@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28.309" height="24" viewBox="0 0 28.309 24">
+  <g id="Group_44" data-name="Group 44" transform="translate(-121 -132.999)">
+    <g id="calendar-day-view" transform="translate(121 133)">
+      <rect id="Rectangle_77" data-name="Rectangle 77" width="28" height="3" rx="1.5" transform="translate(0 -0.001)" fill="#4c7ad3"/>
+      <rect id="Rectangle_78" data-name="Rectangle 78" width="28" height="3" rx="1.5" transform="translate(0 20.999)" fill="#4c7ad3"/>
+      <path id="Path_41" data-name="Path 41" d="M28.4,30.785H1.913A.913.913,0,0,1,1,29.872V18.913A.913.913,0,0,1,1.913,18H28.4a.913.913,0,0,1,.913.913V29.872A.913.913,0,0,1,28.4,30.785Z" transform="translate(-1 -12.639)" fill="#4c7ad3"/>
+    </g>
+  </g>
+</svg>

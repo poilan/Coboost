@@ -1,0 +1,35 @@
+@startuml
+actor "Frontend" as Client
+participant "Backend" as A
+participant "UserController" as B
+participant "SessionController" as C
+
+Client -> A: CreateUser
+activate A
+A -> B: New User Request
+activate B
+
+create User
+B -> User : User Created
+User --> B : User Retrieved
+
+B --> A: Request Complete
+deactivate B
+A --> Client: User Created
+deactivate A
+
+
+Client -> A: CreateSession
+activate A
+A -> C: New Session Request
+activate C
+
+create Session
+C -> Session : Session Created
+Session --> C : Session Retrieved
+
+C --> A: Request Complete
+deactivate C
+A --> Client: Session Created
+deactivate A
+@enduml

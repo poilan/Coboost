@@ -1,0 +1,19 @@
+@startuml
+class User {
+ string Email : Primary, Unique Key
+ string FirstName
+ string LastName
+ string Password
+}
+User "1" *-- "*" Session
+
+class Session {
+ string Email : Foreign Key
+ int Identity : Primary Key
+ string LastOpen
+ string Questions
+ string Settings
+ string Slides
+ string Title
+}
+@enduml
