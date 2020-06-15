@@ -4,13 +4,13 @@ import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Ta
 import styled from 'styled-components';
 import "circular-std";
 import { useState } from 'react';
-import { PageModal } from './Services/PageModal';
-import { Input } from './Classes/Input';
-import { Group } from './Classes/Group';
-import { Column } from './Classes/Column';
-import { Collection, Task } from './Classes/Tasks';
-import { ResultBackground, ResultItem } from './Classes/Results';
-import { Ico_Text, Ico_MultipleChoice } from './Classes/Icons';
+import { PageModal } from '../Services/PageModal';
+import { Input } from '../Classes/Input';
+import { Group } from '../Classes/Group';
+import { Column } from '../Classes/Column';
+import { Collection, Task } from '../Classes/Tasks';
+import { ResultBackground, ResultItem } from '../Classes/Results';
+import { Ico_Text, Ico_MultipleChoice } from '../Classes/Icons';
 
 const MainContainer = styled.div`
     display: table;
@@ -1381,15 +1381,15 @@ export class Session extends Component {
         const Text = e => {
             return (
                 <ModalDisplay show={this.state.modalCreateNumber == 0}>
-                <Form autoComplete="off">
-                    <NewOptionNumber>Title</NewOptionNumber>
-                    <Form.Group controlId="validateTitle">
-                        <InputGroup>
-                            <Form.Control name="title" ref="title" placeholder="Task Title.." required />
-                        </InputGroup>
-                    </Form.Group>
-                    <CancelButton onClick={this.modalCreateClose.bind(this)}>Cancel</CancelButton>
-                    <CreateButton type="submit" value="Submit" />
+                    <Form autoComplete="off">
+                        <NewOptionNumber>Title</NewOptionNumber>
+                        <Form.Group controlId="validateTitle">
+                            <InputGroup>
+                                <Form.Control name="title" ref="title" placeholder="Task Title.." required />
+                            </InputGroup>
+                        </Form.Group>
+                        <CancelButton onClick={this.modalCreateClose.bind(this)}>Cancel</CancelButton>
+                        <CreateButton type="submit" value="Submit" />
                     </Form>
                 </ModalDisplay>
             );
@@ -1422,12 +1422,12 @@ export class Session extends Component {
 
         return (
 
-        <>
-                            {Type()}
-                            {Text()}
+            <>
+                {Type()}
+                {Text()}
                 {Choice()}
-                </>
-            );
+            </>
+        );
     }
 
     modalCreateClose() {

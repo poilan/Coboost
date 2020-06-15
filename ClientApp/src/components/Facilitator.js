@@ -2,8 +2,6 @@
 import styled from 'styled-components';
 import { BsArrowsAngleContract, BsX, BsList, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
-
-
 const FacilitatorContainer = styled.div`
     display: table;
     height: 10%;
@@ -32,7 +30,6 @@ const FacilitatorButtonArrowLeft = styled.button`
 
 `;
 
-
 const FacilitatorButtonHide = styled.button`
     color: rgb(249 251 247);
     background-color: rgb(53 57 67);
@@ -53,7 +50,6 @@ const FacilitatorButtonClose = styled.button`
     border: 0;
 `;
 
-
 const FacilitatorButtonStart = styled.button`
     color: rgb(249 251 247);
     background-color: rgb(53 57 67);
@@ -63,7 +59,6 @@ const FacilitatorButtonStart = styled.button`
     border: 0;
 
 `;
-
 
 const FacilitatorButtonHamburger = styled.button`
     color: rgb(249 251 247);
@@ -88,18 +83,16 @@ const FacilitatorButtonMinimize = styled.button`
     background-color: rgb(53 57 67);
     float: left;
     width: 13%;
-    height: 100%; 
+    height: 100%;
     border: 0;
-    font-size: 100%;  
+    font-size: 100%;
 `;
 
-
-export class Facilitator extends React.Component {
+export class Controls extends React.Component {
     constructor(props) {
         super(props);
-
     }
-    
+
     openHamburgerMenu() {
         console.log("Hamburger menu opened");
     }
@@ -135,20 +128,20 @@ export class Facilitator extends React.Component {
     render() {
         return (
             <FacilitatorContainer>
-            <FacilitatorButtonHamburger onClick={this.openHamburgerMenu}>
-                <BsList>
-                </BsList>
-            </FacilitatorButtonHamburger>
+                <FacilitatorButtonHamburger onClick={this.openHamburgerMenu}>
+                    <BsList>
+                    </BsList>
+                </FacilitatorButtonHamburger>
 
-            <FacilitatorButtonExit onClick={this.handleExit}>
-                <BsX>
-                </BsX>
-            </FacilitatorButtonExit>
+                <FacilitatorButtonExit onClick={this.handleExit}>
+                    <BsX>
+                    </BsX>
+                </FacilitatorButtonExit>
 
-            <FacilitatorButtonMinimize onClick={this.handleMinimize}>
-                <BsArrowsAngleContract>
-                </BsArrowsAngleContract>
-            </FacilitatorButtonMinimize>
+                <FacilitatorButtonMinimize onClick={this.handleMinimize}>
+                    <BsArrowsAngleContract>
+                    </BsArrowsAngleContract>
+                </FacilitatorButtonMinimize>
 
                 <FacilitatorButtonArrowRight onClick={this.arrowForward}>
                     <BsArrowRight>
@@ -162,10 +155,10 @@ export class Facilitator extends React.Component {
                 <FacilitatorButtonHide onClick={this.hideResults}>
                     Hide Results
                         </FacilitatorButtonHide>
-                        <FacilitatorButtonClose onClick={this.closeVoting}>
+                <FacilitatorButtonClose onClick={this.closeVoting}>
                     Close voting
                         </FacilitatorButtonClose>
-                        <FacilitatorButtonStart onClick={this.startCountdown}>
+                <FacilitatorButtonStart onClick={this.startCountdown}>
                     Start Countdown
                         </FacilitatorButtonStart>
             </FacilitatorContainer>
