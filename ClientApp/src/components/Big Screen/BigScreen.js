@@ -1,15 +1,15 @@
 ﻿import React, { Component } from 'react';
-import axios from 'axios';
+import axios from '../Administrator/Tabs/node_modules/axios';
 import { Button, Nav, Col, Row } from 'react-bootstrap';
 import styled from 'styled-components';
-import "circular-std";
-import { Ico_Loading, Ico_Group152 } from "./Classes/Icons";
-import { Column } from "./Classes/Column";
-import { Group } from "./Classes/Group";
-import { Input } from "./Classes/Input";
-import { ResultBackground, ResultItem } from "./Classes/Results";
+import "../Administrator/Tabs/node_modules/circular-std";
+import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
+import { Column } from "../Classes/Column";
+import { Group } from "../Classes/Group";
+import { Input } from "../Classes/Input";
+import { ResultBackground, ResultItem } from "../Classes/Results";
 
-import SSE from "./Core/SSE";
+import SSE from "../Core/SSE";
 
 const MainContainer = styled(Col)`
     display: table;
@@ -358,8 +358,8 @@ export class BigScreen extends Component {
 
         return (
             <>
-                <ResultBackground style={{width: "95%", height: "70%"}} />
-                {/*options.map(option => 
+                <ResultBackground style={{ width: "95%", height: "70%" }} />
+                {/*options.map(option =>
                     <Input key={option.Index} percentage={((option.Votes.length / question.TotalVotes) * 100)} organized vote id={option.Index} index={option.Index} title={option.Title} />)}
                 */}
                 {options.map(option =>

@@ -1,5 +1,5 @@
 ﻿import React, { Component } from 'react';
-import "circular-std";
+import "../Administrator/Tabs/node_modules/circular-std";
 
 export class Ico_CheckmarkWhite extends Component {
     constructor(props) {

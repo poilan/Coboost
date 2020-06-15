@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import styled from 'styled-components';
-import "circular-std";
-import axios from 'axios';
+import "../Administrator/Tabs/node_modules/circular-std";
+import axios from '../Administrator/Tabs/node_modules/axios';
 
 const Container = styled.div`
     width: ${props => props.width * 320}px;

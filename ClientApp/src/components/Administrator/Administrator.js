@@ -1,8 +1,8 @@
 ﻿import React, { Component } from 'react';
-import axios from 'axios';
+import axios from './Tabs/node_modules/axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
-import "circular-std";
+import "./Tabs/node_modules/circular-std";
 import { useState } from 'react';
 import { PageModal } from '../Services/PageModal';
 import { Input } from '../Classes/Input';

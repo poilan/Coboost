@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
-import { Home } from './components/Home';
-import { Login } from './components/Login';
-import { Dashboard } from './components/Dashboard';
+import { Home } from './components/Landing/Home';
+import { Login } from './components/Login/Login';
+import { Dashboard } from './components/Dashboard/Dashboard';
 import { Session } from './components/Administrator/Session';
-import { Mobile } from './components/Mobile';
-import { BigScreen } from './components/BigScreen';
+import { Mobile } from './components/Mobile/Mobile';
+import { BigScreen } from './components/Big Screen/BigScreen';
 import './custom.css'
 
 export default class App extends Component {

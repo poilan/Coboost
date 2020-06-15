@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import axios from '../Administrator/Tabs/node_modules/axios';
 import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from 'react-bootstrap';
 
 const LoginContainer = styled.div`

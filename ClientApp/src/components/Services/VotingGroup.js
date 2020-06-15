@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import styled from 'styled-components';
-import "circular-std";
+import "../Administrator/Tabs/node_modules/circular-std";
 
 const MultipleChoiceGroup = styled(ToggleButtonGroup)`
     display: block;

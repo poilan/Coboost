@@ -1,9 +1,9 @@
 ﻿import React, { Component } from 'react';
-import axios from 'axios';
-import { PageModal } from './Services/PageModal';
+import axios from '../Administrator/Tabs/node_modules/axios';
+import { PageModal } from '../Services/PageModal';
 import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'react-bootstrap';
 import styled from 'styled-components';
-import "circular-std";
+import "../Administrator/Tabs/node_modules/circular-std";
 
 const MainContainer = styled(Col)`
     display: table;
