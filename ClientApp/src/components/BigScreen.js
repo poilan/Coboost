@@ -9,6 +9,8 @@ import { Group } from "./Classes/Group";
 import { Input } from "./Classes/Input";
 import { ResultBackground, ResultItem } from "./Classes/Results";
 
+import SSE from "./Core/SSE";
+
 const MainContainer = styled(Col)`
     display: table;
     height: 100%;
@@ -172,7 +174,9 @@ export class BigScreen extends Component {
                 "item8",
                 "item9",
                 "item10",
-            ]
+            ],
+
+            sse: null,
         };
 
         this.eventSource = undefined;
@@ -194,95 +198,70 @@ export class BigScreen extends Component {
             });
         });
 
-        this.startEventSource();
-    }
+        var sse = new SSE(`presentation/${code}/data`);
 
-    startEventSource() {
-        const code = sessionStorage.getItem("present_code");
-        this.eventSource = new EventSource(`presentation/${code}/data`);
+        this.setState({
+            sse: sse,
+        });
 
-        this.eventSource.addEventListener("Question", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                //This updates the entire question each time the question changes, needs to overwrite the ones before it.
-                //Only have to remember the last task that came through this.
-                //NB: Since these are sent with Json they keep the Capital Letters used in back end. I.E. Variables start with Capital Letters.
-                var stateData = {
-                    question: data
-                };
+        sse.startEventSource((e) => {
+            sse.addListener("Question", (data) => {
+                try {
+                    var questionData = JSON.parse(data);
 
-                switch (data.QuestionType) {
-                    case 0:
-                        stateData.groups = data.Groups;
-                        break;
-                    case 1:
-                        stateData.options = data.Options;
-                        break;
+                    var stateData = {
+                        question: questionData,
+                    };
+
+                    switch (questionData.QuestionType) {
+                        case 0:
+                            stateData.groups = questionData.Groups;
+                            break;
+                        case 1:
+                            stateData.options = questionData.Options;
+                            break;
+                    }
+
+                    this.setState(stateData);
+                } catch (e) {
+                    sse.log("Failed to parse server event");
                 }
+            });
 
-                this.setState(stateData);
-                console.log(data);
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            sse.addListener("Groups", (data) => {
+                try {
+                    var groupData = JSON.parse(data);
 
-        this.eventSource.addEventListener("Groups", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                //This updates inputs in OpenText, which are all contained within groups.
-                //question.Groups | since the come through Json variables are given capital letters
-                console.log("Groups", data);
-                this.setState({
-                    groups: data
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+                    this.setState({
+                        groups: groupData
+                    })
+                } catch (e) {
+                    sse.log("Failed to parse server event");
+                }
+            });
 
-        this.eventSource.addEventListener("Options", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                //This updates options for votes
-                //question.Votes | since the come through Json variables are given capital letters
-                console.log("Options", data);
-                this.setState({
-                    options: data
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            sse.addListener("Options", (data) => {
+                try {
+                    var optionData = JSON.parse(data);
 
-        this.eventSource.addEventListener("Total", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                //This updates the total amount of votes for votes
-                //question.TotalVotes | since the come through Json variables are given capital letters
-                console.log("Total", data);
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+                    this.setState({
+                        options: optionData
+                    })
+                } catch (e) {
+                    sse.log("Failed to parse server event");
+                }
+            });
 
-        this.eventSource.addEventListener("error", (e) => {
-            if (e.eventPhase == EventSource.CLOSED) {
-                //Connection was closed.
-                console.log("SSE: connection closed");
-            } else {
-                console.log(e);
-            }
-        }, false);
+            sse.addListener("Total", (data) => {
+                try {
+                    var totalVotes = JSON.parse(data);
 
-        this.eventSource.addEventListener("open", function (e) {
-            console.log("SSE: connection opened");
-            // Connection was opened.
-        }, false);
+                    sse.log("Total votes: " + totalVotes);
+                } catch (e) {
+                    sse.log("Failed to parse server event");
+                }
+            });
+        })
     }
 
     renderWaiting() {
