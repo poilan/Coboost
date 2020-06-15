@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import "../Administrator/Tabs/node_modules/circular-std";
 import axios from '../Administrator/Tabs/node_modules/axios';
-import { Ico_Text, Ico_MultipleChoice } from './Icons';
+import { Ico_Text, Ico_MultipleChoice } from '../../../Classes/Icons';
 
 const CollectionContainer = styled.div`
     width: 20%;
@@ -39,8 +39,8 @@ const CreateTask = styled.div`
 
 export function Collection(props) {
     const drop = e => {
-       // e.preventDefault();
-      //  e.stopPropagation();
+        // e.preventDefault();
+        //  e.stopPropagation();
     }
 
     const dragOver = e => {
@@ -103,13 +103,11 @@ export function Task(props) {
         e.stopPropagation();
 
         const task = JSON.parse(e.dataTransfer.getData('task'));
-
-
     }
 
     const dragOver = e => {
-       // e.preventDefault();
-       // e.stopPropagation();
+        // e.preventDefault();
+        // e.stopPropagation();
     }
 
     const dragStart = e => {

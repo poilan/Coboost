@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import "circular-std";
 import { useState } from 'react';
 import { PageModal } from '../../Services/PageModal';
-import { Input } from '../../Classes/Input';
-import { Group } from '../../Classes/Group';
-import { Column } from '../../Classes/Column';
-import { Collection, Task } from '../../Classes/Tasks';
-import { ResultBackground, ResultItem } from '../../Classes/Results';
+import { Input } from './Components/Input';
+import { Group } from './Components/Group';
+import { Column } from './Components/Column';
+import { Collection, Task } from './Components/Tasks';
+import { ResultBackground, ResultItem } from './Components/Results';
 import { Ico_Text, Ico_MultipleChoice } from '../../Classes/Icons';
 
 export class Tasks extends Component {

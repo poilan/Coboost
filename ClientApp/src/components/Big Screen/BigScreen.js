@@ -4,10 +4,10 @@ import { Button, Nav, Col, Row } from 'react-bootstrap';
 import styled from 'styled-components';
 import "../Administrator/Tabs/node_modules/circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
-import { Column } from "../Classes/Column";
-import { Group } from "../Classes/Group";
-import { Input } from "../Classes/Input";
-import { ResultBackground, ResultItem } from "../Classes/Results";
+import { Column } from "../Administrator/Tabs/Components/Column";
+import { Group } from "../Administrator/Tabs/Components/Group";
+import { Input } from "../Administrator/Tabs/Components/Input";
+import { ResultBackground, ResultItem } from "../Administrator/Tabs/Components/Results";
 
 import SSE from "../Core/SSE";
 
