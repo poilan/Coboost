@@ -5,6 +5,7 @@ import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, D
 import styled from 'styled-components';
 import "../Administrator/Tabs/node_modules/circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
+import SSE from "../Core/SSE";
 
 const MainContainer = styled(Col)`
     display: table;
@@ -343,9 +344,10 @@ export class Mobile extends Component {
 
             loggedIn: false,
             sessionState: 0, // 0: Not started, 1: Answering, 2: Finished
+            sse: null,
         }
 
-        this.eventSource = undefined;
+        //this.eventSource = undefined;
         this.headerClick = this.headerClick.bind(this);
         this.questionChange = this.questionChange.bind(this);
         this.choicePick = this.choicePick.bind(this);
@@ -360,7 +362,57 @@ export class Mobile extends Component {
                 loggedIn: true
             });
 
-        this.startEventSource();
+        //this.startEventSource();
+        const code = sessionStorage.getItem("code");
+        var sse = new SSE(`client/${code}/question`);
+
+        this.setState({
+            sse: sse,
+        })
+
+        sse.startEventSource((e) => {
+            sse.log("ASD");
+            sse.addListener("question", (data) => {
+                try {
+                    var qData = JSON.parse(data); // Question data
+
+                    var index = parseInt(qData.Index);
+
+                    var question = {
+                        type: qData.QuestionType,
+                        title: qData.Title
+                    }
+
+                    if (question.type === 1) { // Multiple Choice
+                        var choices = [];
+
+                        qData.Options.forEach(choice => {
+                            choices.push(choice.Title);
+                        });
+
+                        question.choices = choices;
+                    }
+
+                    var inputs = this.state.inputs;
+                    inputs[index] = question;
+
+                    this.setState({
+                        inputs: inputs,
+                    });
+
+                    this.parseAnswers();
+
+                    var currentState = this.state.sessionState;
+                    if (currentState === 0 || currentState === 2) { // Either in the start phase or waiting phase
+                        this.setState({
+                            sessionState: 1
+                        });
+                    }
+                } catch (e) {
+                    sse.log("Failed to parse server event");
+                }
+            });
+        });
     }
 
     componentWillUnmount() {
@@ -388,7 +440,7 @@ export class Mobile extends Component {
         });
     }
 
-    startEventSource() {
+    /*startEventSource() {
         const code = sessionStorage.getItem("code");
         this.eventSource = new EventSource(`client/${code}/question`);
 
@@ -448,7 +500,7 @@ export class Mobile extends Component {
             //console.log("SSE: connection opened");
             // Connection was opened.
         }, false);
-    }
+    }*/
 
     getInputQuestions() {
         return this.state.inputs;
@@ -519,8 +571,8 @@ export class Mobile extends Component {
     welcomeRender() {
         return (
             <ContentContainer>
-                <ContentTitle>Velkommen!</ContentTitle>
-                <ContentBody>Vent på de resterende deltakerne, og at administrator starter presentasjonen</ContentBody>
+                <ContentTitle>Welcome!</ContentTitle>
+                <ContentBody>Wait for the remaining participants, or until the administrator starts the presentation</ContentBody>
                 <IconLoader />
                 <ContentFooter>2 Participants</ContentFooter>
             </ContentContainer>
@@ -531,23 +583,23 @@ export class Mobile extends Component {
         const lastInput = this.getLastInput();
         const lastType = lastInput.type;
 
-        var word = "Input";
+        var word = "Open Text";
 
         switch (lastType) {
             case 0:
-                word = "Input";
+                word = "Open Text";
                 break;
             case 1:
-                word = "Votering";
+                word = "Voting";
                 break;
         }
 
         return (
             <ContentContainer>
-                <ContentTitle blue>{word} sendt!</ContentTitle>
+                <ContentTitle blue>{word} sent!</ContentTitle>
                 <IconDone />
-                <ContentBody boxed>Ta det rolig til neste oppgave, endre inputen din eller se gjennom dine tidligere oppgaver.</ContentBody>
-                <ContentButton onClick={this.inputsEdit}>Legg til {word}</ContentButton>
+                <ContentBody boxed>Take it easy while waiting for the next task, change your last input or look at previous tasks.</ContentBody>
+                <ContentButton onClick={this.inputsEdit}>Edit Last {word} Task</ContentButton>
             </ContentContainer>
         );
     }
@@ -564,7 +616,7 @@ export class Mobile extends Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getInputTitle()}</ContentQuestion>
-                <ContentInput value={this.getInputAnswer()} name={`q-${this.getInputIndex()}`} onChange={this.questionChange} placeholder="Skriv svaret ditt..." />
+                <ContentInput value={this.getInputAnswer()} name={`q-${this.getInputIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
                 <ContentButton onClick={this.inputsClick}>Send Input</ContentButton>
             </ContentContainer>
         );
@@ -715,10 +767,10 @@ export class Mobile extends Component {
 
         switch (type) {
             case 0:
-                title = "Open Text Input";
+                title = "Open Text";
                 break;
             case 1:
-                title = "Multiple Choice Input";
+                title = "Multiple Choice";
                 break;
             default:
                 title = "Waiting";
@@ -740,7 +792,7 @@ export class Mobile extends Component {
                     </Banner>
                     <Header>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentInput() !== undefined ? this.tabTitle(this.getInputType()) : "Waiting"}</HeaderText>
-                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Arkiv</HeaderText>
+                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
                     </Header>
                     {this.renderPage()}
                 </MainContainer>
