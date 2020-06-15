@@ -8,7 +8,7 @@ import { PageModal } from '../Services/PageModal';
 import { Input } from './Tabs/Components/Input';
 import { Group } from './Tabs/Components/Group';
 import { Column } from './Tabs/Components/Column';
-import { Collection, Task } from './Tabs/Components/Tasks';
+import { Collection, Task } from './Tabs/Components/Task';
 import { ResultBackground, ResultItem } from './Tabs/Components/Results';
 import { Ico_Text, Ico_MultipleChoice } from '../Classes/Icons';
 
