@@ -1,9 +1,9 @@
 ﻿import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
-import axios from '../Administrator/Tabs/node_modules/axios';
+import axios from 'axios';
 import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton } from 'react-bootstrap';
 import styled from 'styled-components';
-import "../Administrator/Tabs/node_modules/circular-std";
+import "circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
 import SSE from "../Core/SSE";
 

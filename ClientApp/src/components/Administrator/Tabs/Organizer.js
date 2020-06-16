@@ -3,14 +3,12 @@ import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
-import { useState } from 'react';
 import { PageModal } from '../../Services/PageModal';
 import { Input } from './Components/Input';
 import { Group } from './Components/Group';
 import { Column } from './Components/Column';
-import { Collection, Task } from './Components/Task';
 import { ResultBackground, ResultItem } from './Components/Results';
-import { Ico_Text, Ico_MultipleChoice } from '../../Classes/Icons';
+import { CreateTaskModal } from './Components/CreateModal';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -48,6 +46,24 @@ const TitleBreadCrumb = styled.h2`
     }
 `;
 
+const ItemTask = styled.div`
+    width: 100%;
+    background: #fff;
+    padding: 1.5% 2.5%;
+    margin-bottom: 1%;
+    border-radius: 10px;
+    position: relative;
+    font-family: CircularStd;
+    font-weight: 420;
+    border: 1px solid black;
+    opacity: 90%;
+
+    &:hover {
+        cursor:pointer;
+        opacity: 100%;
+    }
+`;
+
 const AnswerButton = styled(Nav.Link)`
     color: #fff;
     background: #4C7AD3;
@@ -73,158 +89,59 @@ const MergeButton = styled(AnswerButton)`
     right: calc(7% + 400px);
 `;
 
+const CancelButton = styled(Nav.Link)`
+    color: #100e0e;
+    background: #fff;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
+
+const CreateButton = styled.input`
+    color: #fff;
+    background: #4C7AD3;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
+
+const NewOptionNumber = styled.h2`
+    opacity: 50%;
+    font-family: CircularStd;
+    font-size: 0.5em;
+`;
+
 export class Organizer extends Component {
-    state = {
-        tasks: [],
-        overview: true,
-        active: 0,
-        columns: [],
-        selected: [],
+    constructor(props) {
+        super(props);
+        this.state = {
+            overview: true,
+            active: 0,
+            selected: '',
 
-        modal = {
-            string: '',
-            key: '',
-            answer: false,
-            rename: false,
+            modal: {
+                string: '',
+                key: '',
+                answer: false,
+                rename: false,
+                create: false,
+            }
         }
-    }
-
-    eventSource = undefined;
-
-    componentWillMount() {
-        this.addColumn();
-        this.getTasks();
     }
 
     componentWillUnmount() {
-        if (this.eventSource)
-            this.eventSource.close();
-    }
-
-    getTasks = () => {
-        const code = this.state.code;
-        await axios.get(`admin/${code}/questions-all`).then(res => {
-            if (res.status === 202) {
-                this.setState({ tasks: res.data });
-            } else if (res.status === 404) {
-                //session not found
-            }
-        })
-    }
-
-    addColumn = () => {
-        let column = {
-            index: this.state.columns.length,
-            width: 1,
-        }
-
-        let columns = this.state.columns;
-
-        columns !== undefined ? columns.push(column) : columns = [column];
-        this.setState({
-            columns: columns,
-        });
-    }
-
-    startEventSource = (target) => {
-        const code = sessionStorage.getItem("code");
-
-        if (this.eventSource !== undefined)
-            this.eventSource.close();
-
-        this.eventSource = new EventSource(`admin/${code}/stream-question-${target}`);
-
-        this.eventSource.addEventListener("Groups", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].groups = data;
-                let columns = this.state.columns;
-                this.state.columns = [];
-                if (questions[this.state.question].groups !== undefined) {
-                    for (let i = 0; i < questions[this.state.question].groups.length; i++) {
-                        while (questions[this.state.question].groups[i].Column + 1 >= this.state.columns.length) {
-                            this.addColumn();
-                        }
-                    }
-                }
-
-                for (let i = 0; i < this.state.columns.length; i++) {
-                    if (columns[i] !== undefined) {
-                        this.state.columns[i].width = columns[i].width;
-                    }
-                    else {
-                        break;
-                    }
-                }
-
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("Options", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].options = data;
-                if (questions[this.state.question].options !== undefined) {
-                    questions[this.state.question].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
-                }
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("Total", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].TotalVotes = data;
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("Archive", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].archive = data;
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("error", (e) => {
-            if (e.eventPhase == EventSource.CLOSED) {
-                //Connection was closed.
-                console.log("SSE: connection closed");
-            } else {
-                console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("open", function (e) {
-            console.log("SSE: connection opened");
-            // Connection was opened.
-        }, false);
     }
 
     clickTask = (event) => {
@@ -232,9 +149,7 @@ export class Organizer extends Component {
             overview: false,
         });
 
-        if (event.target.id == this.state.question)
-            return;
-
+        console.log('hello');
         this.loadTask(event);
     }
 
@@ -245,15 +160,23 @@ export class Organizer extends Component {
             active: key,
             selected: [],
         });
+        console.log('hello');
 
-        if (this.state.questions[key].questionType !== -1) {
-            this.startEventSource(key);
-        }
+        this.props.startEventSource(key);
+    }
+
+    toOverview = () => {
+        this.setState({
+            overview: true,
+            selected: [],
+        });
+        if (this.eventSource !== undefined)
+            this.eventSource.close();
     }
 
     renderText(task) {
-        shrink = (key) => {
-            let Columns = this.state.columns;
+        const shrink = (key) => {
+            let Columns = this.props.columns;
 
             if (Columns[key] !== undefined) {
                 Columns[key].width !== undefined ? Columns[key].width -= 1 : Columns[key].width = 1;
@@ -264,8 +187,8 @@ export class Organizer extends Component {
             });
         }
 
-        grow = (key) => {
-            let Columns = this.state.columns;
+        const grow = (key) => {
+            let Columns = this.props.columns;
 
             if (Columns[key] !== undefined) {
                 Columns[key].width !== undefined ? Columns[key].width += 1 : Columns[key].width = 1;
@@ -276,12 +199,12 @@ export class Organizer extends Component {
             });
         }
 
-        createGroup = () => {
+        const createGroup = () => {
             const code = sessionStorage.getItem("code");
-            axios.post(`admin/${code}/question-create-group-C${this.state.columns.length - 1}`);
+            axios.post(`admin/${code}/question-create-group-C${this.props.columns.length - 1}`);
         }
 
-        select = (event) => {
+        const select = (event) => {
             const key = event.target.id;
 
             if (this.state.selected.indexOf(key) == -1) {
@@ -302,34 +225,45 @@ export class Organizer extends Component {
             console.log(this.state.selected);
         }
 
-        sendToVote = () => {
-            var options = [];
-            var question = this.state.questions[this.state.question];
+        const modalCreateOpen = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                }
+            });
+        }
+
+        const modalCreateClose = (success) => {
+            this.setState({
+                modal: {
+                    create: false,
+                }
+            });
+            
+            if (success == true) {
+                this.props.changeTab('task');
+                this.props.updateTasks();
+            }
+        }
+
+        const getOptions = () => {
+            let options = [];
             for (var i = 0; i < this.state.selected.length; i++) {
                 var key = this.state.selected[i].split("-");
-                var input = question.groups[key[0]].Members[key[1]];
+                var answer = task.groups[key[0]].Members[key[1]];
                 var data = {
-                    userID: input.UserID,
+                    userID: answer.UserID,
                     index: options.length,
-                    description: input.Description,
+                    description: answer.Description,
                     votes: [],
                     archive: [],
                 }
                 options.push(data);
             }
-            console.log(options);
-            const create = this.state.create;
-            create.type = 1;
-            create.options = options;
-            this.setState({
-                create: create,
-                organizing: false,
-                selected: [],
-            });
-            this.createTask();
+            return options;
         }
 
-        merge = () => {
+        const merge = () => {
             if (this.state.selected == undefined || this.state.selected.length <= 1)
                 return;
 
@@ -358,7 +292,7 @@ export class Organizer extends Component {
             })
         }
 
-        modalAnswerOpen = () => {
+        const modalAnswerOpen = () => {
             this.setState({
                 modal: {
                     answer: true,
@@ -366,10 +300,10 @@ export class Organizer extends Component {
             })
         }
 
-        modalAnswerContent = () => {
+        const modalAnswerContent = () => {
             const sendInput = (e) => {
                 e.preventDefault();
-                const title = this.state.create.title;
+                const title = this.state.modal.string;
                 const user = localStorage.getItem("user");
                 const code = sessionStorage.getItem("code");
 
@@ -383,7 +317,7 @@ export class Organizer extends Component {
                 axios.post(`client/${code}/add-opentext`, data);
             }
 
-            handleTitle = (event) => {
+            const handleTitle = (event) => {
                 event.preventDefault();
                 var modal = this.state.modal;
                 modal.string = this.refs.title.value;
@@ -400,22 +334,22 @@ export class Organizer extends Component {
                             <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} tabIndex autoFocus="true" placeholder="Input Title.." required />
                         </InputGroup>
                     </Form.Group>
-                    <CancelButton onClick={this.modalAnswerClose.bind(this)}>Cancel</CancelButton>
+                    <CancelButton onClick={modalAnswerClose.bind(this)}>Cancel</CancelButton>
                     <CreateButton type="submit" value="Submit" />
                 </Form>
             );
         }
 
-        modalAnswerClose = () => {
+        const modalAnswerClose = () => {
             this.setState({
                 modal: {
                     string: '',
-                    answer: true,
+                    answer: false,
                 }
             })
         }
 
-        modalRenameOpen = (event) => {
+        const modalRenameOpen = (event) => {
             const key = event.target.id.split("-");
             console.log(key);
 
@@ -425,7 +359,7 @@ export class Organizer extends Component {
             });
         }
 
-        modalRenameContent = () => {
+        const modalRenameContent = () => {
             const rename = (e) => {
                 e.preventDefault();
                 const code = sessionStorage.getItem("code");
@@ -442,7 +376,7 @@ export class Organizer extends Component {
                 }
             }
 
-            handleTitle = (event) => {
+            const handleTitle = (event) => {
                 event.preventDefault();
                 var modal = this.state.modal;
                 modal.string = this.refs.title.value;
@@ -465,7 +399,7 @@ export class Organizer extends Component {
             );
         }
 
-        modalRenameClose = () => {
+        const modalRenameClose = () => {
             this.setState({
                 modal: {
                     rename: false,
@@ -477,35 +411,36 @@ export class Organizer extends Component {
 
         return (
             <MainContainer>
-                {this.state.modalInput && <PageModal title="Send Input" body={this.modalInputContent()} onClose={this.modalInputClose.bind(this)} />}
-                {this.state.modalRename && <PageModal title="Rename" body={this.modalRenameContent()} onClose={this.modalRenameClose.bind(this)} />}
-                <TitleBreadCrumb onClick={this.backtoOverview.bind(this)}>{this.state.title} &#187; Organizing &#187;   {task.title}</TitleBreadCrumb>
+                {this.state.modal.answer && <PageModal title="Send Input" body={modalAnswerContent()} onClose={modalAnswerClose.bind(this)} />}
+                {this.state.modal.rename && <PageModal title="Rename" body={modalRenameContent()} onClose={modalRenameClose.bind(this)} />}
+                {this.state.modal.create && <CreateTaskModal type="1" options={getOptions()} onClose={modalCreateClose.bind(this)} />}
+                <TitleBreadCrumb onClick={this.toOverview.bind(this)}>Organizing &#187; {task.title}</TitleBreadCrumb>
 
-                <AnswerButton onClick={this.modalInputOpen.bind(this)}>Answer Task</AnswerButton>
-                <SendToMC onClick={sendToVote()}>Send to voting</SendToMC>
-                <MergeButton onClick={merge(this)}>Merge</MergeButton>
+                <AnswerButton onClick={modalAnswerOpen.bind(this)}>Answer Task</AnswerButton>
+                <SendToMC onClick={modalCreateOpen.bind(this)}>New Task: Multiple Choice</SendToMC>
+                <MergeButton onClick={merge.bind(this)}>Merge</MergeButton>
 
-                {this.state.columns !== undefined && this.state.columns.map(column =>
+                {this.props.columns !== undefined && this.props.columns.map(column =>
 
-                    <Column column={column.index} width={column.width} empty={column.index + 1 == this.state.columns.length}
-                        grow={grow(column.index)}
-                        shrink={shrink(column.index)}>
-                        {question.groups !== undefined &&
-                            question.groups.map(group => {
+                    <Column column={column.index} width={column.width} empty={column.index + 1 == this.props.columns.length}
+                        grow={() => grow(column.index)}
+                        shrink={() => shrink(column.index)}>
+                        {task.groups !== undefined &&
+                            task.groups.map(group => {
                                 if (column.index === group.Column) {
                                     return (
                                         <Group id={group.Index} key={group.Index}
                                             group={group.Index} column={group.Column} title={group.Title} size={column.width}
-                                            double={this.modalRenameOpen.bind(this)}>
+                                            double={modalRenameOpen.bind(this)}>
 
                                             {group.Members !== undefined &&
                                                 group.Members.map(member =>
 
                                                     <Input id={group.Index + "-" + member.Index} key={member.Index}
                                                         member={member.Index} group={group.Index} column={group.Column} title={member.Title} size={column.width}
-                                                        double={this.modalRenameOpen.bind(this)}
+                                                        double={modalRenameOpen.bind(this)}
                                                         checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
-                                                        onCheck={select(this)}
+                                                        onCheck={select.bind(this)}
                                                     />
 
                                                 )}
@@ -515,31 +450,69 @@ export class Organizer extends Component {
                             }
                             )}
 
-                        {column.index + 1 == this.state.columns.length &&
+                        {column.index + 1 == this.props.columns.length &&
                             <Group id="new"
                                 group="new" column={column.index} title="➕ Create Group" size={column.width}
-                                onClick={createGroup()} />
+                                onClick={createGroup.bind(this)}
+                            />
                         }
                     </Column>
-
                 )}
-            </MainContainer>
+            </MainContainer >
         );
     }
 
     renderMultipleChoice(task) {
+
+        const select = (event) => {
+            const key = event.target.id;
+
+            if (this.state.selected.indexOf(key) == -1) {
+                this.setState({
+                    selected: key,
+                });
+            }
+            else {
+                this.setState({
+                    selected: '',
+                })
+            }
+        }
+
+        const modalCreateOpen = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                }
+            });
+        }
+
+        const modalCreateClose = (success) => {
+            this.setState({
+                modal: {
+                    create: false,
+                }
+            });
+            if (success == true) {
+                this.props.changeTab('task');
+                this.props.updateTasks();
+            }
+        }
+
         return (
             <MainContainer>
-                <SendToT onClick={() => this.organizeCreateInput(question)}>New Input: Text</SendToT>
+                {this.state.modal.create && <CreateTaskModal type="0" title={task.options[parseInt(this.state.selected)].Description} onClose={modalCreateClose.bind(this)} />}
+                <TitleBreadCrumb onClick={this.toOverview.bind(this)}> Organizing &#187; {task.title}</TitleBreadCrumb>
+                <SendToT disabled={this.state.selected.length !== 1} onClick={() => modalCreateOpen()}>New Task: Text</SendToT>
                 <ResultBackground style={{ width: "95%", height: "70%" }} />
                 {task.options !== undefined && task.options.map(option =>
                     <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
-                        vote percentage={((option.Votes.length / question.TotalVotes) * 100)} height="70%" total={task.options.length}
+                        vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="70%" total={task.options.length}
                         checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                        onCheck={this.organizeSelect.bind(this)}
+                        onCheck={select.bind(this)}
                     />
                 )}
-            </MainContainer>
+            </MainContainer >
         );
     }
 
@@ -548,17 +521,17 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     <TitleBreadCrumb>All Tasks</TitleBreadCrumb>
-                    {this.state.tasks.map(task =>
+                    {this.props.tasks.map(task =>
                         <ItemTask id={task.index} onClick={this.clickTask}>{task.index + 1}. {task.title}</ItemTask>
                     )}
                 </MainContainer>
             )
         } else {
-            let task = this.state.tasks[this.state.active];
+            let task = this.props.tasks[this.state.active];
 
-            if (task.type == 0) {
+            if (task.questionType == 0) {
                 return this.renderText(task);
-            } else if (task.type == 1) {
+            } else if (task.questionType == 1) {
                 return this.renderMultipleChoice(task);
             }
         }

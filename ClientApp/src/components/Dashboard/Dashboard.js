@@ -1,9 +1,9 @@
 ﻿import React, { Component } from 'react';
-import axios from '../Administrator/Tabs/node_modules/axios';
+import axios from 'axios';
 import { PageModal } from '../Services/PageModal';
 import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'react-bootstrap';
 import styled from 'styled-components';
-import "../Administrator/Tabs/node_modules/circular-std";
+import "circular-std";
 
 const MainContainer = styled(Col)`
     display: table;
@@ -309,13 +309,13 @@ export class Dashboard extends Component {
                 //Session already active?
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute('name'));
-                this.props.history.push('/session');
+                this.props.history.push('/administrator');
             }
             else if (res.status === 201) {
                 //Session Created!
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute('name'));
-                this.props.history.push('/session');
+                this.props.history.push('/administrator');
             }
             else if (res.status === 404) {
                 //Session not found

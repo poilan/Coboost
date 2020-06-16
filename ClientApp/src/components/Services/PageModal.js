@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import styled from "styled-components";
 import { Modal } from "react-bootstrap";
-import '../Administrator/Tabs/node_modules/circular-std';
+import 'circular-std';
 
 const ModalPage = styled(Modal)`
     border-radius: 20px;

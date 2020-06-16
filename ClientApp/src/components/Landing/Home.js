@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from "../Administrator/Tabs/node_modules/axios";
+import axios from "axios";
 import styled from "styled-components";
 import { Nav, Container, Row, Col, Button } from "react-bootstrap";
-import "../Administrator/Tabs/node_modules/circular-std";
+import "circular-std";
 import { IconMain } from '../Classes/Icons';
 
 const LeftHalf = styled(Col)`

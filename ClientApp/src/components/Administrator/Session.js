@@ -1,8 +1,8 @@
 ﻿import React, { Component } from 'react';
-import axios from './Tabs/node_modules/axios';
+import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
-import "./Tabs/node_modules/circular-std";
+import "circular-std";
 import { useState } from 'react';
 import { PageModal } from '../Services/PageModal';
 import { Input } from './Tabs/Components/Input';
@@ -931,7 +931,7 @@ export class Session extends Component {
         else if (!this.state.create.title) {
             return (
                 <SelectedSlide>
-                    <SlideTitle>What is the question do you want answered?</SlideTitle>
+                    <SlideTitle>What is the question you want answered?</SlideTitle>
                     <SlideBody>
                         <Form id="title-form" onSubmit={this.handleTitle.bind(this)}>
                             <NewTitle autoComplete="off" placeholder='Title...' ref='title' name='title' required />

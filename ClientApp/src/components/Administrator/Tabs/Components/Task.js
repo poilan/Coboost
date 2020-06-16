@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import styled from 'styled-components';
-import "../Administrator/Tabs/node_modules/circular-std";
-import axios from '../Administrator/Tabs/node_modules/axios';
+import "circular-std";
+import axios from 'axios';
 import { Ico_Text, Ico_MultipleChoice } from '../../../Classes/Icons';
 
 const CollectionContainer = styled.div`

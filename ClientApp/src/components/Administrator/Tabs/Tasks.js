@@ -3,150 +3,245 @@ import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
-import { useState } from 'react';
-import { PageModal } from '../../Services/PageModal';
-import { Input } from './Components/Input';
-import { Group } from './Components/Group';
-import { Column } from './Components/Column';
 import { Collection, Task } from './Components/Task';
-import { ResultBackground, ResultItem } from './Components/Results';
-import { Ico_Text, Ico_MultipleChoice } from '../../Classes/Icons';
 
-export class Tasks extends Component {
-    state = {
-        tasks: [],
-        active: [],
+const SlideContainer = styled.div`
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    display: inline-block;
+    position: absolute;
+    left: 26%;
+    width: 69%;
+    max-width: calc(172vh - 225px);
+`;
 
-        create: {
-            type: '',
-            title: '',
-            options: [],
-        },
+const SelectedSlide = styled.div`
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #fff;
+    border-radius: 10px;
+`;
+
+const SlideTitle = styled.h1`
+    position: absolute;
+    width: 80%;
+    font-family: CircularStd;
+    font-size: 2em;
+    text-align: center;
+    top: 25%;
+    left: 10%;
+`;
+
+const SlideBody = styled.h3`
+    position: absolute;
+    left: 10%;
+    top: 35%;
+    width: 80%;
+    text-align: center;
+    font-family: CircularStd;
+`;
+
+const AddOption = styled.div`
+    display: ${props => props.possible ? "inline-block" : "none"};
+    opacity: 50%;
+    width: 100%;
+    font-family: CircularStd;
+    font-size: 0.8em;
+    font:weight: 700;
+    padding: .2em .5em .17em .26em;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #fff;
+
+    &:hover {
+        opacity: 75%;
+        cursor:pointer;
+    }
+`;
+
+const VoteOption = styled(AddOption)`
+    display: inline-block;
+    width: 30%;
+    margin: 1.5%;
+    opacity: 100%;
+`;
+
+const NewButton = styled.button`
+    border-radius: 10px;
+    border: 0;
+    font-family: CircularStd;
+    font-size: 2em;
+    position: absolute;
+    height: 100%;
+    padding: 0.5em;
+    top: 0;
+    right: 0;
+    opacity: 50%;
+
+    &:hover {
+        cursor:pointer;
+        opacity: 85%;
+        background: #4C7AD3;
+        color: #fff;
+    }
+`;
+
+const NewType = styled.select`
+    font-family: CircularStd;
+    font-size: 1.5em;
+    font:weight: 700;
+    padding: .6em 1.4em .5em .8em;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    border-radius: .5em;
+    /*-moz-appearance: none;
+    -webkit-appearance: none;*/
+    appearance: none;
+    background: #fff;
+
+    margin: 60px;
+
+    &::-ms-expand {
+        display: none;
     }
 
-    eventSource = undefined;
+    &:hover {
+        border-color: #888;
+    }
 
-    startEventSource = (target) => {
-        const code = sessionStorage.getItem("code");
+    &:focus {
+        border-color: #aaa;
+        box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+        box-shadow: 0 0 0 3px -moz-mac-focusring;
+        outline: none;
+    }
+`;
 
-        if (this.eventSource !== undefined)
-            this.eventSource.close();
+const NewTitle = styled.input`
+    font-family: CircularStd;
+    font-size: 1em;
+    font:weight: 700;
+    padding: .6em 1.4em .5em .8em;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    border-radius: .5em;
+    /*-moz-appearance: none;
+    -webkit-appearance: none;*/
+    appearance: none;
+    background: #fff;
 
-        this.eventSource = new EventSource(`admin/${code}/stream-question-${target}`);
+    margin: 60px;
 
-        this.eventSource.addEventListener("Groups", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].groups = data;
-                let columns = this.state.columns;
-                this.state.columns = [];
-                if (questions[this.state.question].groups !== undefined) {
-                    for (let i = 0; i < questions[this.state.question].groups.length; i++) {
-                        while (questions[this.state.question].groups[i].Column + 1 >= this.state.columns.length) {
-                            this.addColumn();
-                        }
-                    }
-                }
+    &:hover {
+        border-color: #888;
+    }
 
-                for (let i = 0; i < this.state.columns.length; i++) {
-                    if (columns[i] !== undefined) {
-                        this.state.columns[i].width = columns[i].width;
-                    }
-                    else {
-                        break;
-                    }
-                }
+    &:focus {
+        border-color: #aaa;
+        box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+        box-shadow: 0 0 0 3px -moz-mac-focusring;
+        outline: none;
+    }
+`;
 
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+const NewOptionContainer = styled.div`
+    display: inline-block;
+    padding: 0.3em;
+    width: 30%;
+    height: 15%;
+    text-align: left;
 
-        this.eventSource.addEventListener("Options", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].options = data;
-                if (questions[this.state.question].options !== undefined) {
-                    questions[this.state.question].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
-                }
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+`;
 
-        this.eventSource.addEventListener("Total", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].TotalVotes = data;
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+const NewOptionNumber = styled.h2`
+    opacity: 50%;
+    font-family: CircularStd;
+    font-size: 0.5em;
+`;
 
-        this.eventSource.addEventListener("Archive", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var questions = this.state.questions;
-                questions[this.state.question].archive = data;
-                this.setState({
-                    questions: questions,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+const NewOption = styled.input`
+    font-family: CircularStd;
+    font-size: 0.8em;
+    font:weight: 700;
+    width: 100%;
+    padding: .2em .5em .17em .26em;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #fff;
 
-        this.eventSource.addEventListener("error", (e) => {
-            if (e.eventPhase == EventSource.CLOSED) {
-                //Connection was closed.
-                console.log("SSE: connection closed");
-            } else {
-                console.log(e);
-            }
-        }, false);
+    &:hover {
+        border-color: #888;
+    }
 
-        this.eventSource.addEventListener("open", function (e) {
-            console.log("SSE: connection opened");
-            // Connection was opened.
-        }, false);
+    &:focus {
+        border-color: #aaa;
+        box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+        box-shadow: 0 0 0 3px -moz-mac-focusring;
+        outline: none;
+    }
+`;
+
+export class Tasks extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            active: 0,
+            tasks: props.tasks,
+
+            create: {
+                type: '',
+                title: '',
+                options: [],
+            },
+        }
     }
 
     createTask = () => {
-        this.selectTab('task');
+        //const tasks = this.props.tasks;
+        //var count = tasks.length;
 
-        const questions = this.state.questions;
-        var count = questions.length;
+        //var question = {
+        //    questionType: -1,
+        //    title: 'New Task',
+        //    index: count,
+        //};
 
-        var question = {
-            questionType: -1,
-            title: 'New Task',
-            index: count,
-        };
+        //this.setState({
+        //    tasks: tasks.concat(question),
+        //    active: count,
+        //});
+        const code = sessionStorage.getItem('code');
+        var data = {
+            Title: "Discuss: Ramifications of Dr.K",
+        }
 
-        this.setState({
-            questions: questions.concat(question),
-            question: count,
-        });
+        axios.post(`admin/${code}/questions-create-opentext`, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(res => {
+            if (res.status === 201) {
+                this.props.updateTasks();
+            }
+        });;
     }
 
     taskCreate = () => {
-        handleType = (event) => {
+        const handleType = (event) => {
             event.preventDefault();
             this.setState({
                 create: {
@@ -155,7 +250,7 @@ export class Tasks extends Component {
             });
         }
 
-        handleTitle = (event) => {
+        const handleTitle = (event) => {
             event.preventDefault();
             var create = this.state.create;
             create.title = this.refs.title.value;
@@ -164,7 +259,7 @@ export class Tasks extends Component {
             });
         }
 
-        handleOption = (event) => {
+        const handleOption = (event) => {
             const key = event.target.id;
             const value = event.target.value;
 
@@ -175,7 +270,7 @@ export class Tasks extends Component {
             });
         }
 
-        createMultipleChoice = (event) => {
+        const createMultipleChoice = (event) => {
             event.preventDefault();
             let code = sessionStorage.getItem("code");
 
@@ -190,7 +285,7 @@ export class Tasks extends Component {
                 }
             }).then(res => {
                 if (res.status === 201) {
-                    this.getQuestions().then(() => { this.startEventSource(this.state.question) });
+                    this.props.updateTasks().then(() => { this.props.startEventSource(this.state.active) });
                     this.setState({
                         create: {
                             type: '',
@@ -202,7 +297,7 @@ export class Tasks extends Component {
             })
         }
 
-        createOpenText = () => {
+        const createOpenText = () => {
             const code = sessionStorage.getItem('code');
             var data = {
                 Title: this.state.create.title,
@@ -214,7 +309,7 @@ export class Tasks extends Component {
                 }
             }).then(res => {
                 if (res.status === 201) {
-                    this.getQuestions().then(() => { this.startEventSource(this.state.question) });
+                    this.props.updateTasks().then(() => { this.props.startEventSource(this.state.active) });
                     this.setState({
                         create: {
                             type: '',
@@ -226,12 +321,11 @@ export class Tasks extends Component {
             });
         }
 
-        addOption = () => {
+        const addOption = () => {
             var count = this.state.create.options !== undefined ? this.state.create.options.length : 0;
             var user = localStorage.getItem("user");
 
-            var option =
-            {
+            var option = {
                 userID: user,
                 index: count,
                 description: "",
@@ -251,7 +345,7 @@ export class Tasks extends Component {
                 <SelectedSlide>
                     <SlideTitle>What type of slide is this?</SlideTitle>
                     <SlideBody>
-                        <Form id="type-form" onSubmit={this.handleType.bind(this)}>
+                        <Form id="type-form" onSubmit={handleType.bind(this)}>
                             <NewType placeholder='Select type...' ref='type' name='type' required>
                                 <option value="" disabled>Select type...</option>
                                 <option value='0'>Open Text</option>
@@ -268,7 +362,7 @@ export class Tasks extends Component {
                 <SelectedSlide>
                     <SlideTitle>What is the question do you want answered?</SlideTitle>
                     <SlideBody>
-                        <Form id="title-form" onSubmit={this.handleTitle.bind(this)}>
+                        <Form id="title-form" onSubmit={handleTitle.bind(this)}>
                             <NewTitle autoComplete="off" placeholder='Title...' ref='title' name='title' required />
                         </Form>
                     </SlideBody>
@@ -282,18 +376,18 @@ export class Tasks extends Component {
 
             return (
                 <SelectedSlide>
-                    {isOpenText ? this.createOpenText() : ""}
+                    {isOpenText ? createOpenText() : ""}
                     <SlideTitle>{isOpenText ? "Creating your slide..." : "Select options"}</SlideTitle>
                     <SlideBody display={isOpenText ? "none" : "block"}>
-                        <Form id="options-form" onSubmit={this.createMultipleChoice.bind(this)}>
+                        <Form id="options-form" onSubmit={createMultipleChoice.bind(this)}>
                             {this.state.create.options !== undefined && this.state.create.options.map(option =>
                                 <NewOptionContainer index={option.index}>
                                     <NewOptionNumber>{"Option " + (option.index + 1)}</NewOptionNumber>
-                                    <NewOption id={option.index} name={"Option " + option.index} value={option.description} onChange={this.handleOption.bind(this)} required />
+                                    <NewOption id={option.index} name={"Option " + option.index} value={option.description} onChange={handleOption.bind(this)} required />
                                 </NewOptionContainer>
                             )}
                             <NewOptionContainer>
-                                <AddOption possible={canAdd} onClick={this.addOption.bind(this)}>➕ Add option...</AddOption>
+                                <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
                             </NewOptionContainer>
                         </Form>
                     </SlideBody>
@@ -304,9 +398,6 @@ export class Tasks extends Component {
     }
 
     taskClick = (event) => {
-        if (event.target.id == this.state.question)
-            return;
-
         this.loadTask(event);
     }
 
@@ -317,13 +408,13 @@ export class Tasks extends Component {
             active: key,
         });
 
-        if (this.state.tasks[key].questionType !== -1) {
-            this.startEventSource(key);
+        if (this.props.tasks[key].questionType !== -1) {
+            this.props.startEventSource(key);
         }
     }
 
     renderActive() {
-        if (this.state.question == -1) {
+        if (this.state.active == -1) {
             return (
                 <SelectedSlide>
                     <SlideTitle>Hello there</SlideTitle>
@@ -332,16 +423,16 @@ export class Tasks extends Component {
             );
         }
 
-        var question = this.state.questions[this.state.question];
+        var task = this.props.tasks[this.state.active];
 
-        if (question !== undefined && question.questionType === -1) {
+        if (task !== undefined && task.questionType === -1) {
             return this.taskCreate();
         }
-        else if (question !== undefined && question.questionType === 0) {
+        else if (task !== undefined && task.questionType === 0) {
             return (
                 <SelectedSlide>
-                    <SlideTitle>{question.title}</SlideTitle>
-                    <SlideBody>{question.groups !== undefined && question.groups.slice(1).map(group =>
+                    <SlideTitle>{task.title}</SlideTitle>
+                    <SlideBody>{task.groups !== undefined && task.groups.slice(1).map(group =>
                         group.Members !== undefined && group.Members.map(member =>
                             <VoteOption key={member.Index}>{member.Title}</VoteOption>
                         )
@@ -349,14 +440,14 @@ export class Tasks extends Component {
                 </SelectedSlide>
             );
         }
-        else if (question !== undefined && question.questionType === 1) {
+        else if (task !== undefined && task.questionType === 1) {
             return (
                 <SelectedSlide>
-                    <SlideTitle>{question.title}</SlideTitle>
+                    <SlideTitle>{task.title}</SlideTitle>
                     <SlideBody>
-                        {question.options !== undefined && question.options.map(option =>
+                        {task.options !== undefined && task.options.map(option =>
                             <>
-                                <VoteOption id={option.Index} index={option.Index} name={"Option " + option.Index}>{option.Description} {option.Votes.length !== 0 && " (" + Math.floor((option.Votes.length / question.TotalVotes) * 100) + "%)"}</VoteOption>
+                                <VoteOption id={option.Index} index={option.Index} name={"Option " + option.Index}>{option.Description} {option.Votes.length !== 0 && " (" + Math.floor((option.Votes.length / task.TotalVotes) * 100) + "%)"}</VoteOption>
                             </>
                         )}
                     </SlideBody>
@@ -376,11 +467,11 @@ export class Tasks extends Component {
     render() {
         return (
             <>
-                <Collection createTask={this.createTask}>
-                    {this.state.questions.map(question =>
-                        <Task key={question.index} id={question.index}
-                            onClick={this.taskClick} active={this.state.question == question.index}
-                            type={question.questionType} title={question.title}
+                <Collection createTask={this.createTask.bind(this)}>
+                    {this.props.tasks.map(task =>
+                        <Task key={task.index} id={task.index}
+                            onClick={this.taskClick} active={this.state.active == task.index}
+                            type={task.questionType} title={task.title}
                         />
                     )}
                 </Collection>

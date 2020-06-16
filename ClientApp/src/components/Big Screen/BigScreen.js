@@ -1,8 +1,8 @@
 ﻿import React, { Component } from 'react';
-import axios from '../Administrator/Tabs/node_modules/axios';
+import axios from 'axios';
 import { Button, Nav, Col, Row } from 'react-bootstrap';
 import styled from 'styled-components';
-import "../Administrator/Tabs/node_modules/circular-std";
+import "circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
 import { Column } from "../Administrator/Tabs/Components/Column";
 import { Group } from "../Administrator/Tabs/Components/Group";
