@@ -3,11 +3,12 @@ import axios from 'axios';
 import { Button, Nav, Col, Row } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
-import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
+import { Ico_Loading, Ico_Group152, IconLogo } from "../Classes/Icons";
 import { Column } from "../Administrator/Tabs/Components/Column";
 import { Group } from "../Administrator/Tabs/Components/Group";
 import { Input } from "../Administrator/Tabs/Components/Input";
 import { ResultBackground, ResultItem } from "../Administrator/Tabs/Components/Results";
+import { Facilitator } from "../Classes/Facilitator";
 
 import SSE from "../Core/SSE";
 
@@ -154,6 +155,11 @@ const VoteOption = styled(AddOption)`
     opacity: 100%;
 `;
 
+const Logo = styled(IconLogo)`
+    padding: 20px;
+    width: 15%;
+`;
+
 export class BigScreen extends Component {
     constructor(props) {
         super(props);
@@ -179,7 +185,7 @@ export class BigScreen extends Component {
             sse: null,
         };
 
-        this.eventSource = undefined;
+        //this.eventSource = undefined;
     }
 
     componentWillMount() {
@@ -198,11 +204,21 @@ export class BigScreen extends Component {
             });
         });
 
+        //this.beginSSE = this.beginSSE.bind(this);
+
         var sse = new SSE(`presentation/${code}/data`);
 
         this.setState({
             sse: sse,
         });
+
+        console.log(code);
+        //this.beginSSE();
+    }
+
+    beginSSE() {
+        var state = this.state;
+        var sse = state.sse;
 
         sse.startEventSource((e) => {
             sse.addListener("Question", (data) => {
@@ -270,12 +286,13 @@ export class BigScreen extends Component {
         return (<>
             <ContentContainer>
                 <WelcomeContainer>
-                    <Title>Bli med gjennom<br /><b>innonor.no</b> med koden:</Title>
+                    <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
+                <Facilitator />
             </ContentContainer>
             <BottomBanner>
-                <BottomBannerText>Venter på deltakere...</BottomBannerText>
+                <BottomBannerText>Waiting on participants...</BottomBannerText>
             </BottomBanner>
         </>);
     }
@@ -290,6 +307,7 @@ export class BigScreen extends Component {
                 <WelcomeContainer>
                     <IconLoader />
                 </WelcomeContainer>
+                <Facilitator />
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>innonor.no</BottomBannerText>
@@ -389,7 +407,7 @@ export class BigScreen extends Component {
         return (
             <MainContainer>
                 <Banner>
-                    <BannerText>Innonor</BannerText>
+                    <Logo/>
                 </Banner>
                 {this.handleRender()}
             </MainContainer>

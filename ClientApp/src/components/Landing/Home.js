@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { Nav, Container, Row, Col, Button } from "react-bootstrap";
 import "circular-std";
-import { IconMain } from '../Classes/Icons';
+import { IconMain, IconLogo } from '../Classes/Icons';
 
 const LeftHalf = styled(Col)`
   background: rgb(224 233 254);
@@ -128,6 +128,11 @@ const EventCodeText = styled.h5`
     z-index: 1;
 `;
 
+const Logo = styled(IconLogo)`
+    padding: 20px;
+    width: 15%;
+`;
+
 export class Home extends Component {
     static displayName = Home.name;
 
@@ -216,7 +221,7 @@ export class Home extends Component {
                 </LeftHalf>
 
                 <RightHalf mobile={mobile.toString()}>
-                    <RightTitle id="AdminText">Innonor</RightTitle>
+                    <RightTitle id="AdminText">Innonor2</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
             </LandingContainer>

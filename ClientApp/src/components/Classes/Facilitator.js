@@ -1,94 +1,40 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
-import { BsArrowsAngleContract, BsX, BsList, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsFullscreenExit, BsStopwatch, BsCollection, BsLock, BsInfoCircle, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 const FacilitatorContainer = styled.div`
-    display: table;
     height: 10%;
-    width: 100%;
-    background: rgb(53 57 67);
+    width: 60%;
+    background: rgb(53, 57, 67);
+
+    display: flex;
+    flex-direction: row;
+
     position: absolute;
+    bottom: -12.6%;
+    left: 0px;
 `;
 
-const FacilitatorButtonArrowRight = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: right;
-    width: 10%;
+const FacilitatorButton = styled.button`
+    color: rgb(249, 251, 247);
+    background-color: rgb(53, 57, 67);
     height: 100%;
-    border: 0;
+    border: 0px solid;
 
+    flex: 1 1 auto;
+
+    .icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    :focus {
+        outline: none;
+        box-shadow: none;
+    }
 `;
 
-const FacilitatorButtonArrowLeft = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: right;
-    width: 10%;
-    height: 100%;
-    border: 0;
-
-`;
-
-const FacilitatorButtonHide = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: right;
-    width: 13%;
-    height: 100%;
-    border: 0;
-
-`;
-
-const FacilitatorButtonClose = styled.button`
-    color: rgb(249 251 247);
-    display: rgb(53 57 67);
-    background-color: rgb(53 57 67);
-    float: right;
-    width: 13%;
-    height: 100%;
-    border: 0;
-`;
-
-const FacilitatorButtonStart = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: right;
-    width: 13%;
-    height: 100%;
-    border: 0;
-
-`;
-
-const FacilitatorButtonHamburger = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: left;
-    width: 13%;
-    height: 100%;
-    border: 0;
-`;
-
-const FacilitatorButtonExit = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: left;
-    width: 13%;
-    height: 100%;
-    border: 0;
-`;
-
-const FacilitatorButtonMinimize = styled.button`
-    color: rgb(249 251 247);
-    background-color: rgb(53 57 67);
-    float: left;
-    width: 13%;
-    height: 100%;
-    border: 0;
-    font-size: 100%;
-`;
-
-export class Controls extends React.Component {
+export class Facilitator extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -128,39 +74,43 @@ export class Controls extends React.Component {
     render() {
         return (
             <FacilitatorContainer>
-                <FacilitatorButtonHamburger onClick={this.openHamburgerMenu}>
-                    <BsList>
-                    </BsList>
-                </FacilitatorButtonHamburger>
+                <FacilitatorButton onClick={this.arrowBackward}>
+                    <BsArrowLeft class="icon" />
+                </FacilitatorButton>
 
-                <FacilitatorButtonExit onClick={this.handleExit}>
-                    <BsX>
-                    </BsX>
-                </FacilitatorButtonExit>
+                <FacilitatorButton onClick={this.arrowForward}>
+                    <BsArrowRight class="icon" />
+                </FacilitatorButton>
 
-                <FacilitatorButtonMinimize onClick={this.handleMinimize}>
-                    <BsArrowsAngleContract>
-                    </BsArrowsAngleContract>
-                </FacilitatorButtonMinimize>
+                <FacilitatorButton>
+                    <BsCollection class="icon" /><br />
+                    All tasks
+                </FacilitatorButton>
 
-                <FacilitatorButtonArrowRight onClick={this.arrowForward}>
-                    <BsArrowRight>
-                    </BsArrowRight>
-                </FacilitatorButtonArrowRight>
-                <FacilitatorButtonArrowLeft onClick={this.arrowBackward}>
-                    <BsArrowLeft>
+                <FacilitatorButton onClick={this.handleMinimize}>
+                    <BsInfoCircle class="icon" /><br />
+                    Information
+                </FacilitatorButton>
 
-                    </BsArrowLeft>
-                </FacilitatorButtonArrowLeft>
-                <FacilitatorButtonHide onClick={this.hideResults}>
-                    Hide Results
-                        </FacilitatorButtonHide>
-                <FacilitatorButtonClose onClick={this.closeVoting}>
-                    Close voting
-                        </FacilitatorButtonClose>
-                <FacilitatorButtonStart onClick={this.startCountdown}>
-                    Start Countdown
-                        </FacilitatorButtonStart>
+                <FacilitatorButton onClick={this.hideResults}>
+                    <BsEyeSlash class="icon" /><br/>
+                    Hide results
+                </FacilitatorButton>
+
+                <FacilitatorButton onClick={this.closeVoting}>
+                    <BsLock class="icon" /><br/>
+                    Lock answers
+                </FacilitatorButton>
+
+                <FacilitatorButton onClick={this.startCountdown}>
+                    <BsStopwatch class="icon" /><br/>
+                    Countdown
+                </FacilitatorButton>
+
+                <FacilitatorButton>
+                    <BsFullscreenExit class="icon" /><br/>
+                    Exit Fullscreen
+                </FacilitatorButton>
             </FacilitatorContainer>
         );
     }

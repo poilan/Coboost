@@ -165,9 +165,9 @@ const ContentQuestion = styled.p`
     color: #4C7AD3;
 
     position: relative;
-    padding: 0px 0px 15px 0px;
+    padding: 0px 0px 10px 0px;
     margin: 0px 30px 0px 30px;
-    border-bottom: 4px solid #cfcfcf;
+    border-bottom: 2px solid #cfcfcf;
 `;
 
 const ContentInput = styled.input`
@@ -181,6 +181,8 @@ const ContentInput = styled.input`
     text-align: center;
     color: black;
     border: 0px solid;
+    border-bottom: 1px solid #cfcfcf;
+    padding-bottom: 10px;
 `;
 
 const ContentButton = styled(Button)`

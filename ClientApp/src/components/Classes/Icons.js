@@ -167,6 +167,17 @@ export class IconMain extends Component {
     }
 }
 
+export class IconLogo extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <span><img {...this.props} alt="product logo" src="./icons/coboost.png" /></span>
+        );
+    }
+}
 
 export class IcoBlue extends Component {
     constructor(props) {
