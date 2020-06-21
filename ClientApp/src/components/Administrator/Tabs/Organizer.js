@@ -9,6 +9,7 @@ import { Group } from './Components/Group';
 import { Column } from './Components/Column';
 import { ResultBackground, ResultItem } from './Components/Results';
 import { CreateTaskModal } from './Components/CreateModal';
+import { ContextMenu } from './Components/ContextMenu';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -137,8 +138,40 @@ export class Organizer extends Component {
                 answer: false,
                 rename: false,
                 create: false,
+            },
+
+            menu: {
+                x: 0,
+                y: 0,
+                visible: false,
             }
         }
+    }
+
+    componentDidMount() {
+        let self = this;
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+            const clickX = event.clientX;
+            const clickY = event.clientY;
+            self.setState({
+                menu: {
+                    x: clickX,
+                    y: clickY,
+                    visible: true,
+                }
+            })
+        })
+
+        document.addEventListener('click', function () {
+            self.setState({
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
+        })
     }
 
     componentWillUnmount() {
@@ -239,7 +272,7 @@ export class Organizer extends Component {
                     create: false,
                 }
             });
-            
+
             if (success == true) {
                 this.props.changeTab('task');
                 this.props.updateTasks();
@@ -305,9 +338,7 @@ export class Organizer extends Component {
                 e.preventDefault();
                 const title = this.state.modal.string;
                 const user = localStorage.getItem("user");
-                const code = sessionStorage.getItem("code");
-
-                modalAnswerClose();
+                const code = sessionStorage.getItem("code");                
 
                 let data = {
                     description: title,
@@ -315,6 +346,7 @@ export class Organizer extends Component {
                 }
 
                 axios.post(`client/${code}/add-opentext`, data);
+                modalAnswerClose();
             }
 
             const handleTitle = (event) => {
@@ -327,11 +359,11 @@ export class Organizer extends Component {
             }
 
             return (
-                <Form autoComplete="off" onSubmit={sendInput.bind(this)}>
+                <Form autoComplete="off" onSubmit={sendInput}>
                     <NewOptionNumber>Title</NewOptionNumber>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} tabIndex autoFocus="true" placeholder="Input Title.." required />
+                            <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={modalAnswerClose.bind(this)}>Cancel</CancelButton>
@@ -354,8 +386,10 @@ export class Organizer extends Component {
             console.log(key);
 
             this.setState({
-                modalRename: true,
-                modalRenameKey: key,
+                modal: {
+                    rename: true,
+                    key: key,
+                }
             });
         }
 
@@ -366,14 +400,14 @@ export class Organizer extends Component {
                 const key = this.state.modal.key;
                 const title = {
                     Title: this.state.modal.string,
-                }
-
-                modalRenameClose();
+                }               
                 if (key.indexOf("title") !== -1) {
                     axios.post(`admin/${code}/question-rename-group-${key[0]}`, title);
                 } else {
                     axios.post(`admin/${code}/question-rename-member-${key[0]}-${key[1]}`, title);
                 }
+
+                modalRenameClose();
             }
 
             const handleTitle = (event) => {
@@ -390,7 +424,7 @@ export class Organizer extends Component {
                     <NewOptionNumber>Title</NewOptionNumber>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} autoFocus={true} placeholder="Input Title.." required />
+                            <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={modalRenameClose.bind(this)}>Cancel</CancelButton>
@@ -403,14 +437,22 @@ export class Organizer extends Component {
             this.setState({
                 modal: {
                     rename: false,
-                    key: [],
+                    key: '',
                     string: '',
                 }
             });
         }
 
+        const menu = [
+            { "label": "Answer question", "callback": modalAnswerOpen },
+            { "label": "Group selected answers", "callback": "" },
+            { "label": "Merge selected answers", "callback": merge },
+            { "label": "Create vote from selected", "callback": modalCreateOpen },
+        ];
+
         return (
-            <MainContainer>
+            <MainContainer>            
+                <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                 {this.state.modal.answer && <PageModal title="Send Input" body={modalAnswerContent()} onClose={modalAnswerClose.bind(this)} />}
                 {this.state.modal.rename && <PageModal title="Rename" body={modalRenameContent()} onClose={modalRenameClose.bind(this)} />}
                 {this.state.modal.create && <CreateTaskModal type="1" options={getOptions()} onClose={modalCreateClose.bind(this)} />}
@@ -458,12 +500,12 @@ export class Organizer extends Component {
                         }
                     </Column>
                 )}
+                
             </MainContainer >
         );
     }
 
     renderMultipleChoice(task) {
-
         const select = (event) => {
             const key = event.target.id;
 

@@ -120,7 +120,8 @@ export class CreateTaskModal extends Component {
     }
 
     TextContent() {
-        const createOpenText = () => {
+        const createOpenText = (event) => {
+            event.preventDefault();
             const code = sessionStorage.getItem('code');
             var data = {
                 Title: this.state.title,
@@ -177,7 +178,7 @@ export class CreateTaskModal extends Component {
         }
 
         const handleOption = (event) => {
-            const key = event.target.id;
+            const key = event.target.name;
             const value = event.target.value;
 
             const options = this.state.options;
@@ -238,14 +239,14 @@ export class CreateTaskModal extends Component {
                 <FieldText>Task Title</FieldText>
                 <Form.Group controlId="validateTitle">
                     <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} autoFocus={true} placeholder="Task Title.." required />
+                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
                         <OptionContainer index={option.index}>
-                            <FieldText>{"Option " + (option.index + 1)}</FieldText>
-                            <Option id={option.index} name={"Option " + option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                            <FieldText key={"T" +option.index}>{"Option " + (option.index + 1)}</FieldText>
+                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
                         </OptionContainer>
                     )}
                     <OptionContainer>
@@ -266,7 +267,7 @@ export class CreateTaskModal extends Component {
             title: '',
             options: [],
             showing: false,
-            success:false,
+            success: false,
         });
     }
 
@@ -275,13 +276,13 @@ export class CreateTaskModal extends Component {
     //}
 
     render() {
-        return(
-        <ModalPage show={this.state.showing} centered onHide={this.onClose.bind(this)}>
-            <Modal.Header closeButton>
-                <Modal.Title>{"Create new task: " + this.props.type == 0 ? "Text" : "Multiple Choice"}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.MultipleChoiceContent()}</Modal.Body>
+        return (
+            <ModalPage show={this.state.showing} centered onHide={this.onClose.bind(this)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{"Create new task: " + this.props.type == 0 ? "Text" : "Multiple Choice"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.MultipleChoiceContent()}</Modal.Body>
             </ModalPage>
-            )
+        )
     }
 }

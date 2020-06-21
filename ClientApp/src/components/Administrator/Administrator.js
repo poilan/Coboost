@@ -180,12 +180,10 @@ export class Administrator extends Component {
             columns: [],
 
             tab: 'task',
-        }
-        this.getTasks();
-        this.addColumn();
+        }        
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let code = sessionStorage.getItem("code");
         let title = sessionStorage.getItem("title");
 
@@ -193,6 +191,9 @@ export class Administrator extends Component {
             title: title,
             code: code,
         })
+
+        this.getTasks();
+        this.addColumn();
     }
 
     componentWillUnmount() {
@@ -353,7 +354,7 @@ export class Administrator extends Component {
                 <Banner>
                     <BannerArrow onClick={this.backToProjects}>⟵</BannerArrow>
                     <BannerText>{this.state.title}</BannerText>
-                    <BannerCode>{"#" + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3)}</BannerCode>
+                    <BannerCode>{this.state.code > 0 ? "#" + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
                     <BannerButton title="User">
                         <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>

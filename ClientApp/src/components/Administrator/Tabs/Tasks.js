@@ -4,6 +4,8 @@ import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Ta
 import styled from 'styled-components';
 import "circular-std";
 import { Collection, Task } from './Components/Task';
+import { CreateTaskModal } from './Components/CreateModal';
+import { ContextMenu } from './Components/ContextMenu';
 
 const SlideContainer = styled.div`
     top: 50%;
@@ -207,10 +209,37 @@ export class Tasks extends Component {
                 title: '',
                 options: [],
             },
+
+            menu: {
+                x: 0,
+                y: 0,
+                visible: false,
+                type: null,
+            },
+
+            modal: {
+                create: false,
+                type: null,
+            }
         }
     }
 
-    createTask = () => {
+    componentDidMount() {
+        let self = this;
+        document.addEventListener('contextmenu', function () {
+            
+                self.setState({
+                    menu: {
+                        x: 0,
+                        y: 0,
+                        visible: false,
+                    }
+                })
+            
+        })
+    }
+
+    createTask = (event) => {
         //const tasks = this.props.tasks;
         //var count = tasks.length;
 
@@ -224,20 +253,30 @@ export class Tasks extends Component {
         //    tasks: tasks.concat(question),
         //    active: count,
         //});
-        const code = sessionStorage.getItem('code');
-        var data = {
-            Title: "Discuss: Ramifications of Dr.K",
-        }
+        //const code = sessionStorage.getItem('code');
+        //var data = {
+        //    Title: "Discuss: Ramifications of Dr.K",
+        //}
 
-        axios.post(`admin/${code}/questions-create-opentext`, data, {
-            headers: {
-                'Content-Type': 'application/json',
+        //axios.post(`admin/${code}/questions-create-opentext`, data, {
+        //    headers: {
+        //        'Content-Type': 'application/json',
+        //    }
+        //}).then(res => {
+        //    if (res.status === 201) {
+        //        this.props.updateTasks();
+        //    }
+        //});;
+
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+        this.setState({
+            menu: {
+                x: clickX,
+                y: clickY,
+                visible: true,
             }
-        }).then(res => {
-            if (res.status === 201) {
-                this.props.updateTasks();
-            }
-        });;
+        })
     }
 
     taskCreate = () => {
@@ -465,9 +504,56 @@ export class Tasks extends Component {
     }
 
     render() {
+        const modalCreateClose = (success) => {
+            this.setState({
+                modal: {
+                    create: false,
+                    type: null,
+                }
+            });
+
+            if (success == true) {
+                this.props.updateTasks();
+            }
+        }
+
+        const createInput = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 0,
+                },
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
+        }
+
+        const createVote = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 1,
+                },
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
+        }
+
+        const menu = [
+            { "label": "New Input", "callback": createInput},
+            { "label": "New Vote", "callback": createVote},
+        ];
         return (
             <>
-                <Collection createTask={this.createTask.bind(this)}>
+                {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={[]} onClose={modalCreateClose.bind(this)} />}
+                <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
+                <Collection createTask={(event) => this.createTask(event)}>
                     {this.props.tasks.map(task =>
                         <Task key={task.index} id={task.index}
                             onClick={this.taskClick} active={this.state.active == task.index}
