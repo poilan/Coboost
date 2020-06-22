@@ -33,7 +33,8 @@ const Banner = styled(Col)`
 const BannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1.5rem;
-    color: #4C7AD3;
+    /*color: #4C7AD3;*/
+    color: rgb(53, 57, 67);
     padding: 25px 5px;
     position: absolute;
 `;
@@ -89,7 +90,8 @@ const IconLoader = styled(Ico_Loading)`
 const Code = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    color: #4C7AD3;
+    /*color: #4C7AD3;*/
+    color: rgb(53, 57, 67);
     font-weight: 600;
 `;
 
@@ -121,7 +123,8 @@ const BottomBannerText = styled.h1`
 
     :not(:first-child) {
         padding: 35px 5px;
-        color: #4C7AD3;
+        /*color: #4C7AD3;*/
+        color: rgb(53, 57, 67);
     }
 `;
 
@@ -168,6 +171,9 @@ export class BigScreen extends Component {
             code: 100001,
             title: null,
 
+            // Facilitator Options
+            isFullscreen: false,
+
             question: null,
             groups: [
                 "item1",
@@ -186,9 +192,10 @@ export class BigScreen extends Component {
         };
 
         //this.eventSource = undefined;
+        //this.beginSSE = this.beginSSE.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const email = localStorage.getItem("user");
         const code = sessionStorage.getItem("present_code");
 
@@ -196,24 +203,22 @@ export class BigScreen extends Component {
             code: code,
         });
 
+        console.log(`Code is ${code}`);
+
         axios.get(`presentation/info-${code}`).then(res => {
             const title = res.data.title;
+            console.log(res.data);
+
+            this.beginSSE = this.beginSSE.bind(this);
+            var dataSource = new SSE(`presentation/${code}/data`);
 
             this.setState({
-                title: title
+                title: title,
+                sse: dataSource,
             });
+
+            this.beginSSE();
         });
-
-        //this.beginSSE = this.beginSSE.bind(this);
-
-        var sse = new SSE(`presentation/${code}/data`);
-
-        this.setState({
-            sse: sse,
-        });
-
-        console.log(code);
-        //this.beginSSE();
     }
 
     beginSSE() {
@@ -310,7 +315,7 @@ export class BigScreen extends Component {
                 <Facilitator />
             </ContentContainer>
             <BottomBanner>
-                <BottomBannerText>innonor.no</BottomBannerText>
+                <BottomBannerText>Coboost</BottomBannerText>
                 <BottomBannerText>#{code}</BottomBannerText>
             </BottomBanner>
         </>);
@@ -343,7 +348,7 @@ export class BigScreen extends Component {
                 </WelcomeContainer>
             </ContentContainer>
             <BottomBanner>
-                <BottomBannerText>innonor.no</BottomBannerText>
+                <BottomBannerText>Coboost</BottomBannerText>
                 <BottomBannerText>#{code}</BottomBannerText>
             </BottomBanner>
         </>);

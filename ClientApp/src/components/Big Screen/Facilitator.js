@@ -97,12 +97,6 @@ export class Facilitator extends React.Component {
         this.setState({
             fullscreen: fullscreen,
         });
-
-        /*var fullscreen = this.state.fullscreen;
-
-        if (fullscreen) {
-            if 
-        }*/
     }
 
     render() {

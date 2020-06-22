@@ -1,4 +1,4 @@
-﻿class SSE {
+﻿export default class SSE {
     constructor(address) {
         this.address = address;
         this.open = false;
@@ -6,11 +6,11 @@
         this.log(`SSE instantiated for '${address}'`);
     }
 
-    log(msg) {
+    log = (msg) => {
         console.log(`SSE: ${msg}`);
     }
 
-    addListener(type, callback) {
+    addListener = (type, callback) => {
         if (this.open !== true) {
             this.log(`Unable to add an event listener for type '${type}' because the event source is not active.`);
             return;
@@ -24,7 +24,8 @@
     }
 
 
-    startEventSource(callback) {
+    startEventSource = (callback) => {
+        console.log("Attempting to start event source");
         this.eventSource = new EventSource(this.address);
         this.open = true;
 
@@ -41,5 +42,3 @@
         callback(this.eventSource);
     }
 }
-
-export default SSE;

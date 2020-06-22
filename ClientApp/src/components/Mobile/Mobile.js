@@ -18,7 +18,8 @@ const MainContainer = styled(Col)`
 
 const Banner = styled(Col)`
     position: sticky;
-    background: #4C7AD3;
+    /*background: #4C7AD3;*/
+    background: rgb(53, 57, 67);
     height: 75px;
     top: 0;
     left: 0;
@@ -90,7 +91,7 @@ const Header = styled(Col)`
 
     display: flex;
     flex-direction: row;
-    box-shadow: inset 0px -4px 0px 0px #cfcfcf;
+    /*box-shadow: inset 0px -4px 0px 0px #cfcfcf;*/
     z-index: 10;
 `;
 
@@ -100,11 +101,12 @@ const HeaderText = styled.h1`
     font-weight: 425;
     padding: 10px 35px;
     font-size: 1rem;
-    border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #4C7AD3;
+    /*border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #4C7AD3;*/
+    border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} rgb(53, 57, 67);
     cursor: pointer;
 
     :hover {
-        border-bottom: 4px solid ${props => props.active === props.id ? "#4C7AD3" : "#4f4f4f"};
+        border-bottom: 4px solid ${props => props.active === props.id ? "rgb(53, 57, 67)" : "#4f4f4f"};
     }
 
     flex: 1 1 auto;

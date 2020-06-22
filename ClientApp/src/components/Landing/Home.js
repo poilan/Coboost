@@ -54,12 +54,14 @@ const LeftTitle = styled.h1`
 
 const JoinEventBtn = styled.button`
     font-family: CircularStd;
-    background-color: rgb(60 102 246);
+    /*background-color: rgb(60 102 246);*/
+    background-color: rgb(53, 57, 67);
     color: rgb(255 255 255);
     position: absolute;
     bottom: ${props => props.mobile === "true" ? "23%" : "22%"};
     left: ${props => props.mobile === "true" ? "62%" : "25%"};  
-    border: 2px solid rgb(60 102 246);
+    /*border: 2px solid rgb(60 102 246);*/
+    border: 2px solid rgb(53, 57, 67);
     border-radius: 10px;    
     width: ${props => props.mobile === "true" ? "30%" : "10%"};
 `;
@@ -95,7 +97,8 @@ const RightNav = styled(Nav)`
 
 const RightTitle = styled.h2`
     position: relative;
-    color: rgb(26 87 248);
+    /*color: rgb(26 87 248);*/
+    color: rgb(53, 57, 67);
     opacity: 60%;
     padding: 50px;
     font-family: CircularStd;
@@ -112,7 +115,8 @@ const LandingContainer = styled(Container)`
 `;
 
 const LoginButton = styled(Nav.Link)`
-    border: 2px solid rgb(73 128 250); 
+    /*border: 2px solid rgb(73 128 250);*/
+    border: 2px solid rgb(53, 57, 67);
     color: rgb(73 128 250);
     border-radius: 50px;
     text-align: center;
