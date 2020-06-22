@@ -8,7 +8,7 @@ import { Column } from "../Administrator/Tabs/Components/Column";
 import { Group } from "../Administrator/Tabs/Components/Group";
 import { Input } from "../Administrator/Tabs/Components/Input";
 import { ResultBackground, ResultItem } from "../Administrator/Tabs/Components/Results";
-import { Facilitator } from "../Classes/Facilitator";
+import { Facilitator } from "./Facilitator";
 
 import SSE from "../Core/SSE";
 

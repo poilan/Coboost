@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import "circular-std";
 import { Tasks } from './Tabs/Tasks';
 import { Organizer } from './Tabs/Organizer';
+import { Presentation } from './Presentation';
 
 const MainContainer = styled.div`
     display: table;
@@ -180,16 +181,22 @@ export class Administrator extends Component {
             columns: [],
 
             tab: 'task',
-        }        
+            presentor: null,
+        }
+
+        this.present = this.present.bind(this);
     }
 
     componentDidMount() {
         let code = sessionStorage.getItem("code");
         let title = sessionStorage.getItem("title");
 
+        let presentManager = new Presentation(code);
+
         this.setState({
             title: title,
             code: code,
+            presentor: presentManager,
         })
 
         this.getTasks();
@@ -345,6 +352,13 @@ export class Administrator extends Component {
         this.setState({
             tasks: tasks.concat(question),
         });
+    }
+
+    present = () => {
+        let state = this.state;
+        let presentor = state.presentor;
+
+        presentor.PresentInNewWindow();
     }
 
     render() {
