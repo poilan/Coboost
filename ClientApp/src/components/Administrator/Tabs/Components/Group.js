@@ -6,7 +6,7 @@ import axios from 'axios';
 const GroupContainer = styled.div`
         width: 100%;
         display: ${props => props.empty ? "none" : "block"};
-        background: ${props => props.id == "0" ? "#808ca2" : "#4C7AD3"};
+        background: ${props => props.group == "0" ? "#808ca2" : "#4C7AD3"};
         padding: 10px;
         padding-top: 65px;
         margin-bottom: 20px;
@@ -14,11 +14,11 @@ const GroupContainer = styled.div`
         box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
         vertical-align: top;
         position: relative;
-        opacity: ${props => props.id == "new" ? "50%" : "100%"};
+        opacity: ${props => props.group == "new" ? "50%" : "100%"};
 
         &:hover {
-           opacity: ${props => props.id == "new" ? "90%" : "100%"};
-           cursor: ${props => props.id == "new" ? "pointer" : "default"};
+           opacity: ${props => props.group == "new" ? "90%" : "100%"};
+           cursor: ${props => props.group == "new" ? "pointer" : "default"};
         }
     `;
 
@@ -45,6 +45,14 @@ const GroupTitle = styled.h1`
     top: 20px;
     vertical-align: center;
     left: 15px;
+`;
+
+const GroupMenu = styled.div`
+    position: absolute;
+    right: 2.5%;
+    top: 0.5%;
+    color: #fff;
+    font-weight: 600;
 `;
 
 export function Group(props) {
@@ -93,37 +101,43 @@ export function Group(props) {
         }
     }
 
+    const remove = () => {
+        let code = sessionStorage.getItem("code");
+
+        axios.post(`admin/${code}/question-remove-group${props.group}`);
+    }
+
     return (
-        <GroupContainer id={props.id} group={props.group} column={props.column}
+        <GroupContainer id={props.id + "-title"} group={props.group} column={props.column}
             onClick={props.onClick} size={props.size} empty={props.id == "0" && props.children.length < 1}
             onDrop={drop} onDragOver={dragOver}
-            draggable={props.group != "0"} onDragStart={dragStart}>
-
+            draggable={props.group != "0"} onDragStart={dragStart}>            
             <GroupTitle onDoubleClick={(e) => handleDouble(e)} id={props.id + "-title"}>{props.title}</GroupTitle>
             {props.size <= "2" ?
                 (props.size == "2" ?
                     <>
-                        <IDChars size={props.size} id={props.id}>A</IDChars>
-                        <IDChars size={props.size} id={props.id}>B</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
                     </>
                     :
                     ""
                 ) : (props.size == "4" ?
                     <>
-                        <IDChars size={props.size} id={props.id}>A</IDChars>
-                        <IDChars size={props.size} id={props.id}>B</IDChars>
-                        <IDChars size={props.size} id={props.id}>C</IDChars>
-                        <IDChars size={props.size} id={props.id}>D</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>C</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>D</IDChars>
                     </>
                     :
                     <>
-                        <IDChars size={props.size} id={props.id}>A</IDChars>
-                        <IDChars size={props.size} id={props.id}>B</IDChars>
-                        <IDChars size={props.size} id={props.id}>C</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
+                        <IDChars size={props.size} id={props.id + "-title"}>C</IDChars>
                     </>
                 )
             }
             {props.children}
+            {props.group != 0 && <GroupMenu id={props.id + "-title"} onClick={() => remove()}>...</GroupMenu>}
         </GroupContainer>
     );
 }

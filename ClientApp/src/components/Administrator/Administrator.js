@@ -180,7 +180,7 @@ export class Administrator extends Component {
             columns: [],
 
             tab: 'task',
-        }        
+        }
     }
 
     componentDidMount() {

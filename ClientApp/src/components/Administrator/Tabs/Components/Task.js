@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
 import { Ico_Text, Ico_MultipleChoice } from '../../../Classes/Icons';
+import { Session } from '../../Session';
 
 const CollectionContainer = styled.div`
     width: 20%;
@@ -39,11 +40,17 @@ const CreateTask = styled.div`
 
 export function Collection(props) {
     const drop = e => {
-        // e.preventDefault();
-        //  e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
+        const task = JSON.parse(e.dataTransfer.getData('task'));
+        const target = props.children.length - 1;
+        const code = sessionStorage.getItem('code');
+
+        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.updateTasks());
     }
 
     const dragOver = e => {
+        e.preventDefault();
     }
 
     return (
@@ -103,11 +110,15 @@ export function Task(props) {
         e.stopPropagation();
 
         const task = JSON.parse(e.dataTransfer.getData('task'));
+        const target = props.id;
+        const code = sessionStorage.getItem('code');
+
+        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.updateTasks());
     }
 
     const dragOver = e => {
-        // e.preventDefault();
-        // e.stopPropagation();
+        e.preventDefault();
+        //e.stopPropagation();
     }
 
     const dragStart = e => {
@@ -128,7 +139,7 @@ export function Task(props) {
             {props.type == 0 ? <Ico_Text id={props.id} style={{ height: "60px", marginTop: "10px", }} /> : props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
             <TitleContainer id={props.id}>
                 <TaskType id={props.id}>{props.type == 0 ? "Text" : props.type == 1 ? "Multiple Choice" : "New Task"}</TaskType>
-                <div id={props.id}>{props.title}</div>
+                <TaskTitle id={props.id}>{props.title}</TaskTitle>
             </TitleContainer>
         </TaskContainer>
     );

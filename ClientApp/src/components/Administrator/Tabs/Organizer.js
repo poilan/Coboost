@@ -138,6 +138,7 @@ export class Organizer extends Component {
                 answer: false,
                 rename: false,
                 create: false,
+                remove: false,
             },
 
             menu: {
@@ -293,7 +294,27 @@ export class Organizer extends Component {
                 }
                 options.push(data);
             }
+
             return options;
+        }
+
+        const getSelected = () => {
+            let selected = [];
+            for (let i = 0; i < this.state.selected.length; i++) {
+                let key = this.state.selected[i].split("-");
+
+                selected.push(key);
+            }
+
+            const compare = (a, b) => {
+                let group = a[0] - b[0];
+
+                if (group == 0)
+                    return a[1] - b[1];
+                else
+                    return group;
+            }
+            return selected.sort(compare);
         }
 
         const merge = () => {
@@ -301,11 +322,13 @@ export class Organizer extends Component {
                 return;
 
             const code = sessionStorage.getItem("code");
-            const master = this.state.selected[0].split("-");
+            const selected = getSelected();
+
+            const master = selected[0];
             let change = [];
 
-            for (var i = 1; i < this.state.selected.length; i++) {
-                var subject = this.state.selected[i].split("-");
+            for (var i = 1; i < selected.length; i++) {
+                var subject = selected[i];
 
                 if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
                     subject[1] -= change[subject[0]];
@@ -316,7 +339,7 @@ export class Organizer extends Component {
                 if (change[subject[0]] == undefined) {
                     change[subject[0]] = 1;
                 } else {
-                    change[subject[0]] -= 1;
+                    change[subject[0]] += 1;
                 }
             }
 
@@ -338,7 +361,7 @@ export class Organizer extends Component {
                 e.preventDefault();
                 const title = this.state.modal.string;
                 const user = localStorage.getItem("user");
-                const code = sessionStorage.getItem("code");                
+                const code = sessionStorage.getItem("code");
 
                 let data = {
                     description: title,
@@ -400,7 +423,7 @@ export class Organizer extends Component {
                 const key = this.state.modal.key;
                 const title = {
                     Title: this.state.modal.string,
-                }               
+                }
                 if (key.indexOf("title") !== -1) {
                     axios.post(`admin/${code}/question-rename-group-${key[0]}`, title);
                 } else {
@@ -443,15 +466,90 @@ export class Organizer extends Component {
             });
         }
 
+        //const modalRemoveOpen = (event) => {
+        //    const key = event.target.id.split("-");
+        //    console.log(key);
+
+        //    this.setState({
+        //        modal: {
+        //            remove: true,
+        //            key: key,
+        //        }
+        //    });
+        //}
+
+        //const modalRemoveContent = () => {
+        //    const remove = (e) => {
+        //        e.preventDefault();
+        //        const code = sessionStorage.getItem("code");
+        //        const key = this.state.modal.key;
+
+        //        if (key.indexOf("title") !== -1) {
+        //            axios.post(`admin/${code}/question-rename-group-${key[0]}`, title);
+        //        } else {
+        //            axios.post(`admin/${code}/question-rename-member-${key[0]}-${key[1]}`, title);
+        //        }
+
+        //        modalRemoveClose();
+        //    }
+
+        //    return (
+        //        <Form autoComplete="off" onSubmit={remove.bind(this)}>
+        //            <CancelButton onClick={modalRemoveClose.bind(this)}>Cancel</CancelButton>
+        //            <CreateButton type="submit" value="Submit" />
+        //        </Form>
+        //    );
+        //}
+
+        //const modalRemoveClose = () => {
+        //    this.setState({
+        //        modal: {
+        //            remove: false,
+        //            key: '',
+        //            string: '',
+        //        }
+        //    });
+        //}
+
+        const removeMembers = () => {
+            const code = sessionStorage.getItem('code');
+
+            const selected = getSelected();
+            let change = []
+
+            console.log(selected);
+
+            for (let i = 0; i < selected.length; i++) {
+                let subject = selected[i];
+
+                if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
+                    subject[1] -= change[subject[0]];
+                }
+
+                axios.post(`admin/${code}/question-remove-member-${subject[0]}-${subject[1]}`);
+
+                if (change[subject[0]] == undefined) {
+                    change[subject[0]] = 1;
+                } else {
+                    change[subject[0]] += 1;
+                }
+            }
+
+            this.setState({
+                selected: [],
+            });
+        }
+
         const menu = [
             { "label": "Answer question", "callback": modalAnswerOpen },
-            { "label": "Group selected answers", "callback": "" },
+            //{ "label": "Group selected answers", "callback": "" },
             { "label": "Merge selected answers", "callback": merge },
             { "label": "Create vote from selected", "callback": modalCreateOpen },
+            { "label": "Remove selected answers", "callback": removeMembers },
         ];
 
         return (
-            <MainContainer>            
+            <MainContainer>
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                 {this.state.modal.answer && <PageModal title="Send Input" body={modalAnswerContent()} onClose={modalAnswerClose.bind(this)} />}
                 {this.state.modal.rename && <PageModal title="Rename" body={modalRenameContent()} onClose={modalRenameClose.bind(this)} />}
@@ -500,7 +598,7 @@ export class Organizer extends Component {
                         }
                     </Column>
                 )}
-                
+
             </MainContainer >
         );
     }

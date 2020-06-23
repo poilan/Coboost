@@ -154,13 +154,13 @@ namespace Slagkraft.Models.Admin
                 {
                     if (target > current)
                     {
-                        active += 1;
+                        active -= 1;
                         Questions[active].Reset.Set();
                         Client.Set();
                     }
                     else if (target < current)
                     {
-                        active -= 1;
+                        active += 1;
                         Questions[active].Reset.Set();
                         Client.Set();
                     }

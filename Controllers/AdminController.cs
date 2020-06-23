@@ -291,6 +291,47 @@ namespace Slagkraft.Controllers
                 Response.StatusCode = 404;
         }
 
+        [HttpPost("{code}/question-remove-group-{group}")]
+        public void RemoveGroup(int code, int group)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Questions[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open.RemoveGroup(group));
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+        }
+
+        [HttpPost("{code}/question-remove-member-{group}-{member}")]
+        public void RemoveMember(int code, int group, int member)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Questions[admin.Active] as OpenText;
+
+                OpenText.Key key = new OpenText.Key
+                {
+                    Group = group,
+                    Member = member,
+                };
+                ThreadPool.QueueUserWorkItem(o => open.RemoveInput(key));
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+        }
+
         [HttpPost("{code}/question-rename-group-{group}")]
         public void RenameGroup(int code, int group, [FromBody]Help help)
         {

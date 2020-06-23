@@ -247,6 +247,44 @@ namespace Slagkraft.Models.Admin.Questions
             EventStream();
         }
 
+        public void RemoveGroup(int group)
+        {
+            lock (QuestionLock)
+            {
+                if (group >= Groups.Count)
+                    return;
+
+                for (int i = Groups[group].Members.Count - 1; i >= 0; i--)
+                {
+                    Key key = new Key
+                    {
+                        Group = group,
+                        Member = i
+                    };
+
+                    RemoveMember(key);
+                }
+
+                Groups.RemoveAt(group);
+                UpdateGroupIndexes();
+            }
+            EventStream();
+        }
+
+        public void RemoveInput(Key input)
+        {
+            lock (QuestionLock)
+            {
+                if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count)
+                    return;
+
+                RemoveMember(input);
+
+                UpdateMemberIndexes(input.Group);
+            }
+            EventStream();
+        }
+
         /// <summary>
         /// Renames the specified group
         /// </summary>
@@ -341,6 +379,25 @@ namespace Slagkraft.Models.Admin.Questions
         #endregion Public Methods
 
         #region Private Methods
+
+        private void RemoveMember(Key member)
+        {
+            //Grab the Input we want moved
+            OpenText_Input Input = Groups[member.Group].Members[member.Member];
+
+            //Remove it from its old location
+            Groups[member.Group].Members.RemoveAt(member.Member);
+            Input.Index = Archive.Count;
+            Archive.Add(Input);
+        }
+
+        private void UpdateGroupIndexes()
+        {
+            for (int i = 0; i < Groups.Count; i++)
+            {
+                Groups[i].Index = i;
+            }
+        }
 
         private void UpdateMemberIndexes(int Group)
         {

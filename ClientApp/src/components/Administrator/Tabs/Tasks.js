@@ -227,15 +227,13 @@ export class Tasks extends Component {
     componentDidMount() {
         let self = this;
         document.addEventListener('contextmenu', function () {
-            
-                self.setState({
-                    menu: {
-                        x: 0,
-                        y: 0,
-                        visible: false,
-                    }
-                })
-            
+            self.setState({
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
         })
     }
 
@@ -546,16 +544,16 @@ export class Tasks extends Component {
         }
 
         const menu = [
-            { "label": "New Input", "callback": createInput},
-            { "label": "New Vote", "callback": createVote},
+            { "label": "New Input", "callback": createInput },
+            { "label": "New Vote", "callback": createVote },
         ];
         return (
             <>
                 {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={[]} onClose={modalCreateClose.bind(this)} />}
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                <Collection createTask={(event) => this.createTask(event)}>
+                <Collection createTask={(event) => this.createTask(event)} updateTasks={this.props.updateTasks}>
                     {this.props.tasks.map(task =>
-                        <Task key={task.index} id={task.index}
+                        <Task key={task.index} id={task.index} updateTasks={this.props.updateTasks}
                             onClick={this.taskClick} active={this.state.active == task.index}
                             type={task.questionType} title={task.title}
                         />

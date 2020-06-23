@@ -13,7 +13,7 @@ const LoginContainer = styled.div`
 
 const LoginCard = styled(Card)`
     align-self: center;
-    border: 0; 
+    border: 0;
     width: 100%;
     margin: 0 auto;
     max-width: 400px;
@@ -49,7 +49,6 @@ const InfoText = styled.h2`
     left: 35%;
     top: 15%;
 `;
-
 
 export class Login extends Component {
     constructor(props) {
@@ -98,21 +97,21 @@ export class Login extends Component {
 
     loginTab() {
         return (
-            
-                <Form autoComplete="on" validated={this.state.login.validated} onSubmit={this.submitLogin}>
-                    <FormGroup controlId="formBasicEmail">    
+
+            <Form autoComplete="on" validated={this.state.login.validated} onSubmit={this.submitLogin}>
+                <FormGroup controlId="formBasicEmail">
                     <Form.Label>Username or Email</Form.Label>
-                            <FormInput name="email" onChange={this.handleChange} placeholder="myemail@address.com" type="email" required />
-                    </FormGroup>
-                    <Form.Group controlId="formBasicPassword">
+                    <FormInput name="email" onChange={this.handleChange} placeholder="myemail@address.com" type="email" required />
+                </FormGroup>
+                <Form.Group controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
-                            <FormInput autoComplete="off" name="password" onChange={this.handleChange} placeholder="Enter your password" type="password" minLength="8" required />
-                    </Form.Group>
-                    <CardButton type="submit">Login</CardButton>
-                    <Form.Check style={{ margin: '5%' }} type="checkbox" label="Remember Me" />
-                    <ForgotButton onClick={this.forgotPassword}>Forgot password?</ForgotButton>
-                </Form>
-            
+                    <FormInput autoComplete="off" name="password" onChange={this.handleChange} placeholder="Enter your password" type="password" minLength="8" required />
+                </Form.Group>
+                <CardButton type="submit">Login</CardButton>
+                <Form.Check style={{ margin: '5%' }} type="checkbox" label="Remember Me" />
+                <ForgotButton onClick={this.forgotPassword}>Forgot password?</ForgotButton>
+            </Form>
+
         );
     }
 
@@ -207,7 +206,7 @@ export class Login extends Component {
 
     render() {
         return (
-            
+
             <LoginContainer>
                 <InfoText>Sign in or Register to your account</InfoText>
                 <LoginCard>

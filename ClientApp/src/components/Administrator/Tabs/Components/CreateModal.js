@@ -245,7 +245,7 @@ export class CreateTaskModal extends Component {
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
                         <OptionContainer index={option.index}>
-                            <FieldText key={"T" +option.index}>{"Option " + (option.index + 1)}</FieldText>
+                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
                             <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
                         </OptionContainer>
                     )}
