@@ -1,17 +1,17 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
-import { BsFullscreenExit, BsStopwatch, BsCollection, BsLock, BsInfoCircle, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollection, BsLock, BsInfoCircle, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 const FacilitatorContainer = styled.div`
-    height: 10%;
+    height: 100px;
     width: 60%;
     background: rgb(53, 57, 67);
 
     display: flex;
     flex-direction: row;
 
-    position: absolute;
-    bottom: -12.6%;
+    position: fixed;
+    bottom: 100px;
     left: 0px;
 `;
 
@@ -37,6 +37,12 @@ const FacilitatorButton = styled.button`
 export class Facilitator extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            fullscreen: false,
+        }
+
+        this.toggleFullscreen = this.toggleFullscreen.bind(this);
     }
 
     openHamburgerMenu() {
@@ -69,6 +75,28 @@ export class Facilitator extends React.Component {
 
     arrowForward() {
         console.log(">")
+    }
+
+    toggleFullscreen() {
+        var document = window.document;
+        var element = document.documentElement;
+
+        var request = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullScreen || element.msRequestFullscreen;
+        var cancel = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
+
+        var fullscreen = this.state.fullscreen;
+
+        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            request.call(element);
+            fullscreen = !fullscreen;
+        } else {
+            cancel.call(document);
+            fullscreen = !fullscreen;
+        }
+
+        this.setState({
+            fullscreen: fullscreen,
+        });
     }
 
     render() {
@@ -107,9 +135,14 @@ export class Facilitator extends React.Component {
                     Countdown
                 </FacilitatorButton>
 
-                <FacilitatorButton>
-                    <BsFullscreenExit class="icon" /><br/>
-                    Exit Fullscreen
+                <FacilitatorButton onClick={this.toggleFullscreen}>
+                    {this.state.fullscreen ? <>
+                        <BsFullscreenExit class="icon" /><br />
+                        Exit Fullscreen
+                    </> : <>
+                        <BsFullscreen class="icon" /><br />
+                        Enter Fullscreen
+                    </>}
                 </FacilitatorButton>
             </FacilitatorContainer>
         );
