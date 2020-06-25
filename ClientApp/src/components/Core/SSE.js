@@ -4,6 +4,8 @@
         this.open = false;
 
         this.log(`SSE instantiated for '${address}'`);
+
+        this.eventSource = undefined;
     }
 
     log = (msg) => {
@@ -25,6 +27,8 @@
 
 
     startEventSource = (callback) => {
+        if (this.eventSource !== undefined)
+            this.eventSource.close();
         console.log("Attempting to start event source");
         this.eventSource = new EventSource(this.address);
         this.open = true;

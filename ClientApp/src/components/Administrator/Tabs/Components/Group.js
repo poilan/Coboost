@@ -53,6 +53,7 @@ const GroupMenu = styled.div`
     top: 0.5%;
     color: #fff;
     font-weight: 600;
+    display: ${props => props.showcase ? "none" : "block"};
 `;
 
 export function Group(props) {
@@ -111,7 +112,7 @@ export function Group(props) {
         <GroupContainer id={props.id + "-title"} group={props.group} column={props.column}
             onClick={props.onClick} size={props.size} empty={props.id == "0" && props.children.length < 1}
             onDrop={drop} onDragOver={dragOver}
-            draggable={props.group != "0"} onDragStart={dragStart}>            
+            draggable={props.group != "0" && !props.showcase} onDragStart={dragStart}>            
             <GroupTitle onDoubleClick={(e) => handleDouble(e)} id={props.id + "-title"}>{props.title}</GroupTitle>
             {props.size <= "2" ?
                 (props.size == "2" ?
@@ -137,7 +138,7 @@ export function Group(props) {
                 )
             }
             {props.children}
-            {props.group != 0 && <GroupMenu id={props.id + "-title"} onClick={() => remove()}>...</GroupMenu>}
+            {props.group != 0 && <GroupMenu showcase={props.showcase} id={props.id + "-title"} onClick={() => remove()}>...</GroupMenu>}
         </GroupContainer>
     );
 }

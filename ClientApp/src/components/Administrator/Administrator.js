@@ -185,6 +185,7 @@ export class Administrator extends Component {
         }
 
         this.present = this.present.bind(this);
+        this.source = undefined;
     }
 
     componentDidMount() {
@@ -220,12 +221,12 @@ export class Administrator extends Component {
     startEventSource = (target) => {
         const code = sessionStorage.getItem("code");
 
-        if (this.eventSource !== undefined)
-            this.eventSource.close();
+        if (this.source !== undefined)
+            this.source.close();
 
-        this.eventSource = new EventSource(`admin/${code}/stream-question-${target}`);
+        this.source = new EventSource(`admin/${code}/stream-question-${target}`);
 
-        this.eventSource.addEventListener("Groups", (e) => {
+        this.source.addEventListener("Groups", (e) => {
             try {
                 var data = JSON.parse(e.data);
                 var tasks = this.state.tasks;
@@ -248,7 +249,7 @@ export class Administrator extends Component {
                         break;
                     }
                 }
-
+                console.log(tasks);
                 this.setState({
                     tasks: tasks,
                 })
@@ -258,14 +259,14 @@ export class Administrator extends Component {
             }
         }, false);
 
-        this.eventSource.addEventListener("Options", (e) => {
+        this.source.addEventListener("Options", (e) => {
             try {
                 var data = JSON.parse(e.data);
                 var tasks = this.state.tasks;
                 tasks[target].options = data;
-                if (tasks[target].options !== undefined) {
-                    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
-                }
+                //if (tasks[target].options !== undefined) {
+                //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
+                //}
                 this.setState({
                     tasks: tasks,
                 })
@@ -275,13 +276,13 @@ export class Administrator extends Component {
             }
         }, false);
 
-        this.eventSource.addEventListener("Total", (e) => {
+        this.source.addEventListener("Total", (e) => {
             try {
                 var data = JSON.parse(e.data);
                 var tasks = this.state.tasks;
                 tasks[target].TotalVotes = data;
                 this.setState({
-                    questions: tasks,
+                    tasks: tasks,
                 })
             } catch (e) {
                 console.log("Failed to parse server event: " + e.data);
@@ -289,7 +290,7 @@ export class Administrator extends Component {
             }
         }, false);
 
-        this.eventSource.addEventListener("Archive", (e) => {
+        this.source.addEventListener("Archive", (e) => {
             try {
                 var data = JSON.parse(e.data);
                 var tasks = this.state.tasks;
@@ -303,7 +304,7 @@ export class Administrator extends Component {
             }
         }, false);
 
-        this.eventSource.addEventListener("error", (e) => {
+        this.source.addEventListener("error", (e) => {
             if (e.eventPhase == EventSource.CLOSED) {
                 //Connection was closed.
                 console.log("SSE: connection closed");
@@ -312,7 +313,7 @@ export class Administrator extends Component {
             }
         }, false);
 
-        this.eventSource.addEventListener("open", function (e) {
+        this.source.addEventListener("open", function (e) {
             console.log("SSE: connection opened");
             // Connection was opened.
         }, false);

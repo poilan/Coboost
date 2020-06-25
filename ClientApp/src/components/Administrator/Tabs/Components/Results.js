@@ -32,6 +32,7 @@ const ItemContainer = styled.div`
     width: ${props => 97 / props.total}%;
     left: ${props => ((97 / props.total) * props.index) + 3}%;
     position:absolute;
+    overflow: hidden;
 `;
 
 const PercentageContainer = styled.div`
@@ -58,15 +59,16 @@ const Percentage = styled.div`
 `;
 
 export function ResultItem(props) {
+
     return (
         <ItemContainer total={props.total} index={props.index}>
-            <PercentageContainer height={props.height}>
+            <PercentageContainer height={`${props.height}%`}>
                 <Percentage percentage={props.percentage}> {props.percentage > 0 && Math.floor(props.percentage) + "%"} </Percentage>
             </PercentageContainer>
             <Input vote size="1"
                 id={props.id} index={props.index} title={props.title}
                 checked={props.checked}
-                onCheck={props.onCheck}
+                onCheck={props.onCheck} showcase={props.showcase}
             />
         </ItemContainer>
     );

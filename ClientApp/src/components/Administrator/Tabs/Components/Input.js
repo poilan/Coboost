@@ -11,12 +11,14 @@ const Container = styled.div`
         font-weight: 600;
         margin: 1%;
         box-sizing: border-box;
-        padding: ${props => props.vote ? "20px" : "10px"};
+        padding: 10px;
         border-radius: 0.8em;
         box-shadow: 0 1px 0 1px rgba(0, 0, 0, .08);
         background: #fff;
-        border: ${props => props.vote ? "2px solid #4C7AD3" : ""};
+        border: ${props => props.vote ? "2px solid #000" : ""};
         position: relative;
+        overflow: hidden;
+        white-space: nowrap;
 `;
 
 const CheckboxContainer = styled.div`
@@ -99,13 +101,14 @@ export function Input(props) {
             <Container id={props.id} member={props.member} group={props.group} column={props.column}
                 size={props.size} vote={props.vote}
                 onDoubleClick={(e) => handleDouble(e)}
-                draggable onDragStart={dragStart}>
-                <CheckboxContainer>
-                    <Checkbox id={props.id} type="checkbox"
-                        checked={props.checked}
-                        onChange={props.onCheck}
-                    />
-                </CheckboxContainer>
+                draggable={!props.showcase} onDragStart={dragStart}>
+                {!props.showcase &&
+                    <CheckboxContainer>
+                        <Checkbox id={props.id} type="checkbox"
+                            checked={props.checked}
+                            onChange={props.onCheck}
+                        />
+                    </CheckboxContainer>}
                 {props.title}
             </Container>
         </>

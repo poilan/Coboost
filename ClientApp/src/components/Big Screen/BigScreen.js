@@ -24,7 +24,8 @@ const MainContainer = styled(Col)`
 const Banner = styled(Col)`
     position: sticky;
     background: transparent;
-    height: 75px;
+    min-height: 100px;
+    height: 10%;
     top: 0;
     left: 0;
     z-index: 10;
@@ -42,9 +43,11 @@ const BannerText = styled.h1`
 const ContentContainer = styled(Col)`
     position: absolute;
     width: 100%;
-    height: 77%;
+    height: 80%;
+    max-height: calc(100% - 200px);
     left: 0;
-    top: 75px;
+    top: calc(max(10%, 100px));
+    overflow: hidden;
 
     display: table-cell;
     veritical-align: middle;
@@ -54,14 +57,14 @@ const ContentContainer = styled(Col)`
 const Title = styled.h1`
     font-family: CircularStd;
     font-weight: 400;
-
     b {
         font-weight: 500;
     }
-
-    /*position: absolute;
+    position: absolute;
     left: 50%;
-    transform: translateX(-50%);*/
+    z-index: 11;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
     text-align: center;
 `;
@@ -100,6 +103,7 @@ const WelcomeContainer = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
+    height: 100%;
     position: absolute;
     margin: 0 auto;
 `;
@@ -108,7 +112,8 @@ const BottomBanner = styled(Col)`
     position: fixed;
     background: transparent;
     border-top: 1px solid black;
-    height: 100px;
+    min-height: 100px;
+    height: 10%;
     bottom: 0;
     left: 0;
     z-index: 10;
@@ -128,39 +133,9 @@ const BottomBannerText = styled.h1`
     }
 `;
 
-const AddOption = styled.div`
-    display: ${props => props.possible ? "inline-block" : "none"};
-    opacity: 50%;
-    width: 100%;
-    font-family: CircularStd;
-    font-size: 0.8em;
-    font:weight: 700;
-    padding: .2em .5em .17em .26em;
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
-    border-radius: .5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #fff;
-
-    &:hover {
-        opacity: 75%;
-        cursor:pointer;
-    }
-`;
-
-const VoteOption = styled(AddOption)`
-    display: inline-block;
-    width: 15%;
-    margin: 0.5%;
-    opacity: 100%;
-`;
-
 const Logo = styled(IconLogo)`
     padding: 20px;
-    width: 15%;
+    height: 100%;
 `;
 
 export class BigScreen extends Component {
@@ -174,25 +149,9 @@ export class BigScreen extends Component {
             // Facilitator Options
             isFullscreen: false,
 
-            question: null,
-            groups: [
-                "item1",
-                "item2",
-                "item3",
-                "item4",
-                "item5",
-                "item6",
-                "item7",
-                "item8",
-                "item9",
-                "item10",
-            ],
-
+            task: null,
             sse: null,
         };
-
-        //this.eventSource = undefined;
-        //this.beginSSE = this.beginSSE.bind(this);
     }
 
     componentDidMount() {
@@ -229,57 +188,53 @@ export class BigScreen extends Component {
             sse.addListener("Question", (data) => {
                 try {
                     var questionData = JSON.parse(data);
+                    var task = this.state.task;
+                    task = questionData;
 
-                    var stateData = {
-                        question: questionData,
-                    };
-
-                    switch (questionData.QuestionType) {
-                        case 0:
-                            stateData.groups = questionData.Groups;
-                            break;
-                        case 1:
-                            stateData.options = questionData.Options;
-                            break;
-                    }
-
-                    this.setState(stateData);
+                    this.setState({
+                        task: task,
+                    })
                 } catch (e) {
-                    sse.log("Failed to parse server event");
+                    sse.log("Failed to parse server event: Question");
                 }
             });
 
             sse.addListener("Groups", (data) => {
                 try {
-                    var groupData = JSON.parse(data);
-
+                    let groups = JSON.parse(data);
+                    let task = this.state.task;
+                    task.Groups = groups;
                     this.setState({
-                        groups: groupData
-                    })
+                        task: task
+                    });
                 } catch (e) {
-                    sse.log("Failed to parse server event");
+                    sse.log("Failed to parse server event: Group");
                 }
             });
 
             sse.addListener("Options", (data) => {
                 try {
-                    var optionData = JSON.parse(data);
-
+                    let options = JSON.parse(data);
+                    let task = this.state.task;
+                    task.Options = options;
                     this.setState({
-                        options: optionData
-                    })
+                        task: task
+                    });
                 } catch (e) {
-                    sse.log("Failed to parse server event");
+                    sse.log("Failed to parse server event: Options");
                 }
             });
 
             sse.addListener("Total", (data) => {
                 try {
-                    var totalVotes = JSON.parse(data);
-
-                    sse.log("Total votes: " + totalVotes);
+                    let totalVotes = JSON.parse(data);
+                    let task = this.state.task
+                    task.TotalVotes = totalVotes;
+                    this.setState({
+                        task: task
+                    });
                 } catch (e) {
-                    sse.log("Failed to parse server event");
+                    sse.log("Failed to parse server event: Total");
                 }
             });
         })
@@ -322,7 +277,7 @@ export class BigScreen extends Component {
     }
 
     viewResult() {
-        const question = this.state.question;
+        const question = this.state.task;
         if (question.QuestionType === 0) {
             return this.renderOpenTextResult();
             //return <p>Open Text</p>;
@@ -336,37 +291,30 @@ export class BigScreen extends Component {
     renderQuestion() {
         const state = this.state;
         const code = state.code;
-        const question = state.question;
-
-        const columnWidth = 1;
-
-        return (<>
-            <ContentContainer>
-                <Title><b>{question.Index + 1}. {question.Title}</b></Title>
-                <WelcomeContainer>
-                    {this.viewResult()}
-                </WelcomeContainer>
-            </ContentContainer>
-            <BottomBanner>
-                <BottomBannerText>Coboost</BottomBannerText>
-                <BottomBannerText>#{code}</BottomBannerText>
-            </BottomBanner>
-        </>);
+        return (
+            <>
+                <ContentContainer>
+                    <WelcomeContainer>
+                        {this.viewResult()}
+                    </WelcomeContainer>
+                    <Facilitator />
+                </ContentContainer>
+                <BottomBanner>
+                    <BottomBannerText>Coboost</BottomBannerText>
+                    <BottomBannerText>#{code}</BottomBannerText>
+                </BottomBanner>
+            </>);
     }
 
     renderOpenTextResult() {
-        const results = this.state.groups;
-
-        /*for (var i in results) {
-            console.log(i);
-        }*/
+        const results = this.state.task.Groups;
         return (
             <>
-                {results.map(group =>
+                {results.slice(1).map(group =>
                     <>
-                        {group.Members.length > 0 && <Column key={group.Title} column={group.Column} width={1}>
-                            <Group title={group.Title} size={1}>
-                                {group.Members.map(member => <Input key={member.Title} title={member.Title} size={1} />)}
+                        {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
+                            <Group key={group.Index} title={group.Title} size={1} showcase>
+                                {group.Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
                             </Group>
                         </Column>}
                     </>)}
@@ -375,32 +323,26 @@ export class BigScreen extends Component {
     }
 
     renderMultipleChoiceResult() {
-        const state = this.state;
-        const question = state.question;
-        const options = state.options;
+        const task = this.state.task;
 
         return (
             <>
-                <ResultBackground style={{ width: "95%", height: "70%" }} />
-                {/*options.map(option =>
-                    <Input key={option.Index} percentage={((option.Votes.length / question.TotalVotes) * 100)} organized vote id={option.Index} index={option.Index} title={option.Title} />)}
-                */}
-                {options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / question.TotalVotes) * 100)} height="79%" total={options.length} />
+                <ResultBackground style={{ width: "95%", height: "80%" }} />
+                {task.Options.map(option =>
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height={80} total={task.Options.length} showcase />
                 )}
             </>
         );
     }
 
     handleRender() {
-        const state = this.state;
-        const title = state.title;
-        const question = state.question;
+        const title = this.state.title;
+        const task = this.state.task;
 
         if (title === null) {
             return this.renderWaiting()
         } else {
-            if (question !== null && question.Index !== -1) {
+            if (task !== null && task.Index !== -1) {
                 return this.renderQuestion();
             } else {
                 return this.renderWelcome()
@@ -412,7 +354,8 @@ export class BigScreen extends Component {
         return (
             <MainContainer>
                 <Banner>
-                    <Logo/>
+                    <Logo />
+                    {this.state.task !== null && <Title><b>{this.state.task.Index + 1}. {this.state.task.Title}</b></Title>}
                 </Banner>
                 {this.handleRender()}
             </MainContainer>

@@ -12,7 +12,7 @@ const Container = styled.div`
     display: ${props => props.empty ? "none" : "inline-block"};
     white-space: normal;
     margin-top: 20px;
-    border-right: 2px solid #C4C4C4;
+    border-right: ${props => props.showcase ? "none" : "2px solid #C4C4C4"};
     scrollbar-width: thin;
     scrollbar-color: #4C7AD3 #fff;
 `;
@@ -77,7 +77,7 @@ export function Column(props) {
                 <Shrink available={props.width > 1} onClick={() => props.shrink(props.column)}>&#129080;</Shrink>
                 <Grow available={props.width < 4} onClick={() => props.grow(props.column)}>&#129082;</Grow>
             </WidthControl>
-            <Container empty={props.column == 0 && props.children[0][0] !== undefined && props.children[0][0].props.children.length < 1} column={props.column} width={props.width} onDrop={drop} onDragOver={dragOver}>
+            <Container showcase={props.empty} empty={props.column == 0 && props.children[0][0] !== undefined && props.children[0][0].props.children.length < 1} column={props.column} width={props.width} onDrop={drop} onDragOver={dragOver}>
             {props.children}
             </Container>
         </>
