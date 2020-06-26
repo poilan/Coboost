@@ -35,19 +35,19 @@ namespace Slagkraft.Models.Admin
                 int i = active;
                 active = value;
                 Client.Set();
-                if (Questions != null && Questions.Count > i)
+                if (Tasks != null && Tasks.Count > i)
                 {
-                    Questions[i].Reset.Set();
+                    Tasks[i].Reset.Set();
                 }
             }
         }
 
         public int Admin { get; set; }
 
+        public int EventCode { get; set; }
         public bool Open { get; set; }
         public string Owner { get; set; }
-        public List<QuestionBase> Questions { get; set; }
-        public int SessionIdentity { get; set; }
+        public List<BaseTask> Tasks { get; set; }
 
         #endregion Public Properties
 
@@ -57,7 +57,7 @@ namespace Slagkraft.Models.Admin
         {
             Active = 0;
             Open = false;
-            Questions = new List<QuestionBase>();
+            Tasks = new List<BaseTask>();
         }
 
         #endregion Public Constructors
@@ -68,7 +68,7 @@ namespace Slagkraft.Models.Admin
         {
             if (clientInput is OpenText_Input Open)
             {
-                if (Questions[Active] is OpenText Text)
+                if (Tasks[Active] is OpenText Text)
                 {
                     Text.AddUserInput(Open);
                     return;
@@ -77,7 +77,7 @@ namespace Slagkraft.Models.Admin
 
             if (clientInput is MultipleChoice_Input Multi)
             {
-                if (Questions[Active] is MultipleChoice Choice)
+                if (Tasks[Active] is MultipleChoice Choice)
                 {
                     Choice.AddUserVote(Multi);
                 }
@@ -86,31 +86,38 @@ namespace Slagkraft.Models.Admin
 
         public void AddMultipleChoice(MultipleChoice question)
         {
-            question.Index = Questions.Count;
+            question.Index = Tasks.Count;
             question.Archive = new List<MultipleChoice_Option>();
-            question.QuestionType = QuestionBase.Type.MultipleChoice;
-            Questions.Add(question);
+            question.QuestionType = BaseTask.Type.MultipleChoice;
+            Tasks.Add(question);
         }
 
         public void AddOpenText(OpenText question)
         {
-            question.Index = Questions.Count;
+            question.Index = Tasks.Count;
             question.Groups = new List<OpenText_Group>();
             question.AddGroup("Unorganized", 0);
             question.Archive = new List<OpenText_Input>();
-            question.QuestionType = QuestionBase.Type.OpenText;
-            Questions.Add(question);
+            question.QuestionType = BaseTask.Type.OpenText;
+            Tasks.Add(question);
         }
 
-        public QuestionBase GetActiveQuestion()
+        public void DeleteTask(int index)
         {
-            switch (Questions[Active].QuestionType)
-            {
-                case QuestionBase.Type.OpenText:
-                    return Questions[Active] as OpenText;
+            Tasks[index].Reset.Set();
+            Tasks.RemoveAt(index);
+            UpdateIndexes();
+        }
 
-                case QuestionBase.Type.MultipleChoice:
-                    return Questions[Active] as MultipleChoice;
+        public BaseTask GetActiveQuestion()
+        {
+            switch (Tasks[Active].QuestionType)
+            {
+                case BaseTask.Type.OpenText:
+                    return Tasks[Active] as OpenText;
+
+                case BaseTask.Type.MultipleChoice:
+                    return Tasks[Active] as MultipleChoice;
 
                 default:
                     return null;
@@ -123,31 +130,31 @@ namespace Slagkraft.Models.Admin
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            List<QuestionBase> questions = JsonConvert.DeserializeObject<List<QuestionBase>>(questionJson, settings);
-            Questions = questions;
+            List<BaseTask> questions = JsonConvert.DeserializeObject<List<BaseTask>>(questionJson, settings);
+            Tasks = questions;
         }
 
         public void MoveQuestion(int current, int target)
         {
-            if (current < Questions.Count && target < Questions.Count && current != target)
+            if (current < Tasks.Count && target < Tasks.Count && current != target)
             {
-                if (Questions[current] is OpenText)
+                if (Tasks[current] is OpenText)
                 {
-                    OpenText open = Questions[current] as OpenText;
-                    Questions.RemoveAt(current);
-                    Questions.Insert(target, open);
+                    OpenText open = Tasks[current] as OpenText;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, open);
                 }
-                else if (Questions[current] is MultipleChoice)
+                else if (Tasks[current] is MultipleChoice)
                 {
-                    MultipleChoice choice = Questions[current] as MultipleChoice;
-                    Questions.RemoveAt(current);
-                    Questions.Insert(target, choice);
+                    MultipleChoice choice = Tasks[current] as MultipleChoice;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
                 }
                 UpdateIndexes();
                 if (active == current)
                 {
                     active = target;
-                    Questions[target].Reset.Set();
+                    Tasks[target].Reset.Set();
                     Client.Set();
                 }
                 else if (active == target)
@@ -155,26 +162,26 @@ namespace Slagkraft.Models.Admin
                     if (target > current)
                     {
                         active -= 1;
-                        Questions[active].Reset.Set();
+                        Tasks[active].Reset.Set();
                         Client.Set();
                     }
                     else if (target < current)
                     {
                         active += 1;
-                        Questions[active].Reset.Set();
+                        Tasks[active].Reset.Set();
                         Client.Set();
                     }
                 }
                 else if (active <= target && active > current)
                 {
                     active -= 1;
-                    Questions[active].Reset.Set();
+                    Tasks[active].Reset.Set();
                     Client.Set();
                 }
                 else if (active >= target && active < current)
                 {
                     active += 1;
-                    Questions[active].Reset.Set();
+                    Tasks[active].Reset.Set();
                     Client.Set();
                 }
             }
@@ -186,7 +193,7 @@ namespace Slagkraft.Models.Admin
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            string json = JsonConvert.SerializeObject(Questions, settings);
+            string json = JsonConvert.SerializeObject(Tasks, settings);
 
             return json;
         }
@@ -205,9 +212,10 @@ namespace Slagkraft.Models.Admin
 
         private void UpdateIndexes()
         {
-            for (int i = 0; i < Questions.Count; i++)
+            for (int i = 0; i < Tasks.Count; i++)
             {
-                Questions[i].Index = i;
+                Tasks[i].Index = i;
+                Tasks[i].Reset.Set();
             }
         }
 

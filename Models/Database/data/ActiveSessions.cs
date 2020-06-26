@@ -40,8 +40,8 @@ namespace Slagkraft.Models.Database
         private ActiveSessions()
         {
             Sessions = new Dictionary<int, AdminInstance>();
-            AdminInstance instance = new AdminInstance { Owner = "erlend.marcus@gmail.com", SessionIdentity = 123123 };
-            Sessions.Add(instance.SessionIdentity, instance);
+            AdminInstance instance = new AdminInstance { Owner = "erlend.marcus@gmail.com", EventCode = 123123 };
+            Sessions.Add(instance.EventCode, instance);
         }
 
         #endregion Private Constructors

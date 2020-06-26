@@ -9,7 +9,7 @@ namespace Slagkraft.Models.Admin.Questions
     /// The Primary Class for Multiple Choice Votes
     /// <para>This class holds all the logic used in Multiple Choice</para>
     /// </summary>
-    public class MultipleChoice : QuestionBase
+    public class MultipleChoice : BaseTask
     {
         #region Public Properties
 

@@ -10,7 +10,7 @@ namespace Slagkraft.Models.Admin.Questions
     /// The Primary Class for all OpenText Polls
     /// <para>Contains all the logic used in OpenText Polls</para>
     /// </summary>
-    public class OpenText : QuestionBase
+    public class OpenText : BaseTask
     {
         #region Public Properties
 
@@ -108,6 +108,44 @@ namespace Slagkraft.Models.Admin.Questions
                         }
                     }
                 }
+            }
+            EventStream();
+        }
+
+        public void ArchiveGroup(int group)
+        {
+            lock (QuestionLock)
+            {
+                if (group >= Groups.Count)
+                    return;
+
+                for (int i = Groups[group].Members.Count - 1; i >= 0; i--)
+                {
+                    Key key = new Key
+                    {
+                        Group = group,
+                        Member = i
+                    };
+
+                    ArchiveInput(key);
+                }
+
+                Groups.RemoveAt(group);
+                UpdateGroupIndexes();
+            }
+            EventStream();
+        }
+
+        public void ArchiveMember(Key input)
+        {
+            lock (QuestionLock)
+            {
+                if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count)
+                    return;
+
+                ArchiveInput(input);
+
+                UpdateMemberIndexes(input.Group);
             }
             EventStream();
         }
@@ -247,44 +285,6 @@ namespace Slagkraft.Models.Admin.Questions
             EventStream();
         }
 
-        public void RemoveGroup(int group)
-        {
-            lock (QuestionLock)
-            {
-                if (group >= Groups.Count)
-                    return;
-
-                for (int i = Groups[group].Members.Count - 1; i >= 0; i--)
-                {
-                    Key key = new Key
-                    {
-                        Group = group,
-                        Member = i
-                    };
-
-                    RemoveMember(key);
-                }
-
-                Groups.RemoveAt(group);
-                UpdateGroupIndexes();
-            }
-            EventStream();
-        }
-
-        public void RemoveInput(Key input)
-        {
-            lock (QuestionLock)
-            {
-                if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count)
-                    return;
-
-                RemoveMember(input);
-
-                UpdateMemberIndexes(input.Group);
-            }
-            EventStream();
-        }
-
         /// <summary>
         /// Renames the specified group
         /// </summary>
@@ -380,7 +380,7 @@ namespace Slagkraft.Models.Admin.Questions
 
         #region Private Methods
 
-        private void RemoveMember(Key member)
+        private void ArchiveInput(Key member)
         {
             //Grab the Input we want moved
             OpenText_Input Input = Groups[member.Group].Members[member.Member];

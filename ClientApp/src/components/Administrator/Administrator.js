@@ -185,7 +185,6 @@ export class Administrator extends Component {
         }
 
         this.present = this.present.bind(this);
-        this.source = undefined;
     }
 
     componentDidMount() {
@@ -200,14 +199,15 @@ export class Administrator extends Component {
             presentor: presentManager,
         })
 
-        this.getTasks();
-        this.addColumn();
+        this.update();
     }
 
     componentWillUnmount() {
+        this.SSE.close();
     }
 
-    getTasks = async () => {
+    update = async () => {
+        this.SSE.close();
         const code = sessionStorage.getItem('code');
         await axios.get(`admin/${code}/questions-all`).then(res => {
             if (res.status === 202) {
@@ -218,140 +218,117 @@ export class Administrator extends Component {
         })
     }
 
-    startEventSource = (target) => {
-        const code = sessionStorage.getItem("code");
+    SSE = {
+        source: undefined,
 
-        if (this.source !== undefined)
-            this.source.close();
+        start: (target) => {
+            this.SSE.close();
+            const code = sessionStorage.getItem('code');
+            this.SSE.source = new EventSource(`admin/${code}/stream-question-${target}`);
+            this.SSE.source.addEventListener("Groups", (e) => {
+                try {
+                    var data = JSON.parse(e.data);
+                    var tasks = this.state.tasks;
+                    tasks[target].groups = data;
+                    let columns = this.state.columns;
+                    this.state.columns = [];
+                    if (tasks[target].groups !== undefined) {
+                        for (let i = 0; i < tasks[target].groups.length; i++) {
+                            while (tasks[target].groups[i].Column + 1 >= this.state.columns.length) {
+                                this.addColumn();
+                            }
+                        }
+                    } else {
+                        this.addColumn();
+                    }
 
-        this.source = new EventSource(`admin/${code}/stream-question-${target}`);
-
-        this.source.addEventListener("Groups", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var tasks = this.state.tasks;
-                tasks[target].groups = data;
-                let columns = this.state.columns;
-                this.state.columns = [];
-                if (tasks[target].groups !== undefined) {
-                    for (let i = 0; i < tasks[target].groups.length; i++) {
-                        while (tasks[target].groups[i].Column + 1 >= this.state.columns.length) {
-                            this.addColumn();
+                    for (let i = 0; i < this.state.columns.length; i++) {
+                        if (columns[i] !== undefined) {
+                            this.state.columns[i].width = columns[i].width;
+                        }
+                        else {
+                            break;
                         }
                     }
+                    this.setState({
+                        tasks: tasks,
+                    })
+                } catch (e) {
+                    console.log("Failed to parse server event: " + e.data);
+                    console.log(e);
                 }
+            }, false);
 
-                for (let i = 0; i < this.state.columns.length; i++) {
-                    if (columns[i] !== undefined) {
-                        this.state.columns[i].width = columns[i].width;
-                    }
-                    else {
-                        break;
-                    }
+            this.SSE.source.addEventListener("Options", (e) => {
+                try {
+                    var data = JSON.parse(e.data);
+                    var tasks = this.state.tasks;
+                    tasks[target].options = data;
+                    //if (tasks[target].options !== undefined) {
+                    //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
+                    //}
+                    this.setState({
+                        tasks: tasks,
+                    })
+                } catch (e) {
+                    console.log("Failed to parse server event: " + e.data);
+                    console.log(e);
                 }
-                console.log(tasks);
-                this.setState({
-                    tasks: tasks,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            }, false);
 
-        this.source.addEventListener("Options", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var tasks = this.state.tasks;
-                tasks[target].options = data;
-                //if (tasks[target].options !== undefined) {
-                //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
-                //}
-                this.setState({
-                    tasks: tasks,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            this.SSE.source.addEventListener("Total", (e) => {
+                try {
+                    var data = JSON.parse(e.data);
+                    var tasks = this.state.tasks;
+                    tasks[target].TotalVotes = data;
+                    this.setState({
+                        tasks: tasks,
+                    })
+                } catch (e) {
+                    console.log("Failed to parse server event: " + e.data);
+                    console.log(e);
+                }
+            }, false);
 
-        this.source.addEventListener("Total", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var tasks = this.state.tasks;
-                tasks[target].TotalVotes = data;
-                this.setState({
-                    tasks: tasks,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            this.SSE.source.addEventListener("Archive", (e) => {
+                try {
+                    var data = JSON.parse(e.data);
+                    var tasks = this.state.tasks;
+                    tasks[target].archive = data;
+                    this.setState({
+                        tasks: tasks,
+                    })
+                } catch (e) {
+                    console.log("Failed to parse server event: " + e.data);
+                    console.log(e);
+                }
+            }, false);
 
-        this.source.addEventListener("Archive", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-                var tasks = this.state.tasks;
-                tasks[target].archive = data;
-                this.setState({
-                    tasks: tasks,
-                })
-            } catch (e) {
-                console.log("Failed to parse server event: " + e.data);
-                console.log(e);
-            }
-        }, false);
+            this.SSE.source.addEventListener("error", (e) => {
+                if (e.readyState == EventSource.CLOSED) {
+                    console.log("SSE: connection closed");
+                } else {
+                    console.log(e);
+                }
+            }, false);
 
-        this.source.addEventListener("error", (e) => {
-            if (e.eventPhase == EventSource.CLOSED) {
-                //Connection was closed.
-                console.log("SSE: connection closed");
-            } else {
-                console.log(e);
-            }
-        }, false);
+            this.SSE.source.addEventListener("open", (e) => {
+                console.log("SSE: connection opened");
+            }, false);
 
-        this.source.addEventListener("open", function (e) {
-            console.log("SSE: connection opened");
-            // Connection was opened.
-        }, false);
+
+        },
+
+        close: () => {
+            if (this.SSE.source !== undefined && this.SSE.source.readyState != EventSource.CLOSED)
+                this.SSE.source.close();
+        },
     }
 
     selectTab(key) {
-        this.getTasks();
+        this.update();
         this.setState({
             tab: key,
-        });
-    }
-
-    addColumn = () => {
-        let column = {
-            index: this.state.columns.length,
-            width: 1,
-        }
-
-        let columns = this.state.columns;
-
-        columns !== undefined ? columns.push(column) : columns = [column];
-        this.setState({
-            columns: columns,
-        });
-    }
-
-    createTask = () => {
-        const tasks = this.state.tasks;
-        var count = tasks.length;
-
-        var question = {
-            questionType: -1,
-            title: 'New Task',
-            index: count,
-        };
-
-        this.setState({
-            tasks: tasks.concat(question),
         });
     }
 
@@ -394,10 +371,10 @@ export class Administrator extends Component {
                         <ContentBody>
                             <Tab.Content>
                                 <Tab.Pane eventKey="task">
-                                    <Tasks tasks={this.state.tasks} startEventSource={this.startEventSource.bind(this)} updateTasks={this.getTasks.bind(this)} changeTab={this.selectTab.bind(this)} />
+                                    <Tasks tasks={this.state.tasks} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="organize">
-                                    <Organizer tasks={this.state.tasks} columns={this.state.columns} startEventSource={this.startEventSource.bind(this)} updateTasks={this.getTasks.bind(this)} changeTab={this.selectTab.bind(this)} />
+                                    <Organizer tasks={this.state.tasks} columns={this.state.columns} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
                                 </Tab.Pane>
                             </Tab.Content>
                         </ContentBody>

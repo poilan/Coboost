@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Slagkraft.Models.Admin.Questions
 {
-    public class Grouped : QuestionBase
+    public class Grouped : BaseTask
     {
         #region Public Properties
 

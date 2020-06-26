@@ -78,19 +78,19 @@ namespace Slagkraft.Controllers
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 Response.ContentType = "text/event-stream";
-                QuestionBase question = null;
+                BaseTask question = null;
 
                 while (true)
                 {
                     if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                         break;
 
-                    if (admin.Active < admin.Questions.Count)
+                    if (admin.Active < admin.Tasks.Count)
                     {
-                        question = admin.Questions[admin.Active].QuestionType switch
+                        question = admin.Tasks[admin.Active].QuestionType switch
                         {
-                            QuestionBase.Type.MultipleChoice => admin.Questions[admin.Active] as MultipleChoice,
-                            _ => admin.Questions[admin.Active] as OpenText,
+                            BaseTask.Type.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
+                            _ => admin.Tasks[admin.Active] as OpenText,
                         };
                     }
 

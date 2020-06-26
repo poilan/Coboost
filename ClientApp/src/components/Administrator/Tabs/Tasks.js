@@ -146,7 +146,7 @@ export class Tasks extends Component {
         //    }
         //}).then(res => {
         //    if (res.status === 201) {
-        //        this.props.updateTasks();
+        //        this.props.update();
         //    }
         //});;
 
@@ -173,62 +173,62 @@ export class Tasks extends Component {
         });
 
         if (this.props.tasks[key].questionType !== -1) {
-            this.props.startEventSource(key);
+            this.props.SSE(key);
         }
     }
 
-    //old_renderActive() {
-    //    if (this.state.active == -1) {
-    //        return (
-    //            <SelectedSlide>
-    //                <SlideTitle>Hello there</SlideTitle>
-    //                <SlideBody>To get started click "Create new Task" on the left</SlideBody>
-    //            </SelectedSlide>
-    //        );
-    //    }
+    old_renderActive() {
+        if (this.state.active == -1) {
+            return (
+                <SelectedSlide>
+                    <SlideTitle>Hello there</SlideTitle>
+                    <SlideBody>To get started click "Create new Task" on the left</SlideBody>
+                </SelectedSlide>
+            );
+        }
 
-    //    var task = this.props.tasks[this.state.active];
+        var task = this.props.tasks[this.state.active];
 
-    //    if (task !== undefined && task.questionType === 0) {
-    //        return (
-    //            <SelectedSlide>
-    //                <SlideTitle>{task.title}</SlideTitle>
-    //                <SlideBody>{task.groups !== undefined && task.groups.slice(1).map(group =>
-    //                    group.Members !== undefined && group.Members.map(member =>
-    //                        <VoteOption key={member.Index}>{member.Title}</VoteOption>
-    //                    )
-    //                )}</SlideBody>
-    //            </SelectedSlide>
-    //        );
-    //    }
-    //    else if (task !== undefined && task.questionType === 1) {
-    //        return (
-    //            <SelectedSlide>
-    //                <SlideTitle>{task.title}</SlideTitle>
-    //                <SlideBody>
-    //                    {task.options !== undefined && task.options.map(option =>
-    //                        <>
-    //                            <VoteOption id={option.Index} index={option.Index} name={"Option " + option.Index}>{option.Description} {option.Votes.length !== 0 && " (" + Math.floor((option.Votes.length / task.TotalVotes) * 100) + "%)"}</VoteOption>
-    //                        </>
-    //                    )}
-    //                </SlideBody>
-    //            </SelectedSlide>
-    //        );
-    //    }
-    //    else {
-    //        return (
-    //            <SelectedSlide>
-    //                <SlideTitle>Hello there</SlideTitle>
-    //                <SlideBody>To get started click "Create new Task" on the left</SlideBody>
-    //            </SelectedSlide>
-    //        );
-    //    }
-    //}
+        if (task !== undefined && task.questionType === 0) {
+            return (
+                <SelectedSlide>
+                    <SlideTitle>{task.title}</SlideTitle>
+                    <SlideBody>{task.groups !== undefined && task.groups.slice(1).map(group =>
+                        group.Members !== undefined && group.Members.map(member =>
+                            <VoteOption key={member.Index}>{member.Title}</VoteOption>
+                        )
+                    )}</SlideBody>
+                </SelectedSlide>
+            );
+        }
+        else if (task !== undefined && task.questionType === 1) {
+            return (
+                <SelectedSlide>
+                    <SlideTitle>{task.title}</SlideTitle>
+                    <SlideBody>
+                        {task.options !== undefined && task.options.map(option =>
+                            <>
+                                <VoteOption id={option.Index} index={option.Index} name={"Option " + option.Index}>{option.Description} {option.Votes.length !== 0 && " (" + Math.floor((option.Votes.length / task.TotalVotes) * 100) + "%)"}</VoteOption>
+                            </>
+                        )}
+                    </SlideBody>
+                </SelectedSlide>
+            );
+        }
+        else {
+            return (
+                <SelectedSlide>
+                    <SlideTitle>Hello there</SlideTitle>
+                    <SlideBody>To get started click "Create new Task" on the left</SlideBody>
+                </SelectedSlide>
+            );
+        }
+    }
 
     renderActive() {
         return (
             <SelectedSlide>
-                <Viewer/>
+                <Viewer admin={true} />
             </SelectedSlide>
         );
     }
@@ -243,7 +243,7 @@ export class Tasks extends Component {
             });
 
             if (success == true) {
-                this.props.updateTasks();
+                this.props.update();
             }
         }
 
@@ -283,9 +283,9 @@ export class Tasks extends Component {
             <>
                 {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={[]} onClose={modalCreateClose.bind(this)} />}
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                <Collection createTask={(event) => this.createTask(event)} updateTasks={this.props.updateTasks}>
+                <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
-                        <Task key={task.index} id={task.index} updateTasks={this.props.updateTasks}
+                        <Task key={task.index} id={task.index} update={this.props.update}
                             onClick={this.taskClick} active={this.state.active == task.index}
                             type={task.questionType} title={task.title}
                         />

@@ -9,7 +9,7 @@ namespace Slagkraft.Models.Admin.Questions
     /// <summary>
     /// The Abstract Base for all Question Types
     /// </summary>
-    public abstract class QuestionBase
+    public abstract class BaseTask
     {
         #region Public Fields
 

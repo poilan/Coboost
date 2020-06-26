@@ -249,7 +249,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                <Facilitator />
+                {!this.props.admin && <Facilitator />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -267,7 +267,7 @@ export class BigScreen extends Component {
                 <WelcomeContainer>
                     <IconLoader />
                 </WelcomeContainer>
-                <Facilitator />
+                {!this.props.admin && <Facilitator />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Coboost</BottomBannerText>
@@ -297,7 +297,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    <Facilitator />
+                    {!this.props.admin && <Facilitator />}
                 </ContentContainer>
                 <BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>

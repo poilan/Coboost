@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, { Component } from 'react';
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
@@ -46,7 +46,7 @@ export function Collection(props) {
         const target = props.children.length - 1;
         const code = sessionStorage.getItem('code');
 
-        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.updateTasks());
+        axios.post(`admin/${code}/question${task.index}-move${target}`).then(this.props.update());
     }
 
     const dragOver = e => {
@@ -104,43 +104,141 @@ const TaskTitle = styled.div`
     display: block;
 `;
 
-export function Task(props) {
-    const drop = e => {
-        e.preventDefault();
-        e.stopPropagation();
+const ModalTitle = styled.h1`
+    color: #fff;
+    font-family: CircularStd;
+    font-weight: 600;
+    font-size: 1.25em;
+    opacity: 90%;
+    position: absolute;
+    top: 20px;
+    vertical-align: center;
+    left: 15px;
+`;
 
-        const task = JSON.parse(e.dataTransfer.getData('task'));
-        const target = props.id;
-        const code = sessionStorage.getItem('code');
+const CancelButton = styled(Nav.Link)`
+    color: #100e0e;
+    background: #fff;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
 
-        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.updateTasks());
-    }
+const CreateButton = styled.input`
+    color: #fff;
+    background: #4C7AD3;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
 
-    const dragOver = e => {
-        e.preventDefault();
-        //e.stopPropagation();
-    }
+const RemoveButton = styled(Ico_Box)`
+    position: absolute;
+    right: 2.5%;
+    top: 0.5%;
+    color: #fff;
+    font-weight: 600;
+    display: ${props => props.showcase ? "none" : "block"};
+`;
 
-    const dragStart = e => {
-        let data = {
-            index: props.id,
+export class Task extends Component {
+    state = {
+        modal: {
+            delete: true,
         }
-
-        e.dataTransfer.setData('task', JSON.stringify(data));
     }
 
-    return (
-        <TaskContainer id={props.id}
-            draggable onDragStart={dragStart} onDragOver={dragOver}
-            onDrop={drop}
-            onClick={props.onClick} onDoubleClick={props.onDoubleClick}
-            active={props.active} type={props.type}>
-            <TaskIndex id={props.id}>{props.id + 1}</TaskIndex>
-            {props.type == 0 ? <Ico_Text id={props.id} style={{ height: "60px", marginTop: "10px", }} /> : props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
-            <TitleContainer id={props.id}>
-                <TaskType id={props.id}>{props.type == 0 ? "Text" : props.type == 1 ? "Multiple Choice" : "New Task"}</TaskType>
-                <TaskTitle id={props.id}>{props.title}</TaskTitle>
-            </TitleContainer>
-        </TaskContainer>
-    );
+    drag = {
+        start: (e) => {
+            let data = {
+                index: props.id,
+            }
+
+            e.dataTransfer.setData('task', JSON.stringify(data));
+        },
+
+        over: (e) => {
+            e.preventDefault();
+        },
+
+        drop: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const task = JSON.parse(e.dataTransfer.getData('task'));
+            const target = props.id;
+            const code = sessionStorage.getItem('code');
+
+            axios.post(`admin/${code}/question${task.index}-move${target}`).then(this.props.update());
+        }
+    }
+
+    modal = {
+        delete: {
+            open: () => {
+                this.setState({
+                    modal: {
+                        delete: true,
+                    }
+                });
+            },
+
+            content: () => {
+                const deleteTask = (e) => {
+                    e.preventDefault();
+                    let code = sessionStorage.getItem("code");
+
+                    axios.post(`admin/delete-${code}`);
+                    this.modal.delete.close();
+                }
+
+                return (
+                    <Form autoComplete="off" onSubmit={(e) => deleteTask(e)}>
+                        <ModalTitle>Are you sure you want to delete this task? This action can not be undone</ModalTitle>
+                        <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
+                        <CreateButton type="submit" value="Submit" />
+                    </Form>
+                );
+            },
+
+            close: () => {
+                this.setState({
+                    modal: {
+                        delete: false,
+                    }
+                });
+            }
+        }
+    }
+
+    render() {
+        return (
+            <TaskContainer id={this.props.id}
+                draggable onDragStart={this.drag.start} onDragOver={this.drag.over}
+                onDrop={this.drag.drop}
+                onClick={this.props.onClick} onDoubleClick={this.props.onDoubleClick}
+                active={this.props.active} type={this.props.type}>
+                <TaskIndex id={this.props.id}>{this.props.id + 1}</TaskIndex>
+                {props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : this.props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
+                <TitleContainer id={this.props.id}>
+                    <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : "New Task"}</TaskType>
+                    <TaskTitle id={this.props.id}>{this.props.title}</TaskTitle>
+                </TitleContainer>
+                <RemoveButton id={this.props.id} onClick={() => this.modal.delete.open()}>...</RemoveButton>
+                {this.state.modal.delete && <PageModal title="Confirm Delete" body={this.modal.delete.content()} onClose={this.modal.delete.close} />}
+            </TaskContainer>
+        );
+    }
 }

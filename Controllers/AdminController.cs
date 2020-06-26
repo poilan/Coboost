@@ -50,12 +50,53 @@ namespace Slagkraft.Controllers
 
         #region Public Methods
 
+        [HttpPost("{code}/question-archive-group-{group}")]
+        public void ArchiveGroup(int code, int group)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open.ArchiveGroup(group));
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+        }
+
+        [HttpPost("{code}/question-archive-member-{group}-{member}")]
+        public void ArchiveMember(int code, int group, int member)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                OpenText.Key key = new OpenText.Key
+                {
+                    Group = group,
+                    Member = member,
+                };
+                ThreadPool.QueueUserWorkItem(o => open.ArchiveMember(key));
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+        }
+
         [HttpPost("{code}/change-group{group}-column{column}")]
         public void ChangeColumn(int code, int group, int column)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (admin.Questions[admin.Active] is OpenText open)
+                if (admin.Tasks[admin.Active] is OpenText open)
                 {
                     ThreadPool.QueueUserWorkItem(o => open.ChangeColumn(group, column));
                     HttpContext.Response.StatusCode = 202;
@@ -74,7 +115,7 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
                 OpenText.Key key = new OpenText.Key
                 {
                     Group = group,
@@ -94,7 +135,7 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
                 ThreadPool.QueueUserWorkItem(o => open.AddGroup("", column));
                 HttpContext.Response.StatusCode = 201;
             }
@@ -167,20 +208,51 @@ namespace Slagkraft.Controllers
             HttpContext.Response.StatusCode = 202;
         }
 
-        [HttpGet("{code}/question-{index}")]
-        public QuestionBase GetQuestion(int code, int index)
+        [HttpPost("delete-{code}")]
+        public async void DeleteSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (admin.Questions.Count <= index)
+                Context.Active.Sessions.Remove(code);
+            }
+
+            Session session = await Context.Sessions.FindAsync(code);
+            if (session != null)
+            {
+                Context.Sessions.Remove(session);
+            }
+
+            HttpContext.Response.StatusCode = 200;
+        }
+
+        [HttpPost("{code}/task-delete-{index}")]
+        public void DeleteTask(int code, int index)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.DeleteTask(index));
+                HttpContext.Response.StatusCode = 200;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+            }
+        }
+
+        [HttpGet("{code}/question-{index}")]
+        public BaseTask GetQuestion(int code, int index)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                if (admin.Tasks.Count <= index)
                     return null;
 
                 admin.Active = index;
                 HttpContext.Response.StatusCode = 202;
-                return admin.Questions[index].QuestionType switch
+                return admin.Tasks[index].QuestionType switch
                 {
-                    QuestionBase.Type.MultipleChoice => admin.Questions[index] as MultipleChoice,
-                    _ => admin.Questions[index] as OpenText,
+                    BaseTask.Type.MultipleChoice => admin.Tasks[index] as MultipleChoice,
+                    _ => admin.Tasks[index] as OpenText,
                 };
             }
             else
@@ -191,12 +263,12 @@ namespace Slagkraft.Controllers
         }
 
         [HttpGet("{code}/questions-all")]
-        public IEnumerable<QuestionBase> GetQuestions(int code)
+        public IEnumerable<BaseTask> GetQuestions(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 HttpContext.Response.StatusCode = 202;
-                return admin.Questions;
+                return admin.Tasks;
             }
             else
             {
@@ -267,7 +339,7 @@ namespace Slagkraft.Controllers
                     Member = subjectMember,
                 };
 
-                OpenText open = admin.Questions[admin.Active] as OpenText;
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
                 ThreadPool.QueueUserWorkItem(o => open.Merge(master, subject));
                 HttpContext.Response.StatusCode = 202;
                 return;
@@ -291,53 +363,12 @@ namespace Slagkraft.Controllers
                 Response.StatusCode = 404;
         }
 
-        [HttpPost("{code}/question-remove-group-{group}")]
-        public void RemoveGroup(int code, int group)
-        {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
-
-                ThreadPool.QueueUserWorkItem(o => open.RemoveGroup(group));
-                HttpContext.Response.StatusCode = 202;
-                return;
-            }
-            else
-            {
-                HttpContext.Response.StatusCode = 404;
-                return;
-            }
-        }
-
-        [HttpPost("{code}/question-remove-member-{group}-{member}")]
-        public void RemoveMember(int code, int group, int member)
-        {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
-
-                OpenText.Key key = new OpenText.Key
-                {
-                    Group = group,
-                    Member = member,
-                };
-                ThreadPool.QueueUserWorkItem(o => open.RemoveInput(key));
-                HttpContext.Response.StatusCode = 202;
-                return;
-            }
-            else
-            {
-                HttpContext.Response.StatusCode = 404;
-                return;
-            }
-        }
-
         [HttpPost("{code}/question-rename-group-{group}")]
         public void RenameGroup(int code, int group, [FromBody]Help help)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
 
                 ThreadPool.QueueUserWorkItem(o => open.RenameGroup(group, help.Title));
                 HttpContext.Response.StatusCode = 202;
@@ -355,7 +386,7 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                OpenText open = admin.Questions[admin.Active] as OpenText;
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
 
                 OpenText.Key key = new OpenText.Key
                 {
@@ -373,12 +404,28 @@ namespace Slagkraft.Controllers
             }
         }
 
+        [HttpPost("save-{code}")]
+        public async void SaveSession(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                Session session = await Context.Sessions.FindAsync(code);
+                session.Questions = admin.SaveSession();
+                session.LastOpen = DateTime.Now.ToString();
+
+                Context.Sessions.Update(session);
+                await Context.SaveChangesAsync();
+
+                HttpContext.Response.StatusCode = 200;
+            }
+        }
+
         [HttpGet("{code}/stream-question-{index}")]
         public async void StreamQuestion(int code, int index)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (admin.Questions.Count <= index)
+                if (admin.Tasks.Count <= index)
                 {
                     Response.StatusCode = 406;
                     return;
@@ -387,9 +434,9 @@ namespace Slagkraft.Controllers
                 admin.Active = index;
                 Response.ContentType = "text/event-stream";
 
-                if (admin.Questions[admin.Active] is OpenText)
+                if (admin.Tasks[admin.Active] is OpenText)
                 {
-                    OpenText subject = admin.Questions[admin.Active] as OpenText;
+                    OpenText subject = admin.Tasks[admin.Active] as OpenText;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -409,9 +456,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Questions[admin.Active] is MultipleChoice)
+                else if (admin.Tasks[admin.Active] is MultipleChoice)
                 {
-                    MultipleChoice subject = admin.Questions[admin.Active] as MultipleChoice;
+                    MultipleChoice subject = admin.Tasks[admin.Active] as MultipleChoice;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -436,9 +483,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Questions[admin.Active] is Points)
+                else if (admin.Tasks[admin.Active] is Points)
                 {
-                    Points subject = admin.Questions[admin.Active] as Points;
+                    Points subject = admin.Tasks[admin.Active] as Points;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -463,9 +510,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Questions[admin.Active] is Rate)
+                else if (admin.Tasks[admin.Active] is Rate)
                 {
-                    Rate subject = admin.Questions[admin.Active] as Rate;
+                    Rate subject = admin.Tasks[admin.Active] as Rate;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)

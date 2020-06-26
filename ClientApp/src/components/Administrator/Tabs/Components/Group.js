@@ -1,7 +1,10 @@
-﻿import React from 'react';
+﻿import React, { Component } from 'react';
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
+import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
+import { PageModal } from '../../../Services/PageModal';
+import { Ico_Box } from '../../../Classes/Icons';
 
 const GroupContainer = styled.div`
         width: 100%;
@@ -47,7 +50,7 @@ const GroupTitle = styled.h1`
     left: 15px;
 `;
 
-const GroupMenu = styled.div`
+const GroupMenu = styled(Ico_Box)`
     position: absolute;
     right: 2.5%;
     top: 0.5%;
@@ -56,89 +59,159 @@ const GroupMenu = styled.div`
     display: ${props => props.showcase ? "none" : "block"};
 `;
 
-export function Group(props) {
-    const drop = e => {
-        e.preventDefault();
-        e.stopPropagation();
+const CancelButton = styled(Nav.Link)`
+    color: #100e0e;
+    background: #fff;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
 
-        const drag = JSON.parse(e.dataTransfer.getData('drag'));
-        let code = sessionStorage.getItem("code");
+const CreateButton = styled.input`
+    color: #fff;
+    background: #4C7AD3;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
 
-        if (drag.member !== undefined) {
-            console.log(props);
-            var key = [drag.group, drag.member];
-            var target = props.group;
+export class Group extends Component {
+    state = {
+        modal: {
+            archive: false,
+        }
+    }
 
-            if (target == "new") {
+    modal = {
+        archive: {
+            open: () => {
+                this.setState({
+                    modal: {
+                        archive: true,
+                    }
+                });
+            },
+
+            content: () => {
+                const archive = (e) => {
+                    e.preventDefault();
+                    let code = sessionStorage.getItem("code");
+
+                    axios.post(`admin/${code}/question-archive-group-${this.props.group}`);
+                    this.modal.archive.close();
+                }
+
+                return (
+                    <Form autoComplete="off" onSubmit={(e) => archive(e)}>
+                        <GroupTitle>Are you sure you want to delete this group?</GroupTitle>
+                        <CancelButton onClick={() => this.modal.archive.close()}>Cancel</CancelButton>
+                        <CreateButton type="submit" value="Submit" />
+                    </Form>
+                );
+            },
+
+            close: () => {
+                this.setState({
+                    modal: {
+                        archive: false,
+                    }
+                });
             }
-            else
-                axios.post(`admin/${code}/group-${key[0]}/change-${target}/member-${key[1]}`);
-        }
-        else if (props.column !== 0 && drag.column !== props.column) {
-            let key = drag.group;
-            let target = props.column;
-
-            axios.post(`admin/${code}/change-group${key}-column${target}`);
         }
     }
 
-    const dragOver = e => {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    const dragStart = e => {
-        let data = {
-            group: props.group,
-            column: props.column,
-        }
-
-        e.dataTransfer.setData('drag', JSON.stringify(data));
-    }
-
-    const handleDouble = e => {
-        if (props.double !== undefined && props.group != "0") {
-            props.double(e);
-        }
-    }
-
-    const remove = () => {
-        let code = sessionStorage.getItem("code");
-
-        axios.post(`admin/${code}/question-remove-group${props.group}`);
-    }
-
-    return (
-        <GroupContainer id={props.id + "-title"} group={props.group} column={props.column}
-            onClick={props.onClick} size={props.size} empty={props.id == "0" && props.children.length < 1}
-            onDrop={drop} onDragOver={dragOver}
-            draggable={props.group != "0" && !props.showcase} onDragStart={dragStart}>            
-            <GroupTitle onDoubleClick={(e) => handleDouble(e)} id={props.id + "-title"}>{props.title}</GroupTitle>
-            {props.size <= "2" ?
-                (props.size == "2" ?
-                    <>
-                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
-                    </>
-                    :
-                    ""
-                ) : (props.size == "4" ?
-                    <>
-                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>C</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>D</IDChars>
-                    </>
-                    :
-                    <>
-                        <IDChars size={props.size} id={props.id + "-title"}>A</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>B</IDChars>
-                        <IDChars size={props.size} id={props.id + "-title"}>C</IDChars>
-                    </>
-                )
+    drag = {
+        start: (e) => {
+            let data = {
+                group: this.props.group,
+                column: this.props.column,
             }
-            {props.children}
-            {props.group != 0 && <GroupMenu showcase={props.showcase} id={props.id + "-title"} onClick={() => remove()}>...</GroupMenu>}
-        </GroupContainer>
-    );
+
+            e.dataTransfer.setData('drag', JSON.stringify(data));
+        },
+
+        over: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        },
+
+        drop: (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const drag = JSON.parse(e.dataTransfer.getData('drag'));
+            let code = sessionStorage.getItem("code");
+
+            if (drag.member !== undefined) {
+                var key = [drag.group, drag.member];
+                var target = this.props.group;
+
+                if (target == "new") {
+                }
+                else
+                    axios.post(`admin/${code}/group-${key[0]}/change-${target}/member-${key[1]}`);
+            }
+            else if (this.props.column !== 0 && drag.column !== this.props.column) {
+                let key = drag.group;
+                let target = this.props.column;
+
+                axios.post(`admin/${code}/change-group${key}-column${target}`);
+            }
+        }
+    }
+
+    handleDouble = (e) => {
+        if (this.props.double !== undefined && this.props.group != 0) {
+            this.props.double(e);
+        }
+    }
+
+    render() {
+        return (
+            <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column}
+                onClick={this.props.onClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
+                onDrop={this.drag.drop} onDragOver={this.drag.over}
+                draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"}>{this.props.title}</GroupTitle>
+                {this.props.size <= "2" ?
+                    (this.props.size == "2" ?
+                        <>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                        </>
+                        :
+                        ""
+                    ) : (this.props.size == "4" ?
+                        <>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>D</IDChars>
+                        </>
+                        :
+                        <>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                            <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
+                        </>
+                    )
+                }
+                {this.props.children}
+                {this.props.group != 0 && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()}>...</GroupMenu>}
+                {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
+            </GroupContainer>
+        );
+    }
 }
