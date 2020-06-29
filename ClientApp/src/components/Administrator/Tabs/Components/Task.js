@@ -1,9 +1,11 @@
 ﻿import React, { Component } from 'react';
+import { Form, Nav } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
-import { Ico_Text, Ico_MultipleChoice } from '../../../Classes/Icons';
+import { Ico_Box, Ico_Text, Ico_MultipleChoice } from '../../../Classes/Icons';
 import { Session } from '../../Session';
+import { PageModal } from '../../../Services/PageModal';
 
 const CollectionContainer = styled.div`
     width: 20%;
@@ -163,7 +165,7 @@ export class Task extends Component {
     drag = {
         start: (e) => {
             let data = {
-                index: props.id,
+                index: this.props.id,
             }
 
             e.dataTransfer.setData('task', JSON.stringify(data));
@@ -178,7 +180,7 @@ export class Task extends Component {
             e.stopPropagation();
 
             const task = JSON.parse(e.dataTransfer.getData('task'));
-            const target = props.id;
+            const target = this.props.id;
             const code = sessionStorage.getItem('code');
 
             axios.post(`admin/${code}/question${task.index}-move${target}`).then(this.props.update());
@@ -231,7 +233,7 @@ export class Task extends Component {
                 onClick={this.props.onClick} onDoubleClick={this.props.onDoubleClick}
                 active={this.props.active} type={this.props.type}>
                 <TaskIndex id={this.props.id}>{this.props.id + 1}</TaskIndex>
-                {props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : this.props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
+                {this.props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : this.props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
                 <TitleContainer id={this.props.id}>
                     <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : "New Task"}</TaskType>
                     <TaskTitle id={this.props.id}>{this.props.title}</TaskTitle>
