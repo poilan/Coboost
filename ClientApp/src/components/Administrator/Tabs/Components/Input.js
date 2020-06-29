@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
+import { PageModal } from '../../../Services/PageModal';
 
 const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
@@ -113,4 +114,15 @@ export function Input(props) {
             </Container>
         </>
     );
+}
+
+
+export class InputDetails extends Component {
+    state = {
+        answer: this.props.answer,
+    }
+
+    render() {
+        return <PageModal title
+    }
 }

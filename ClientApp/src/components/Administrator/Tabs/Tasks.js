@@ -86,6 +86,7 @@ export class Tasks extends Component {
         super(props);
         this.state = {
             tasks: props.tasks,
+            active: 0,
 
             create: {
                 type: '',
@@ -166,12 +167,18 @@ export class Tasks extends Component {
 
     loadTask = (event) => {
         let key = event.target.id;
+        let code = sessionStorage.getItem('code');
 
-        this.props.SSE(key);
+        axios.post(`admin/${code}/active-${key}`).then(res =>
+            res.status == 200
+                ? this.setState({ active: key }).then(
+                    this.props.SSE(key))
+                : null
+        );
     }
 
     old_renderActive() {
-        if (this.props.active == -1) {
+        if (this.state.active == -1) {
             return (
                 <SelectedSlide>
                     <SlideTitle>Hello there</SlideTitle>
@@ -180,7 +187,7 @@ export class Tasks extends Component {
             );
         }
 
-        var task = this.props.tasks[this.props.active];
+        var task = this.props.tasks[this.state.active];
 
         if (task !== undefined && task.questionType === 0) {
             return (
@@ -279,7 +286,7 @@ export class Tasks extends Component {
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
                         <Task key={task.index} id={task.index} update={this.props.update}
-                            onClick={this.taskClick.bind(this)} active={this.props.active == task.index}
+                            onClick={this.taskClick.bind(this)} active={this.state.active == task.index}
                             type={task.questionType} title={task.title}
                         />
                     )}

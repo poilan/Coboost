@@ -50,6 +50,26 @@ namespace Slagkraft.Controllers
 
         #region Public Methods
 
+        [HttpPost("{code}/active-{index}")]
+        public void Active(int code, int index)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                if (admin.Tasks.Count <= index)
+                {
+                    Response.StatusCode = 406;
+                    return;
+                }
+
+                admin.Active = index;
+                HttpContext.Response.StatusCode = 200;
+            }
+            else
+            {
+                Response.StatusCode = 404;
+            }
+        }
+
         [HttpPost("{code}/question-archive-group-{group}")]
         public void ArchiveGroup(int code, int group)
         {
@@ -430,18 +450,11 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (admin.Tasks.Count <= index)
-                {
-                    Response.StatusCode = 406;
-                    return;
-                }
-
-                admin.Active = index;
                 Response.ContentType = "text/event-stream";
 
-                if (admin.Tasks[admin.Active] is OpenText)
+                if (admin.Tasks[index] is OpenText)
                 {
-                    OpenText subject = admin.Tasks[admin.Active] as OpenText;
+                    OpenText subject = admin.Tasks[index] as OpenText;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -461,9 +474,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Tasks[admin.Active] is MultipleChoice)
+                else if (admin.Tasks[index] is MultipleChoice)
                 {
-                    MultipleChoice subject = admin.Tasks[admin.Active] as MultipleChoice;
+                    MultipleChoice subject = admin.Tasks[index] as MultipleChoice;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -488,9 +501,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Tasks[admin.Active] is Points)
+                else if (admin.Tasks[index] is Points)
                 {
-                    Points subject = admin.Tasks[admin.Active] as Points;
+                    Points subject = admin.Tasks[index] as Points;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -515,9 +528,9 @@ namespace Slagkraft.Controllers
                         subject.Reset.WaitOne();
                     }
                 }
-                else if (admin.Tasks[admin.Active] is Rate)
+                else if (admin.Tasks[index] is Rate)
                 {
-                    Rate subject = admin.Tasks[admin.Active] as Rate;
+                    Rate subject = admin.Tasks[index] as Rate;
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
