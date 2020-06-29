@@ -52,8 +52,8 @@ const GroupTitle = styled.h1`
 
 const GroupMenu = styled(Ico_Box)`
     position: absolute;
-    right: 2.5%;
-    top: 0.5%;
+    right: 15px;
+    top: 25px;
     color: #fff;
     font-weight: 600;
     display: ${props => props.showcase ? "none" : "block"};
@@ -87,6 +87,17 @@ const CreateButton = styled.input`
     width: 200px;
 `;
 
+const ModalText = styled.h1`
+    font-family: CircularStd;
+    font-weight: 600;
+    font-size: 1em;
+    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+`;
+
 export class Group extends Component {
     state = {
         modal: {
@@ -115,7 +126,7 @@ export class Group extends Component {
 
                 return (
                     <Form autoComplete="off" onSubmit={(e) => archive(e)}>
-                        <GroupTitle>Are you sure you want to delete this group?</GroupTitle>
+                        <ModalText>Are you sure you want to delete this group?</ModalText>
                         <CancelButton onClick={() => this.modal.archive.close()}>Cancel</CancelButton>
                         <CreateButton type="submit" value="Submit" />
                     </Form>
@@ -209,7 +220,7 @@ export class Group extends Component {
                     )
                 }
                 {this.props.children}
-                {this.props.group != 0 && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()}>...</GroupMenu>}
+                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()}/>}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
             </GroupContainer>
         );

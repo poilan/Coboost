@@ -129,7 +129,6 @@ export class Organizer extends Component {
         super(props);
         this.state = {
             overview: true,
-            active: 0,
             selected: '',
 
             modal: {
@@ -328,8 +327,6 @@ export class Organizer extends Component {
         this.setState({
             overview: false,
         });
-
-        console.log('hello');
         this.loadTask(event);
     }
 
@@ -337,11 +334,9 @@ export class Organizer extends Component {
         let key = event.target.id;
 
         this.setState({
-            active: key,
             overview: false,
             selected: [],
         });
-        console.log('hello');
 
         this.props.SSE(key);
     }
@@ -607,7 +602,7 @@ export class Organizer extends Component {
                 </MainContainer>
             )
         } else {
-            let task = this.props.tasks[this.state.active];
+            let task = this.props.tasks[this.props.active];
 
             if (task.questionType == 0) {
                 return text(task);

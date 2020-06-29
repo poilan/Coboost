@@ -4,6 +4,7 @@ import { PageModal } from '../Services/PageModal';
 import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
+import { Ico_Box } from '../Classes/Icons';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -221,21 +222,57 @@ const PopupText = styled.h3`
     opacity: 50%;
 `;
 
-const CancelButton = styled(ProjectButton)`
+const CancelButton = styled(Nav.Link)`
     color: #100e0e;
     background: #fff;
     position: relative;
     display: inline-block;
     left: 0;
     top: 0;
-
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
 `;
 
-const CreateButton = styled(ProjectButton)`
+const CreateButton = styled.input`
+    color: #fff;
+    background: #4C7AD3;
     position: relative;
     display: inline-block;
     left: 0;
     top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
+
+const ModalText = styled.h1`
+    font-family: CircularStd;
+    font-weight: 600;
+    font-size: 1em;
+    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+`;
+
+const RemoveButton = styled(Ico_Box)`
+    float: right;
+    position: relative;
+    padding: 30px 0;
+    margin-left: 3%;
+    margin-right: 1%;
+    display: inline-block;
+    flex-direction: row;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 25%;
 `;
 
 export class Dashboard extends Component {
@@ -245,6 +282,11 @@ export class Dashboard extends Component {
             sessions: [],
             showModal: false,
             title: '',
+
+            modal: {
+                delete: false,
+                code: 0,
+            }
         }
         this.createProject = this.createProject.bind(this);
         this.newProject = this.newProject.bind(this);
@@ -258,10 +300,71 @@ export class Dashboard extends Component {
         this.getSessions();
     }
 
+    modal = {
+        delete: {
+            open: (e, identity) => {
+                e.stopPropagation();
+                this.setState({
+                    modal: {
+                        delete: true,
+                        code: identity,
+                    }
+                });
+            },
+
+            content: () => {
+                const deleteSession = (e) => {
+                    e.preventDefault();
+
+                    axios.post(`admin/delete-${this.state.modal.code}`).then(this.getSessions());
+                    this.modal.delete.close();
+                }
+
+                return (
+                    <Form autoComplete="off" onSubmit={(e) => deleteSession(e)}>
+                        <ModalText>Are you sure you want to delete this session? <br/> This action can not be undone</ModalText>
+                        <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
+                        <CreateButton type="submit" value="Delete Session" />
+                    </Form>
+                );
+            },
+
+            close: () => {
+                this.setState({
+                    modal: {
+                        delete: false,
+                        code: 0,
+                    }
+                });
+            }
+        }
+    }
+
     async getSessions() {
+        const compare = (A, B) => {
+            const a = new Date(Date.parse(A.lastOpen));
+            const b = new Date(Date.parse(B.lastOpen));
+
+            let year = a.getFullYear() - b.getFullYear();
+
+            if (year === 0) {
+                let month = a.getMonth() - b.getMonth();
+
+                if (month === 0) {
+                    return -(a.getUTCDate() - b.getUTCDate());
+                }
+                else
+                    return -month;
+            }
+            else
+                return -year;
+        }
+
         let email = localStorage.getItem("user");
         await axios.get(`admin/sessions-${email}`).then((response) => {
-            this.setState({ sessions: response.data });
+            let data = response.data.sort(compare);           
+
+            this.setState({ sessions: data });
         });
     }
 
@@ -292,6 +395,8 @@ export class Dashboard extends Component {
                 //Title can't be empty!
             }
         });
+
+        this.setState({ title: '' });
     }
 
     handleChange(e) {
@@ -330,10 +435,10 @@ export class Dashboard extends Component {
         if (this.state.sessions && this.state.sessions.length) {
             return (
                 this.state.sessions.map(session =>
-                    <Category id={session.identity} name={session.title} index={session.identity} onClick={((e) => this.sessionClick(e.target))}>
+                    <Category id={session.identity} name={session.title} key={session.identity} index={session.identity} onClick={((e) => this.sessionClick(e.target))}>
                         <CategoryTitle>{session.title}</CategoryTitle>
                         <CategoryIdentity>#{session.identity}</CategoryIdentity>
-                        <CategorySettings>...</CategorySettings>
+                        <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)}/>
                         <CategoryTime>{this.displayDate(session.lastOpen)}</CategoryTime>
                     </Category>)
             );
@@ -405,15 +510,15 @@ export class Dashboard extends Component {
     modalContent() {
         return (
             <ProjectModalContent>
-                <Form autoComplete="on" onSubmit={this.createProject}>
+                <Form autoComplete="on" onSubmit={(e) => this.createProject(e)}>
                     <PopupText>Title</PopupText>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
                             <Form.Control name="title" onChange={this.handleChange} placeholder="Session title..." required />
                         </InputGroup>
                     </Form.Group>
-                    <CancelButton onClick={this.closeModal}>Cancel</CancelButton>
-                    <CreateButton onClick={this.createProject}>Create Session</CreateButton>
+                    <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
+                    <CreateButton type="submit" value="Create Session"/>
                 </Form>
             </ProjectModalContent>
         );
@@ -438,6 +543,7 @@ export class Dashboard extends Component {
                     </CategoryContainer>
                 </MainContainer>
                 {this.state.showModal && <PageModal title="New Session" body={this.modalContent()} onClose={this.closeModal} />}
+                {this.state.modal.delete && <PageModal title="Confirm Delete" body={this.modal.delete.content()} onClose={this.modal.delete.close.bind(this)} />}
             </>
         );
     }

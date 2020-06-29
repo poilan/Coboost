@@ -85,7 +85,6 @@ export class Tasks extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            active: 0,
             tasks: props.tasks,
 
             create: {
@@ -168,17 +167,11 @@ export class Tasks extends Component {
     loadTask = (event) => {
         let key = event.target.id;
 
-        this.setState({
-            active: key,
-        });
-
-        if (this.props.tasks[key].questionType !== -1) {
-            this.props.SSE(key);
-        }
+        this.props.SSE(key);
     }
 
     old_renderActive() {
-        if (this.state.active == -1) {
+        if (this.props.active == -1) {
             return (
                 <SelectedSlide>
                     <SlideTitle>Hello there</SlideTitle>
@@ -187,7 +180,7 @@ export class Tasks extends Component {
             );
         }
 
-        var task = this.props.tasks[this.state.active];
+        var task = this.props.tasks[this.props.active];
 
         if (task !== undefined && task.questionType === 0) {
             return (
@@ -286,7 +279,7 @@ export class Tasks extends Component {
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
                         <Task key={task.index} id={task.index} update={this.props.update}
-                            onClick={this.taskClick} active={this.state.active == task.index}
+                            onClick={this.taskClick.bind(this)} active={this.props.active == task.index}
                             type={task.questionType} title={task.title}
                         />
                     )}

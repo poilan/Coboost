@@ -179,6 +179,7 @@ export class Administrator extends Component {
             code: 0,
             tasks: [],
             columns: [],
+            active: 0,
 
             tab: 'task',
             presentor: null,
@@ -204,6 +205,7 @@ export class Administrator extends Component {
 
     componentWillUnmount() {
         this.SSE.close();
+        axios.post(`admin/save-${this.state.code}`)
     }
 
     update = async () => {
@@ -211,7 +213,14 @@ export class Administrator extends Component {
         const code = sessionStorage.getItem('code');
         await axios.get(`admin/${code}/questions-all`).then(res => {
             if (res.status === 202) {
-                this.setState({ tasks: res.data });
+                this.setState({
+                    tasks: res.data,
+                });
+
+                if (this.state.active < this.state.tasks.length)
+                    this.SSE.start(this.state.active);
+                else
+                    this.SSE.start(0);
             } else if (res.status === 404) {
                 //session not found
             }
@@ -221,9 +230,30 @@ export class Administrator extends Component {
     SSE = {
         source: undefined,
 
+        addColumn: () => {
+            let column = {
+                index: this.state.columns.length,
+                width: 1,
+            }
+
+            let columns = this.state.columns;
+
+            columns !== undefined ? columns.push(column) : columns = [column];
+            this.setState({
+                columns: columns,
+            });
+        },
+
         start: (target) => {
+            if (target >= this.state.tasks.length)
+                return;
+
             this.SSE.close();
             const code = sessionStorage.getItem('code');
+            this.setState({
+                active: target,
+            });
+
             this.SSE.source = new EventSource(`admin/${code}/stream-question-${target}`);
             this.SSE.source.addEventListener("Groups", (e) => {
                 try {
@@ -235,11 +265,11 @@ export class Administrator extends Component {
                     if (tasks[target].groups !== undefined) {
                         for (let i = 0; i < tasks[target].groups.length; i++) {
                             while (tasks[target].groups[i].Column + 1 >= this.state.columns.length) {
-                                this.addColumn();
+                                this.SSE.addColumn();
                             }
                         }
                     } else {
-                        this.addColumn();
+                        this.SSE.addColumn();
                     }
 
                     for (let i = 0; i < this.state.columns.length; i++) {
@@ -326,7 +356,6 @@ export class Administrator extends Component {
     }
 
     selectTab(key) {
-        this.update();
         this.setState({
             tab: key,
         });
@@ -371,10 +400,10 @@ export class Administrator extends Component {
                         <ContentBody>
                             <Tab.Content>
                                 <Tab.Pane eventKey="task">
-                                    <Tasks tasks={this.state.tasks} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
+                                    <Tasks tasks={this.state.tasks} active={this.state.active} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="organize">
-                                    <Organizer tasks={this.state.tasks} columns={this.state.columns} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
+                                    <Organizer tasks={this.state.tasks} active={this.state.active} columns={this.state.columns} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
                                 </Tab.Pane>
                             </Tab.Content>
                         </ContentBody>

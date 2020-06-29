@@ -24,7 +24,7 @@ const MainContainer = styled(Col)`
 const Banner = styled(Col)`
     position: sticky;
     background: transparent;
-    min-height: 100px;
+    min-height: 50px;
     height: 10%;
     top: 0;
     left: 0;
@@ -44,7 +44,7 @@ const ContentContainer = styled(Col)`
     position: absolute;
     width: 100%;
     height: 80%;
-    max-height: calc(100% - 200px);
+    max-height: calc(100% - 100px);
     left: 0;
     top: calc(max(10%, 100px));
     overflow: hidden;
@@ -112,7 +112,7 @@ const BottomBanner = styled(Col)`
     position: fixed;
     background: transparent;
     border-top: 1px solid black;
-    min-height: 100px;
+    min-height: 50px;
     height: 10%;
     bottom: 0;
     left: 0;
@@ -123,8 +123,11 @@ const BottomBannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1.5rem;
     color: black;
-    padding: 35px;
+    padding: 0 35px;
     float: left;
+    top:50%;
+    transform: translateY(-50%);
+    position: relative;
 
     :not(:first-child) {
         padding: 35px 5px;
@@ -156,7 +159,10 @@ export class BigScreen extends Component {
 
     componentDidMount() {
         const email = localStorage.getItem("user");
-        const code = sessionStorage.getItem("present_code");
+        let code = sessionStorage.getItem("present_code");
+
+        if (code == null)
+            code = sessionStorage.getItem("code");
 
         this.setState({
             code: code,
@@ -354,7 +360,7 @@ export class BigScreen extends Component {
         return (
             <MainContainer>
                 <Banner>
-                    <Logo />
+                    <Logo style={{height: "100%"}}/>
                     {this.state.task !== null && <Title><b>{this.state.task.Index + 1}. {this.state.task.Title}</b></Title>}
                 </Banner>
                 {this.handleRender()}

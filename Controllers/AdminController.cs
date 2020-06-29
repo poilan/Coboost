@@ -209,20 +209,23 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("delete-{code}")]
-        public async void DeleteSession(int code)
+        public async Task DeleteSession(int code)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                Context.Active.Sessions.Remove(code);
-            }
-
             Session session = await Context.Sessions.FindAsync(code);
-            if (session != null)
+            if (session == null)
+            {
+                HttpContext.Response.StatusCode = 400;
+            }
+            else
             {
                 Context.Sessions.Remove(session);
+                if (Context.Active.Sessions.ContainsKey(code))
+                {
+                    Context.Active.Sessions.Remove(code);
+                }
+                await Context.SaveChangesAsync();
+                HttpContext.Response.StatusCode = 200;
             }
-
-            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpPost("{code}/task-delete-{index}")]
@@ -418,6 +421,8 @@ namespace Slagkraft.Controllers
 
                 HttpContext.Response.StatusCode = 200;
             }
+
+            Context.Active.Sessions.Remove(code);
         }
 
         [HttpGet("{code}/stream-question-{index}")]
