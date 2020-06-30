@@ -132,6 +132,11 @@ namespace Slagkraft.Models.Admin
             };
             List<BaseTask> questions = JsonConvert.DeserializeObject<List<BaseTask>>(questionJson, settings);
             Tasks = questions;
+
+            foreach(BaseTask task in Tasks)
+            {
+                task.Reset = new ManualResetEvent(false);
+            }
         }
 
         public void MoveQuestion(int current, int target)

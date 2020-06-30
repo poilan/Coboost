@@ -48,7 +48,7 @@ export function Collection(props) {
         const target = props.children.length - 1;
         const code = sessionStorage.getItem('code');
 
-        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.update());
+        axios.post(`admin/${code}/question${task.index}-move${target}`).then(props.update(true));
     }
 
     const dragOver = e => {
@@ -181,7 +181,7 @@ export class Task extends Component {
             const target = this.props.id;
             const code = sessionStorage.getItem('code');
 
-            axios.post(`admin/${code}/question${task.index}-move${target}`).then(this.props.update());
+            axios.post(`admin/${code}/question${task.index}-move${target}`).then(this.props.update(true));
         }
     }
 
@@ -201,7 +201,7 @@ export class Task extends Component {
                     e.preventDefault();
                     let code = sessionStorage.getItem("code");
 
-                    axios.post(`admin/${code}/task-delete-${this.props.id}`).then(this.props.update());
+                    axios.post(`admin/${code}/task-delete-${this.props.id}`).then(this.props.update(true));
                     this.modal.delete.close(e);
                 }
 

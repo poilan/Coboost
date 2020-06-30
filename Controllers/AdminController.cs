@@ -428,7 +428,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("save-{code}")]
-        public async void SaveSession(int code)
+        public async Task SaveSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -451,6 +451,13 @@ namespace Slagkraft.Controllers
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 Response.ContentType = "text/event-stream";
+
+                if(index >= admin.Tasks.Count)
+                {
+                    Response.StatusCode = 406;
+                    return;
+                }
+                    
 
                 if (admin.Tasks[index] is OpenText)
                 {

@@ -165,16 +165,16 @@ export class Tasks extends Component {
         this.loadTask(event);
     }
 
-    loadTask = (event) => {
+    loadTask = async (event) => {
         let key = event.target.id;
         let code = sessionStorage.getItem('code');
 
-        axios.post(`admin/${code}/active-${key}`).then(res =>
-            res.status == 200
-                ? this.setState({ active: key }).then(
-                    this.props.SSE(key))
-                : null
-        );
+        await axios.post(`admin/${code}/active-${key}`).then(res => {
+            if (res.status === 200) {
+                this.setState({ active: key });
+                this.props.SSE(key);
+            }
+        });
     }
 
     old_renderActive() {
@@ -243,7 +243,7 @@ export class Tasks extends Component {
             });
 
             if (success == true) {
-                this.props.update();
+                this.props.update(true);
             }
         }
 

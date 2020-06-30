@@ -436,10 +436,10 @@ export class Dashboard extends Component {
             return (
                 this.state.sessions.map(session =>
                     <Category id={session.identity} name={session.title} key={session.identity} index={session.identity} onClick={((e) => this.sessionClick(e.target))}>
-                        <CategoryTitle>{session.title}</CategoryTitle>
-                        <CategoryIdentity>#{session.identity}</CategoryIdentity>
+                        <CategoryTitle id={session.identity} name={session.title} key={session.identity} index={session.identity}>{session.title}</CategoryTitle>
+                        <CategoryIdentity id={session.identity} name={session.title} key={session.identity} index={session.identity}>#{session.identity}</CategoryIdentity>
                         <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)}/>
-                        <CategoryTime>{this.displayDate(session.lastOpen)}</CategoryTime>
+                        <CategoryTime id={session.identity} name={session.title} key={session.identity} index={session.identity}>{this.displayDate(session.lastOpen)}</CategoryTime>
                     </Category>)
             );
         } else {

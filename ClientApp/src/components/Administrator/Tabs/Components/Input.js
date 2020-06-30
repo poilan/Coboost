@@ -117,12 +117,12 @@ export function Input(props) {
 }
 
 
-export class InputDetails extends Component {
-    state = {
-        answer: this.props.answer,
-    }
+//export class InputDetails extends Component {
+//    state = {
+//        answer: this.props.answer,
+//    }
 
-    render() {
-        return <PageModal title
-    }
-}
+//    render() {
+//        return <PageModal title
+//    }
+//}

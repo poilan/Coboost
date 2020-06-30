@@ -116,8 +116,6 @@ namespace Slagkraft.Controllers
                         await Response.Body.FlushAsync();
                     }
 
-                    //admin.Client.Reset();
-                    //admin.Client.WaitOne();
                     if (question != null)
                     {
                         question.Reset.Reset();

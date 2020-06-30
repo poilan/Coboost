@@ -288,7 +288,7 @@ export class Organizer extends Component {
 
                     if (success == true) {
                         this.props.changeTab('task');
-                        this.props.update();
+                        this.props.update(true);
                     }
                 },
             }

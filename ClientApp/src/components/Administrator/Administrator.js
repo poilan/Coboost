@@ -219,7 +219,7 @@ export class Administrator extends Component {
 
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
-                else
+                else if(this.state.tasks.length > 0)
                     this.SSE.start(0);
             } else if (res.status === 404) {
                 //session not found
