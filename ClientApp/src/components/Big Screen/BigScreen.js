@@ -150,6 +150,7 @@ export class BigScreen extends Component {
             title: null,
 
             // Facilitator Options
+            activeQuestion: 0,
             isFullscreen: false,
 
             task: null,
@@ -194,10 +195,14 @@ export class BigScreen extends Component {
             sse.addListener("Question", (data) => {
                 try {
                     var questionData = JSON.parse(data);
+
+                    console.log(`Active index is: ${questionData.Index}`);
+
                     var task = this.state.task;
                     task = questionData;
 
                     this.setState({
+                        activeQuestion: task.Index,
                         task: task,
                     })
                 } catch (e) {
@@ -255,7 +260,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator />}
+                {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -273,7 +278,7 @@ export class BigScreen extends Component {
                 <WelcomeContainer>
                     <IconLoader />
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator />}
+                {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Coboost</BottomBannerText>
@@ -303,7 +308,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator />}
+                    {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 <BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>

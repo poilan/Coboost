@@ -117,12 +117,12 @@ export function Input(props) {
 }
 
 
-export class InputDetails extends Component {
+export class InputDetails extends React.Component {
     state = {
         answer: this.props.answer,
     }
 
     render() {
-        return <PageModal title
+        return <PageModal title/>
     }
 }

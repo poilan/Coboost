@@ -1,5 +1,6 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
+import axios from 'axios';
 import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollection, BsLock, BsInfoCircle, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
 const FacilitatorContainer = styled.div`
@@ -11,7 +12,7 @@ const FacilitatorContainer = styled.div`
     flex-direction: row;
 
     position: fixed;
-    bottom: 100px;
+    bottom: 10%;
     left: 0px;
 `;
 
@@ -40,9 +41,18 @@ export class Facilitator extends React.Component {
 
         this.state = {
             fullscreen: false,
+
+            code: props.code,
+            questions: [],
+            questionIndex: props.active,
         }
 
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
+
+        this.arrowBackward = this.arrowBackward.bind(this);
+        this.arrowForward = this.arrowForward.bind(this);
+        this.setActiveQuestion = this.setActiveQuestion.bind(this);
+        this.getActiveQuestion = this.getActiveQuestion.bind(this);
     }
 
     openHamburgerMenu() {
@@ -69,12 +79,57 @@ export class Facilitator extends React.Component {
         console.log("Hiding results");
     }
 
-    arrowBackward() {
-        console.log("<")
+    async getActiveQuestion(callback) {
+        const state = this.state;
+        const code = state.code;
+
+        await axios.get(`admin/${this.state.code}/questions-all`).then(res => {
+            if (res.status === 202) {
+                this.setState({
+                    questions: res.data,
+                });
+                callback();
+            }
+        });
     }
 
-    arrowForward() {
-        console.log(">")
+    async setActiveQuestion(index) {
+        const state = this.state;
+        const code = state.code;
+
+        await axios.post(`admin/${code}/active-${index}`).then((res) => {
+            if (res.status === 200) {
+                this.setState({
+                    questionIndex: index,
+                })
+            }
+        });
+    }
+
+    async arrowBackward() {
+        const state = this.state;
+        const questions = state.questions;
+        const active = state.questionIndex;
+
+        await this.getActiveQuestion(() => {
+            if (active > 0) {
+                const index = active - 1;
+                this.setActiveQuestion(index);
+            }
+        });
+    }
+
+    async arrowForward() {
+        const state = this.state;
+        const questions = state.questions;
+        const active = state.questionIndex;
+
+        await this.getActiveQuestion(() => {
+            if (active < (questions.length - 1)) {
+                const index = active + 1;
+                this.setActiveQuestion(index);
+            }
+        });
     }
 
     toggleFullscreen() {
