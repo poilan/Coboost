@@ -1,7 +1,7 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
-import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
@@ -117,6 +117,7 @@ export class Facilitator extends React.Component {
         this.getActiveQuestion = this.getActiveQuestion.bind(this);
         this.onSlideClick = this.onSlideClick.bind(this);
         this.openTasks = this.openTasks.bind(this);
+        this.hideResults = this.hideResults.bind(this);
     }
 
     async openTasks() {
@@ -147,7 +148,7 @@ export class Facilitator extends React.Component {
     }
 
     hideResults() {
-        console.log("Hiding results");
+        this.props.onResultToggle();
     }
 
     componentDidMount() {
@@ -162,7 +163,6 @@ export class Facilitator extends React.Component {
 
         await axios.get(`admin/${this.state.code}/questions-all`).then(res => {
             if (res.status === 202) {
-                console.log(res.data);
                 this.setState({
                     questions: res.data,
                 });
@@ -263,11 +263,16 @@ export class Facilitator extends React.Component {
                     </FacilitatorButton>*/}
 
                     <FacilitatorButton onClick={this.hideResults}>
-                        <BsEyeSlash class="icon" /><br/>
-                        Hide results
+                        {this.props.showingResult ? <>
+                            <BsEyeSlash class="icon" /><br/>
+                            Hide Results
+                        </> : <>
+                            <BsEye class="icon" /><br/>
+                            Show Results
+                        </>}
                     </FacilitatorButton>
 
-                    <FacilitatorButton onClick={this.closeVoting}>
+                    {/*<FacilitatorButton onClick={this.closeVoting}>
                         <BsLock class="icon" /><br/>
                         Lock answers
                     </FacilitatorButton>
@@ -275,7 +280,7 @@ export class Facilitator extends React.Component {
                     <FacilitatorButton onClick={this.startCountdown}>
                         <BsStopwatch class="icon" /><br/>
                         Countdown
-                    </FacilitatorButton>
+                    </FacilitatorButton>*/}
 
                     <FacilitatorButton onClick={this.toggleFullscreen}>
                         {this.state.fullscreen ? <>

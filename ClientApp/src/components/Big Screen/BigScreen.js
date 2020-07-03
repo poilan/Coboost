@@ -152,10 +152,13 @@ export class BigScreen extends Component {
             // Facilitator Options
             activeQuestion: 0,
             isFullscreen: false,
+            showResults: true,
 
             task: null,
             sse: null,
         };
+
+        this.facilitatorToggleResults = this.facilitatorToggleResults.bind(this);
     }
 
     componentDidMount() {
@@ -169,11 +172,8 @@ export class BigScreen extends Component {
             code: code,
         });
 
-        console.log(`Code is ${code}`);
-
         axios.get(`presentation/info-${code}`).then(res => {
             const title = res.data.title;
-            console.log(res.data);
 
             this.beginSSE = this.beginSSE.bind(this);
             var dataSource = new SSE(`presentation/${code}/data`);
@@ -195,8 +195,6 @@ export class BigScreen extends Component {
             sse.addListener("Question", (data) => {
                 try {
                     var questionData = JSON.parse(data);
-
-                    console.log(`Active index is: ${questionData.Index}`);
 
                     var task = this.state.task;
                     task = questionData;
@@ -251,6 +249,15 @@ export class BigScreen extends Component {
         })
     }
 
+    facilitatorToggleResults() {
+        const oldState = this.state.showResults;
+        var newState = !oldState;
+
+        this.setState({
+            showResults: newState
+        });
+    }
+
     renderWaiting() {
         const state = this.state;
         const code = state.code;
@@ -260,7 +267,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -278,7 +285,7 @@ export class BigScreen extends Component {
                 <WelcomeContainer>
                     <IconLoader />
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Coboost</BottomBannerText>
@@ -288,14 +295,19 @@ export class BigScreen extends Component {
     }
 
     viewResult() {
-        const question = this.state.task;
-        if (question.QuestionType === 0) {
-            return this.renderOpenTextResult();
-            //return <p>Open Text</p>;
-        }
-        else if (question.QuestionType === 1) {
-            //return <p>Multiple Choice</p>;
-            return this.renderMultipleChoiceResult();
+        const state = this.state;
+        const canShow = state.showResults;
+
+        if (canShow === true) {
+            const question = state.task;
+            if (question.QuestionType === 0) {
+                return this.renderOpenTextResult();
+                //return <p>Open Text</p>;
+            }
+            else if (question.QuestionType === 1) {
+                //return <p>Multiple Choice</p>;
+                return this.renderMultipleChoiceResult();
+            }   
         }
     }
 
@@ -308,7 +320,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 <BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
