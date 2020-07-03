@@ -619,9 +619,6 @@ export class Mobile extends Component {
         const type = this.getInputType();
         const answer = this.getInputAnswer();
 
-        var newState = 1;
-        var newIndex = current + 1;
-
         // Send the input
         const code = sessionStorage.getItem("code");
         var user = "anonymous";
@@ -660,7 +657,6 @@ export class Mobile extends Component {
         }
 
         this.setState({
-            /*currentInput: newIndex,*/
             lastInput: current,
             sessionState: 2,
         })
