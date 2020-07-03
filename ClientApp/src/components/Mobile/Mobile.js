@@ -366,8 +366,31 @@ export class Mobile extends Component {
                 loggedIn: true
             });
 
-        //this.startEventSource();
         const code = sessionStorage.getItem("code");
+
+        axios.get(`admin/${code}/questions-all`).then(res => {
+            if (res.status === 202) {
+                var qData = res.data;
+
+                var inputs = this.state.inputs;
+                qData.forEach((q, index) => {
+
+                    var question = {
+                        type: q.questionType,
+                        title: q.title
+                    };
+
+                    inputs[index] = question;
+                });
+
+                this.setState({
+                    inputs: inputs,
+                });
+
+                this.parseAnswers();
+            }
+        });
+
         var sse = new SSE(`client/${code}/question`);
 
         this.setState({
@@ -375,7 +398,6 @@ export class Mobile extends Component {
         })
 
         sse.startEventSource((e) => {
-            sse.log("ASD");
             sse.addListener("question", (data) => {
                 try {
                     var qData = JSON.parse(data); // Question data
@@ -412,6 +434,10 @@ export class Mobile extends Component {
                             sessionState: 1
                         });
                     }
+
+                    this.setState({
+                        currentInput: index
+                    });
                 } catch (e) {
                     sse.log("Failed to parse server event");
                 }
@@ -443,68 +469,6 @@ export class Mobile extends Component {
             answers: answers
         });
     }
-
-    /*startEventSource() {
-        const code = sessionStorage.getItem("code");
-        this.eventSource = new EventSource(`client/${code}/question`);
-
-        this.eventSource.addEventListener("question", (e) => {
-            try {
-                var data = JSON.parse(e.data);
-
-                var index = parseInt(data.Index);
-                var question = {
-                    type: data.QuestionType,
-                    title: data.Title,
-                }
-
-                if (question.type === 1) // Multiple Choice
-                {
-                    var choices = []
-                    data.Options.forEach(choice => {
-                        choices.push(choice.Title);
-                    });
-
-                    question.choices = choices;
-                }
-
-                var inputs = this.state.inputs;
-                inputs[index] = question;
-
-                // Initially add the question
-                this.setState({
-                    inputs: inputs
-                });
-                // Then parse answers
-                this.parseAnswers();
-
-                // Show the question if a question isn't already showing
-                var currentState = this.state.sessionState
-                if (currentState === 0 || currentState === 2) {
-                    this.setState({
-                        sessionState: 1
-                    })
-                }
-            } catch (e) {
-                //console.log("Failed to parse server event: " + e.data);
-                //console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("error", (e) => {
-            if (e.eventPhase == EventSource.CLOSED) {
-                //Connection was closed.
-                //console.log("SSE: connection closed");
-            } else {
-                //console.log(e);
-            }
-        }, false);
-
-        this.eventSource.addEventListener("open", function (e) {
-            //console.log("SSE: connection opened");
-            // Connection was opened.
-        }, false);
-    }*/
 
     getInputQuestions() {
         return this.state.inputs;
@@ -686,10 +650,19 @@ export class Mobile extends Component {
             })
         }
 
+        switch(type) {
+            case 0:
+                this.setInputAnswer("");
+                break;
+            case 1:
+                this.setInputAnswer([]);
+                break;
+        }
+
         this.setState({
-            currentInput: newIndex,
+            /*currentInput: newIndex,*/
             lastInput: current,
-            sessionState: newState,
+            sessionState: 2,
         })
     }
 
