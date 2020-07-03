@@ -174,7 +174,7 @@ export class IconLogo extends Component {
 
     render() {
         return (
-            <span {...this.props}><img draggable={false} alt="product logo" src="./icons/coboost.png" /></span>
+            <span><img {...this.props} draggable={false} alt="product logo" src="./icons/coboost.png" /></span>
         );
     }
 }
@@ -198,7 +198,7 @@ export class Ico_Text extends Component {
 
     render() {
         return (
-            <span {...this.props}><img draggable={false} alt="Multiple Choice" src="./icons/Group 222.svg" /></span>
+            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/Group 222.svg" /></span>
         );
     }
 }
@@ -210,7 +210,7 @@ export class Ico_MultipleChoice extends Component {
 
     render() {
         return (
-            <span {...this.props}><img draggable={false} alt="Multiple Choice" src="./icons/Group 220.svg" /></span>
+            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/Group 220.svg" /></span>
         );
     }
 }

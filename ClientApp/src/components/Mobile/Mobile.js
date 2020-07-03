@@ -316,8 +316,8 @@ const MultipleChoiceButton = styled(ToggleButton)`
 
     &.active {
         color: white !important;
-        background-color: #4C7AD3 !important;
-        border-color: #4C7AD3 !important;
+        background-color: #006BDD !important;
+        border-color: #006BDD !important;
 
         ${Tick} {
             display: inline;
@@ -325,11 +325,11 @@ const MultipleChoiceButton = styled(ToggleButton)`
             border-color: white;
 
             ${TickKick} {
-                background-color: #4C7AD3;
+                background-color: #006BDD;
             }
 
             ${TickStem} {
-                background-color: #4C7AD3;
+                background-color: #006BDD;
             }
         };
     };
