@@ -56,8 +56,6 @@ namespace Slagkraft.Models.Admin.Questions
         {
             Archive = new List<OpenText_Input>();
             Groups = new List<OpenText_Group>();
-
-            AddGroup("Unorganized", 0);
         }
 
         #endregion Public Constructors

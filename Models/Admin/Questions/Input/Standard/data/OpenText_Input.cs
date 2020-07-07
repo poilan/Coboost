@@ -10,11 +10,11 @@ namespace Slagkraft.Models.Admin.Questions
     /// </summary>
     public class OpenText_Input
     {
-        #region Private Fields
+        #region Protected Fields
 
         protected string title;
 
-        #endregion Private Fields
+        #endregion Protected Fields
 
         #region Public Properties
 

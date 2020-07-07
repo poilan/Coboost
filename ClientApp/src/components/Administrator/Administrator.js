@@ -18,8 +18,9 @@ const MainContainer = styled.div`
 
 const Banner = styled(Col)`
     position: fixed;
-    background: #4C7AD3;
+    background: #424355;
     height: 5vh;
+    min-height: 100px;
     top: 0;
     left: 0;
     z-index: 11;
@@ -27,7 +28,7 @@ const Banner = styled(Col)`
 
 const BannerArrow = styled.div`
     font-family: CircularStd;
-    font-Size: 3vh;
+    font-Size: 4em;
     color: #fff;
     padding: .5vh 0;
     margin-left: 1vw;
@@ -40,7 +41,7 @@ const BannerArrow = styled.div`
 
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 3vh;
+    font-Size: 2em;
     color: #fff;
     padding: 1vh 0;
     margin-left: 6vw;
@@ -109,65 +110,73 @@ const BannerButton = styled(DropdownButton)`
 
 const HeaderTabs = styled(Nav)`
     left: 5%;
-    position: absolute;
+    position: relative;
     height: 100%;
     top: 0;
+    margin: 0;
+    padding: 0;
     .nav-link {
         width: 200px;
+        position: relative;
         min-width: 15vw;
         max-width: 33vw;
         text-align: center;
-        top: 0;
-        height: 100%;
+        top:50%;
+        transform: translateY(-50%);
+        height: 50px;
         color: black;
-        padding: 0.75vh;
         font-family: CircularStd;
         font-weight: 600;
-        font-size: 2vh;
+        font-size: 1.25em;
+        margin: 0;
+        padding: 0;
+        padding-top: 15px;
 
         &:hover {
             border: 0;
             background: #4C7AD3;
-            padding-top: 1.25vh;
         }
 
         &.active {
             border: 0;
             opacity: 100%;
             color: black;
-            border-bottom: .4vh solid #4C7AD3;
+            border-bottom: 3px solid #4C7AD3;
             cursor: default;
             background: #FFF;
-            padding-top: 1.25vh;
         };
     };
 `;
 
 const ContentCard = styled(Card)`
     position: absolute;
-    top: 5vh;
+    top: calc(max(5vh, 100px));
     width: 100%;
     left: 0;
-    height: 95vh;
-    padding:0;
+    height: calc(100vh - 100px);
+    padding: 0;
     background: #e4e4e4;
-    min-height: calc(720px - 9vh);
+    max-height: 95vh;
 `;
 
 const ContentHeader = styled(Card.Header)`
     width: 100%;
     background: #fff;
     height: 4vh;
+    min-height: 50px;
     top: 0;
     position: absolute;
+    margin: 0;
+    padding: 0;
 `;
 
 const ContentBody = styled(Card.Body)`
     background: #E4E4E4;
     position: absolute;
-    top: 4vh;
+    top: max(4vh, 50px);
     width: 100%;
-    min-height: 89vh;
+    max-height: 89vh;
+    height: calc(100vh - 150px);
     padding: 0;
 `;
 
@@ -219,7 +228,7 @@ export class Administrator extends Component {
 
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
-                else if(this.state.tasks.length > 0)
+                else if (this.state.tasks.length > 0)
                     this.SSE.start(0);
             } else if (res.status === 404) {
                 //session not found
@@ -345,8 +354,6 @@ export class Administrator extends Component {
             this.SSE.source.addEventListener("open", (e) => {
                 console.log("SSE: connection opened");
             }, false);
-
-
         },
 
         close: () => {

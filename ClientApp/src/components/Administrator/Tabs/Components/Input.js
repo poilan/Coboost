@@ -1,8 +1,9 @@
-﻿import React from 'react';
+﻿import React, { Component } from 'react';
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
 import { PageModal } from '../../../Services/PageModal';
+import { Modal } from 'react-bootstrap';
 
 const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
@@ -79,50 +80,193 @@ const RowNumber = styled.h1`
     font-weight: 700;
 `;
 
-export function Input(props) {
-    const dragStart = e => {
+export class Input extends Component {
+    state = {
+        clickTimeout: null,
+    }
+
+    dragStart = e => {
         e.stopPropagation();
         let data = {
-            member: props.member,
-            group: props.group,
+            member: this.props.member,
+            group: this.props.group,
         };
         e.dataTransfer.setData('drag', JSON.stringify(data));
     }
 
-    const handleDouble = e => {
-        if (props.double !== undefined) {
-            props.double(e);
+    handleDouble = e => {
+        if (this.props.double !== undefined) {
+            this.props.double(e);
         }
     }
 
-    return (
-        <>
-            {props.member % props.size == 0 &&
-                <RowNumber id={props.id}>{(props.member / props.size) + 1}</RowNumber>}
-            <Container id={props.id} member={props.member} group={props.group} column={props.column}
-                size={props.size} vote={props.vote}
-                onDoubleClick={(e) => handleDouble(e)}
-                draggable={!props.showcase} onDragStart={dragStart}>
-                {!props.showcase &&
-                    <CheckboxContainer>
-                        <Checkbox id={props.id} type="checkbox"
-                            checked={props.checked}
-                            onChange={props.onCheck}
-                        />
-                    </CheckboxContainer>}
-                {props.title}
-            </Container>
-        </>
-    );
-}
-
-
-export class InputDetails extends React.Component {
-    state = {
-        answer: this.props.answer,
+    handleClicks = e => {
+        console.log(this.state.clickTimeout);
+        if (this.state.clickTimeout !== null) {
+            this.props.double(e);
+            clearTimeout(this.state.clickTimeout);
+            this.state.clickTimeout = null;
+        } else {
+            this.state.clickTimeout = setTimeout(() => {
+                this.props.onClick(this.props.id);
+                console.log(this.state.clickTimeout);
+                clearTimeout(this.state.clickTimeout);
+                this.state.clickTimeout = null;
+            }, 250)
+        }
     }
 
     render() {
-        return <PageModal title/>
+        return (
+            <>
+                {this.props.member % this.props.size == 0 &&
+                    <RowNumber id={this.props.id}>{(this.props.member / this.props.size) + 1}</RowNumber>}
+                <Container id={this.props.id} member={this.props.member} group={this.props.group} column={this.props.column}
+                    size={this.props.size} vote={this.props.vote}
+                    onClick={(e) => this.handleClicks(e)}
+                    draggable={!this.props.showcase} onDragStart={this.dragStart}>
+                    {!this.props.showcase &&
+                        <CheckboxContainer>
+                            <Checkbox id={this.props.id} type="checkbox"
+                                checked={this.props.checked}
+                                onChange={this.props.onCheck}
+                                onClick={(e) => { e.stopPropagation() }}
+                                onDoubleClick={(e) => { e.stopPropagation() }}
+                            />
+                        </CheckboxContainer>}
+                    {this.props.title}
+                </Container>
+            </>
+        );
+    }
+}
+
+const ModalPage = styled(Modal)`
+    border-radius: 20px;
+    font-family: CircularStd;
+
+    .modal-title {
+        font-size: 1rem;
+        opacity: 50%;
+    }
+
+    .modal-body {
+        min-width: 720px;
+    }
+`;
+
+const DetailsContainer = styled.div`
+    display: flex;
+    height: 100%;
+    flex-wrap: wrap;
+    min-height: 150px;
+`;
+
+const Title = styled.h1`
+    width: 100%;
+    position: relative;
+    text-align: left;
+    font-family: CircularStd;
+    font-weight: 600;
+    font-size: 1.25em;
+`;
+
+const User = styled.h1`
+    position: relative;
+    width: 100%;
+    font-size: 1.1em;
+    opacity: 80%;
+    justify-content: end;
+`;
+
+const Description = styled.p`
+    width: 100%;
+    font-size: 1em;
+    position: relative;
+`;
+
+const ShowChildren = styled.input`
+    color: #fff;
+    background: #4C7AD3;
+    position: relative;
+    display: inline-block;
+    font-family: CircularStd;
+    font-weight: 450;
+    text-align: center;
+    width: 100%;
+
+    &:hover {
+        opactiy: 75%;
+        cursor: pointer;
+    }
+`;
+
+const Children = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Child = styled(DetailsContainer)`
+    max-height: 200px;
+`;
+
+export class InputDetails extends React.Component {
+    state = {
+        showChildren: false,
+        answer: this.props.answer,
+        showing: true,
+    }
+
+    content() {
+        const children = this.props.answer.Children;
+
+        return (
+            <DetailsContainer>
+                {this.details(this.props.answer)}
+                {children != undefined && //If this is merged input add button to show them.
+                    <ShowChildren>
+                        {this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"}
+                    </ShowChildren>}
+
+                {this.state.showChildren &&
+                    <Children>{children.map(child =>
+                        <Child>{this.details(child)}</Child>)}
+                    </Children>}
+            </DetailsContainer>
+        );
+    }
+
+    details(answer) {
+        const title = answer.Title;
+        const description = answer.Description;
+        const user = answer.UserID;
+        return (
+            <>
+                <Title>{title}</Title>
+                <User>{user}</User>
+                {title != description && <Description>{description}</Description>}
+            </>
+        )
+    }
+
+    close() {
+        this.setState({
+            showChildren: false,
+            answer: undefined,
+            showing: false,
+        })
+
+        if (this.props.close !== undefined)
+            this.props.close();
+    }
+
+    render() {
+        return this.props.answer == undefined ? null :
+            <ModalPage show={this.state.showing} centered onHide={this.close.bind(this)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Answer Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{this.content()}</Modal.Body>
+            </ModalPage>
     }
 }

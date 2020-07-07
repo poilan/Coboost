@@ -435,6 +435,7 @@ namespace Slagkraft.Controllers
                 Session session = await Context.Sessions.FindAsync(code);
                 session.Questions = admin.SaveSession();
                 session.LastOpen = DateTime.Now.ToString();
+                Console.WriteLine(session.Questions);
 
                 Context.Sessions.Update(session);
                 await Context.SaveChangesAsync();

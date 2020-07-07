@@ -192,9 +192,9 @@ export class BigScreen extends Component {
         var sse = state.sse;
 
         sse.startEventSource((e) => {
-            sse.addListener("Question", (data) => {
+            sse.addListener("Question", (e) => {
                 try {
-                    var questionData = JSON.parse(data);
+                    var questionData = JSON.parse(e.data);
 
                     console.log(`Active index is: ${questionData.Index}`);
 
@@ -210,9 +210,9 @@ export class BigScreen extends Component {
                 }
             });
 
-            sse.addListener("Groups", (data) => {
+            sse.addListener("Groups", (e) => {
                 try {
-                    let groups = JSON.parse(data);
+                    let groups = JSON.parse(e.data);
                     let task = this.state.task;
                     task.Groups = groups;
                     this.setState({
@@ -223,9 +223,9 @@ export class BigScreen extends Component {
                 }
             });
 
-            sse.addListener("Options", (data) => {
+            sse.addListener("Options", (e) => {
                 try {
-                    let options = JSON.parse(data);
+                    let options = JSON.parse(e.data);
                     let task = this.state.task;
                     task.Options = options;
                     this.setState({
@@ -236,9 +236,9 @@ export class BigScreen extends Component {
                 }
             });
 
-            sse.addListener("Total", (data) => {
+            sse.addListener("Total", (e) => {
                 try {
-                    let totalVotes = JSON.parse(data);
+                    let totalVotes = JSON.parse(e.data);
                     let task = this.state.task
                     task.TotalVotes = totalVotes;
                     this.setState({

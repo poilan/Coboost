@@ -17,7 +17,7 @@ const MainContainer = styled(Col)`
 
 const Banner = styled(Col)`
     position: sticky;
-    background: #4C7AD3;
+    background: #424355;
     height: 75px;
     top: 0;
     left: 0;
@@ -322,7 +322,7 @@ export class Dashboard extends Component {
 
                 return (
                     <Form autoComplete="off" onSubmit={(e) => deleteSession(e)}>
-                        <ModalText>Are you sure you want to delete this session? <br/> This action can not be undone</ModalText>
+                        <ModalText>Are you sure you want to delete this session? <br /> This action can not be undone</ModalText>
                         <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
                         <CreateButton type="submit" value="Delete Session" />
                     </Form>
@@ -345,24 +345,12 @@ export class Dashboard extends Component {
             const a = new Date(Date.parse(A.lastOpen));
             const b = new Date(Date.parse(B.lastOpen));
 
-            let year = a.getFullYear() - b.getFullYear();
-
-            if (year === 0) {
-                let month = a.getMonth() - b.getMonth();
-
-                if (month === 0) {
-                    return -(a.getUTCDate() - b.getUTCDate());
-                }
-                else
-                    return -month;
-            }
-            else
-                return -year;
+            return b.getTime() - a.getTime();
         }
 
         let email = localStorage.getItem("user");
         await axios.get(`admin/sessions-${email}`).then((response) => {
-            let data = response.data.sort(compare);           
+            let data = response.data.sort(compare);
 
             this.setState({ sessions: data });
         });
@@ -438,7 +426,7 @@ export class Dashboard extends Component {
                     <Category id={session.identity} name={session.title} key={session.identity} index={session.identity} onClick={((e) => this.sessionClick(e.target))}>
                         <CategoryTitle id={session.identity} name={session.title} key={session.identity} index={session.identity}>{session.title}</CategoryTitle>
                         <CategoryIdentity id={session.identity} name={session.title} key={session.identity} index={session.identity}>#{session.identity}</CategoryIdentity>
-                        <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)}/>
+                        <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)} />
                         <CategoryTime id={session.identity} name={session.title} key={session.identity} index={session.identity}>{this.displayDate(session.lastOpen)}</CategoryTime>
                     </Category>)
             );
@@ -518,7 +506,7 @@ export class Dashboard extends Component {
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
-                    <CreateButton type="submit" value="Create Session"/>
+                    <CreateButton type="submit" value="Create Session" />
                 </Form>
             </ProjectModalContent>
         );

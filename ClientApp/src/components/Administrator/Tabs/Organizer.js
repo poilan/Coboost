@@ -4,7 +4,7 @@ import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Ta
 import styled from 'styled-components';
 import "circular-std";
 import { PageModal } from '../../Services/PageModal';
-import { Input } from './Components/Input';
+import { Input, InputDetails } from './Components/Input';
 import { Group } from './Components/Group';
 import { Column } from './Components/Column';
 import { ResultBackground, ResultItem } from './Components/Results';
@@ -38,7 +38,7 @@ const TitleBreadCrumb = styled.h2`
     position: fixed;
     text-align: center;
     z-index: 11;
-    top: 9.5vh;
+    top: max(9.5vh, 160px);
     left: 2.5vw;
 
     &:hover {
@@ -138,6 +138,11 @@ export class Organizer extends Component {
                 rename: false,
                 create: false,
                 remove: false,
+            },
+
+            details: {
+                open: false,
+                answer: null,
             },
 
             menu: {
@@ -291,6 +296,28 @@ export class Organizer extends Component {
                         this.props.update(true);
                     }
                 },
+            },
+
+            details: {
+                open: (id) => {
+                    let key = id.split("-");
+                    let answer = this.props.tasks[this.props.active].groups[key[0]].Members[key[1]];
+                    this.setState({
+                        details: {
+                            answer: answer,
+                            open: true,
+                        }
+                    })
+                },
+
+                close: () => {
+                    this.setState({
+                        details: {
+                            answer: null,
+                            open: false,
+                        }
+                    })
+                }
             }
         }
     }
@@ -380,6 +407,7 @@ export class Organizer extends Component {
             }
 
             const select = (event) => {
+                event.stopPropagation();
                 const key = event.target.id;
 
                 if (this.state.selected.indexOf(key) == -1) {
@@ -397,7 +425,6 @@ export class Organizer extends Component {
                         selected: selected,
                     })
                 }
-                console.log(this.state.selected);
             }
 
             const getOptions = () => {
@@ -534,6 +561,7 @@ export class Organizer extends Component {
                                                             double={this.modal.rename.open.bind(this)}
                                                             checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
                                                             onCheck={select.bind(this)}
+                                                            onClick={this.modal.details.open}
                                                         />
 
                                                     )}
@@ -555,6 +583,7 @@ export class Organizer extends Component {
                     {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
                     {this.state.modal.create && <CreateTaskModal type="1" options={getOptions()} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} />}
                 </MainContainer >
             );
         }

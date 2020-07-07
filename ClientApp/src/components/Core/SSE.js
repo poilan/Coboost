@@ -21,7 +21,7 @@
         this.log(`Registered an event listener on '${type}'`);
         this.eventSource.addEventListener(type, (e) => {
             this.log(`Got input from listener on '${type}'`);
-            callback(e.data);
+            callback(e);
         }, false);
     }
 
@@ -34,7 +34,7 @@
         this.open = true;
 
         this.addListener("error", (e) => {
-            if (e.eventPhase === EventSource.CLOSED) {
+            if (e.readyState === EventSource.CLOSED) {
                 this.log(`Error. connection has been closed (${e})`);
             }
         });

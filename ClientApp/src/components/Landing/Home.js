@@ -207,7 +207,7 @@ export class Home extends Component {
     }
 
     render() {
-        
+
         const state = this.state;
         const width = state.width;
         const mobile = width <= 500;
@@ -225,7 +225,7 @@ export class Home extends Component {
                 </LeftHalf>
 
                 <RightHalf mobile={mobile.toString()}>
-                    <RightTitle id="AdminText">Innonor2</RightTitle>
+                    <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
             </LandingContainer>
