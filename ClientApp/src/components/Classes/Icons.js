@@ -174,7 +174,7 @@ export class IconLogo extends Component {
 
     render() {
         return (
-            <span><img {...this.props} draggable={false} alt="product logo" src="./icons/coboost.png" /></span>
+            <span><img {...this.props} draggable={false} alt="product logo" src="./icons/Logo_Transparent.png" /></span>
         );
     }
 }
