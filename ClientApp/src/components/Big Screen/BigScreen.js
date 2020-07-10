@@ -378,7 +378,7 @@ export class BigScreen extends Component {
             <>
                 <MainContainer>
                     <Banner>
-                        <Logo style={{height: "100%"}}/>
+                        {/*<Logo style={{height: "100%"}}/>*/}
                         {this.state.task !== null && <Title><b>{this.state.task.Index + 1}. {this.state.task.Title}</b></Title>}
                     </Banner>
                     {this.handleRender()}
