@@ -9,15 +9,17 @@ import { ContextMenu } from './Components/ContextMenu';
 import { BigScreen } from '../../Big Screen/BigScreen';
 
 const SlideContainer = styled.div`
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    top: 2%;
+    transform: translateY(-1%);
     display: inline-block;
     position: absolute;
-    left: 26%;
-    width: 69%;
-    height: 76.5%;
-    max-width: calc(172vh - 225px);
+    left: max(27%, calc(400px + 2%));
+    width: 1980px;
+    max-width: calc(97% - max(400px, 25%));
+    height: 1080px;
+    max-height: 98%;
+    border: 1px solid #424355;
+    overflow: hidden;
 `;
 
 const SelectedSlide = styled.div`
@@ -32,7 +34,7 @@ const SlideTitle = styled.h1`
     position: absolute;
     width: 80%;
     font-family: CircularStd;
-    font-size: 2em;
+    font-size: 1em;
     text-align: center;
     top: 25%;
     left: 10%;
@@ -52,7 +54,7 @@ const AddOption = styled.div`
     opacity: 50%;
     width: 100%;
     font-family: CircularStd;
-    font-size: 0.8em;
+    font-size: 1em;
     font:weight: 700;
     padding: .2em .5em .17em .26em;
     box-sizing: border-box;
@@ -122,34 +124,6 @@ export class Tasks extends Component {
     }
 
     createTask = (event) => {
-        //const tasks = this.props.tasks;
-        //var count = tasks.length;
-
-        //var question = {
-        //    questionType: -1,
-        //    title: 'New Task',
-        //    index: count,
-        //};
-
-        //this.setState({
-        //    tasks: tasks.concat(question),
-        //    active: count,
-        //});
-        //const code = sessionStorage.getItem('code');
-        //var data = {
-        //    Title: "Discuss: Ramifications of Dr.K",
-        //}
-
-        //axios.post(`admin/${code}/questions-create-opentext`, data, {
-        //    headers: {
-        //        'Content-Type': 'application/json',
-        //    }
-        //}).then(res => {
-        //    if (res.status === 201) {
-        //        this.props.update();
-        //    }
-        //});;
-
         const clickX = event.clientX;
         const clickY = event.clientY;
         this.setState({
@@ -189,7 +163,7 @@ export class Tasks extends Component {
 
         var task = this.props.tasks[this.state.active];
 
-        if (task !== undefined && task.questionType === 0) {
+        if (task !== undefined && task.type === 0) {
             return (
                 <SelectedSlide>
                     <SlideTitle>{task.title}</SlideTitle>
@@ -201,7 +175,7 @@ export class Tasks extends Component {
                 </SelectedSlide>
             );
         }
-        else if (task !== undefined && task.questionType === 1) {
+        else if (task !== undefined && task.type === 1) {
             return (
                 <SelectedSlide>
                     <SlideTitle>{task.title}</SlideTitle>
@@ -261,7 +235,7 @@ export class Tasks extends Component {
             })
         }
 
-        const createVote = () => {
+        const createMultipleChoice = () => {
             this.setState({
                 modal: {
                     create: true,
@@ -275,9 +249,39 @@ export class Tasks extends Component {
             })
         }
 
+        const createPoints = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 2,
+                },
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
+        }
+
+        const createSlider = () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 3,
+                },
+                menu: {
+                    x: 0,
+                    y: 0,
+                    visible: false,
+                }
+            })
+        }
+
         const menu = [
-            { "label": "New Input", "callback": createInput },
-            { "label": "New Vote", "callback": createVote },
+            { "label": "Brainstorm: Text", "callback": createInput },
+            { "label": "Vote: Multiple Choice", "callback": createMultipleChoice },
+            { "label": "Vote: Points", "callback": createPoints },
+            { "label": "Vote: Slider", "callback": createSlider },
         ];
         return (
             <>
@@ -287,7 +291,7 @@ export class Tasks extends Component {
                     {this.props.tasks.map(task =>
                         <Task key={task.index} id={task.index} update={this.props.update}
                             onClick={this.taskClick.bind(this)} active={this.state.active == task.index}
-                            type={task.questionType} title={task.title}
+                            type={task.type} title={task.title}
                         />
                     )}
                 </Collection>

@@ -22,13 +22,14 @@ const MainContainer = styled(Col)`
 `;
 
 const Banner = styled(Col)`
-    position: sticky;
+    position: fixed;
     background: transparent;
-    min-height: 50px;
+    min-height: 100px;
     height: 10%;
     top: 0;
     left: 0;
     z-index: 10;
+    border-bottom: 1px dotted black;
 `;
 
 const BannerText = styled.h1`
@@ -93,7 +94,7 @@ const IconLoader = styled(Ico_Loading)`
 const Code = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    /*color: #4C7AD3;*/
+    color: #4C7AD3;
     color: rgb(53, 57, 67);
     font-weight: 600;
 `;
@@ -122,17 +123,17 @@ const BottomBanner = styled(Col)`
 const BottomBannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1.5rem;
-    color: black;
+    color: rgb(53, 57, 67);
     padding: 0 35px;
-    float: left;
+    float: right;
     top:50%;
     transform: translateY(-50%);
     position: relative;
 
     :not(:first-child) {
-        padding: 35px 5px;
+        padding: 0px 5px;
         /*color: #4C7AD3;*/
-        color: rgb(53, 57, 67);
+        color: black;
     }
 `;
 
@@ -234,6 +235,19 @@ export class BigScreen extends Component {
                 }
             });
 
+            sse.addListener("Votes", (e) => {
+                try {
+                    let votes = JSON.parse(e.data);
+                    let task = this.state.task;
+                    task.Votes = votes;
+                    this.setState({
+                        task: task,
+                    });
+                } catch (e) {
+                    sse.log("Failed to parse server event: Votes");
+                }
+            });
+
             sse.addListener("Total", (e) => {
                 try {
                     let totalVotes = JSON.parse(e.data);
@@ -283,13 +297,12 @@ export class BigScreen extends Component {
             <ContentContainer>
                 <Title><b>{title}</b></Title>
                 <WelcomeContainer>
-                    <IconLoader />
                 </WelcomeContainer>
                 {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
-                <BottomBannerText>Coboost</BottomBannerText>
                 <BottomBannerText>#{code}</BottomBannerText>
+                <BottomBannerText>Coboost</BottomBannerText>
             </BottomBanner>
         </>);
     }
@@ -300,14 +313,20 @@ export class BigScreen extends Component {
 
         if (canShow === true) {
             const question = state.task;
-            if (question.QuestionType === 0) {
+            if (question.Type === 0) {
                 return this.renderOpenTextResult();
                 //return <p>Open Text</p>;
             }
-            else if (question.QuestionType === 1) {
+            else if (question.Type === 1) {
                 //return <p>Multiple Choice</p>;
                 return this.renderMultipleChoiceResult();
-            }   
+            }
+            else if (question.Type === 2) {
+                return this.renderPoints();
+            }
+            else if (question.Type === 3) {
+                return this.renderSlider();
+            }
         }
     }
 
@@ -322,10 +341,10 @@ export class BigScreen extends Component {
                     </WelcomeContainer>
                     {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
-                <BottomBanner>
+                {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
                     <BottomBannerText>#{code}</BottomBannerText>
-                </BottomBanner>
+                </BottomBanner>*/}
             </>);
     }
 
@@ -358,6 +377,33 @@ export class BigScreen extends Component {
         );
     }
 
+    renderPoints() {
+        const task = this.state.task;
+        const total = task.Votes.length * task.Amount;
+
+        return (
+            <>
+                <ResultBackground style={{ width: "95%", height: "80%" }} />
+                {task.Options.map(option =>
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height={80} total={task.Options.length} showcase />
+                )}
+            </>
+        );
+    }
+
+    renderSlider() {
+        const task = this.state.task;
+
+        return (
+            <>
+                <ResultBackground style={{ width: "95%", height: "80%" }} />
+                {task.Options.map(option =>
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Average / task.Max) * 100)} height={80} total={task.Options.length} showcase />
+                )}
+            </>
+        );
+    }
+
     handleRender() {
         const title = this.state.title;
         const task = this.state.task;
@@ -378,8 +424,9 @@ export class BigScreen extends Component {
             <>
                 <MainContainer>
                     <Banner>
-                        <Logo style={{height: "100%"}}/>
-                        {this.state.task !== null && <Title><b>{this.state.task.Index + 1}. {this.state.task.Title}</b></Title>}
+                        <BottomBannerText>#{this.state.code}</BottomBannerText>
+                        <BottomBannerText>Coboost</BottomBannerText>
+                        {this.state.task !== null && <Title><b>{this.state.task.Title}</b></Title>}
                     </Banner>
                     {this.handleRender()}
                 </MainContainer>

@@ -792,7 +792,7 @@ export class Session extends Component {
             <>
                 <SlidesOverview>
                     {this.state.questions.map(question =>
-                        <SlideCategory key={question.index} id={question.index} onClick={this.taskClick.bind(this)} active={this.state.question == question.index} type={question.questionType}>{(question.index + 1) + '. ' + question.title} | {question.questionType == 1 ? "Vote: Multiple Choice" : question.questionType == 0 ? "Input: Standard" : "Creating Task"}</SlideCategory>)
+                        <SlideCategory key={question.index} id={question.index} onClick={this.taskClick.bind(this)} active={this.state.question == question.index} type={question.type}>{(question.index + 1) + '. ' + question.title} | {question.type == 1 ? "Vote: Multiple Choice" : question.type == 0 ? "Input: Standard" : "Creating Task"}</SlideCategory>)
                     }
                     <NewSlide onClick={this.createTask.bind(this)}>➕ Create new task</NewSlide>
                 </SlidesOverview>
@@ -810,7 +810,7 @@ export class Session extends Component {
                     {this.state.questions.map(question =>
                         <Task key={question.index} id={question.index}
                             onClick={this.taskClick.bind(this)} active={this.state.question == question.index}
-                            type={question.questionType} title={question.title}
+                            type={question.type} title={question.title}
                         />
                     )}
                 </Collection>
@@ -824,10 +824,10 @@ export class Session extends Component {
     tabOrganize() {
         if (this.state.organizing) {
             const question = this.state.questions[this.state.question];
-            if (question.questionType == 0) { //Open Text
+            if (question.type == 0) { //Open Text
                 return this.organizeOpenText(question);
             }
-            else if (question.questionType == 1) { //Multiple Choice
+            else if (question.type == 1) { //Multiple Choice
                 return this.organizeMultipleChoice(question);
             }
         } else { //Display all tasks
@@ -856,13 +856,13 @@ export class Session extends Component {
 
         var question = this.state.questions[this.state.question];
 
-        if (question !== undefined && question.questionType === -1) {
+        if (question !== undefined && question.type === -1) {
             return this.taskCreate();
         }
-        else if (question !== undefined && question.questionType === 0) {
+        else if (question !== undefined && question.type === 0) {
             return this.taskOpenText(question);
         }
-        else if (question !== undefined && question.questionType === 1) {
+        else if (question !== undefined && question.type === 1) {
             return this.taskMultipleChoice(question);
         }
         else {
@@ -894,7 +894,7 @@ export class Session extends Component {
             selected: [],
         });
 
-        if (this.state.questions[key].questionType !== -1) {
+        if (this.state.questions[key].type !== -1) {
             this.startEventSource(key);
         }
     }
@@ -1052,7 +1052,7 @@ export class Session extends Component {
         var count = questions.length;
 
         var question = {
-            questionType: -1,
+            type: -1,
             title: 'New Task',
             index: count,
         };

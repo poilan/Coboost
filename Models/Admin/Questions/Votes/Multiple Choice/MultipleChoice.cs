@@ -19,6 +19,11 @@ namespace Slagkraft.Models.Admin.Questions
         public List<MultipleChoice_Option> Archive { get; set; }
 
         /// <summary>
+        /// The maximum number of choices users can vote for.
+        /// </summary>
+        public int Max { get; set; }
+
+        /// <summary>
         /// The options you can pick from
         /// </summary>
         public List<MultipleChoice_Option> Options { get; set; }
@@ -60,7 +65,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <summary>
         /// Adds another option to the vote
         /// </summary>
-        /// <param name="input">A Open Text input, that it takes the data from</param>
+        /// <param name="input">A Open Text input, that is converted into a option</param>
         public void AddOption(OpenText_Input input)
         {
             lock (QuestionLock)

@@ -90,22 +90,7 @@ namespace Slagkraft.Models.Admin.Questions
         {
             lock (QuestionLock)
             {
-                if (Groups[0].Members.Count == 0 || Groups[0].Members.Count == Groups[0].Members.Last().Index + 1)
-                {
-                    input.Index = Groups[0].Members.Count;
-                    Groups[0].Members.Add(input);
-                }
-                else
-                {
-                    for (int i = 0; i < Groups[0].Members.Count; i++)
-                    {
-                        if (i == Groups[0].Members[i].Index)
-                        {
-                            input.Index = i;
-                            Groups[0].Members.Insert(i, input);
-                        }
-                    }
-                }
+                Groups[0].Members.Add(input);
             }
             EventStream();
         }

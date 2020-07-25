@@ -84,9 +84,11 @@ namespace Slagkraft.Controllers
 
                     if (admin.Active < admin.Tasks.Count && (question == null || question.Index != admin.Active))
                     {
-                        question = admin.Tasks[admin.Active].QuestionType switch
+                        question = admin.Tasks[admin.Active].Type switch
                         {
-                            BaseTask.Type.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
+                            BaseTask.TaskType.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
+                            BaseTask.TaskType.Points => admin.Tasks[admin.Active] as Points,
+                            BaseTask.TaskType.Rate => admin.Tasks[admin.Active] as Rate,
                             _ => admin.Tasks[admin.Active] as OpenText,
                         };
 
@@ -113,6 +115,30 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync("event:" + "Total\n");
                         string total = $"data: {JsonConvert.SerializeObject(choice.TotalVotes)}\n\n";
                         await Response.WriteAsync(total);
+                        await Response.Body.FlushAsync();
+                    }
+                    else if(question is Points point)
+                    {
+                        await Response.WriteAsync("event:" + "Options\n");
+                        string options = $"data: {JsonConvert.SerializeObject(point.Options)}\n\n";
+                        await Response.WriteAsync(options);
+                        await Response.Body.FlushAsync();
+
+                        await Response.WriteAsync("event:" + "Votes\n");
+                        string votes = $"data: {JsonConvert.SerializeObject(point.Votes)}\n\n";
+                        await Response.WriteAsync(votes);
+                        await Response.Body.FlushAsync();
+                    }
+                    else if(question is Rate slider)
+                    {
+                        await Response.WriteAsync("event:" + "Options\n");
+                        string options = $"data: {JsonConvert.SerializeObject(slider.Options)}\n\n";
+                        await Response.WriteAsync(options);
+                        await Response.Body.FlushAsync();
+
+                        await Response.WriteAsync("event:" + "Votes\n");
+                        string votes = $"data: {JsonConvert.SerializeObject(slider.Votes)}\n\n";
+                        await Response.WriteAsync(votes);
                         await Response.Body.FlushAsync();
                     }
 

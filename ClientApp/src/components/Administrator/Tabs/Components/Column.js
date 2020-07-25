@@ -33,11 +33,10 @@ const Grow = styled.div`
     color: #C4C4C4;
     display ${props => props.id == "new" ? "none" : props.available ? "inline-block" : "none"};
     text-align: right;
-   
 
     &:hover {
         cursor: pointer;
-        color: #545454; 
+        color: #545454;
     }
 `;
 
@@ -53,9 +52,9 @@ export function Column(props) {
         let code = sessionStorage.getItem("code");
 
         if (drag.member !== undefined) {
-            //Create new group
+            axios.post(`admin/${code}/question-create-group-C${props.column}`).then(setTimeout(() => { axios.post(`admin/${code}/group${drag.group}-member${drag.member}`) }, 200))
         }
-        else if(drag.column !== props.column){
+        else if (drag.column !== props.column) {
             let key = drag.group;
             let target = props.column;
 
@@ -78,7 +77,7 @@ export function Column(props) {
                 <Grow available={props.width < 4} onClick={() => props.grow(props.column)}>&#129082;</Grow>
             </WidthControl>
             <Container showcase={props.empty} empty={props.column == 0 && props.children[0][0] !== undefined && props.children[0][0].props.children.length < 1} column={props.column} width={props.width} onDrop={drop} onDragOver={dragOver}>
-            {props.children}
+                {props.children}
             </Container>
         </>
     );

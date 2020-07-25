@@ -82,13 +82,21 @@ namespace Slagkraft.Models.Admin
                     Choice.AddUserVote(Multi);
                 }
             }
+
+            if (clientInput is Points_Vote vote)
+            {
+                if (Tasks[Active] is Points points)
+                {
+                    points.
+                }
+            }
         }
 
         public void AddMultipleChoice(MultipleChoice question)
         {
             question.Index = Tasks.Count;
             question.Archive = new List<MultipleChoice_Option>();
-            question.QuestionType = BaseTask.Type.MultipleChoice;
+            question.Type = BaseTask.TaskType.MultipleChoice;
             Tasks.Add(question);
         }
 
@@ -98,8 +106,26 @@ namespace Slagkraft.Models.Admin
             question.Groups = new List<OpenText_Group>();
             question.AddGroup("Unorganized", 0);
             question.Archive = new List<OpenText_Input>();
-            question.QuestionType = BaseTask.Type.OpenText;
+            question.Type = BaseTask.TaskType.OpenText;
             Tasks.Add(question);
+        }
+
+        public void AddPoints(Points task)
+        {
+            task.Index = Tasks.Count;
+            task.Type = BaseTask.TaskType.Points;
+            task.Votes = new List<Points_Vote>();
+            task.Archive = new List<Points_Option>();
+            Tasks.Add(task);
+        }
+
+        public void AddRate(Rate task)
+        {
+            task.Index = Tasks.Count;
+            task.Type = BaseTask.TaskType.Rate;
+            task.Votes = new List<Rate_Vote>();
+            task.Archive = new List<Rate_Option>();
+            Tasks.Add(task);
         }
 
         public void DeleteTask(int index)
@@ -111,12 +137,12 @@ namespace Slagkraft.Models.Admin
 
         public BaseTask GetActiveQuestion()
         {
-            switch (Tasks[Active].QuestionType)
+            switch (Tasks[Active].Type)
             {
-                case BaseTask.Type.OpenText:
+                case BaseTask.TaskType.OpenText:
                     return Tasks[Active] as OpenText;
 
-                case BaseTask.Type.MultipleChoice:
+                case BaseTask.TaskType.MultipleChoice:
                     return Tasks[Active] as MultipleChoice;
 
                 default:
@@ -133,7 +159,7 @@ namespace Slagkraft.Models.Admin
             List<BaseTask> questions = JsonConvert.DeserializeObject<List<BaseTask>>(questionJson, settings);
             Tasks = questions;
 
-            foreach(BaseTask task in Tasks)
+            foreach (BaseTask task in Tasks)
             {
                 task.Reset = new ManualResetEvent(false);
             }

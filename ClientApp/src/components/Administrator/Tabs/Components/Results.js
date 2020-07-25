@@ -48,7 +48,7 @@ const Percentage = styled.div`
     background: #4C7AD3;
     color: #fff;
     overflow: hidden;
-    font-size: 2em;
+    font-size: 1.25em;
     text-align: center;
     font-weight: 600;
     position: absolute;

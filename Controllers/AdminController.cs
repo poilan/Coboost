@@ -193,6 +193,34 @@ namespace Slagkraft.Controllers
             }
         }
 
+        [HttpPost("{code}/questions-create-points")]
+        public void CreatePoints(int code, [FromBody]Points question)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.AddPoints(question));
+                HttpContext.Response.StatusCode = 201;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+            }
+        }
+
+        [HttpPost("{code}/questions-create-slider")]
+        public void CreateRate(int code, [FromBody]Rate question)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.AddRate(question));
+                HttpContext.Response.StatusCode = 201;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+            }
+        }
+
         [HttpPost("create")]
         public async Task CreateSession([FromBody]Session data)
         {
@@ -272,9 +300,9 @@ namespace Slagkraft.Controllers
 
                 admin.Active = index;
                 HttpContext.Response.StatusCode = 202;
-                return admin.Tasks[index].QuestionType switch
+                return admin.Tasks[index].Type switch
                 {
-                    BaseTask.Type.MultipleChoice => admin.Tasks[index] as MultipleChoice,
+                    BaseTask.TaskType.MultipleChoice => admin.Tasks[index] as MultipleChoice,
                     _ => admin.Tasks[index] as OpenText,
                 };
             }
@@ -315,6 +343,26 @@ namespace Slagkraft.Controllers
                 }
             }
             return userSessions;
+        }
+
+        [HttpPost("{code}/group{group}-member{member}")]
+        public void LastGroup(int code, int group, int member)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+                OpenText.Key key = new OpenText.Key
+                {
+                    Group = group,
+                    Member = member,
+                };
+                ThreadPool.QueueUserWorkItem(o => open.SwitchGroup(key, open.Groups.Count - 1));
+                HttpContext.Response.StatusCode = 202;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 404;
+            }
         }
 
         [HttpPost("load-{code}")]
@@ -453,12 +501,11 @@ namespace Slagkraft.Controllers
             {
                 Response.ContentType = "text/event-stream";
 
-                if(index >= admin.Tasks.Count)
+                if (index >= admin.Tasks.Count)
                 {
                     Response.StatusCode = 406;
                     return;
                 }
-                    
 
                 if (admin.Tasks[index] is OpenText)
                 {

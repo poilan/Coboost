@@ -45,22 +45,22 @@ const CreateButton = styled.input`
 const FieldText = styled.h2`
     opacity: 50%;
     font-family: CircularStd;
-    font-size: 0.5em;
+    font-size: 1em;
 `;
 
 const OptionContainer = styled.div`
     display: inline-block;
     padding: 0.3em;
-    width: 30%;
-    height: 15%;
+    width: 50%;
+    height: 1.5em;
     text-align: left;
 
 `;
 
 const Option = styled(Form.Control)`
     font-family: CircularStd;
-    font-size: 0.8em;
-    font:weight: 700;
+    font-size: 1em;
+    font-weight: 700;
     width: 100%;
     padding: .2em .5em .17em .26em;
     box-sizing: border-box;
@@ -89,8 +89,8 @@ const AddOption = styled.div`
     opacity: 50%;
     width: 100%;
     font-family: CircularStd;
-    font-size: 0.8em;
-    font:weight: 700;
+    font-size: 1em;
+    font-weight: 700;
     padding: .2em .5em .17em .26em;
     box-sizing: border-box;
     border: 1px solid #aaa;
@@ -113,6 +113,9 @@ export class CreateTaskModal extends Component {
         this.state = {
             type: props.type,
             title: props.title,
+            max: 1,
+            points: 1,
+
             options: props.options,
             showing: true,
             success: false,
@@ -134,9 +137,6 @@ export class CreateTaskModal extends Component {
             }).then(res => {
                 if (res.status === 201) {
                     this.setState({
-                        type: '',
-                        title: '',
-                        options: [],
                         success: true,
                     });
                     this.onClose();
@@ -155,7 +155,7 @@ export class CreateTaskModal extends Component {
 
         return (
             <Form onSubmit={createOpenText.bind(this)}>
-                <FieldText>Please</FieldText>
+                <FieldText>Task Title</FieldText>
                 <Form.Group controlId="validateTitle">
                     <InputGroup>
                         <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} autoFocus={true} value={this.state.title} required />
@@ -174,6 +174,15 @@ export class CreateTaskModal extends Component {
             title = this.refs.title.value;
             this.setState({
                 title: title,
+            });
+        }
+
+        const handleMax = (event) => {
+            event.preventDefault();
+            var max = this.state.title;
+            max = this.refs.max.value;
+            this.setState({
+                max: max,
             });
         }
 
@@ -242,6 +251,256 @@ export class CreateTaskModal extends Component {
                         <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
                     </InputGroup>
                 </Form.Group>
+                <Form.Group controlId="validateMax">
+                    <FieldText>Number of Choices</FieldText>
+                    <InputGroup>
+                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} placeholder="Maximum choices.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validateOptions">
+                    {this.state.options !== undefined && this.state.options.map(option =>
+                        <OptionContainer index={option.index}>
+                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
+                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                        </OptionContainer>
+                    )}
+                    <OptionContainer>
+                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
+                    </OptionContainer>
+                </Form.Group>
+                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
+                <CreateButton type="submit" value="Submit" />
+            </Form>
+        );
+    }
+
+    PointsContent() {
+        const handleTitle = (event) => {
+            event.preventDefault();
+            var title = this.state.title;
+            title = this.refs.title.value;
+            this.setState({
+                title: title,
+            });
+        }
+
+        const handleMax = (event) => {
+            event.preventDefault();
+            var max = this.state.max;
+            max = this.refs.max.value;
+            this.setState({
+                max: max,
+            });
+        }
+
+        const handlePoints = (event) => {
+            event.preventDefault();
+            var points = this.state.points;
+            points = this.refs.points.value;
+            this.setState({
+                points: points,
+            });
+        }
+
+        const handleOption = (event) => {
+            const key = event.target.name;
+            const value = event.target.value;
+
+            const options = this.state.options;
+            options[key].description = value;
+            this.setState({
+                options: options,
+            });
+        }
+
+        const addOption = () => {
+            var count = this.state.options !== undefined ? this.state.options.length : 0;
+            var user = localStorage.getItem("user");
+
+            var Option = {
+                userID: user,
+                index: count,
+                description: "",
+            }
+
+            var Options = this.state.options;
+            count > 0 ? Options.push(Option) : Options = [Option];
+            this.setState({
+                options: Options,
+            });
+        }
+
+        const createPoints = (event) => {
+            event.preventDefault();
+            let code = sessionStorage.getItem("code");
+
+            let data = {
+                Title: this.state.title,
+                Options: this.state.options,
+                Amount: parseInt(this.state.points),
+                Max: parseInt(this.state.max),
+            }
+
+            axios.post(`admin/${code}/questions-create-points`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(res => {
+                if (res.status === 201) {
+                    this.setState({
+                        type: '',
+                        title: '',
+                        options: [],
+                        success: true,
+                    });
+                    this.onClose();
+                }
+            })
+        }
+
+        let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
+        return (
+            <Form onSubmit={createPoints.bind(this)}>
+                <FieldText>Task Title</FieldText>
+                <Form.Group controlId="validateTitle">
+                    <InputGroup>
+                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validatePoints">
+                    <FieldText>Number of Points</FieldText>
+                    <InputGroup>
+                        <Form.Control type="number" name="points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} placeholder="Total Points.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validateMax">
+                    <FieldText>Maximum points allowed per option</FieldText>
+                    <InputGroup>
+                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="Max per option.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validateOptions">
+                    {this.state.options !== undefined && this.state.options.map(option =>
+                        <OptionContainer index={option.index}>
+                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
+                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                        </OptionContainer>
+                    )}
+                    <OptionContainer>
+                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
+                    </OptionContainer>
+                </Form.Group>
+                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
+                <CreateButton type="submit" value="Submit" />
+            </Form>
+        );
+    }
+
+    SliderContent() {
+        const handleTitle = (event) => {
+            event.preventDefault();
+            var title = this.state.title;
+            title = this.refs.title.value;
+            this.setState({
+                title: title,
+            });
+        }
+
+        const handleMax = (event) => {
+            event.preventDefault();
+            var max = this.state.max;
+            max = this.refs.max.value;
+            this.setState({
+                max: max,
+            });
+        }
+
+        const handleMin = (event) => {
+            event.preventDefault();
+            var min = this.state.points;
+            min = this.refs.min.value;
+            this.setState({
+                points: min,
+            });
+        }
+
+        const handleOption = (event) => {
+            const key = event.target.name;
+            const value = event.target.value;
+
+            const options = this.state.options;
+            options[key].description = value;
+            this.setState({
+                options: options,
+            });
+        }
+
+        const addOption = () => {
+            var count = this.state.options !== undefined ? this.state.options.length : 0;
+            var user = localStorage.getItem("user");
+
+            var option = {
+                userID: user,
+                index: count,
+                description: "",
+            }
+
+            var options = this.state.options;
+            count > 0 ? options.push(option) : options = [option];
+            this.setState({
+                options: options,
+            });
+        }
+
+        const createSlider = (event) => {
+            event.preventDefault();
+            let code = sessionStorage.getItem("code");
+
+            let data = {
+                Title: this.state.title,
+                Options: this.state.options,
+                Min: parseInt(this.state.points),
+                Max: parseInt(this.state.max),
+            }
+
+            axios.post(`admin/${code}/questions-create-slider`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(res => {
+                if (res.status === 201) {
+                    this.setState({
+                        type: '',
+                        title: '',
+                        options: [],
+                        success: true,
+                    });
+                    this.onClose();
+                }
+            })
+        }
+
+        let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
+        return (
+            <Form onSubmit={createSlider.bind(this)}>
+                <FieldText>Task Title</FieldText>
+                <Form.Group controlId="validateTitle">
+                    <InputGroup>
+                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validateMin">
+                    <FieldText>Minimum Value</FieldText>
+                    <InputGroup>
+                        <Form.Control type="number" name="min" ref="min" onChange={handleMin.bind(this)} value={this.state.points} placeholder="Minimum Value.." required />
+                    </InputGroup>
+                </Form.Group>
+                <Form.Group controlId="validateMax">
+                    <FieldText>Max Value</FieldText>
+                    <InputGroup>
+                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="Maximum Value.." required />
+                    </InputGroup>
+                </Form.Group>
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
                         <OptionContainer index={option.index}>
@@ -268,20 +527,18 @@ export class CreateTaskModal extends Component {
             options: [],
             showing: false,
             success: false,
+            max: 1,
+            points: 1,
         });
     }
-
-    //render() {
-    //    return <PageModal title={"Create new task: " + this.props.type == 0 ? "Text" : "Multiple Choice"} body={this.props.type == 0 ? this.TextContent() : this.MultipleChoiceContent()} onClose={this.props.onClose} />
-    //}
 
     render() {
         return (
             <ModalPage show={this.state.showing} centered onHide={this.onClose.bind(this)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{"Create new task: " + this.props.type == 0 ? "Text" : "Multiple Choice"}</Modal.Title>
+                    <Modal.Title>{"Create new task: " + this.props.type == 0 ? "Brainstorm: Text" : this.props.type == 1 ? "Vote: Multiple Choice" : this.props.type == 2 ? "Vote: Points" : "Vote: Slider"}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.MultipleChoiceContent()}</Modal.Body>
+                <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.props.type == 1 ? this.MultipleChoiceContent() : this.props.type == 2 ? this.PointsContent() : this.SliderContent()}</Modal.Body>
             </ModalPage>
         )
     }

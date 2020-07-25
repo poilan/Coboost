@@ -9,7 +9,7 @@ const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
         width: calc((${props => props.size <= "2" ? (props.size == "2" ? "(100% - 20px) / 2" : "100% - 20px") : (props.size == "4" ? "(100% - 20px) / 4" : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
-        font-size: ${props => props.vote ? "2em" : "1em"};
+        font-size: 1em;
         font-weight: 600;
         margin: 1%;
         box-sizing: border-box;
@@ -146,7 +146,7 @@ const ModalPage = styled(Modal)`
     font-family: CircularStd;
 
     .modal-title {
-        font-size: 1rem;
+        font-size: 1em;
         opacity: 50%;
     }
 
@@ -168,13 +168,13 @@ const Title = styled.h1`
     text-align: left;
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1.25em;
+    font-size: 1em;
 `;
 
 const User = styled.h1`
     position: relative;
     width: 100%;
-    font-size: 1.1em;
+    font-size: 1em;
     opacity: 80%;
     justify-content: end;
 `;

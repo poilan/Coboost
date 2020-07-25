@@ -6,13 +6,14 @@ import "circular-std";
 
 const MenuContainer = styled.div`
     border: solid 1px #ccc;
+    border-radius: 10px;
     display: inline-block;
     margin: 5px;
-    background: #FFF;
+    background: #DDD;
     color: #000;
     font-family: CircularStd;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 1em;
     position: fixed;
     top: ${props => props.top}px;
     left: ${props => props.left}px;
@@ -20,7 +21,7 @@ const MenuContainer = styled.div`
 `;
 
 const ContextItem = styled.div`
-    border-bottom: ${props => props.last ? "" : "dotted 1px #ccc"};
+    border-bottom: ${props => props.last ? "" : "solid 1px #999"};
     padding: 5px 25px;
 `;
 

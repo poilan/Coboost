@@ -70,7 +70,7 @@ namespace Slagkraft.Controllers
         [HttpPost("login")]
         public async Task Login([FromBody]User user)
         {
-            User foundUser = await Context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
+            User foundUser = await Context.Users.FindAsync(user.Email);
             if (foundUser != null)
             {
                 if (PasswordHasher.Verify(user.Password, foundUser.Password))

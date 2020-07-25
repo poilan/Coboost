@@ -59,6 +59,32 @@ namespace Slagkraft.Controllers
             }
         }
 
+        [HttpPost("{code}/add-points")]
+        public void AddPoints(int code, [FromBody]Points_Vote vote)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(vote));
+            }
+            else
+            {
+                //Session not found
+            }
+        }
+
+        [HttpPost("{code}/add-slider")]
+        public void AddSlider(int code, [FromBody]Rate_Vote vote)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(vote));
+            }
+            else
+            {
+                //Session not found
+            }
+        }
+
         [HttpGet("{code}")]
         public bool CheckSession(int code)
         {
@@ -87,9 +113,11 @@ namespace Slagkraft.Controllers
 
                     if (admin.Active < admin.Tasks.Count)
                     {
-                        question = admin.Tasks[admin.Active].QuestionType switch
+                        question = admin.Tasks[admin.Active].Type switch
                         {
-                            BaseTask.Type.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
+                            BaseTask.TaskType.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
+                            BaseTask.TaskType.Points => admin.Tasks[admin.Active] as Points,
+                            BaseTask.TaskType.Rate => admin.Tasks[admin.Active] as Rate,
                             _ => admin.Tasks[admin.Active] as OpenText,
                         };
                     }

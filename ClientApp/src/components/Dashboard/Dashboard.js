@@ -517,7 +517,7 @@ export class Dashboard extends Component {
             <>
                 <MainContainer>
                     <Banner>
-                        <BannerText>Slagkraft</BannerText>
+                        <BannerText>Coboost</BannerText>
                         <BannerDropButton title="User">
                             <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
                         </BannerDropButton>

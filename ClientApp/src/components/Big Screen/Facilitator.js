@@ -294,8 +294,8 @@ export class Facilitator extends React.Component {
                 </FacilitatorContainer>
                 <SlideContainer show={this.state.showTasks}>
                     {this.state.questions.map(question => <Slide id={question.index} isActive={question.index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>
-                        {question.questionType === 0 && <IconText id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        {question.questionType === 1 && <IconMP id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        {question.type === 0 && <IconText id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        {question.type === 1 && <IconMP id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
                         <SlideText>{question.index + 1}</SlideText>
                     </Slide>)}
                 </SlideContainer>

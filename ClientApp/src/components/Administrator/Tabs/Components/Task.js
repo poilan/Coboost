@@ -8,16 +8,16 @@ import { Nav, Form } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 
 const CollectionContainer = styled.div`
-    width: 20%;
+    width: 25%;
+    min-width: 400px;
     background: #fff;
-    height: 95%;
-    top: 2.5%;
+    height: 98%;
+    top: 1%;
     border-radius: 10px;
     display: inline-block;
     position: absolute;
     overflow: auto;
-    left: 2.5%;
-
+    left: 1%;
     scrollbar-width: thin;
     scrollbar-color: #4C7AD3 #fff;
 `;
@@ -25,7 +25,7 @@ const CollectionContainer = styled.div`
 const CreateTask = styled.div`
     color: #100e0e;
     position: relative;
-    font-size: 1.5em;
+    font-size: 1em;
     font-family: CircularStd;
     font-weight: 600;
     padding: 10px;
@@ -67,14 +67,14 @@ const TaskContainer = styled.div`
     border-bottom: 2px solid #BABABA;
     color: #100e0e;
     position: relative;
-    font-size: 1.25em;
+    font-size: 1em;
     font-family: CircularStd;
     display:flex;
     font-weight: 500;
     padding: 10px;
     height: 100px;
     overflow: hidden;
-    background: ${props => props.active ? "#f4f4f4" : "#fff"};
+    background: ${props => props.active ? "#c8ddfe" : "#fff"};
 
     &:hover {
         cursor: pointer;

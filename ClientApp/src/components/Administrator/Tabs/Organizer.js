@@ -23,7 +23,6 @@ const MainContainer = styled.div`
     background: #E4E4E4;
     top: 0;
     left 0;
-    margin-top: 25px;
 
     scrollbar-width: thin;
     scrollbar-color: #4C7AD3 #fff;
@@ -32,13 +31,13 @@ const MainContainer = styled.div`
 const TitleBreadCrumb = styled.h2`
     font-family: CircularStd;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 1.25em;
     margin: 1% 0;
     height: 35px;
     position: fixed;
     text-align: center;
     z-index: 11;
-    top: max(9.5vh, 160px);
+    top: max(7.5%, 105px);
     left: 2.5vw;
 
     &:hover {
@@ -50,14 +49,14 @@ const TitleBreadCrumb = styled.h2`
 const ItemTask = styled.div`
     width: 100%;
     background: #fff;
-    padding: 1.5% 2.5%;
-    margin-bottom: 1%;
+    padding: 25px;
+    margin-bottom: 20px;
     border-radius: 10px;
     position: relative;
     font-family: CircularStd;
     font-weight: 420;
     border: 1px solid black;
-    opacity: 90%;
+    opacity: 85%;
 
     &:hover {
         cursor:pointer;
@@ -76,18 +75,18 @@ const AnswerButton = styled(Nav.Link)`
     border-radius: 100px;
     font-weight: 450;
     text-align: center;
-    width: 200px;
+    width: 250px;
 `;
 
 const SendToMC = styled(AnswerButton)`
-    right: calc(6% + 200px);
+    right: calc(6% + 250px);
 `;
 
 const SendToT = styled(SendToMC)`
 `;
 
 const MergeButton = styled(AnswerButton)`
-    right: calc(7% + 400px);
+    right: calc(7% + 500px);
 `;
 
 const CancelButton = styled(Nav.Link)`
@@ -121,7 +120,7 @@ const CreateButton = styled.input`
 const NewOptionNumber = styled.h2`
     opacity: 50%;
     font-family: CircularStd;
-    font-size: 0.5em;
+    font-size: 1em;
 `;
 
 export class Organizer extends Component {
@@ -359,12 +358,13 @@ export class Organizer extends Component {
 
     loadTask = (event) => {
         let key = event.target.id;
+        let code = sessionStorage.getItem("code");
 
         this.setState({
             overview: false,
             selected: [],
         });
-
+        axios.post(`admin/${code}/active-${key}`);
         this.props.SSE(key);
     }
 
@@ -633,9 +633,9 @@ export class Organizer extends Component {
         } else {
             let task = this.props.tasks[this.props.active];
 
-            if (task.questionType == 0) {
+            if (task.Type == 0) {
                 return text(task);
-            } else if (task.questionType == 1) {
+            } else if (task.Type == 1) {
                 return multipleChoice(task);
             }
         }

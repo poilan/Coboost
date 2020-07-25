@@ -6,6 +6,10 @@ import styled from 'styled-components';
 import "circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
 import SSE from "../Core/SSE";
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+import Rating from '@material-ui/lab/Rating';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -370,17 +374,17 @@ export class Mobile extends Component {
 
         axios.get(`admin/${code}/questions-all`).then(res => {
             if (res.status === 202) {
-                var qData = res.data;
+                var data = res.data;
 
-                var inputs = this.state.inputs;
-                qData.forEach((q, index) => {
-
-                    var question = {
-                        type: q.questionType,
-                        title: q.title
+                var inputs = [];
+                data.forEach((q) => {
+                    var task = {
+                        Type: q.type,
+                        Title: q.title,
+                        Index: q.Index,
                     };
 
-                    inputs[index] = question;
+                    inputs[q.Index] = task;
                 });
 
                 this.setState({
@@ -398,29 +402,31 @@ export class Mobile extends Component {
         })
 
         sse.startEventSource((e) => {
-            sse.addListener("question", (data) => {
+            sse.addListener("question", (e) => {
                 try {
-                    var qData = JSON.parse(data); // Question data
+                    var data = JSON.parse(e.data); // Question data
 
-                    var index = parseInt(qData.Index);
+                    var index = parseInt(data.Index);
 
-                    var question = {
-                        type: qData.QuestionType,
-                        title: qData.Title
+                    //if (data.Type === 1) { // Multiple Choice
+                    //    var choices = [];
+
+                    //    data.Options.forEach(choice => {
+                    //        choices.push(choice.Title);
+                    //    });
+
+                    //    data.choices = choices;
+                    //}
+
+                    if (data.Type === 2) {
+
                     }
+                    else if (data.Type === 3) {
 
-                    if (question.type === 1) { // Multiple Choice
-                        var choices = [];
-
-                        qData.Options.forEach(choice => {
-                            choices.push(choice.Title);
-                        });
-
-                        question.choices = choices;
                     }
 
                     var inputs = this.state.inputs;
-                    inputs[index] = question;
+                    inputs[index] = data;
 
                     this.setState({
                         inputs: inputs,
@@ -428,15 +434,9 @@ export class Mobile extends Component {
 
                     this.parseAnswers();
 
-                    var currentState = this.state.sessionState;
-                    if (currentState === 0 || currentState === 2) { // Either in the start phase or waiting phase
-                        this.setState({
-                            sessionState: 1
-                        });
-                    }
-
                     this.setState({
-                        currentInput: index
+                        currentInput: index,
+                        sessionState: 1
                     });
                 } catch (e) {
                     sse.log("Failed to parse server event");
@@ -453,16 +453,33 @@ export class Mobile extends Component {
     parseAnswers() {
         var answers = this.state.answers;
 
-        const questions = this.getInputQuestions();
+        const questions = this.getTasks();
         questions.forEach((question, index) => {
             var answer = {
                 index: index,
-                value: (question.type === 0 ? "" : []),
+                value: question.Type === 0 ? "" : []
             };
 
-            if (!answers[index]) {
-                answers.push(answer);
+
+            if (question.Type === 2) {
+                let values = [];
+
+                for (let i = 0; i < question.Options.length; i++) {
+                    values.push(1);
+                }
+                answer.value = values;
             }
+            else if (question.Type === 3) {
+                let values = [];
+
+                for (let i = 0; i < question.Options.length; i++) {
+                    values.push(question.Min);
+                }
+                answer.value = values;
+            }
+
+            answers.push(answer);
+
         });
 
         this.setState({
@@ -470,17 +487,17 @@ export class Mobile extends Component {
         });
     }
 
-    getInputQuestions() {
+    getTasks() {
         return this.state.inputs;
     }
 
-    getInputIndex() {
+    getTaskIndex() {
         return this.state.currentInput;
     }
 
-    getInputAnswer() {
-        const index = this.getInputIndex();
-        const type = this.getInputType();
+    getTaskAnswers() {
+        const index = this.getTaskIndex();
+        const type = this.getTaskType();
         const answerData = this.state.answers[index];
 
         if (answerData !== undefined) {
@@ -495,9 +512,9 @@ export class Mobile extends Component {
         }
     }
 
-    setInputAnswer(answer) {
+    setTaskAnswers(answer) {
         const state = this.state;
-        const index = this.getInputIndex();
+        const index = this.getTaskIndex();
         const answers = state.answers;
         answers[index].value = answer;
 
@@ -506,26 +523,30 @@ export class Mobile extends Component {
         })
     }
 
-    getCurrentInput() {
-        const inputs = this.getInputQuestions()
-        return inputs[this.getInputIndex()];
+    getCurrentTask() {
+        const inputs = this.getTasks()
+        return inputs[this.getTaskIndex()];
     }
 
-    getLastInput() {
-        const inputs = this.getInputQuestions();
+    getLastTask() {
+        const inputs = this.getTasks();
         return inputs[this.state.lastInput];
     }
 
-    getInputType() {
-        return this.getCurrentInput().type;
+    getTaskType() {
+        return this.getCurrentTask().Type;
     }
 
-    getInputTitle() {
-        return this.getCurrentInput().title;
+    getTaskTitle() {
+        return this.getCurrentTask().Title;
     }
 
-    getInputChoices() {
-        return this.getCurrentInput().choices;
+    getTaskOptions() {
+        return this.getCurrentTask().Options;
+    }
+
+    getOptionMax() {
+        return this.getCurrentTask().Max;
     }
 
     headerClick(target) {
@@ -548,8 +569,8 @@ export class Mobile extends Component {
     }
 
     finishedRender() {
-        const lastInput = this.getLastInput();
-        const lastType = lastInput.type;
+        const lastInput = this.getLastTask();
+        const lastType = lastInput.Type;
 
         var word = "Open Text";
 
@@ -566,8 +587,8 @@ export class Mobile extends Component {
             <ContentContainer>
                 <ContentTitle blue>{word} sent!</ContentTitle>
                 <IconDone />
-                <ContentBody boxed>Take it easy while waiting for the next task, change your last input or look at previous tasks.</ContentBody>
-                <ContentButton onClick={this.inputsEdit}>Edit Last {word} Task</ContentButton>
+                <ContentBody boxed>Take it easy while waiting for the next task, you can send another input if you so choose.</ContentBody>
+                <ContentButton onClick={this.inputsEdit}>New Answer</ContentButton>
             </ContentContainer>
         );
     }
@@ -576,48 +597,97 @@ export class Mobile extends Component {
         const target = e.target;
         const value = target.value;
 
-        const index = this.getInputIndex();
-        this.setInputAnswer(value);
+        const index = this.getTaskIndex();
+        this.setTaskAnswers(value);
     }
 
     questionRender() {
         return (
             <ContentContainer>
-                <ContentQuestion>{this.getInputTitle()}</ContentQuestion>
-                <ContentInput value={this.getInputAnswer()} name={`q-${this.getInputIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
+                <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
+                <ContentInput value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
                 <ContentButton onClick={this.inputsClick}>Send Input</ContentButton>
             </ContentContainer>
         );
     }
 
     choicePick(picked) {
-        const index = this.getInputIndex();
-        const options = this.getInputChoices();
+        const index = this.getTaskIndex();
+        const options = this.getTaskOptions();
+        const max = this.getOptionMax();
+
+        if (picked.length >= this.getTaskAnswers().length && picked.length >= max) {
+            return;
+        }
 
         var chosen = [];
 
         picked.forEach(pick => {
             var pickData = pick.split("-");
             var choiceIndex = parseInt(pickData[0]);
-            var id = parseInt(pickData[1]);
 
             if (choiceIndex === index) {
-                var name = options[id];
-                //chosen.push({name: name, index: id})
                 chosen.push(pick);
+
+                if (chosen.length >= max) {
+                    this.setTaskAnswers(chosen);
+                    return;
+                }
             }
         })
 
-        this.setInputAnswer(chosen);
+        this.setTaskAnswers(chosen);
+    }
+
+    pointsChange(index, value) {
+        const answers = this.getTaskAnswers();
+        let spent = 0;
+        let tasks = this.getTasks();
+        const change = value - answers[index];
+
+        if (tasks[this.getTaskIndex()].Amount <= tasks[this.getTaskIndex()].Spent + change) {
+            let maximum = tasks[this.getTaskIndex()].Amount - tasks[this.getTaskIndex()].Spent;
+
+            if (maximum < 1)
+                return;
+            else
+                value = maximum;
+
+        }
+        for (let i = 0; i < this.getTaskOptions().length; i++) {
+            if (answers[i] == undefined)
+                answers[i] = 1;
+
+            if (index == i) {
+                answers[i] = value;
+            }
+
+            if (answers[i] > 1) {
+                spent += answers[i] - 1;
+            }
+        }
+
+        tasks[this.getTaskIndex()].Spent = spent;
+        this.setstate({
+            input: tasks
+        });
+
+        this.setTaskAnswers(answers);
+    }
+
+    sliderChange(index, value) {
+        const answers = this.getTaskAnswers();
+        answers[index] = value;
+        this.setTaskAnswers(answers);
     }
 
     inputsClick() {
         const state = this.state;
-        const questions = this.getInputQuestions().length;
-        const current = this.getInputIndex();
+        const questions = this.getTasks().length;
+        const current = this.getTaskIndex();
 
-        const type = this.getInputType();
-        const answer = this.getInputAnswer();
+        const type = this.getTaskType();
+        const answer = this.getTaskAnswers();
 
         // Send the input
         const code = sessionStorage.getItem("code");
@@ -632,8 +702,7 @@ export class Mobile extends Component {
 
         // Send
         if (type === 0) { // Open Text
-            //data.title = answer // Title just uses description if it isn't set
-            data.Description = answer
+            data.Description = answer;
 
             axios.post(`client/${code}/add-opentext`, data);
         }
@@ -641,20 +710,24 @@ export class Mobile extends Component {
             answer.forEach(option => {
                 var optionData = option.split("-");
                 var index = parseInt(optionData[1]);
-                data.Option = index
+                data.Option = index;
 
                 axios.post(`client/${code}/add-multiplechoice`, data);
             })
         }
-
-        switch(type) {
-            case 0:
-                this.setInputAnswer("");
-                break;
-            case 1:
-                this.setInputAnswer([]);
-                break;
+        else if (type === 2) { // Points
+            for (let i = 0; i < answer.length; i++) {
+                answer[i] -= 1;
+            }
+            data.Points = answer;
+            axios.post(`client/${code}/add-points`, data);
         }
+        else if (type === 3) { // Slider
+            data.Ratings = answer;
+            axios.post(`client/${code}/add-slider`, data);
+        }
+
+        this.parseAnswers();
 
         this.setState({
             lastInput: current,
@@ -679,18 +752,63 @@ export class Mobile extends Component {
     choiceRender() {
         return (
             <ContentContainer>
-                <ContentQuestion>{this.getInputTitle()}</ContentQuestion>
-                <MultipleChoiceGroup onChange={this.choicePick} toggle type="checkbox" name={`group-${this.getInputIndex()}`} vertical value={this.getInputAnswer()}>
-                    {this.getInputChoices().map((choice, index) =>
-                        <MultipleChoiceButton key={index} value={`${this.getInputIndex()}-${index}`} name={`${this.getInputIndex()}-${choice}-${index}`} size="lg">
+                <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
+                <MultipleChoiceGroup onChange={this.choicePick} toggle type="checkbox" name={`group-${this.getTaskIndex()}`} vertical value={this.getTaskAnswers()}>
+                    {this.getTaskOptions().map((choice) =>
+                        <MultipleChoiceButton key={choice.Index} value={`${this.getTaskIndex()}-${choice.Index}`} name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`} size="lg">
                             <Tick>
                                 <TickStem />
                                 <TickKick />
                             </Tick>
-                            {choice}
+                            {choice.Title}
                         </MultipleChoiceButton>)}
                 </MultipleChoiceGroup>
 
+                <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
+            </ContentContainer>
+        );
+    }
+
+    pointsRender() {
+        let task = this.getCurrentTask();
+        let answers = this.getTaskAnswers();
+        return (
+            <ContentContainer>
+                <ContentQuestion>{task.Title}</ContentQuestion>
+                <Box component="fieldset" mb={3} borderColor="transparent">
+                    <Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
+                    {task.Options.map((point) =>
+                        <Box component="fieldset" mb={3} borderColor="transparent">
+                            {answers[point.Index] == undefined ? answers[point.Index] = 1 : null}
+                            <Typography component="legend">{point.Title}</Typography>
+                            <Rating name={point.Title} value={answers[point.Index]} max={point.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />                            
+                        </Box>
+                    )}
+                </Box>
+                <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
+            </ContentContainer>
+        );
+    }
+
+    sliderRender() {
+        let task = this.getCurrentTask();
+        let answers = this.getTaskAnswers();
+
+        return (
+            <ContentContainer>
+                <ContentQuestion>{task.Title}</ContentQuestion>
+                <Box component="fieldset" mb={3} pt={1} px={10} borderColor="transparent">
+                    {task.Options.map((slider) =>
+                        <Box component="fieldset" mb={3} px={10} borderColor="transparent">
+                            {answers[slider.Index] == undefined ? answers[slider.Index] = slider.min : null}
+                            <Typography component="legend">{slider.Title}</Typography>
+                            <Slider name={slider.Title} value={answers[slider.Index]}
+                                step={1} marks min={task.Min} max={task.Max}
+                                aria-labledby="discrete-slider" valueLabelDisplay="auto"
+                                onChange={(e, value) => this.sliderChange(slider.Index, value)} />
+                        </Box>
+                    )}
+                </Box>
                 <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
             </ContentContainer>
         );
@@ -703,18 +821,22 @@ export class Mobile extends Component {
             case 0: // Start Screen
                 return this.welcomeRender();
             case 1: // Answer Screen
-                if (this.getCurrentInput() !== undefined) {
-                    const type = this.getInputType();
-                    const answer = this.getInputAnswer();
+                if (this.getCurrentTask() !== undefined) {
+                    const type = this.getTaskType();
+                    const answer = this.getTaskAnswers();
 
                     if (answer !== 0) {
                         if (type === 0)
                             return this.questionRender()
                         else if (type === 1)
                             return this.choiceRender()
+                        else if (type === 2)
+                            return this.pointsRender()
+                        else if (type === 3)
+                            return this.sliderRender()
                     }
                 } else {
-                    if (this.getInputIndex() > 0)
+                    if (this.getTaskIndex() > 0)
                         return this.finishedRender()
                     else
                         return this.welcomeRender()
@@ -764,7 +886,7 @@ export class Mobile extends Component {
                         </BannerButton>}
                     </Banner>
                     <Header>
-                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentInput() !== undefined ? this.tabTitle(this.getInputType()) : "Waiting"}</HeaderText>
+                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
                     </Header>
                     {this.renderPage()}

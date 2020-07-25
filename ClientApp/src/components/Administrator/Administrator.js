@@ -19,60 +19,49 @@ const MainContainer = styled.div`
 const Banner = styled(Col)`
     position: fixed;
     background: #424355;
-    height: 5vh;
-    min-height: 100px;
+    height: 5%;
+    width: 100%;
+    min-height: 50px;
     top: 0;
     left: 0;
     z-index: 11;
 `;
 
-const BannerArrow = styled.div`
-    font-family: CircularStd;
-    font-Size: 4em;
-    color: #fff;
-    padding: .5vh 0;
-    margin-left: 1vw;
-    position: absolute;
-    &:hover {
-        cursor: pointer;
-        margin-left: -.5vw;
-    };
-`;
-
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 2em;
+    font-Size: 1.25em;
     color: #fff;
-    padding: 1vh 0;
-    margin-left: 6vw;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 1%;
     position: absolute;
 `;
 
 const BannerCode = styled(BannerText)`
-    width: 40vw;
-    left: 50vw;
-    margin-left: -20vw;
+    width: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 0;
     text-align: center;
 `;
 
 const BannerButton = styled(DropdownButton)`
     background: #fff;
-    border-radius: 5vh;
+    border-radius: 5%;
     color: #100E0E;
 
     font-family: CircularStd;
     font-weight: 450;
-    font-size: 1vh;
-    width: 5vw;
-    height: 3vh;
+    font-size: 1em;
+    width: 8%;
+    height: 50%;
     text-align: center;
-    padding-left: .5vw;
-    padding-right: .5vw;
-    top: 1vh;
+    top: 50%;
+    transform: translateY(-50%);
     position: relative;
     float: right;
 
-    margin: 0px 1vw;
+    margin: 0px 1%;
 
     button {
         text-align:center;
@@ -82,7 +71,7 @@ const BannerButton = styled(DropdownButton)`
 
         font-family: CircularStd;
         font-weight: 450;
-        font-size: 1vh;
+        font-size: 1em;
 
         color: #100E0E;
     };
@@ -108,29 +97,29 @@ const BannerButton = styled(DropdownButton)`
     }
 `;
 
-const HeaderTabs = styled(Nav)`
-    left: 5%;
+const HeaderTabs = styled(Nav)`    
     position: relative;
     height: 100%;
     top: 0;
+    left: 0;
     margin: 0;
     padding: 0;
+    padding-left: 2.5%;
     .nav-link {
-        width: 200px;
+        min-width: 200px;
         position: relative;
-        min-width: 15vw;
-        max-width: 33vw;
         text-align: center;
-        top:50%;
+        top: 50%;
         transform: translateY(-50%);
-        height: 50px;
+        height: 100%;
         color: black;
         font-family: CircularStd;
         font-weight: 600;
-        font-size: 1.25em;
-        margin: 0;
+        font-size: 1em;
+        margin: 0;        
         padding: 0;
-        padding-top: 15px;
+        line-height: 50px;
+        
 
         &:hover {
             border: 0;
@@ -150,33 +139,34 @@ const HeaderTabs = styled(Nav)`
 
 const ContentCard = styled(Card)`
     position: absolute;
-    top: calc(max(5vh, 100px));
+    top: calc(max(5%, 50px));
     width: 100%;
     left: 0;
-    height: calc(100vh - 100px);
+    height: calc(100% - 50px);
     padding: 0;
     background: #e4e4e4;
-    max-height: 95vh;
+    max-height: 95%;
+    border: 0;
 `;
 
 const ContentHeader = styled(Card.Header)`
     width: 100%;
     background: #fff;
-    height: 4vh;
-    min-height: 50px;
+    height: 50px;
     top: 0;
     position: absolute;
     margin: 0;
     padding: 0;
+    border: 0;
 `;
 
 const ContentBody = styled(Card.Body)`
+    border: 0;
     background: #E4E4E4;
     position: absolute;
-    top: max(4vh, 50px);
+    top: 50px;
     width: 100%;
-    max-height: 89vh;
-    height: calc(100vh - 150px);
+    height: calc(100% - 50px);
     padding: 0;
 `;
 
@@ -210,6 +200,7 @@ export class Administrator extends Component {
         })
 
         this.update();
+        axios.post(`admin/${code}/active-${this.state.active}`);
     }
 
     componentWillUnmount() {
@@ -380,9 +371,8 @@ export class Administrator extends Component {
             <MainContainer>
 
                 <Banner>
-                    <BannerArrow onClick={this.backToProjects}>⟵</BannerArrow>
-                    <BannerText>{this.state.title}</BannerText>
-                    <BannerCode>{this.state.code > 0 ? "#" + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
+                    <BannerText>Sessions &#187; {this.state.title} &#187; {this.state.tab == "task" ? "Tasks" : "Organize"}</BannerText>
+                    <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
                     <BannerButton title="User">
                         <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>

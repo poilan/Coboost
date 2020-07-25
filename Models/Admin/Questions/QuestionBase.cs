@@ -37,7 +37,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <summary>
         /// The type of question this is.
         /// </summary>
-        public Type QuestionType { get; set; }
+        public TaskType Type { get; set; }
 
         /// <summary>
         /// The question that is asked.
@@ -51,7 +51,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <summary>
         /// The types of questions that exists.
         /// </summary>
-        public enum Type
+        public enum TaskType
         {
             OpenText,
             MultipleChoice,

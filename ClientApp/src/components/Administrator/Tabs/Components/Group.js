@@ -30,7 +30,7 @@ const IDChars = styled.h1`
     color: #fff;
     width: ${props => props.size <= "2" ? (props.size == "2" ? "50%" : "100%") : (props.size == "4" ? "25%" : "33%")};
     font-family: CircularStd;
-    font-Size: 1.25em;
+    font-Size: 1em;
     margin: 0;
     padding: 10px;
     text-align: center;
@@ -42,7 +42,7 @@ const GroupTitle = styled.h1`
     color: #fff;
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1.25em;
+    font-size: 1em;
     opacity: 90%;
     position: absolute;
     top: 20px;
@@ -170,6 +170,7 @@ export class Group extends Component {
                 var target = this.props.group;
 
                 if (target == "new") {
+                    axios.post(`admin/${code}/question-create-group-C${this.props.column}`).then(setTimeout(() => { axios.post(`admin/${code}/group${drag.group}-member${drag.member}`) }, 200))
                 }
                 else
                     axios.post(`admin/${code}/group-${key[0]}/change-${target}/member-${key[1]}`);
@@ -220,7 +221,7 @@ export class Group extends Component {
                     )
                 }
                 {this.props.children}
-                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()}/>}
+                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()} />}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
             </GroupContainer>
         );
