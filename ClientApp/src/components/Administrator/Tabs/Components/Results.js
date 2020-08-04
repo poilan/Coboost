@@ -48,7 +48,7 @@ const Percentage = styled.div`
     background: #4C7AD3;
     color: #fff;
     overflow: hidden;
-    font-size: 1.25em;
+    font-size: 1rem;
     text-align: center;
     font-weight: 600;
     position: absolute;
@@ -62,7 +62,7 @@ export function ResultItem(props) {
 
     return (
         <ItemContainer total={props.total} index={props.index}>
-            <PercentageContainer height={`${props.height}%`}>
+            <PercentageContainer height={`${props.height}`}>
                 <Percentage percentage={props.percentage}> {props.percentage > 0 && Math.floor(props.percentage) + "%"} </Percentage>
             </PercentageContainer>
             <Input vote size="1"

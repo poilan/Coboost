@@ -5,6 +5,7 @@ import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'rea
 import styled from 'styled-components';
 import "circular-std";
 import { Ico_Box } from '../Classes/Icons';
+import { Breadcrumbs, Link} from '@material-ui/core';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -27,7 +28,7 @@ const Banner = styled(Col)`
 
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 2rem;
+    font-Size: 1.25rem;
     color: #fff;
     padding: 25px 5px;
     position: absolute;
@@ -136,7 +137,7 @@ const ProjectText = styled.h1`
     text-align: center;
     top: 30%;
     font-family: CircularStd;
-    font-size: 2rem;
+    font-size: 1rem;
     font-weight: 400;
 `;
 
@@ -171,7 +172,7 @@ const Category = styled.div`
 `;
 
 const CategoryTitle = styled.h3`
-    font-size: 15px;
+    font-size: 1rem;
     position: relative;
     padding: 30px 0;
     margin-left: 3%;
@@ -216,7 +217,7 @@ const ProjectModalContent = styled.div`
 
 const PopupText = styled.h3`
     font-family: CircularStd;
-    font-size: 0.8rem;
+    font-size: 1rem;
     padding: 10px;
     color: #100e0e;
     opacity: 50%;
@@ -253,7 +254,7 @@ const CreateButton = styled.input`
 const ModalText = styled.h1`
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
     margin-bottom: 20px;
     text-align: center;
@@ -273,6 +274,22 @@ const RemoveButton = styled(Ico_Box)`
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 25%;
+`;
+
+const BreadCrumb = styled(Breadcrumbs)`
+     &&& {
+        font-family: CircularStd;
+        font-Size: 1.25rem;
+        color: #fff;
+        top: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+    }
+`;
+
+const BreadText = styled(Link)`
+    color: ${props => props.active ? "#4C7AD3" : "#fff"};
+    font-size: 1.25rem;    
 `;
 
 export class Dashboard extends Component {
@@ -517,7 +534,10 @@ export class Dashboard extends Component {
             <>
                 <MainContainer>
                     <Banner>
-                        <BannerText>Coboost</BannerText>
+                        <BreadCrumb aria-label="Breadcrumb">
+                            <BreadText color="initial" href="/">Coboost</BreadText>
+                            <BreadText color="initial" href="/dashboard">Dashboard</BreadText>
+                        </BreadCrumb>
                         <BannerDropButton title="User">
                             <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
                         </BannerDropButton>

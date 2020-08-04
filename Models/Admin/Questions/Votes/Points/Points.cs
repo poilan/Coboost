@@ -40,9 +40,11 @@ namespace Slagkraft.Models.Admin.Questions
         {
             lock (QuestionLock)
             {
+                vote.Index = Votes.Count;
                 Votes.Add(vote);
                 RecountVotes();
             }
+            EventStream();
         }
 
         private void RecountVotes()

@@ -13,7 +13,7 @@ const MenuContainer = styled.div`
     color: #000;
     font-family: CircularStd;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 1rem;
     position: fixed;
     top: ${props => props.top}px;
     left: ${props => props.left}px;

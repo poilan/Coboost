@@ -34,7 +34,7 @@ const SlideTitle = styled.h1`
     position: absolute;
     width: 80%;
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
     text-align: center;
     top: 25%;
     left: 10%;
@@ -54,7 +54,7 @@ const AddOption = styled.div`
     opacity: 50%;
     width: 100%;
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
     font:weight: 700;
     padding: .2em .5em .17em .26em;
     box-sizing: border-box;
@@ -88,7 +88,6 @@ export class Tasks extends Component {
         super(props);
         this.state = {
             tasks: props.tasks,
-            active: 0,
 
             create: {
                 type: '',
@@ -141,62 +140,7 @@ export class Tasks extends Component {
 
     loadTask = async (event) => {
         let key = event.target.id;
-        let code = sessionStorage.getItem('code');
-
-        await axios.post(`admin/${code}/active-${key}`).then(res => {
-            if (res.status === 200) {
-                this.setState({ active: key });
-                this.props.SSE(key);
-            }
-        });
-    }
-
-    old_renderActive() {
-        if (this.state.active == -1) {
-            return (
-                <SelectedSlide>
-                    <SlideTitle>Hello there</SlideTitle>
-                    <SlideBody>To get started click "Create new Task" on the left</SlideBody>
-                </SelectedSlide>
-            );
-        }
-
-        var task = this.props.tasks[this.state.active];
-
-        if (task !== undefined && task.type === 0) {
-            return (
-                <SelectedSlide>
-                    <SlideTitle>{task.title}</SlideTitle>
-                    <SlideBody>{task.groups !== undefined && task.groups.slice(1).map(group =>
-                        group.Members !== undefined && group.Members.map(member =>
-                            <VoteOption key={member.Index}>{member.Title}</VoteOption>
-                        )
-                    )}</SlideBody>
-                </SelectedSlide>
-            );
-        }
-        else if (task !== undefined && task.type === 1) {
-            return (
-                <SelectedSlide>
-                    <SlideTitle>{task.title}</SlideTitle>
-                    <SlideBody>
-                        {task.options !== undefined && task.options.map(option =>
-                            <>
-                                <VoteOption id={option.Index} index={option.Index} name={"Option " + option.Index}>{option.Description} {option.Votes.length !== 0 && " (" + Math.floor((option.Votes.length / task.TotalVotes) * 100) + "%)"}</VoteOption>
-                            </>
-                        )}
-                    </SlideBody>
-                </SelectedSlide>
-            );
-        }
-        else {
-            return (
-                <SelectedSlide>
-                    <SlideTitle>Hello there</SlideTitle>
-                    <SlideBody>To get started click "Create new Task" on the left</SlideBody>
-                </SelectedSlide>
-            );
-        }
+        this.props.SSE(key);
     }
 
     renderActive() {
@@ -290,7 +234,7 @@ export class Tasks extends Component {
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
                         <Task key={task.index} id={task.index} update={this.props.update}
-                            onClick={this.taskClick.bind(this)} active={this.state.active == task.index}
+                            onClick={this.taskClick.bind(this)} active={this.props.active == task.index}
                             type={task.type} title={task.title}
                         />
                     )}

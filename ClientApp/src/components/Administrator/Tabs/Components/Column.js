@@ -28,7 +28,7 @@ const Grow = styled.div`
     position: absolute;
     right: -17px;
     top: -12px;
-    font-size: 2.5em;
+    font-size: 2.5rem;
     font-family: CircularStd;
     color: #C4C4C4;
     display ${props => props.id == "new" ? "none" : props.available ? "inline-block" : "none"};

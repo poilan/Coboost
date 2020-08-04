@@ -45,7 +45,7 @@ const CreateButton = styled.input`
 const FieldText = styled.h2`
     opacity: 50%;
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
 `;
 
 const OptionContainer = styled.div`
@@ -59,7 +59,7 @@ const OptionContainer = styled.div`
 
 const Option = styled(Form.Control)`
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 700;
     width: 100%;
     padding: .2em .5em .17em .26em;
@@ -89,7 +89,7 @@ const AddOption = styled.div`
     opacity: 50%;
     width: 100%;
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
     font-weight: 700;
     padding: .2em .5em .17em .26em;
     box-sizing: border-box;
@@ -364,19 +364,19 @@ export class CreateTaskModal extends Component {
                 <FieldText>Task Title</FieldText>
                 <Form.Group controlId="validateTitle">
                     <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
+                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="..." required />
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="validatePoints">
-                    <FieldText>Number of Points</FieldText>
+                    <FieldText>Total points to spend</FieldText>
                     <InputGroup>
-                        <Form.Control type="number" name="points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} placeholder="Total Points.." required />
+                        <Form.Control type="number" name="points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} placeholder="..." required />
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="validateMax">
-                    <FieldText>Maximum points allowed per option</FieldText>
+                    <FieldText>Maximum points per option</FieldText>
                     <InputGroup>
-                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="Max per option.." required />
+                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="..." required />
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="validateOptions">
@@ -387,7 +387,7 @@ export class CreateTaskModal extends Component {
                         </OptionContainer>
                     )}
                     <OptionContainer>
-                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
+                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>Add option...</AddOption>
                     </OptionContainer>
                 </Form.Group>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>

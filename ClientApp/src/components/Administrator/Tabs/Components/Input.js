@@ -9,7 +9,7 @@ const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
         width: calc((${props => props.size <= "2" ? (props.size == "2" ? "(100% - 20px) / 2" : "100% - 20px") : (props.size == "4" ? "(100% - 20px) / 4" : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
-        font-size: 1em;
+        font-size: 1rem;
         font-weight: 600;
         margin: 1%;
         box-sizing: border-box;
@@ -73,7 +73,7 @@ const RowNumber = styled.h1`
     clear: left;
     float: left;
     font-family: CircularStd;
-    font-Size: 1em;
+    font-Size: 1rem;
     text-align: left;
     vertical-align: center;
     height: 44px;
@@ -146,7 +146,7 @@ const ModalPage = styled(Modal)`
     font-family: CircularStd;
 
     .modal-title {
-        font-size: 1em;
+        font-size: 1rem;
         opacity: 50%;
     }
 
@@ -168,20 +168,20 @@ const Title = styled.h1`
     text-align: left;
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 1rem;
 `;
 
 const User = styled.h1`
     position: relative;
     width: 100%;
-    font-size: 1em;
+    font-size: 1rem;
     opacity: 80%;
     justify-content: end;
 `;
 
 const Description = styled.p`
     width: 100%;
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
 `;
 

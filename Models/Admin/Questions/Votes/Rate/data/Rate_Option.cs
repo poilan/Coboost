@@ -12,7 +12,20 @@ namespace Slagkraft.Models.Admin.Questions
         /// <summary>
         /// The average rating of this option
         /// </summary>
-        public int Average { get; set; }
+        public int Average { 
+            get
+            {
+                int i = 0;
+                foreach(int rateing in Ratings)
+                {
+                    i += rateing;
+                }
+
+                i /= Ratings.Count;
+
+                return i;
+            }
+        }
 
         /// <summary>
         /// The Rating this option has recieved, index 0 = the rating this option recieved from the vote at index 0

@@ -5,23 +5,23 @@ import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollec
 import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
-    height: 100px;
-    width: 60%;
     background: rgb(53, 57, 67);
 
     display: flex;
     flex-direction: row;
 
-    position: fixed;
-    bottom: 100px;
-    left: 0px;
+    opacity: ${props => props.hidden ? "0%" : "100%"};
+
+    &:hover {
+        opacity:  100%;
+    }
 `;
 
 const FacilitatorButton = styled.button`
     color: rgb(249, 251, 247);
     background-color: rgb(53, 57, 67);
     height: 100%;
-    border: 0px solid;
+    border: 1px solid rgb(106, 114, 137);
 
     flex: 1 1 auto;
 
@@ -33,6 +33,10 @@ const FacilitatorButton = styled.button`
     :focus {
         outline: none;
         box-shadow: none;
+    }
+
+    &:hover {
+        background-color: rgb(73, 77, 87);
     }
 `;
 
@@ -140,11 +144,11 @@ export class Facilitator extends React.Component {
     }
 
     startCountdown() {
-        console.log("starting countdown");
+        console.log("Countdown started");
     }
 
     closeVoting() {
-        console.log("starting countdown");
+        console.log("closing task...");
     }
 
     hideResults() {
@@ -182,29 +186,40 @@ export class Facilitator extends React.Component {
     }
 
     async arrowBackward() {
-        const state = this.state;
-        const questions = state.questions;
-        const active = this.props.active;
+        if (this.props.back !== undefined) {
+            this.props.back();
+        }
+        else {
 
-        await this.getActiveQuestion(() => {
-            if (active > 0) {
-                const index = active - 1;
-                this.setActiveQuestion(index);
-            }
-        });
+            const state = this.state;
+            const questions = state.questions;
+            const active = this.props.active;
+
+            await this.getActiveQuestion(() => {
+                if (active > 0) {
+                    const index = active - 1;
+                    this.setActiveQuestion(index);
+                }
+            });
+        }
     }
 
     async arrowForward() {
-        const state = this.state;
-        const questions = state.questions;
-        const active = this.props.active;
+        if (this.props.next !== undefined) {
+            this.props.next();
+        }
+        else {
+            const state = this.state;
+            const questions = state.questions;
+            const active = this.props.active;
 
-        await this.getActiveQuestion(() => {
-            if (active < (questions.length - 1)) {
-                const index = active + 1;
-                this.setActiveQuestion(index);
-            }
-        });
+            await this.getActiveQuestion(() => {
+                if (active < (questions.length - 1)) {
+                    const index = active + 1;
+                    this.setActiveQuestion(index);
+                }
+            });
+        }
     }
 
     toggleFullscreen() {
@@ -231,14 +246,14 @@ export class Facilitator extends React.Component {
 
     onSlideClick(target) {
         const index = target.id;
-        
+
         this.setActiveQuestion(index);
     }
 
     render() {
         return (
             <>
-                <FacilitatorContainer>
+                <FacilitatorContainer hidden={this.props.hidden} style={this.props.style}>
                     <FacilitatorButton onClick={this.arrowBackward}>
                         <BsArrowLeft class="icon" />
                     </FacilitatorButton>
@@ -247,15 +262,17 @@ export class Facilitator extends React.Component {
                         <BsArrowRight class="icon" />
                     </FacilitatorButton>
 
-                    <FacilitatorButton onClick={this.openTasks}>
-                        {this.state.showTasks ? <>
-                            <BsCollectionFill class="icon" />
-                        </> : <>
-                            <BsCollection class="icon" />
-                        </>}
-                        <br/>
+                    {this.props.allTasks &&
+                        <FacilitatorButton onClick={this.openTasks}>
+                            {this.state.showTasks ? <>
+                                <BsCollectionFill class="icon" />
+                            </> : <>
+                                    <BsCollection class="icon" />
+                                </>}
+                            <br />
                         All tasks
                     </FacilitatorButton>
+                    }
 
                     {/*<FacilitatorButton onClick={this.handleMinimize}>
                         <BsInfoCircle class="icon" /><br />
@@ -264,10 +281,10 @@ export class Facilitator extends React.Component {
 
                     <FacilitatorButton onClick={this.hideResults}>
                         {this.props.showingResult ? <>
-                            <BsEyeSlash class="icon" /><br/>
+                            <BsEyeSlash class="icon" /><br />
                             Hide Results
                         </> : <>
-                            <BsEye class="icon" /><br/>
+                                <BsEye class="icon" /><br />
                             Show Results
                         </>}
                     </FacilitatorButton>
@@ -282,15 +299,17 @@ export class Facilitator extends React.Component {
                         Countdown
                     </FacilitatorButton>*/}
 
-                    <FacilitatorButton onClick={this.toggleFullscreen}>
-                        {this.state.fullscreen ? <>
-                            <BsFullscreenExit class="icon" /><br />
+                    {this.props.fullscreen &&
+                        <FacilitatorButton onClick={this.toggleFullscreen}>
+                            {this.state.fullscreen ? <>
+                                <BsFullscreenExit class="icon" /><br />
                             Exit Fullscreen
                         </> : <>
-                            <BsFullscreen class="icon" /><br />
+                                    <BsFullscreen class="icon" /><br />
                             Enter Fullscreen
                         </>}
-                    </FacilitatorButton>
+                        </FacilitatorButton>
+                    }
                 </FacilitatorContainer>
                 <SlideContainer show={this.state.showTasks}>
                     {this.state.questions.map(question => <Slide id={question.index} isActive={question.index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>

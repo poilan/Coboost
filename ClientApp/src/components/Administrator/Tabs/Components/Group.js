@@ -5,6 +5,9 @@ import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 import { Ico_Box } from '../../../Classes/Icons';
+import { Collapse, IconButton } from '@material-ui/core';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const GroupContainer = styled.div`
         width: 100%;
@@ -30,7 +33,7 @@ const IDChars = styled.h1`
     color: #fff;
     width: ${props => props.size <= "2" ? (props.size == "2" ? "50%" : "100%") : (props.size == "4" ? "25%" : "33%")};
     font-family: CircularStd;
-    font-Size: 1em;
+    font-Size: 1rem;
     margin: 0;
     padding: 10px;
     text-align: center;
@@ -42,7 +45,7 @@ const GroupTitle = styled.h1`
     color: #fff;
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 1rem;
     opacity: 90%;
     position: absolute;
     top: 20px;
@@ -90,7 +93,7 @@ const CreateButton = styled.input`
 const ModalText = styled.h1`
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
     margin-bottom: 20px;
     text-align: center;
@@ -102,7 +105,8 @@ export class Group extends Component {
     state = {
         modal: {
             archive: false,
-        }
+        },
+        collapse: true,
     }
 
     modal = {
@@ -190,37 +194,51 @@ export class Group extends Component {
         }
     }
 
+    collapse = () => {
+        this.setState({
+            collapse: !this.state.collapse,
+        });
+    }
+
     render() {
         return (
             <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column}
                 onClick={this.props.onClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"}>{this.props.title}</GroupTitle>
-                {this.props.size <= "2" ?
-                    (this.props.size == "2" ?
-                        <>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
-                        </>
-                        :
-                        ""
-                    ) : (this.props.size == "4" ?
-                        <>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>D</IDChars>
-                        </>
-                        :
-                        <>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
-                            <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
-                        </>
-                    )
-                }
-                {this.props.children}
+
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>}</GroupTitle>
+                
+
+                <Collapse timeout="auto" in={this.state.collapse}>
+                    {this.props.size <= "2" ?
+                        (this.props.size == "2" ?
+                            <>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                            </>
+                            :
+                            ""
+                        ) : (this.props.size == "4" ?
+                            <>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>D</IDChars>
+                            </>
+                            :
+                            <>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
+                                <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
+                            </>
+                        )
+                    }
+
+
+                    {this.props.children}
+                </Collapse>
+
                 {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()} />}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
             </GroupContainer>

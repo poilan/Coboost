@@ -34,7 +34,7 @@ const Banner = styled(Col)`
 
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 1.5rem;
+    font-Size: 1rem;
     /*color: #4C7AD3;*/
     color: rgb(53, 57, 67);
     padding: 25px 5px;
@@ -122,7 +122,7 @@ const BottomBanner = styled(Col)`
 
 const BottomBannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 1.5rem;
+    font-Size: 1rem;
     color: rgb(53, 57, 67);
     padding: 0 35px;
     float: right;
@@ -339,7 +339,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator hidden style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>

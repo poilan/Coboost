@@ -6,6 +6,8 @@ import "circular-std";
 import { Tasks } from './Tabs/Tasks';
 import { Organizer } from './Tabs/Organizer';
 import { Presentation } from './Presentation';
+import { Breadcrumbs, Link, Typography, Tooltip } from '@material-ui/core';
+import { Facilitator } from '../Big Screen/Facilitator';
 
 const MainContainer = styled.div`
     display: table;
@@ -27,17 +29,28 @@ const Banner = styled(Col)`
     z-index: 11;
 `;
 
-const BannerText = styled.h1`
-    font-family: CircularStd;
-    font-Size: 1.25em;
-    color: #fff;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: 1%;
-    position: absolute;
+const BreadCrumb = styled(Breadcrumbs)`
+     &&& {
+        font-family: CircularStd;
+        font-Size: 1.25rem;
+        color: #fff;
+        top: 50%;
+        transform: translateY(-50%);
+        position: absolute;
+    }
 `;
 
-const BannerCode = styled(BannerText)`
+const BreadText = styled(Link)`
+    color: ${props => props.active ? "#4C7AD3" : "#fff"};
+    font-size: 1.25rem;    
+`;
+
+const BannerCode = styled.div`
+    font-family: CircularStd;
+    font-Size: 1.25rem;
+    color: #fff;
+    top: 50%;
+    position: absolute;
     width: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -52,7 +65,7 @@ const BannerButton = styled(DropdownButton)`
 
     font-family: CircularStd;
     font-weight: 450;
-    font-size: 1em;
+    font-size: 1rem;
     width: 8%;
     height: 50%;
     text-align: center;
@@ -71,7 +84,7 @@ const BannerButton = styled(DropdownButton)`
 
         font-family: CircularStd;
         font-weight: 450;
-        font-size: 1em;
+        font-size: 1rem;
 
         color: #100E0E;
     };
@@ -115,7 +128,7 @@ const HeaderTabs = styled(Nav)`
         color: black;
         font-family: CircularStd;
         font-weight: 600;
-        font-size: 1em;
+        font-size: 1rem;
         margin: 0;        
         padding: 0;
         line-height: 50px;
@@ -182,6 +195,8 @@ export class Administrator extends Component {
 
             tab: 'task',
             presentor: null,
+
+            results: true,
         }
 
         this.present = this.present.bind(this);
@@ -190,6 +205,7 @@ export class Administrator extends Component {
     componentDidMount() {
         let code = sessionStorage.getItem("code");
         let title = sessionStorage.getItem("title");
+        axios.post(`admin/${code}/active-${this.state.active}`);
 
         let presentManager = new Presentation(code);
 
@@ -197,10 +213,8 @@ export class Administrator extends Component {
             title: title,
             code: code,
             presentor: presentManager,
-        })
-
-        this.update();
-        axios.post(`admin/${code}/active-${this.state.active}`);
+        });
+        this.update();        
     }
 
     componentWillUnmount() {
@@ -245,7 +259,7 @@ export class Administrator extends Component {
         },
 
         start: (target) => {
-            if (target >= this.state.tasks.length)
+            if (target >= this.state.tasks.length || target < 0)
                 return;
 
             this.SSE.close();
@@ -254,6 +268,7 @@ export class Administrator extends Component {
                 active: target,
             });
 
+            axios.post(`admin/${code}/active-${target}`);
             this.SSE.source = new EventSource(`admin/${code}/stream-question-${target}`);
             this.SSE.source.addEventListener("Groups", (e) => {
                 try {
@@ -366,12 +381,38 @@ export class Administrator extends Component {
         presentor.PresentInNewWindow();
     }
 
+    controls = {
+        next: () => {
+            let index = this.state.active + 1;
+            if (index < this.state.tasks.length) {
+                this.SSE.start(index);
+            }
+        },
+
+        back: () => {
+            let index = this.state.active - 1;
+            if (index >= 0) {
+                this.SSE.start(index);
+            }
+        },
+
+        toggleHide: () => {
+
+        },
+
+    }
+
     render() {
         return (
             <MainContainer>
 
                 <Banner>
-                    <BannerText>Sessions &#187; {this.state.title} &#187; {this.state.tab == "task" ? "Tasks" : "Organize"}</BannerText>
+                    <BreadCrumb aria-label="Breadcrumb">
+                        <BreadText color="initial" href="/">Coboost</BreadText>
+                        <BreadText color="initial" href="/dashboard">Dashboard</BreadText>
+                        <Tooltip title="Tasks"><BreadText color="initial" active={this.state.tab == "task"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("task") }}>{this.state.title}</BreadText></Tooltip>
+                        {this.state.tasks[this.state.active] != undefined && <Tooltip title="Organize"><BreadText color="initial" active={this.state.tab == "organize"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("organize") }}>{this.state.tasks[this.state.active].title}</BreadText></Tooltip>}
+                    </BreadCrumb>
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
                     <BannerButton title="User">
@@ -388,11 +429,15 @@ export class Administrator extends Component {
 
                 <ContentCard>
                     <Tab.Container activeKey={this.state.tab} onSelect={(k) => this.selectTab(k)}>
+
                         <ContentHeader>
                             <HeaderTabs variant="tabs">
                                 <Nav.Link eventKey="task">Tasks</Nav.Link>
                                 <Nav.Link eventKey="organize">Organize</Nav.Link>
                             </HeaderTabs>
+
+                            <Facilitator style={{ position: "absolute", top: "0px", right: "0px", height: "50px", width: "40%" }} next={this.controls.next} back={this.controls.back} active={this.state.active} showingResult={this.state.results} onResultToggle={() => { this.setState({ results: !this.state.results, })}}/>
+
                         </ContentHeader>
                         <ContentBody>
                             <Tab.Content>

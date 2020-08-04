@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
 import { Ico_Text, Ico_MultipleChoice, Ico_Box } from '../../../Classes/Icons';
-import { Session } from '../../Session';
 import { Nav, Form } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 
@@ -25,7 +24,7 @@ const CollectionContainer = styled.div`
 const CreateTask = styled.div`
     color: #100e0e;
     position: relative;
-    font-size: 1em;
+    font-size: 1rem;
     font-family: CircularStd;
     font-weight: 600;
     padding: 10px;
@@ -67,7 +66,7 @@ const TaskContainer = styled.div`
     border-bottom: 2px solid #BABABA;
     color: #100e0e;
     position: relative;
-    font-size: 1em;
+    font-size: 1rem;
     font-family: CircularStd;
     display:flex;
     font-weight: 500;
@@ -93,7 +92,7 @@ const TitleContainer = styled.div`
 `;
 
 const TaskType = styled.div`
-    font-size: 0.75em;
+    font-size: 0.95rem;
     opacity: 50%;
     margin-top: 15px;
 `;
@@ -109,7 +108,7 @@ const TaskTitle = styled.div`
 const ModalText = styled.h1`
     font-family: CircularStd;
     font-weight: 600;
-    font-size: 1em;
+    font-size: 1rem;
     position: relative;
     margin-bottom: 20px;
     text-align: center;
@@ -233,9 +232,9 @@ export class Task extends Component {
                     onClick={this.props.onClick.bind(this)} onDoubleClick={this.props.onDoubleClick}
                     active={this.props.active} type={this.props.type}>
                     <TaskIndex id={this.props.id}>{this.props.id + 1}</TaskIndex>
-                    {this.props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : this.props.type == 1 ? <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} /> : <div style={{ background: "#CCC", height: "50px", width: "50px", marginTop: "15px", fontSize: "1.25em", padding: "7.5px", borderRadius: "1000px" }}>➕</div>}
+                    {this.props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} />}
                     <TitleContainer id={this.props.id}>
-                        <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : "New Task"}</TaskType>
+                        <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : this.props.type == 2 ? "Points" : "Slider"}</TaskType>
                         <TaskTitle id={this.props.id}>{this.props.title}</TaskTitle>
                     </TitleContainer>
                     <RemoveButton id={this.props.id} onClick={this.modal.delete.open.bind(this)}></RemoveButton>

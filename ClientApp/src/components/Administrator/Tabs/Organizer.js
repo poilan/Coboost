@@ -10,6 +10,9 @@ import { Column } from './Components/Column';
 import { ResultBackground, ResultItem } from './Components/Results';
 import { CreateTaskModal } from './Components/CreateModal';
 import { ContextMenu } from './Components/ContextMenu';
+import { Tooltip, Collapse, IconButton } from '@material-ui/core';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -28,10 +31,21 @@ const MainContainer = styled.div`
     scrollbar-color: #4C7AD3 #fff;
 `;
 
+const ButtonToolbar = styled.div`
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    position: absolute;
+    height: 75px;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+`;
+
 const TitleBreadCrumb = styled.h2`
     font-family: CircularStd;
     font-weight: 500;
-    font-size: 1.25em;
+    font-size: 1.25rem;
     margin: 1% 0;
     height: 35px;
     position: fixed;
@@ -67,15 +81,13 @@ const ItemTask = styled.div`
 const AnswerButton = styled(Nav.Link)`
     color: #fff;
     background: #4C7AD3;
-    position: fixed;
-    display: inline-block;
-    right: 5%;
-    top: 9.5vh;
     font-family: CircularStd;
-    border-radius: 100px;
     font-weight: 450;
     text-align: center;
-    width: 250px;
+    border: 1px solid #fff;
+    flex: 1 1 auto;
+    height: 100%;
+    line-height: 75px;
 `;
 
 const SendToMC = styled(AnswerButton)`
@@ -120,7 +132,7 @@ const CreateButton = styled.input`
 const NewOptionNumber = styled.h2`
     opacity: 50%;
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
 `;
 
 export class Organizer extends Component {
@@ -129,6 +141,7 @@ export class Organizer extends Component {
         this.state = {
             overview: true,
             selected: '',
+            collapse: [],
 
             modal: {
                 string: '',
@@ -534,17 +547,18 @@ export class Organizer extends Component {
 
             return (
                 <MainContainer>
-                    <TitleBreadCrumb onClick={this.toOverview.bind(this)}>Organizing &#187; {task.title}</TitleBreadCrumb>
-
-                    <AnswerButton onClick={this.modal.answer.open}>Answer Task</AnswerButton>
-                    <SendToMC onClick={this.modal.create.open.bind(this)}>New Task: Multiple Choice</SendToMC>
-                    <MergeButton onClick={merge.bind(this)}>Merge</MergeButton>
+                    <ButtonToolbar>
+                        <AnswerButton onClick={this.modal.answer.open}>Send input</AnswerButton>
+                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={this.modal.create.open.bind(this)}>Send to tasks</SendToMC></Tooltip>
+                        <MergeButton onClick={merge.bind(this)}>Merge selected</MergeButton>
+                    </ButtonToolbar>
 
                     {this.props.columns !== undefined && this.props.columns.map(column =>
 
                         <Column column={column.index} width={column.width} empty={column.index + 1 == this.props.columns.length}
                             grow={() => grow(column.index)}
                             shrink={() => shrink(column.index)}>
+
                             {task.groups !== undefined &&
                                 task.groups.map(group => {
                                     if (column.index === group.Column) {
@@ -552,7 +566,6 @@ export class Organizer extends Component {
                                             <Group id={group.Index} key={group.Index}
                                                 group={group.Index} column={group.Column} title={group.Title} size={column.width}
                                                 double={this.modal.rename.open}>
-
                                                 {group.Members !== undefined &&
                                                     group.Members.map(member =>
 
@@ -578,7 +591,8 @@ export class Organizer extends Component {
                                 />
                             }
                         </Column>
-                    )}
+                    )
+                    }
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                     {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
@@ -607,8 +621,12 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     {this.state.modal.create && <CreateTaskModal type="0" title={task.options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
-                    <TitleBreadCrumb onClick={this.toOverview.bind(this)}> Organizing &#187; {task.title}</TitleBreadCrumb>
-                    <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.state.modal.create.open()}>New Task: Text</SendToT>
+
+                    <ButtonToolbar>
+                        <Tooltip title="Creates a new task using the selected answer">
+                            <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.state.modal.create.open()}>Send to Tasks</SendToT>
+                        </Tooltip>
+                    </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "70%" }} />
                     {task.options !== undefined && task.options.map(option =>
                         <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
@@ -617,27 +635,41 @@ export class Organizer extends Component {
                             onCheck={select.bind(this)}
                         />
                     )}
-                </MainContainer >
+                </MainContainer>
             );
         }
 
-        if (this.state.overview) {
+        if (!this.state.overview && this.props.tasks[this.props.active] != undefined) {
+            let task = this.props.tasks[this.props.active];
+
+            if (task.type == 0) {
+                return text(task);
+            } else if (task.type == 1) {
+                return multipleChoice(task);
+            }
+            else if (task.type == 2) {
+                return multipleChoice(task);
+            }
+            else {
+                return multipleChoice(task);
+            }
+            //else {
+            //    return (
+            //        <MainContainer>
+            //            {this.props.tasks.map(task =>
+            //                <ItemTask id={task.index} onClick={this.clickTask}>{task.index + 1}. {task.title}</ItemTask>
+            //            )}
+            //        </MainContainer>
+            //    )
+            //}
+        } else {
             return (
                 <MainContainer>
-                    <TitleBreadCrumb>All Tasks</TitleBreadCrumb>
                     {this.props.tasks.map(task =>
                         <ItemTask id={task.index} onClick={this.clickTask}>{task.index + 1}. {task.title}</ItemTask>
                     )}
                 </MainContainer>
             )
-        } else {
-            let task = this.props.tasks[this.props.active];
-
-            if (task.Type == 0) {
-                return text(task);
-            } else if (task.Type == 1) {
-                return multipleChoice(task);
-            }
         }
     }
 }

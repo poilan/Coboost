@@ -45,5 +45,32 @@ namespace Slagkraft.Models.Admin.Questions
         public List<Rate_Vote> Votes { get; set; }
 
         #endregion Public Properties
+
+        public void AddClientVote(Rate_Vote vote)
+        {
+            lock(QuestionLock)
+            {
+                vote.Index = Votes.Count;
+                Votes.Add(vote);
+                RecountVotes();
+            }
+            EventStream();
+        }
+
+        private void RecountVotes()
+        {
+            for (int i = 0; i < Options.Count; i++)
+            {
+                Options[i].Ratings.Clear();
+            }
+
+            for (int i = 0; i < Votes.Count; i++)
+            {
+                for (int j = 0; j < Votes[i].Ratings.Count; i++)
+                {
+                    Options[j].Ratings.Add(Votes[i].Ratings[j]);
+                }
+            }
+        }
     }
 }

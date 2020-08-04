@@ -33,7 +33,7 @@ const Banner = styled(Col)`
 
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 2rem;
+    font-Size: 1rem;
     color: #fff;
     padding: 25px 5px;
     position: absolute;
@@ -140,7 +140,7 @@ const Content = styled.div`
 `;
 
 const ContentTitle = styled.h3`
-    font-size: 1.7rem;
+    font-size: 1rem;
     font-family: CircularStd;
     font-weight: 500;
     text-align: center;
@@ -154,7 +154,7 @@ const ContentTitle = styled.h3`
 
 const ContentBody = styled.p`
     font-family: CircularStd;
-    font-size: ${props => props.boxed ? "0.8em" : "1em"};
+    font-size: ${props => props.boxed ? "0.8rem" : "1rem"};
     text-align: center;
 
     position: relative;
@@ -183,7 +183,7 @@ const ContentInput = styled.input`
     width: 100%;
 
     font-family: CircularStd;
-    font-size: 1em;
+    font-size: 1rem;
     text-align: center;
     color: black;
     border: 0px solid;
@@ -381,10 +381,11 @@ export class Mobile extends Component {
                     var task = {
                         Type: q.type,
                         Title: q.title,
-                        Index: q.Index,
+                        Index: q.index,
+                        Options: q.options,
                     };
 
-                    inputs[q.Index] = task;
+                    inputs[q.index] = task;
                 });
 
                 this.setState({
@@ -460,25 +461,34 @@ export class Mobile extends Component {
                 value: question.Type === 0 ? "" : []
             };
 
+            if (question.Options !== undefined) {
+                if (question.Type === 2) {
+                    let values = [];
 
-            if (question.Type === 2) {
-                let values = [];
+                    for (let i = 0; i < question.Options.length; i++) {
+                        values.push(1);
+                    }
+                    answer.value = values;
 
-                for (let i = 0; i < question.Options.length; i++) {
-                    values.push(1);
                 }
-                answer.value = values;
-            }
-            else if (question.Type === 3) {
-                let values = [];
+                else if (question.Type === 3) {
+                    let values = [];
 
-                for (let i = 0; i < question.Options.length; i++) {
-                    values.push(question.Min);
+
+                    for (let i = 0; i < question.Options.length; i++) {
+                        values.push(question.Min);
+                    }
+
+                    answer.value = values;
                 }
-                answer.value = values;
             }
 
-            answers.push(answer);
+            if (answers[index] !== undefined) {
+                answers[index] = answer;
+            }
+            else {
+                answers.push(answer);
+            }
 
         });
 
@@ -506,7 +516,7 @@ export class Mobile extends Component {
             switch (type) {
                 case 0:
                     return "";
-                case 1:
+                default:
                     return [];
             }
         }
@@ -643,7 +653,12 @@ export class Mobile extends Component {
         const answers = this.getTaskAnswers();
         let spent = 0;
         let tasks = this.getTasks();
+        if (value < 1) {
+            value = 1;
+        }
         const change = value - answers[index];
+
+
 
         if (tasks[this.getTaskIndex()].Amount <= tasks[this.getTaskIndex()].Spent + change) {
             let maximum = tasks[this.getTaskIndex()].Amount - tasks[this.getTaskIndex()].Spent;
@@ -668,8 +683,8 @@ export class Mobile extends Component {
         }
 
         tasks[this.getTaskIndex()].Spent = spent;
-        this.setstate({
-            input: tasks
+        this.setState({
+            inputs: tasks
         });
 
         this.setTaskAnswers(answers);
@@ -771,17 +786,18 @@ export class Mobile extends Component {
 
     pointsRender() {
         let task = this.getCurrentTask();
-        let answers = this.getTaskAnswers();
+        let answers = this.state.answers[this.getTaskIndex()];
         return (
             <ContentContainer>
+                {answers == undefined ? answers = [] : null}
                 <ContentQuestion>{task.Title}</ContentQuestion>
                 <Box component="fieldset" mb={3} borderColor="transparent">
                     <Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
                     {task.Options.map((point) =>
-                        <Box component="fieldset" mb={3} borderColor="transparent">
-                            {answers[point.Index] == undefined ? answers[point.Index] = 1 : null}
+                        <Box key={point.Index} component="fieldset" mb={3} borderColor="transparent">
+                            {answers[point.Index] == undefined ? (answers[point.Index] = 1) : null}
                             <Typography component="legend">{point.Title}</Typography>
-                            <Rating name={point.Title} value={answers[point.Index]} max={point.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />                            
+                            <Rating name={point.Title} value={this.state.answers[this.getTaskIndex()].value[point.Index]} max={point.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
                         </Box>
                     )}
                 </Box>
@@ -792,17 +808,18 @@ export class Mobile extends Component {
 
     sliderRender() {
         let task = this.getCurrentTask();
-        let answers = this.getTaskAnswers();
+        let answers = this.state.answers[this.getTaskIndex()];;
 
         return (
             <ContentContainer>
+                {answers == undefined ? answers = [] : null}
                 <ContentQuestion>{task.Title}</ContentQuestion>
                 <Box component="fieldset" mb={3} pt={1} px={10} borderColor="transparent">
                     {task.Options.map((slider) =>
-                        <Box component="fieldset" mb={3} px={10} borderColor="transparent">
+                        <Box key={slider.Index} component="fieldset" mb={3} px={10} borderColor="transparent">
                             {answers[slider.Index] == undefined ? answers[slider.Index] = slider.min : null}
                             <Typography component="legend">{slider.Title}</Typography>
-                            <Slider name={slider.Title} value={answers[slider.Index]}
+                            <Slider name={slider.Title} value={this.state.answers[this.getTaskIndex()].value[slider.Index]}
                                 step={1} marks min={task.Min} max={task.Max}
                                 aria-labledby="discrete-slider" valueLabelDisplay="auto"
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)} />
