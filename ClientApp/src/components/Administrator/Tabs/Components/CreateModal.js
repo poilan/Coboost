@@ -179,7 +179,7 @@ export class CreateTaskModal extends Component {
 
         const handleMax = (event) => {
             event.preventDefault();
-            var max = this.state.title;
+            var max = this.state.max;
             max = this.refs.max.value;
             this.setState({
                 max: max,
@@ -191,7 +191,7 @@ export class CreateTaskModal extends Component {
             const value = event.target.value;
 
             const options = this.state.options;
-            options[key].description = value;
+            options[key].Description = value;
             this.setState({
                 options: options,
             });
@@ -202,9 +202,9 @@ export class CreateTaskModal extends Component {
             var user = localStorage.getItem("user");
 
             var option = {
-                userID: user,
-                index: count,
-                description: "",
+                UserID: user,
+                Index: count,
+                Description: "",
                 votes: [],
                 archive: [],
             }
@@ -223,6 +223,7 @@ export class CreateTaskModal extends Component {
             let data = {
                 Title: this.state.title,
                 Options: this.state.options,
+                Max: parseInt(this.state.max),
             }
 
             axios.post(`admin/${code}/questions-create-multiplechoice`, data, {
@@ -259,9 +260,9 @@ export class CreateTaskModal extends Component {
                 </Form.Group>
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.index}>
-                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
-                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                        <OptionContainer index={option.Index}>
+                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
+                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
                         </OptionContainer>
                     )}
                     <OptionContainer>
@@ -307,7 +308,7 @@ export class CreateTaskModal extends Component {
             const value = event.target.value;
 
             const options = this.state.options;
-            options[key].description = value;
+            options[key].Description = value;
             this.setState({
                 options: options,
             });
@@ -318,9 +319,9 @@ export class CreateTaskModal extends Component {
             var user = localStorage.getItem("user");
 
             var Option = {
-                userID: user,
-                index: count,
-                description: "",
+                UserID: user,
+                Index: count,
+                Description: "",
             }
 
             var Options = this.state.options;
@@ -381,9 +382,9 @@ export class CreateTaskModal extends Component {
                 </Form.Group>
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.index}>
-                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
-                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                        <OptionContainer index={option.Index}>
+                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
+                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
                         </OptionContainer>
                     )}
                     <OptionContainer>
@@ -429,7 +430,7 @@ export class CreateTaskModal extends Component {
             const value = event.target.value;
 
             const options = this.state.options;
-            options[key].description = value;
+            options[key].Description = value;
             this.setState({
                 options: options,
             });
@@ -440,9 +441,9 @@ export class CreateTaskModal extends Component {
             var user = localStorage.getItem("user");
 
             var option = {
-                userID: user,
-                index: count,
-                description: "",
+                UserID: user,
+                Index: count,
+                Description: "",
             }
 
             var options = this.state.options;
@@ -503,9 +504,9 @@ export class CreateTaskModal extends Component {
                 </Form.Group>
                 <Form.Group controlId="validateOptions">
                     {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.index}>
-                            <FieldText key={"T" + option.index}>{"Option " + (option.index + 1)}</FieldText>
-                            <Option key={option.index} name={option.index} value={option.description} onChange={handleOption.bind(this)} required />
+                        <OptionContainer index={option.Index}>
+                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
+                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
                         </OptionContainer>
                     )}
                     <OptionContainer>

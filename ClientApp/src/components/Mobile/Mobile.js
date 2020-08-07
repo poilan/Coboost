@@ -123,10 +123,10 @@ const ContentContainer = styled(Col)`
     box-shadow: 0px 0px 10px 0px #cfcfcf;
     position: relative;
     width: 100%;
+    min-height: 50%;
     left: 0;
-    margin-top: 75px;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    margin-top: 2px;
+    padding: 50px 0;
 `;
 
 const Content = styled.div`
@@ -171,24 +171,22 @@ const ContentQuestion = styled.p`
     color: #4C7AD3;
 
     position: relative;
-    padding: 0px 0px 10px 0px;
-    margin: 0px 30px 0px 30px;
+    padding: 0px 30px 10px 30px;
     border-bottom: 2px solid #cfcfcf;
 `;
 
-const ContentInput = styled.input`
+const ContentInput = styled.textarea`
     display: block;
-    margin: 0 auto;
-    margin-top: 35px;
-    width: 100%;
+    width: calc(100% - 60px);
 
     font-family: CircularStd;
     font-size: 1rem;
     text-align: center;
     color: black;
-    border: 0px solid;
+    border: 0;
     border-bottom: 1px solid #cfcfcf;
-    padding-bottom: 10px;
+    margin: 30px;
+    resize: none;
 `;
 
 const ContentButton = styled(Button)`
@@ -204,8 +202,7 @@ const ContentButton = styled(Button)`
     padding-right: 20px;
 
     display: block;
-    margin: 0 auto;
-    margin-top: 35px;
+    margin: 35px auto 0 auto;
 `;
 
 const ContentFooter = styled.p`
@@ -349,6 +346,7 @@ export class Mobile extends Component {
 
             answers: [],
             inputs: [],
+            title: "",
 
             loggedIn: false,
             sessionState: 0, // 0: Not started, 1: Answering, 2: Finished
@@ -376,20 +374,20 @@ export class Mobile extends Component {
             if (res.status === 202) {
                 var data = res.data;
 
-                var inputs = [];
-                data.forEach((q) => {
-                    var task = {
-                        Type: q.type,
-                        Title: q.title,
-                        Index: q.index,
-                        Options: q.options,
-                    };
+                //var inputs = [];
+                //data.forEach((q) => {
+                //    var task = {
+                //        Type: q.type,
+                //        Title: q.title,
+                //        Index: q.index,
+                //        Options: q.options,
+                //    };
 
-                    inputs[q.index] = task;
-                });
+                //    inputs[q.index] = task;
+                //});
 
                 this.setState({
-                    inputs: inputs,
+                    inputs: data,
                 });
 
                 this.parseAnswers();
@@ -452,7 +450,7 @@ export class Mobile extends Component {
     }
 
     parseAnswers() {
-        var answers = this.state.answers;
+        var answers = [];
 
         const questions = this.getTasks();
         questions.forEach((question, index) => {
@@ -466,9 +464,10 @@ export class Mobile extends Component {
                     let values = [];
 
                     for (let i = 0; i < question.Options.length; i++) {
-                        values.push(1);
+                        values.push(0);
                     }
                     answer.value = values;
+                    question.Spent = 0;
 
                 }
                 else if (question.Type === 3) {
@@ -586,10 +585,10 @@ export class Mobile extends Component {
 
         switch (lastType) {
             case 0:
-                word = "Open Text";
+                word = "Input";
                 break;
-            case 1:
-                word = "Voting";
+            default:
+                word = "Vote";
                 break;
         }
 
@@ -597,8 +596,8 @@ export class Mobile extends Component {
             <ContentContainer>
                 <ContentTitle blue>{word} sent!</ContentTitle>
                 <IconDone />
-                <ContentBody boxed>Take it easy while waiting for the next task, you can send another input if you so choose.</ContentBody>
-                <ContentButton onClick={this.inputsEdit}>New Answer</ContentButton>
+                <ContentBody boxed>Take it easy while waiting for the next task, or you can send another {word}!</ContentBody>
+                <ContentButton onClick={this.inputsEdit}>New {word}</ContentButton>
             </ContentContainer>
         );
     }
@@ -606,17 +605,27 @@ export class Mobile extends Component {
     questionChange(e) {
         const target = e.target;
         const value = target.value;
+        target.style.height = "inherit";
+        target.style.height = `${target.scrollHeight + 1}px`;
 
-        const index = this.getTaskIndex();
         this.setTaskAnswers(value);
     }
 
     questionRender() {
+        const titleChange = (e) => {
+            const target = e.target;
+            const value = target.value;
+
+            this.setState({
+                title: value,
+            });
+        }
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                <ContentInput value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
-                <ContentButton onClick={this.inputsClick}>Send Input</ContentButton>
+                {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} placeholder="Give your input a title..." />}
+                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
+                <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" :"Send Input!"}</ContentButton>
             </ContentContainer>
         );
     }
@@ -626,7 +635,7 @@ export class Mobile extends Component {
         const options = this.getTaskOptions();
         const max = this.getOptionMax();
 
-        if (picked.length >= this.getTaskAnswers().length && picked.length >= max) {
+        if (picked.length >= this.getTaskAnswers().length && picked.length > max) {
             return;
         }
 
@@ -653,14 +662,11 @@ export class Mobile extends Component {
         const answers = this.getTaskAnswers();
         let spent = 0;
         let tasks = this.getTasks();
-        if (value < 1) {
-            value = 1;
-        }
         const change = value - answers[index];
 
 
 
-        if (tasks[this.getTaskIndex()].Amount <= tasks[this.getTaskIndex()].Spent + change) {
+        if (tasks[this.getTaskIndex()].Amount < tasks[this.getTaskIndex()].Spent + change) {
             let maximum = tasks[this.getTaskIndex()].Amount - tasks[this.getTaskIndex()].Spent;
 
             if (maximum < 1)
@@ -671,14 +677,14 @@ export class Mobile extends Component {
         }
         for (let i = 0; i < this.getTaskOptions().length; i++) {
             if (answers[i] == undefined)
-                answers[i] = 1;
+                answers[i] = 0;
 
             if (index == i) {
                 answers[i] = value;
             }
 
-            if (answers[i] > 1) {
-                spent += answers[i] - 1;
+            if (answers[i] > 0) {
+                spent += answers[i];
             }
         }
 
@@ -686,7 +692,6 @@ export class Mobile extends Component {
         this.setState({
             inputs: tasks
         });
-
         this.setTaskAnswers(answers);
     }
 
@@ -719,6 +724,10 @@ export class Mobile extends Component {
         if (type === 0) { // Open Text
             data.Description = answer;
 
+            if (data.Description.length > 20) {
+                data.Title = this.state.title;
+            }
+
             axios.post(`client/${code}/add-opentext`, data);
         }
         else if (type === 1) { // Multiple Choice
@@ -731,9 +740,6 @@ export class Mobile extends Component {
             })
         }
         else if (type === 2) { // Points
-            for (let i = 0; i < answer.length; i++) {
-                answer[i] -= 1;
-            }
             data.Points = answer;
             axios.post(`client/${code}/add-points`, data);
         }
@@ -747,6 +753,7 @@ export class Mobile extends Component {
         this.setState({
             lastInput: current,
             sessionState: 2,
+            title: "",
         })
     }
 
@@ -789,19 +796,17 @@ export class Mobile extends Component {
         let answers = this.state.answers[this.getTaskIndex()];
         return (
             <ContentContainer>
-                {answers == undefined ? answers = [] : null}
                 <ContentQuestion>{task.Title}</ContentQuestion>
-                <Box component="fieldset" mb={3} borderColor="transparent">
+                <Box component="fieldset" mb={3} pt={2} px={2} borderColor="transparent">
                     <Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
                     {task.Options.map((point) =>
-                        <Box key={point.Index} component="fieldset" mb={3} borderColor="transparent">
-                            {answers[point.Index] == undefined ? (answers[point.Index] = 1) : null}
+                        <Box key={point.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
                             <Typography component="legend">{point.Title}</Typography>
-                            <Rating name={point.Title} value={this.state.answers[this.getTaskIndex()].value[point.Index]} max={point.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
+                            <Rating name={point.Title} value={answers.value[point.Index]} max={task.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
                         </Box>
                     )}
                 </Box>
-                <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
+                <ContentButton disabled={task.Spent != task.Amount} onClick={this.inputsClick}>{task.Spent != task.Amount ? (task.Amount - task.Spent) + " points left!" : "Send Vote"}</ContentButton>
             </ContentContainer>
         );
     }
@@ -812,14 +817,12 @@ export class Mobile extends Component {
 
         return (
             <ContentContainer>
-                {answers == undefined ? answers = [] : null}
                 <ContentQuestion>{task.Title}</ContentQuestion>
-                <Box component="fieldset" mb={3} pt={1} px={10} borderColor="transparent">
+                <Box component="fieldset" mb={3} pt={2} px={2} borderColor="transparent">
                     {task.Options.map((slider) =>
-                        <Box key={slider.Index} component="fieldset" mb={3} px={10} borderColor="transparent">
-                            {answers[slider.Index] == undefined ? answers[slider.Index] = slider.min : null}
+                        <Box key={slider.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
                             <Typography component="legend">{slider.Title}</Typography>
-                            <Slider name={slider.Title} value={this.state.answers[this.getTaskIndex()].value[slider.Index]}
+                            <Slider name={slider.Title} value={answers.value[slider.Index]}
                                 step={1} marks min={task.Min} max={task.Max}
                                 aria-labledby="discrete-slider" valueLabelDisplay="auto"
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)} />
@@ -884,6 +887,12 @@ export class Mobile extends Component {
             case 1:
                 title = "Multiple Choice";
                 break;
+            case 2:
+                title = "Points";
+                break;
+            case 3:
+                title = "Slider";
+                break;
             default:
                 title = "Waiting";
                 break;
@@ -899,7 +908,7 @@ export class Mobile extends Component {
                     <Banner>
                         <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
                         {this.state.loggedIn && < BannerButton title="User">
-                            <Dropdown.Item onClick={this.logout}> Logout</Dropdown.Item>
+                            <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
                         </BannerButton>}
                     </Banner>
                     <Header>

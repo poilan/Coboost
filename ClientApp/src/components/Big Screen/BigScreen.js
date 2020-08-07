@@ -197,12 +197,9 @@ export class BigScreen extends Component {
                 try {
                     var questionData = JSON.parse(e.data);
 
-                    var task = this.state.task;
-                    task = questionData;
-
                     this.setState({
-                        activeQuestion: task.Index,
-                        task: task,
+                        activeQuestion: questionData.Index,
+                        task: questionData,
                     })
                 } catch (e) {
                     sse.log("Failed to parse server event: Question");
@@ -339,7 +336,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator hidden style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator hidden={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
@@ -371,7 +368,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "95%", height: "80%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height={80} total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="80%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -385,7 +382,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "95%", height: "80%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height={80} total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height="80%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -398,7 +395,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "95%", height: "80%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Average / task.Max) * 100)} height={80} total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Average / task.Max) * 100)} height="80%" total={task.Options.length} showcase />
                 )}
             </>
         );

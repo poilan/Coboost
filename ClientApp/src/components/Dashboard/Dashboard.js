@@ -534,9 +534,9 @@ export class Dashboard extends Component {
             <>
                 <MainContainer>
                     <Banner>
-                        <BreadCrumb aria-label="Breadcrumb">
+                        <BreadCrumb aria-label="Breadcrumb" separator="&#187;">
                             <BreadText color="initial" href="/">Coboost</BreadText>
-                            <BreadText color="initial" href="/dashboard">Dashboard</BreadText>
+                            <BreadText color="initial" href="/dashboard">Sessions</BreadText>
                         </BreadCrumb>
                         <BannerDropButton title="User">
                             <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>

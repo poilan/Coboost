@@ -66,7 +66,7 @@ namespace Slagkraft.Models.Admin.Questions
 
             for (int i = 0; i < Votes.Count; i++)
             {
-                for (int j = 0; j < Votes[i].Ratings.Count; i++)
+                for (int j = 0; j < Votes[i].Ratings.Count; j++)
                 {
                     Options[j].Ratings.Add(Votes[i].Ratings[j]);
                 }

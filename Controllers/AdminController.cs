@@ -66,7 +66,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                Response.StatusCode = 404;
+                Response.StatusCode = 412;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -106,7 +106,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -126,7 +126,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -146,7 +146,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -161,7 +161,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -175,7 +175,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -189,7 +189,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -203,7 +203,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -217,7 +217,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -286,7 +286,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -314,16 +314,19 @@ namespace Slagkraft.Controllers
         }
 
         [HttpGet("{code}/questions-all")]
-        public IEnumerable<BaseTask> GetQuestions(int code)
+        public string GetQuestions(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 HttpContext.Response.StatusCode = 202;
-                return admin.Tasks;
+                string tasks = JsonConvert.SerializeObject(admin.Tasks);
+
+
+                return tasks;
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return null;
             }
         }
@@ -361,7 +364,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 
@@ -378,7 +381,7 @@ namespace Slagkraft.Controllers
                 Session session = await Context.Sessions.FindAsync(code);
                 if (session == null)
                 {
-                    HttpContext.Response.StatusCode = 404;
+                    HttpContext.Response.StatusCode = 412;
                     return; //Session doesn't exist!
                 }
 
@@ -417,7 +420,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -431,7 +434,7 @@ namespace Slagkraft.Controllers
                 Response.StatusCode = 200;
             }
             else
-                Response.StatusCode = 404;
+                Response.StatusCode = 412;
         }
 
         [HttpPost("{code}/question-rename-group-{group}")]
@@ -447,7 +450,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -470,7 +473,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -489,10 +492,25 @@ namespace Slagkraft.Controllers
                 await Context.SaveChangesAsync();
 
                 HttpContext.Response.StatusCode = 200;
-            }
+            }            
+        }
 
+        [HttpPost("close-{code}")]
+        public async Task CloseSession(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                await SaveSession(code);
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
             Context.Active.Sessions.Remove(code);
         }
+
+
 
         [HttpGet("{code}/stream-question-{index}")]
         public async void StreamQuestion(int code, int index)
@@ -559,6 +577,12 @@ namespace Slagkraft.Controllers
                 else if (admin.Tasks[index] is Points)
                 {
                     Points subject = admin.Tasks[index] as Points;
+
+                    await Response.WriteAsync("event:" + "Amount\n");
+                    string amount = $"data: {JsonConvert.SerializeObject(subject.Amount)}\n\n";
+                    await Response.WriteAsync(amount);
+                    await Response.Body.FlushAsync();
+
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
@@ -572,7 +596,7 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync("event:" + "Votes\n");
                         string votes = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
                         await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();
+                        await Response.Body.FlushAsync();                        
 
                         await Response.WriteAsync("event:" + "Archive\n");
                         string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";
@@ -615,7 +639,7 @@ namespace Slagkraft.Controllers
             }
             else
             {
-                HttpContext.Response.StatusCode = 404;
+                HttpContext.Response.StatusCode = 412;
             }
         }
 

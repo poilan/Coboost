@@ -56,7 +56,7 @@ namespace Slagkraft.Models.Admin.Questions
 
             for(int i = 0; i < Votes.Count; i++)
             {
-                for(int j = 0; j < Votes[i].Points.Count; i++)
+                for(int j = 0; j < Votes[i].Points.Count; j++)
                 {
                     Options[j].Points += Votes[i].Points[j];
                 }

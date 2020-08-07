@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
 import { Input } from './Input';
+import Box from '@material-ui/core/Box';
+import Slider from '@material-ui/core/Slider';
 
 const BackgroundContainer = styled.div`
     background: #fff;
@@ -59,7 +61,6 @@ const Percentage = styled.div`
 `;
 
 export function ResultItem(props) {
-
     return (
         <ItemContainer total={props.total} index={props.index}>
             <PercentageContainer height={`${props.height}`}>
@@ -71,5 +72,23 @@ export function ResultItem(props) {
                 onCheck={props.onCheck} showcase={props.showcase}
             />
         </ItemContainer>
+    );
+}
+
+export function ResultSlider(props) {
+    return (
+        <Box key={props.index} component="fieldset" mb={3} pt={1} px={1} borderColor="grey.500" border={1}>
+            <Input vote size="1" component="legend"
+                id={props.id} index={props.index} title={props.title}
+                checked={props.checked}
+                onCheck={props.onCheck} showcase={props.showcase}
+            />            
+            <Box component="fieldset" px={5} borderRadius={3} borderColor="transparent">
+                <Slider name={props.title} value={props.average}
+                step={1} marks min={props.min} max={props.max}
+                aria-labledby="discrete-slider" valueLabelDisplay="auto"
+            />
+            </Box>
+        </Box>
     );
 }

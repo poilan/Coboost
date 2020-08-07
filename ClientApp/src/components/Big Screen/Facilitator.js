@@ -5,12 +5,14 @@ import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollec
 import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
-    background: rgb(53, 57, 67);
-
     display: flex;
     flex-direction: row;
 
     opacity: ${props => props.hidden ? "0%" : "100%"};
+    outline: 0;
+    box-shadow: 0;
+    border: solid rgb(106, 114, 137);
+    border-width: 0 1px;
 
     &:hover {
         opacity:  100%;
@@ -21,7 +23,10 @@ const FacilitatorButton = styled.button`
     color: rgb(249, 251, 247);
     background-color: rgb(53, 57, 67);
     height: 100%;
-    border: 1px solid rgb(106, 114, 137);
+    border: solid rgb(106, 114, 137);
+    border-width: 2px 1px;
+    outline: none;
+    box-shadow: none;
 
     flex: 1 1 auto;
 
@@ -33,6 +38,10 @@ const FacilitatorButton = styled.button`
     :focus {
         outline: none;
         box-shadow: none;
+    }
+
+    :active {
+        border-color: rgb(83, 87, 97);
     }
 
     &:hover {
@@ -168,7 +177,7 @@ export class Facilitator extends React.Component {
         await axios.get(`admin/${this.state.code}/questions-all`).then(res => {
             if (res.status === 202) {
                 this.setState({
-                    questions: res.data,
+                    questions: JSON.parse(res.data),
                 });
                 callback();
             }
@@ -214,7 +223,7 @@ export class Facilitator extends React.Component {
             const active = this.props.active;
 
             await this.getActiveQuestion(() => {
-                if (active < (questions.length - 1)) {
+                if (active < questions.length) {
                     const index = active + 1;
                     this.setActiveQuestion(index);
                 }
@@ -312,10 +321,10 @@ export class Facilitator extends React.Component {
                     }
                 </FacilitatorContainer>
                 <SlideContainer show={this.state.showTasks}>
-                    {this.state.questions.map(question => <Slide id={question.index} isActive={question.index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>
-                        {question.type === 0 && <IconText id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        {question.type === 1 && <IconMP id={question.index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        <SlideText>{question.index + 1}</SlideText>
+                    {this.state.questions.map(question => <Slide id={question.Index} isActive={question.Index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>
+                        {question.Type === 0 && <IconText id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        {question.Type === 1 && <IconMP id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        <SlideText>{question.Index + 1}</SlideText>
                     </Slide>)}
                 </SlideContainer>
             </>

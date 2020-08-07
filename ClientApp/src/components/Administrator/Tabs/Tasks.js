@@ -233,9 +233,9 @@ export class Tasks extends Component {
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
-                        <Task key={task.index} id={task.index} update={this.props.update}
-                            onClick={this.taskClick.bind(this)} active={this.props.active == task.index}
-                            type={task.type} title={task.title}
+                        <Task key={task.Index} id={task.Index} update={this.props.update}
+                            onClick={this.taskClick.bind(this)} active={this.props.active == task.Index}
+                            type={task.Type} title={task.Title}
                         />
                     )}
                 </Collection>

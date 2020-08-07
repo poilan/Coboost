@@ -34,7 +34,7 @@ namespace Slagkraft.Models.Admin
             {
                 int i = active;
                 active = value;
-                Client.Set();
+                ClientSet();
                 if (Tasks != null && Tasks.Count > i)
                 {
                     Tasks[i].Reset.Set();
@@ -80,6 +80,7 @@ namespace Slagkraft.Models.Admin
                 if (Tasks[Active] is MultipleChoice Choice)
                 {
                     Choice.AddUserVote(Multi);
+                    return;
                 }
             }
 
@@ -88,6 +89,7 @@ namespace Slagkraft.Models.Admin
                 if (Tasks[Active] is Points points)
                 {
                     points.AddClientVote(point);
+                    return;
                 }
             }
 
@@ -96,6 +98,7 @@ namespace Slagkraft.Models.Admin
                 if(Tasks[Active] is Rate slider)
                 {
                     slider.AddClientVote(slide);
+                    return;
                 }
             }
         }
@@ -207,7 +210,7 @@ namespace Slagkraft.Models.Admin
                 {
                     active = target;
                     Tasks[target].Reset.Set();
-                    Client.Set();
+                    ClientSet();
                 }
                 else if (active == target)
                 {
@@ -215,26 +218,26 @@ namespace Slagkraft.Models.Admin
                     {
                         active -= 1;
                         Tasks[active].Reset.Set();
-                        Client.Set();
+                        ClientSet();
                     }
                     else if (target < current)
                     {
                         active += 1;
                         Tasks[active].Reset.Set();
-                        Client.Set();
+                        ClientSet();
                     }
                 }
                 else if (active <= target && active > current)
                 {
                     active -= 1;
                     Tasks[active].Reset.Set();
-                    Client.Set();
+                    ClientSet();
                 }
                 else if (active >= target && active < current)
                 {
                     active += 1;
                     Tasks[active].Reset.Set();
-                    Client.Set();
+                    ClientSet();
                 }
             }
         }
@@ -269,6 +272,13 @@ namespace Slagkraft.Models.Admin
                 Tasks[i].Index = i;
                 Tasks[i].Reset.Set();
             }
+        }
+
+        private void ClientSet()
+        {
+            if (Client == null)
+                Client = new ManualResetEvent(false);
+            Client.Set();
         }
 
         #endregion Private Methods

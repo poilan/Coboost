@@ -91,7 +91,8 @@ namespace Slagkraft.Models.Admin.Questions
             lock (QuestionLock)
             {
                 Groups[0].Members.Add(input);
-            }
+                UpdateMemberIndexes(0);
+            }            
             EventStream();
         }
 

@@ -7,7 +7,7 @@ import { PageModal } from '../../Services/PageModal';
 import { Input, InputDetails } from './Components/Input';
 import { Group } from './Components/Group';
 import { Column } from './Components/Column';
-import { ResultBackground, ResultItem } from './Components/Results';
+import { ResultBackground, ResultItem, ResultSlider } from './Components/Results';
 import { CreateTaskModal } from './Components/CreateModal';
 import { ContextMenu } from './Components/ContextMenu';
 import { Tooltip, Collapse, IconButton } from '@material-ui/core';
@@ -183,8 +183,8 @@ export class Organizer extends Component {
                         const code = sessionStorage.getItem("code");
 
                         let data = {
-                            description: title,
-                            userID: user,
+                            Description: title,
+                            UserID: user,
                         }
 
                         axios.post(`client/${code}/add-opentext`, data);
@@ -313,7 +313,7 @@ export class Organizer extends Component {
             details: {
                 open: (id) => {
                     let key = id.split("-");
-                    let answer = this.props.tasks[this.props.active].groups[key[0]].Members[key[1]];
+                    let answer = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]];
                     this.setState({
                         details: {
                             answer: answer,
@@ -377,7 +377,6 @@ export class Organizer extends Component {
             overview: false,
             selected: [],
         });
-        axios.post(`admin/${code}/active-${key}`);
         this.props.SSE(key);
     }
 
@@ -444,13 +443,12 @@ export class Organizer extends Component {
                 let options = [];
                 for (var i = 0; i < this.state.selected.length; i++) {
                     var key = this.state.selected[i].split("-");
-                    var answer = task.groups[key[0]].Members[key[1]];
+                    var answer = task.Groups[key[0]].Members[key[1]];
                     var data = {
-                        userID: answer.UserID,
-                        index: options.length,
-                        description: answer.Description,
-                        votes: [],
-                        archive: [],
+                        UserID: answer.UserID,
+                        Index: options.length,
+                        Description: answer.Description,
+                        Title: answer.Title,
                     }
                     options.push(data);
                 }
@@ -537,20 +535,29 @@ export class Organizer extends Component {
                 }
             }
 
+            const duplicate = () => {
+                const code = sessionStorage.getItem("code");
+                const options = getOptions();
+
+                options.forEach(option => {
+                    axios.post(`client/${code}/add-opentext`, option);
+                });
+            }
+
             const menu = [
-                { "label": "Answer question", "callback": this.modal.answer.open },
-                //{ "label": "Group selected answers", "callback": "" },
-                { "label": "Merge selected answers", "callback": merge },
-                { "label": "Create vote from selected", "callback": this.modal.create.open },
-                { "label": "Remove selected answers", "callback": archive.members },
+                { "label": "Write input", "callback": this.modal.answer.open },
+                { "label": "Duplicate selected input", "callback": duplicate },
+                { "label": "Merge selected inputs", "callback": merge },
+                { "label": "Create vote from selected inputs", "callback": this.modal.create.open },
+                { "label": "Remove selected inputs", "callback": archive.members },
             ];
 
             return (
                 <MainContainer>
                     <ButtonToolbar>
-                        <AnswerButton onClick={this.modal.answer.open}>Send input</AnswerButton>
-                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={this.modal.create.open.bind(this)}>Send to tasks</SendToMC></Tooltip>
-                        <MergeButton onClick={merge.bind(this)}>Merge selected</MergeButton>
+                        <AnswerButton onClick={this.modal.answer.open}>Write input</AnswerButton>
+                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={this.modal.create.open.bind(this)}>Send selected to vote</SendToMC></Tooltip>
+                        <MergeButton onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
                     </ButtonToolbar>
 
                     {this.props.columns !== undefined && this.props.columns.map(column =>
@@ -559,8 +566,8 @@ export class Organizer extends Component {
                             grow={() => grow(column.index)}
                             shrink={() => shrink(column.index)}>
 
-                            {task.groups !== undefined &&
-                                task.groups.map(group => {
+                            {task.Groups !== undefined &&
+                                task.Groups.map(group => {
                                     if (column.index === group.Column) {
                                         return (
                                             <Group id={group.Index} key={group.Index}
@@ -620,7 +627,7 @@ export class Organizer extends Component {
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
@@ -628,9 +635,99 @@ export class Organizer extends Component {
                         </Tooltip>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "70%" }} />
-                    {task.options !== undefined && task.options.map(option =>
+                    {task.Options !== undefined && task.Options.map(option =>
                         <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
-                            vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="70%" total={task.options.length}
+                            vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="70%" total={task.Options.length}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+                            onCheck={select.bind(this)}
+                        />
+                    )}
+                </MainContainer>
+            );
+        }
+
+        const points = (task) => {
+            const select = (event) => {
+                const key = event.target.id;
+
+                if (this.state.selected.indexOf(key) == -1) {
+                    this.setState({
+                        selected: key,
+                    });
+                }
+                else {
+                    this.setState({
+                        selected: '',
+                    })
+                }
+            }
+
+            return (
+                <MainContainer>
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+
+                    <ButtonToolbar>
+                        <Tooltip title="Creates a new task using the selected answer">
+                            <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.state.modal.create.open()}>Send to Tasks</SendToT>
+                        </Tooltip>
+                    </ButtonToolbar>
+                    <ResultBackground style={{ width: "95%", height: "70%" }} />
+                    {task.Options !== undefined && task.Options.map(option =>
+                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
+                            vote percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} height="70%" total={task.Options.length}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+                            onCheck={select.bind(this)}
+                        />
+                    )}
+                </MainContainer>
+            );
+        }
+
+        const slider = (task) => {
+            const select = (event) => {
+                const key = event.target.id;
+
+                if (this.state.selected.indexOf(key) == -1) {
+                    this.setState({
+                        selected: key,
+                    });
+                }
+                else {
+                    this.setState({
+                        selected: '',
+                    })
+                }
+            }
+
+            //return (
+            //    <MainContainer>
+            //        {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+            //        <ButtonToolbar>
+            //            <Tooltip title="Creates a new task using the selected answer">
+            //                <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.state.modal.create.open()}>Send to Tasks</SendToT>
+            //            </Tooltip>
+            //        </ButtonToolbar>
+            //        <ResultBackground style={{ width: "95%", height: "70%" }} />
+            //        {task.Options !== undefined && task.Options.map(option =>
+            //            <ResultItem id={option.Index} index={option.Index} title={option.Title}
+            //                vote percentage={parseInt((option.Average / task.Max) * 100)} height="70%" total={task.Options.length}
+            //                checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+            //                onCheck={select.bind(this)}
+            //            />
+            //        )}
+            //    </MainContainer>
+            //);
+            return (
+                <MainContainer>
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+                    <ButtonToolbar>
+                        <Tooltip title="Creates a new task using the selected answer">
+                            <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.state.modal.create.open()}>Send to Tasks</SendToT>
+                        </Tooltip>
+                    </ButtonToolbar>
+                    {task.Options !== undefined && task.Options.map(option =>
+                        <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote
+                            average={option.Average} min={task.Min} max={task.Max}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
                             onCheck={select.bind(this)}
                         />
@@ -642,16 +739,16 @@ export class Organizer extends Component {
         if (!this.state.overview && this.props.tasks[this.props.active] != undefined) {
             let task = this.props.tasks[this.props.active];
 
-            if (task.type == 0) {
+            if (task.Type == 0) {
                 return text(task);
-            } else if (task.type == 1) {
+            } else if (task.Type == 1) {
                 return multipleChoice(task);
             }
-            else if (task.type == 2) {
-                return multipleChoice(task);
+            else if (task.Type == 2) {
+                return points(task);
             }
             else {
-                return multipleChoice(task);
+                return slider(task);
             }
             //else {
             //    return (
@@ -666,7 +763,7 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     {this.props.tasks.map(task =>
-                        <ItemTask id={task.index} onClick={this.clickTask}>{task.index + 1}. {task.title}</ItemTask>
+                        <ItemTask id={task.Index} onClick={this.clickTask}>{task.Index + 1}. {task.Title}</ItemTask>
                     )}
                 </MainContainer>
             )

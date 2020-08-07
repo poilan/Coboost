@@ -41,7 +41,7 @@ const BreadCrumb = styled(Breadcrumbs)`
 `;
 
 const BreadText = styled(Link)`
-    color: ${props => props.active ? "#4C7AD3" : "#fff"};
+    color: #fff;
     font-size: 1.25rem;    
 `;
 
@@ -219,7 +219,7 @@ export class Administrator extends Component {
 
     componentWillUnmount() {
         this.SSE.close();
-        axios.post(`admin/save-${this.state.code}`)
+        axios.post(`admin/close-${this.state.code}`);
     }
 
     update = async () => {
@@ -230,12 +230,12 @@ export class Administrator extends Component {
                 this.setState({
                     tasks: res.data,
                 });
-
+                axios.post(`admin/save-${this.state.code}`);
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
                 else if (this.state.tasks.length > 0)
                     this.SSE.start(0);
-            } else if (res.status === 404) {
+            } else if (res.status === 412) {
                 //session not found
             }
         })
@@ -274,12 +274,12 @@ export class Administrator extends Component {
                 try {
                     var data = JSON.parse(e.data);
                     var tasks = this.state.tasks;
-                    tasks[target].groups = data;
+                    tasks[target].Groups = data;
                     let columns = this.state.columns;
                     this.state.columns = [];
-                    if (tasks[target].groups !== undefined) {
-                        for (let i = 0; i < tasks[target].groups.length; i++) {
-                            while (tasks[target].groups[i].Column + 1 >= this.state.columns.length) {
+                    if (tasks[target].Groups !== undefined) {
+                        for (let i = 0; i < tasks[target].Groups.length; i++) {
+                            while (tasks[target].Groups[i].Column + 1 >= this.state.columns.length) {
                                 this.SSE.addColumn();
                             }
                         }
@@ -308,7 +308,7 @@ export class Administrator extends Component {
                 try {
                     var data = JSON.parse(e.data);
                     var tasks = this.state.tasks;
-                    tasks[target].options = data;
+                    tasks[target].Options = data;
                     //if (tasks[target].options !== undefined) {
                     //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
                     //}
@@ -335,11 +335,39 @@ export class Administrator extends Component {
                 }
             }, false);
 
+            this.SSE.source.addEventListener("Votes", (e) => {
+                try {
+                    let votes = JSON.parse(e.data);
+                    let tasks = this.state.tasks;
+                    tasks[target].Votes = votes;
+                    this.setState({
+                        tasks: tasks,
+                    });
+                } catch (e) {
+                    console.log("Failed to parse server event: Votes");
+                    console.log(e);
+                }
+            });
+
+            this.SSE.source.addEventListener("Amount", (e) => {
+                try {
+                    let amount = JSON.parse(e.data);
+                    let tasks = this.state.tasks;
+                    tasks[target].Amount = amount;
+                    this.setState({
+                        tasks: tasks,
+                    });
+                } catch (e) {
+                    console.log("Failed to parse server event: Votes");
+                    console.log(e);
+                }
+            });
+
             this.SSE.source.addEventListener("Archive", (e) => {
                 try {
                     var data = JSON.parse(e.data);
                     var tasks = this.state.tasks;
-                    tasks[target].archive = data;
+                    tasks[target].Archive = data;
                     this.setState({
                         tasks: tasks,
                     })
@@ -407,11 +435,12 @@ export class Administrator extends Component {
             <MainContainer>
 
                 <Banner>
-                    <BreadCrumb aria-label="Breadcrumb">
+                    <BreadCrumb aria-label="Breadcrumb" separator="&#187;">
                         <BreadText color="initial" href="/">Coboost</BreadText>
-                        <BreadText color="initial" href="/dashboard">Dashboard</BreadText>
-                        <Tooltip title="Tasks"><BreadText color="initial" active={this.state.tab == "task"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("task") }}>{this.state.title}</BreadText></Tooltip>
-                        {this.state.tasks[this.state.active] != undefined && <Tooltip title="Organize"><BreadText color="initial" active={this.state.tab == "organize"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("organize") }}>{this.state.tasks[this.state.active].title}</BreadText></Tooltip>}
+                        <BreadText color="initial" href="/dashboard">Sessions</BreadText>
+                        <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.selectTab("task") }}>{this.state.title}</BreadText>
+                        <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.state.tab == "task" ? this.selectTab("organize") : this.selectTab("task") }}>{this.state.tab == "task" ? "Tasks" : "Organize"}</BreadText>
+                        {this.state.tasks[this.state.active] != undefined && <Tooltip title="Organize"><BreadText color="initial" active={this.state.tab == "organize"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("organize") }}>{this.state.tasks[this.state.active].Title}</BreadText></Tooltip>}
                     </BreadCrumb>
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 

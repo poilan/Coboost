@@ -142,12 +142,15 @@ export class Input extends Component {
 }
 
 const ModalPage = styled(Modal)`
-    border-radius: 20px;
     font-family: CircularStd;
+
+    .modal-content {
+        min-width: 720px;
+    }
 
     .modal-title {
         font-size: 1rem;
-        opacity: 50%;
+        opacity: 70%;
     }
 
     .modal-body {
@@ -160,10 +163,11 @@ const DetailsContainer = styled.div`
     height: 100%;
     flex-wrap: wrap;
     min-height: 150px;
+    padding: 15px;
 `;
 
 const Title = styled.h1`
-    width: 100%;
+    width: 50%;
     position: relative;
     text-align: left;
     font-family: CircularStd;
@@ -173,16 +177,17 @@ const Title = styled.h1`
 
 const User = styled.h1`
     position: relative;
-    width: 100%;
+    width: 50%;
     font-size: 1rem;
     opacity: 80%;
-    justify-content: end;
+    float: right;
 `;
 
 const Description = styled.p`
     width: 100%;
     font-size: 1rem;
     position: relative;
+    padding-left: 10px;
 `;
 
 const ShowChildren = styled.input`
@@ -204,6 +209,10 @@ const ShowChildren = styled.input`
 const Children = styled.div`
     display: flex;
     flex-direction: column;
+    background: #ccc;
+    border-radius: 20px;
+    margin: 30px;
+    width: 100%;
 `;
 
 const Child = styled(DetailsContainer)`
@@ -224,9 +233,7 @@ export class InputDetails extends React.Component {
             <DetailsContainer>
                 {this.details(this.props.answer)}
                 {children != undefined && //If this is merged input add button to show them.
-                    <ShowChildren>
-                        {this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"}
-                    </ShowChildren>}
+                    <ShowChildren value={this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"} onClick={() => this.setState({showChildren: !this.state.showChildren})}/>}
 
                 {this.state.showChildren &&
                     <Children>{children.map(child =>

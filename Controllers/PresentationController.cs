@@ -128,6 +128,11 @@ namespace Slagkraft.Controllers
                         string votes = $"data: {JsonConvert.SerializeObject(point.Votes)}\n\n";
                         await Response.WriteAsync(votes);
                         await Response.Body.FlushAsync();
+
+                        await Response.WriteAsync("event:" + "Amount\n");
+                        string amount = $"data: {JsonConvert.SerializeObject(point.Amount)}\n\n";
+                        await Response.WriteAsync(amount);
+                        await Response.Body.FlushAsync();
                     }
                     else if(question is Rate slider)
                     {
