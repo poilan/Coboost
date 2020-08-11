@@ -625,7 +625,7 @@ export class Mobile extends Component {
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
                 {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} placeholder="Give your input a title..." />}
                 <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
-                <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" :"Send Input!"}</ContentButton>
+                <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" : "Send Input!"}</ContentButton>
             </ContentContainer>
         );
     }

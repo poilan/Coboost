@@ -214,7 +214,7 @@ export class Administrator extends Component {
             code: code,
             presentor: presentManager,
         });
-        this.update();        
+        this.update();
     }
 
     componentWillUnmount() {
@@ -465,7 +465,7 @@ export class Administrator extends Component {
                                 <Nav.Link eventKey="organize">Organize</Nav.Link>
                             </HeaderTabs>
 
-                            <Facilitator style={{ position: "absolute", top: "0px", right: "0px", height: "50px", width: "40%" }} next={this.controls.next} back={this.controls.back} active={this.state.active} showingResult={this.state.results} onResultToggle={() => { this.setState({ results: !this.state.results, })}}/>
+                            <Facilitator style={{ position: "absolute", top: "0px", right: "0px", height: "50px", width: "40%" }} next={this.controls.next} back={this.controls.back} active={this.state.active} showingResult={this.state.results} onResultToggle={() => { this.setState({ results: !this.state.results, }) }} code={this.state.code} />
 
                         </ContentHeader>
                         <ContentBody>

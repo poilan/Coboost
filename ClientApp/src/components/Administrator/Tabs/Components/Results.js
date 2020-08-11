@@ -82,12 +82,12 @@ export function ResultSlider(props) {
                 id={props.id} index={props.index} title={props.title}
                 checked={props.checked}
                 onCheck={props.onCheck} showcase={props.showcase}
-            />            
+            />
             <Box component="fieldset" px={5} borderRadius={3} borderColor="transparent">
                 <Slider name={props.title} value={props.average}
-                step={1} marks min={props.min} max={props.max}
-                aria-labledby="discrete-slider" valueLabelDisplay="auto"
-            />
+                    step={1} marks min={props.min} max={props.max}
+                    aria-labledby="discrete-slider" valueLabelDisplay="auto"
+                />
             </Box>
         </Box>
     );

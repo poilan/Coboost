@@ -222,7 +222,7 @@ export class Tasks extends Component {
         }
 
         const menu = [
-            { "label": "Brainstorm: Text", "callback": createInput },
+            { "label": "Input: Open Text", "callback": createInput },
             { "label": "Vote: Multiple Choice", "callback": createMultipleChoice },
             { "label": "Vote: Points", "callback": createPoints },
             { "label": "Vote: Slider", "callback": createSlider },

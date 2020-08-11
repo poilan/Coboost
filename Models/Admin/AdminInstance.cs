@@ -93,9 +93,9 @@ namespace Slagkraft.Models.Admin
                 }
             }
 
-            if(clientInput is Rate_Vote slide)
+            if (clientInput is Rate_Vote slide)
             {
-                if(Tasks[Active] is Rate slider)
+                if (Tasks[Active] is Rate slider)
                 {
                     slider.AddClientVote(slide);
                     return;
@@ -108,7 +108,7 @@ namespace Slagkraft.Models.Admin
             question.Index = Tasks.Count;
             question.Archive = new List<MultipleChoice_Option>();
             question.Type = BaseTask.TaskType.MultipleChoice;
-            foreach(MultipleChoice_Option option in question.Options)
+            foreach (MultipleChoice_Option option in question.Options)
             {
                 option.Votes = new List<MultipleChoice_Input>();
                 option.Archive = new List<MultipleChoice_Input>();
@@ -132,7 +132,7 @@ namespace Slagkraft.Models.Admin
             task.Type = BaseTask.TaskType.Points;
             task.Votes = new List<Points_Vote>();
             task.Archive = new List<Points_Option>();
-            foreach(Points_Option option in task.Options)
+            foreach (Points_Option option in task.Options)
             {
                 option.Points = 0;
             }
@@ -145,7 +145,7 @@ namespace Slagkraft.Models.Admin
             task.Type = BaseTask.TaskType.Rate;
             task.Votes = new List<Rate_Vote>();
             task.Archive = new List<Rate_Option>();
-            foreach(Rate_Option option in task.Options)
+            foreach (Rate_Option option in task.Options)
             {
                 option.Ratings = new List<int>();
             }

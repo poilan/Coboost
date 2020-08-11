@@ -6,76 +6,80 @@ import "circular-std";
 import { IconMain, IconLogo } from '../Classes/Icons';
 
 const LeftHalf = styled(Col)`
-  background: rgb(224 233 254);
   position: absolute;
-  left: ${props => props.mobile === "true" ? "0%" : "10%"};
-  height: ${props => props.mobile === "true" ? "100%" : "70%"};
-  bottom: ${props => props.mobile === "true" ? "0%" : "10%"};
-  width: ${props => props.mobile === "true" ? "100%" : "85%"};
-  border-radius: 10px;
+  left: 50%;
+  height: 60%;
+  top: 50%;
+  width: 100%;
+  max-width: 1080px;
+  transform: translate(-50%, -50%);
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 `;
 
-const MainIcon = styled(IconMain)`
+const InputContainer = styled.div`
+    height: 75px;
+    width: 80%;
     position: absolute;
-    width: 50%;
-    height: 100%;
-    right: 0%;
-    border-radius: 10px;
-    padding: 20px;
-    display: ${props => props.mobile === "true" ? "none" : "block"};
+    background: #fff;
+    border-radius: 1rem;
+    left: 50%;
+    transform: translateX(-50%);    
+    margin: 1rem;
 `;
 
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    width: ${props => props.mobile === "true" ? "90%" : "35%"};
-    height: 10%;
-    bottom: 20%;
-    box-shadow: 0;
-    border-radius: 10px;
+    left: 8rem;
+    width: 70%;
+    height: 100%;
     border: 0;
-    padding-left: ${props => props.mobile === "true" ? "8%" : "11%"};
 `;
 
 const LeftText = styled.h2`
     font-family: CircularStd;
-    position: absolute;
-    top: ${props => props.mobile === "true" ? "25%" : "50%"};
-    font-size: ${props => props.mobile === "true" ? "18px" : "20px"};
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    margin: 1rem;
 `;
 
 const LeftTitle = styled.h1`
     font-family: CircularStd;
-    position: absolute;
-    top: ${props => props.mobile === "true" ? "5%" : "20%"};
-    font-size: ${props => props.mobile === "true" ? "2rem" : "4rem"};
+    text-align: center;
+    font-size: 5rem;
+    color: #fff;
+    margin: 1rem;
 `;
 
 const JoinEventBtn = styled.button`
     font-family: CircularStd;
-    /*background-color: rgb(60 102 246);*/
     background-color: rgb(53, 57, 67);
-    color: rgb(255 255 255);
+    color: rgb(255, 255, 255);
+    display: inline;
+    text-align: center;
+    width: 20%;
+    height: calc(100% - 20px);
+    right: 10px;
+    top: 10px;
     position: absolute;
-    bottom: ${props => props.mobile === "true" ? "23%" : "22%"};
-    left: ${props => props.mobile === "true" ? "62%" : "25%"};  
-    /*border: 2px solid rgb(60 102 246);*/
     border: 2px solid rgb(53, 57, 67);
     border-radius: 10px;    
-    width: ${props => props.mobile === "true" ? "30%" : "10%"};
 `;
 
 const RightHalf = styled(Col)`
   display: ${props => props.mobile === "true" ? "none" : "block"};
   position: absolute;
-  top: 0px;
-  left: 40%;
-  width: 60%;
-  height: 100%;
-  margin-left: 0px;
-  padding: 0px;
-  border-radius: 10px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 10%;
+  padding: 10px;
+  max-width: 1280px;
 `;
 
 const RightNav = styled(Nav)`
@@ -90,22 +94,16 @@ const RightNav = styled(Nav)`
         bottom: 100px;
         right: 100px;
         position: relative;
-
-        color: black;
+        color: #fff;
     };
 `;
 
 const RightTitle = styled.h2`
     position: relative;
-    /*color: rgb(26 87 248);*/
-    color: rgb(53, 57, 67);
-    opacity: 60%;
+    color: #fff;
     padding: 50px;
     font-family: CircularStd;
     font-size: 1.5rem;
-    left: -50%;
-
-
 `;
 
 const LandingContainer = styled(Container)`
@@ -115,27 +113,26 @@ const LandingContainer = styled(Container)`
 `;
 
 const LoginButton = styled(Nav.Link)`
-    /*border: 2px solid rgb(73 128 250);*/
-    border: 2px solid rgb(53, 57, 67);
-    color: rgb(73 128 250);
-    border-radius: 50px;
+    color: #fff;
+    background: #006bdd;
+    border-radius: 3rem;
     text-align: center;
-    width: 170%;
+    width: 130%;
+    box-shadow: 1px 1px #000;
 `;
 
 const EventCodeText = styled.h5`
-    display: ${props => props.mobile === "true" ? "none" : "block"};
+    display: inline;
+    width: 7.5rem;
+    left: 0;
     position: absolute;
-    font-family: CircularStd;   
-    bottom: ${props => props.mobile === "true" ? "22%" : "21.5%"};
-    left: ${props => props.mobile === "true" ? "9%" : "2.5%"};
+    font-family: CircularStd; 
+    text-align: right;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 1;
 `;
 
-const Logo = styled(IconLogo)`
-    padding: 20px;
-    width: 15%;
-`;
 
 export class Home extends Component {
     static displayName = Home.name;
@@ -197,6 +194,9 @@ export class Home extends Component {
                     <Nav.Link href="/about">About</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
+                    <Nav.Link href="/price">Pricing</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
                     <Nav.Link href="/contact">Contact Us</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
@@ -214,20 +214,23 @@ export class Home extends Component {
         return (
             <LandingContainer>
                 <LeftHalf mobile={mobile.toString()}>
-                    <EventCodeText mobile={mobile.toString()}>Event code:</EventCodeText>
-                    <LeftTitle mobile={mobile.toString()} id="ParticipantText">The tool for Digital <br />Co-Creation</LeftTitle>
-                    <LeftText mobile={mobile.toString()} id="JoinText">Co-create and innovate with your team members by <br />creating an event or joining an existing event below.</LeftText>
+                    <LeftTitle mobile={mobile.toString()} id="ParticipantText">The Tool for<br />Digital Co-Creation</LeftTitle>
+                    <LeftText mobile={mobile.toString()} id="JoinText">Co-create and innovate with your team members by creating an<br />event or joining an existing event below.</LeftText>
                     <form onSubmit={this.connectToSession.bind(this)}>
-                        <LeftInput mobile={mobile.toString()} ref="code" placeholder={mobile ? "Enter the 6-digit code" : "eg. #000 000"} name="code"></LeftInput>
-                        <JoinEventBtn mobile={mobile.toString()} type="submit">Join Event</JoinEventBtn>
+                        <InputContainer>
+                            <EventCodeText mobile={mobile.toString()}>Event code: </EventCodeText>
+                            <LeftInput type="number" mobile={mobile.toString()} ref="code" placeholder="eg. 404 404" name="code" />
+                            <JoinEventBtn mobile={mobile.toString()} type="submit">Join Event</JoinEventBtn>
+                        </InputContainer>
                     </form>
-                    <MainIcon mobile={mobile.toString()}></MainIcon>
                 </LeftHalf>
 
                 <RightHalf mobile={mobile.toString()}>
                     <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
+                <img src="./landing.jpg" style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
+                <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "80%", zIndex: "-19" }} />
             </LandingContainer>
         );
     }

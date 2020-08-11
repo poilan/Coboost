@@ -92,7 +92,7 @@ namespace Slagkraft.Models.Admin.Questions
             {
                 Groups[0].Members.Add(input);
                 UpdateMemberIndexes(0);
-            }            
+            }
             EventStream();
         }
 

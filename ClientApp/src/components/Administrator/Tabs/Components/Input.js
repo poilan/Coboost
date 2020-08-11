@@ -233,7 +233,7 @@ export class InputDetails extends React.Component {
             <DetailsContainer>
                 {this.details(this.props.answer)}
                 {children != undefined && //If this is merged input add button to show them.
-                    <ShowChildren value={this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"} onClick={() => this.setState({showChildren: !this.state.showChildren})}/>}
+                    <ShowChildren value={this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"} onClick={() => this.setState({ showChildren: !this.state.showChildren })} />}
 
                 {this.state.showChildren &&
                     <Children>{children.map(child =>

@@ -166,7 +166,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/questions-create-multiplechoice")]
-        public void CreateMultipleChoice(int code, [FromBody]MultipleChoice question)
+        public void CreateMultipleChoice(int code, [FromBody] MultipleChoice question)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -180,7 +180,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/questions-create-opentext")]
-        public void CreateOpenText(int code, [FromBody]OpenText question)
+        public void CreateOpenText(int code, [FromBody] OpenText question)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -194,7 +194,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/questions-create-points")]
-        public void CreatePoints(int code, [FromBody]Points question)
+        public void CreatePoints(int code, [FromBody] Points question)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -208,7 +208,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/questions-create-slider")]
-        public void CreateRate(int code, [FromBody]Rate question)
+        public void CreateRate(int code, [FromBody] Rate question)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -222,7 +222,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("create")]
-        public async Task CreateSession([FromBody]Session data)
+        public async Task CreateSession([FromBody] Session data)
         {
             if (string.IsNullOrWhiteSpace(data.Title))
             {
@@ -438,7 +438,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/question-rename-group-{group}")]
-        public void RenameGroup(int code, int group, [FromBody]Help help)
+        public void RenameGroup(int code, int group, [FromBody] Help help)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -456,7 +456,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/question-rename-member-{group}-{member}")]
-        public void RenameMember(int code, int group, int member, [FromBody]Help help)
+        public void RenameMember(int code, int group, int member, [FromBody] Help help)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -492,7 +492,7 @@ namespace Slagkraft.Controllers
                 await Context.SaveChangesAsync();
 
                 HttpContext.Response.StatusCode = 200;
-            }            
+            }
         }
 
         [HttpPost("close-{code}")]
@@ -596,7 +596,7 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync("event:" + "Votes\n");
                         string votes = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
                         await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();                        
+                        await Response.Body.FlushAsync();
 
                         await Response.WriteAsync("event:" + "Archive\n");
                         string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";

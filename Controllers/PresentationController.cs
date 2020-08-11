@@ -117,7 +117,7 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync(total);
                         await Response.Body.FlushAsync();
                     }
-                    else if(question is Points point)
+                    else if (question is Points point)
                     {
                         await Response.WriteAsync("event:" + "Options\n");
                         string options = $"data: {JsonConvert.SerializeObject(point.Options)}\n\n";
@@ -134,7 +134,7 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync(amount);
                         await Response.Body.FlushAsync();
                     }
-                    else if(question is Rate slider)
+                    else if (question is Rate slider)
                     {
                         await Response.WriteAsync("event:" + "Options\n");
                         string options = $"data: {JsonConvert.SerializeObject(slider.Options)}\n\n";

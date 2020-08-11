@@ -5,7 +5,7 @@ import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'rea
 import styled from 'styled-components';
 import "circular-std";
 import { Ico_Box } from '../Classes/Icons';
-import { Breadcrumbs, Link} from '@material-ui/core';
+import { Breadcrumbs, Link } from '@material-ui/core';
 
 const MainContainer = styled(Col)`
     display: table;

@@ -34,7 +34,7 @@ namespace Slagkraft.Controllers
         #region Public Methods
 
         [HttpPost("{code}/add-multiplechoice")]
-        public void AddMultipleChoice(int code, [FromBody]MultipleChoice_Input input)
+        public void AddMultipleChoice(int code, [FromBody] MultipleChoice_Input input)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -47,7 +47,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/add-opentext")]
-        public void AddOpenText(int code, [FromBody]OpenText_Input input)
+        public void AddOpenText(int code, [FromBody] OpenText_Input input)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -60,7 +60,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/add-points")]
-        public void AddPoints(int code, [FromBody]Points_Vote vote)
+        public void AddPoints(int code, [FromBody] Points_Vote vote)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -73,7 +73,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/add-slider")]
-        public void AddSlider(int code, [FromBody]Rate_Vote vote)
+        public void AddSlider(int code, [FromBody] Rate_Vote vote)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {

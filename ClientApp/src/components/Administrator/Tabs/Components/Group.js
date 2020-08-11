@@ -208,7 +208,7 @@ export class Group extends Component {
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
 
                 <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>}</GroupTitle>
-                
+
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?

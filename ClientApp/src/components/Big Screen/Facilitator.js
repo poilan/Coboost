@@ -172,12 +172,12 @@ export class Facilitator extends React.Component {
 
     async getActiveQuestion(callback) {
         const state = this.state;
-        const code = state.code;
+        const code = sessionStorage.getItem('code');
 
-        await axios.get(`admin/${this.state.code}/questions-all`).then(res => {
+        await axios.get(`admin/${code}/questions-all`).then(res => {
             if (res.status === 202) {
                 this.setState({
-                    questions: JSON.parse(res.data),
+                    questions: res.data,
                 });
                 callback();
             }
@@ -186,7 +186,7 @@ export class Facilitator extends React.Component {
 
     async setActiveQuestion(index) {
         const state = this.state;
-        const code = state.code;
+        const code = sessionStorage.getItem('code');
 
         await axios.post(`admin/${code}/active-${index}`).then((res) => {
             if (res.status === 200) {

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
+import { Box, Typography, TextField, FormControlLabel, Switch } from '@material-ui/core';
 
 const ModalPage = styled(Modal)`
     border-radius: 20px;
@@ -113,12 +114,13 @@ export class CreateTaskModal extends Component {
         this.state = {
             type: props.type,
             title: props.title,
-            max: 1,
+            max: 3,
             points: 1,
 
             options: props.options,
             showing: true,
             success: false,
+            extra: false,
         }
     }
 
@@ -155,14 +157,11 @@ export class CreateTaskModal extends Component {
 
         return (
             <Form onSubmit={createOpenText.bind(this)}>
-                <FieldText>Task Title</FieldText>
-                <Form.Group controlId="validateTitle">
-                    <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} autoFocus={true} value={this.state.title} required />
-                    </InputGroup>
-                </Form.Group>
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth />
+                </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit" value="Submit" />
+                <CreateButton type="submit" value="Add new Task" />
             </Form>
         );
     }
@@ -226,6 +225,9 @@ export class CreateTaskModal extends Component {
                 Max: parseInt(this.state.max),
             }
 
+            if (!this.state.extra)
+                data.Max = 1;
+
             axios.post(`admin/${code}/questions-create-multiplechoice`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,32 +245,33 @@ export class CreateTaskModal extends Component {
             })
         }
 
-        let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
         return (
             <Form onSubmit={createMultipleChoice.bind(this)}>
-                <FieldText>Task Title</FieldText>
-                <Form.Group controlId="validateTitle">
-                    <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateMax">
-                    <FieldText>Number of Choices</FieldText>
-                    <InputGroup>
-                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} placeholder="Maximum choices.." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateOptions">
-                    {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.Index}>
-                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
-                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
-                        </OptionContainer>
-                    )}
-                    <OptionContainer>
-                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
-                    </OptionContainer>
-                </Form.Group>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <FormControlLabel control={<Switch checked={this.state.extra} onChange={(e) => { e.preventDefault(); this.setState({ extra: !this.state.extra }); }} name="TextSwitch" />}
+                        label="Allow Multiple Answers" />
+                    {this.state.extra && <TextField id="TextMax" type="number" label="Max Answers" value={this.state.max} onChange={handleMax} />}
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
+                        <Typography component="legend" variant="subtitle2">Options</Typography>
+                        {this.state.options !== undefined && this.state.options.map(option =>
+                            <Box component="fieldset" mb={1} borderColor="transparent">
+                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
+                            </Box>
+                        )}
+                        <Box component="fieldset" mb={1} borderColor="transparent">
+                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                        </Box>
+                    </Box>
+                </Box>
+
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
                 <CreateButton type="submit" value="Submit" />
             </Form>
@@ -362,35 +365,32 @@ export class CreateTaskModal extends Component {
         let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
         return (
             <Form onSubmit={createPoints.bind(this)}>
-                <FieldText>Task Title</FieldText>
-                <Form.Group controlId="validateTitle">
-                    <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="..." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validatePoints">
-                    <FieldText>Total points to spend</FieldText>
-                    <InputGroup>
-                        <Form.Control type="number" name="points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} placeholder="..." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateMax">
-                    <FieldText>Maximum points per option</FieldText>
-                    <InputGroup>
-                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="..." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateOptions">
-                    {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.Index}>
-                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
-                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
-                        </OptionContainer>
-                    )}
-                    <OptionContainer>
-                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>Add option...</AddOption>
-                    </OptionContainer>
-                </Form.Group>
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <Box display="inline" px={1} borderColor="transparent">
+                        <TextField id="points" name="points" type="number" label="Total Points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} />
+                    </Box>
+                    <Box display="inline" px={0} borderColor="transparent">
+                        <TextField id="max" name="max" type="number" label="Max per option" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
+                    </Box>
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
+                        <Typography component="legend" variant="subtitle2">Options</Typography>
+                        {this.state.options !== undefined && this.state.options.map(option =>
+                            <Box component="fieldset" mb={1} borderColor="transparent">
+                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
+                            </Box>
+                        )}
+                        <Box component="fieldset" mb={1} borderColor="transparent">
+                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                        </Box>
+                    </Box>
+                </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
                 <CreateButton type="submit" value="Submit" />
             </Form>
@@ -484,35 +484,32 @@ export class CreateTaskModal extends Component {
         let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
         return (
             <Form onSubmit={createSlider.bind(this)}>
-                <FieldText>Task Title</FieldText>
-                <Form.Group controlId="validateTitle">
-                    <InputGroup>
-                        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Task Title.." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateMin">
-                    <FieldText>Minimum Value</FieldText>
-                    <InputGroup>
-                        <Form.Control type="number" name="min" ref="min" onChange={handleMin.bind(this)} value={this.state.points} placeholder="Minimum Value.." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateMax">
-                    <FieldText>Max Value</FieldText>
-                    <InputGroup>
-                        <Form.Control type="number" name="max" ref="max" onChange={handleMax.bind(this)} value={this.state.max} placeholder="Maximum Value.." required />
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="validateOptions">
-                    {this.state.options !== undefined && this.state.options.map(option =>
-                        <OptionContainer index={option.Index}>
-                            <FieldText key={"T" + option.Index}>{"Option " + (option.Index + 1)}</FieldText>
-                            <Option key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} required />
-                        </OptionContainer>
-                    )}
-                    <OptionContainer>
-                        <AddOption possible={canAdd} onClick={addOption.bind(this)}>➕ Add option...</AddOption>
-                    </OptionContainer>
-                </Form.Group>
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <Box display="inline" px={1} borderColor="transparent">
+                        <TextField id="min" name="min" type="number" label="Minimum Value" ref="min" onChange={handleMin.bind(this)} value={this.state.points} />
+                    </Box>
+                    <Box display="inline" px={0} borderColor="transparent">
+                        <TextField id="max" name="max" type="number" label="Maximum Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
+                    </Box>
+                </Box>
+
+                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
+                        <Typography component="legend" variant="subtitle2">Options</Typography>
+                        {this.state.options !== undefined && this.state.options.map(option =>
+                            <Box component="fieldset" mb={1} borderColor="transparent">
+                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
+                            </Box>
+                        )}
+                        <Box component="fieldset" mb={1} borderColor="transparent">
+                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                        </Box>
+                    </Box>
+                </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
                 <CreateButton type="submit" value="Submit" />
             </Form>
@@ -528,7 +525,7 @@ export class CreateTaskModal extends Component {
             options: [],
             showing: false,
             success: false,
-            max: 1,
+            max: 3,
             points: 1,
         });
     }
@@ -537,7 +534,7 @@ export class CreateTaskModal extends Component {
         return (
             <ModalPage show={this.state.showing} centered onHide={this.onClose.bind(this)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{"Create new task: " + this.props.type == 0 ? "Brainstorm: Text" : this.props.type == 1 ? "Vote: Multiple Choice" : this.props.type == 2 ? "Vote: Points" : "Vote: Slider"}</Modal.Title>
+                    <Modal.Title>{this.props.type == 0 ? "Input: Open Text" : this.props.type == 1 ? "Vote: Multiple Choice" : this.props.type == 2 ? "Vote: Points" : "Vote: Slider"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.props.type == 1 ? this.MultipleChoiceContent() : this.props.type == 2 ? this.PointsContent() : this.SliderContent()}</Modal.Body>
             </ModalPage>

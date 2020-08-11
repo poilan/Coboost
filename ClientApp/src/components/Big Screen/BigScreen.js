@@ -7,7 +7,7 @@ import { Ico_Loading, Ico_Group152, IconLogo } from "../Classes/Icons";
 import { Column } from "../Administrator/Tabs/Components/Column";
 import { Group } from "../Administrator/Tabs/Components/Group";
 import { Input } from "../Administrator/Tabs/Components/Input";
-import { ResultBackground, ResultItem } from "../Administrator/Tabs/Components/Results";
+import { ResultBackground, ResultItem, ResultSlider } from "../Administrator/Tabs/Components/Results";
 import { Facilitator } from "./Facilitator";
 
 import SSE from "../Core/SSE";
@@ -393,9 +393,11 @@ export class BigScreen extends Component {
 
         return (
             <>
-                <ResultBackground style={{ width: "95%", height: "80%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Average / task.Max) * 100)} height="80%" total={task.Options.length} showcase />
+                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote
+                        average={option.Average} min={task.Min} max={task.Max}
+                        showcase
+                    />
                 )}
             </>
         );

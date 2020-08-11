@@ -68,7 +68,7 @@ namespace Slagkraft.Controllers
         /// </summary>
         /// <param name="user">The user information</param>
         [HttpPost("login")]
-        public async Task Login([FromBody]User user)
+        public async Task Login([FromBody] User user)
         {
             User foundUser = await Context.Users.FindAsync(user.Email);
             if (foundUser != null)
@@ -97,7 +97,7 @@ namespace Slagkraft.Controllers
         /// <param name="user">The New Users Information</param>
         /// <returns>Success or failure</returns>
         [HttpPost("register")]
-        public async Task Register([FromBody]User user)
+        public async Task Register([FromBody] User user)
         {
             if (user == null)
             {
