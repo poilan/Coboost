@@ -149,7 +149,7 @@ export class CreateTaskModal extends Component {
         const handleTitle = (event) => {
             event.preventDefault();
             var title = this.state.title;
-            title = this.refs.title.value;
+            title = event.target.value;
             this.setState({
                 title: title,
             });
