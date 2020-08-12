@@ -349,8 +349,14 @@ export class BigScreen extends Component {
 
     renderOpenTextResult() {
         const results = this.state.task.Groups;
+        console.log(results[0].Members);
         return (
             <>
+                {results[0].Members.length > 0 && <Column key="C0" width={1} empty>
+                    <Group key={0} title="Unorganized" size={1} showcase>
+                        {results[0].Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
+                    </Group>
+                </Column>}
                 {results.slice(1).map(group =>
                     <>
                         {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
