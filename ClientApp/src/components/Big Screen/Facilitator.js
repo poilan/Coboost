@@ -9,10 +9,10 @@ const FacilitatorContainer = styled.div`
     flex-direction: row;
 
     opacity: ${props => props.hide ? "0%" : "100%"};
-    outline: 0;
+    /*outline: 0;
     box-shadow: 0;
     border: solid rgb(106, 114, 137);
-    border-width: 0 1px;
+    border-width: 0 1px;*/
 
     &:hover {
         opacity:  100%;
@@ -42,6 +42,11 @@ const FacilitatorButton = styled.button`
 
     :active {
         border-color: rgb(83, 87, 97);
+    }
+
+    :last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
     &:hover {
@@ -272,8 +277,8 @@ export class Facilitator extends React.Component {
         if (this.props.toggle && this.state.hidden) {
             return(
                 <>
-                    <FacilitatorContainer style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
-                        <FacilitatorButton onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                    <FacilitatorContainer style={{ left: "0px", bottom: this.props.style.bottom, position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
+                        <FacilitatorButton style={{borderTopRightRadius: "5px", borderBottomRightRadius: "5px"}} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
                             <BsCaretRightFill/>
                         </FacilitatorButton>
                     </FacilitatorContainer>
