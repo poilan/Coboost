@@ -13,6 +13,7 @@ using Slagkraft.Models.Admin;
 using Slagkraft.Models.Admin.Questions;
 using Newtonsoft.Json;
 using System.IO.Pipelines;
+using System.Globalization;
 
 namespace Slagkraft.Controllers
 {
@@ -249,7 +250,7 @@ namespace Slagkraft.Controllers
                     data.Identity = 100000;
             }
 
-            data.LastOpen = DateTime.Now.ToString();
+            data.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
             await Context.Sessions.AddAsync(data);
             await Context.SaveChangesAsync();
 
@@ -485,7 +486,7 @@ namespace Slagkraft.Controllers
             {
                 Session session = await Context.Sessions.FindAsync(code);
                 session.Questions = admin.SaveSession();
-                session.LastOpen = DateTime.Now.ToString();
+                session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
                 Console.WriteLine(session.Questions);
 
                 Context.Sessions.Update(session);

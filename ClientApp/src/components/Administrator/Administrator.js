@@ -205,9 +205,8 @@ export class Administrator extends Component {
     componentDidMount() {
         let code = sessionStorage.getItem("code");
         let title = sessionStorage.getItem("title");
-        axios.post(`admin/${code}/active-${this.state.active}`);
-
         let presentManager = new Presentation(code);
+
 
         this.setState({
             title: title,

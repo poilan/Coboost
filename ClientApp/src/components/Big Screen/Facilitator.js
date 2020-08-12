@@ -8,7 +8,7 @@ const FacilitatorContainer = styled.div`
     display: flex;
     flex-direction: row;
 
-    opacity: ${props => props.hidden ? "0%" : "100%"};
+    opacity: ${props => props.hide ? "0%" : "100%"};
     outline: 0;
     box-shadow: 0;
     border: solid rgb(106, 114, 137);
@@ -262,7 +262,7 @@ export class Facilitator extends React.Component {
     render() {
         return (
             <>
-                <FacilitatorContainer hidden={this.props.hidden} style={this.props.style}>
+                <FacilitatorContainer hide={this.props.hide} style={this.props.style}>
                     <FacilitatorButton onClick={this.arrowBackward}>
                         <BsArrowLeft class="icon" />
                     </FacilitatorButton>
