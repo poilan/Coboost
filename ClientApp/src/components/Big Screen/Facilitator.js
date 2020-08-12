@@ -45,8 +45,8 @@ const FacilitatorButton = styled.button`
     }
 
     :last-child {
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
+        border-top-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
+        border-bottom-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
     }
 
     &:hover {
@@ -278,7 +278,7 @@ export class Facilitator extends React.Component {
             return(
                 <>
                     <FacilitatorContainer style={{ left: "0px", bottom: this.props.style.bottom, position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
-                        <FacilitatorButton style={{borderTopRightRadius: "5px", borderBottomRightRadius: "5px"}} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} style={{borderTopRightRadius: "5px", borderBottomRightRadius: "5px"}} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
                             <BsCaretRightFill/>
                         </FacilitatorButton>
                     </FacilitatorContainer>
@@ -288,16 +288,16 @@ export class Facilitator extends React.Component {
         return (
             <>
                 <FacilitatorContainer onMouseLeave={() => this.onHover(false)} hide={this.props.toggle ? this.state.hidden : this.props.hide} style={this.props.style}>
-                    <FacilitatorButton onClick={this.arrowBackward}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowBackward}>
                         <BsArrowLeft class="icon" />
                     </FacilitatorButton>
 
-                    <FacilitatorButton onClick={this.arrowForward}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowForward}>
                         <BsArrowRight class="icon" />
                     </FacilitatorButton>
 
                     {this.props.allTasks &&
-                        <FacilitatorButton onClick={this.openTasks}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.openTasks}>
                             {this.state.showTasks ? <>
                                 <BsCollectionFill class="icon" />
                             </> : <>
@@ -308,12 +308,12 @@ export class Facilitator extends React.Component {
                     </FacilitatorButton>
                     }
 
-                    {/*<FacilitatorButton onClick={this.handleMinimize}>
+                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.handleMinimize}>
                         <BsInfoCircle class="icon" /><br />
                         Information
                     </FacilitatorButton>*/}
 
-                    <FacilitatorButton onClick={this.hideResults}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
                         {this.props.showingResult ? <>
                             <BsEyeSlash class="icon" /><br />
                             Hide Results
@@ -323,7 +323,7 @@ export class Facilitator extends React.Component {
                         </>}
                     </FacilitatorButton>
 
-                    {/*<FacilitatorButton onClick={this.closeVoting}>
+                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.closeVoting}>
                         <BsLock class="icon" /><br/>
                         Lock answers
                     </FacilitatorButton>
@@ -334,7 +334,7 @@ export class Facilitator extends React.Component {
                     </FacilitatorButton>*/}
 
                     {this.props.fullscreen &&
-                        <FacilitatorButton onClick={this.toggleFullscreen}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleFullscreen}>
                             {this.state.fullscreen ? <>
                                 <BsFullscreenExit class="icon" /><br />
                             Exit Fullscreen
