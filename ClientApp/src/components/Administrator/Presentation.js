@@ -17,7 +17,7 @@
     }
 
     PresentInNewWindow() {
-        sessionStorage.setItem("present_code", this.code);
+        //sessionStorage.setItem("present_code", this.code);
 
         var existing = window.open("", "Bigscreen");
         existing.close(); // Close any other big screen window

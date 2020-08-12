@@ -164,10 +164,12 @@ export class BigScreen extends Component {
 
     componentDidMount() {
         const email = localStorage.getItem("user");
-        let code = sessionStorage.getItem("present_code");
+        //let code = sessionStorage.getItem("present_code");
 
-        if (code == null)
-            code = sessionStorage.getItem("code");
+        //if (code == null)
+        //    code = sessionStorage.getItem("code");
+
+        let code = sessionStorage.getItem("code");
 
         this.setState({
             code: code,

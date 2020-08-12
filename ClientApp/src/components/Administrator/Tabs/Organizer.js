@@ -446,38 +446,46 @@ export class Organizer extends Component {
 
             const getOptions = () => {
                 let options = [];
-                for (var i = 0; i < this.state.selected.length; i++) {
-                    var key = this.state.selected[i].split("-");
+                let selected = getSelected();
+                for (var i = 0; i < selected.length; i++) {
+                    var key = selected[i];
                     var answer = task.Groups[key[0]].Members[key[1]];
-                    var data = {
-                        UserID: answer.UserID,
-                        Index: options.length,
-                        Description: answer.Description,
-                        Title: answer.Title,
+                    if (answer !== undefined) {
+                        var data = {
+                            UserID: answer.UserID,
+                            Index: options.length,
+                            Description: answer.Description,
+                            Title: answer.Title,
+                        }
+                        options.push(data);
                     }
-                    options.push(data);
                 }
-
                 return options;
             }
 
             const getSelected = () => {
                 let selected = [];
+                let keys = [];
                 for (let i = 0; i < this.state.selected.length; i++) {
                     let key = this.state.selected[i].split("-");
-
-                    selected.push(key);
+                    var answer = task.Groups[key[0]].Members[key[1]];
+                    if (answer !== undefined) {
+                        selected.push(this.state.selected[i]);
+                        keys.push(key);
+                    }
                 }
 
+                this.setState({ selected: selected });
+
                 const compare = (a, b) => {
-                    let group = a[0] - b[0];
+                    let group = b[0] - a[0];
 
                     if (group == 0)
-                        return a[1] - b[1];
+                        return b[1] - a[1];
                     else
                         return group;
                 }
-                return selected.sort(compare);
+                return keys.sort(compare);
             }
 
             const merge = () => {
@@ -493,17 +501,17 @@ export class Organizer extends Component {
                 for (var i = 1; i < selected.length; i++) {
                     var subject = selected[i];
 
-                    if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
-                        subject[1] -= change[subject[0]];
-                    }
+                    //if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
+                    //    subject[1] -= change[subject[0]];
+                    //}
 
                     axios.post(`admin/${code}/question-merge${master[0]}-${master[1]}with${subject[0]}-${subject[1]}`);
 
-                    if (change[subject[0]] == undefined) {
-                        change[subject[0]] = 1;
-                    } else {
-                        change[subject[0]] += 1;
-                    }
+                    //if (change[subject[0]] == undefined) {
+                    //    change[subject[0]] = 1;
+                    //} else {
+                    //    change[subject[0]] += 1;
+                    //}
                 }
 
                 this.setState({
@@ -561,7 +569,7 @@ export class Organizer extends Component {
                 <MainContainer>
                     <ButtonToolbar>
                         <AnswerButton onClick={this.modal.answer.open}>Write input</AnswerButton>
-                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={(e) => this.setState({anchor: e.currentTarget})}>Send selected to vote</SendToMC></Tooltip>
+                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to vote</SendToMC></Tooltip>
                         <MergeButton onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
                         <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
                             <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>
@@ -714,7 +722,7 @@ export class Organizer extends Component {
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
                             <SendToT disabled={this.state.selected.length !== 1} onClick={(e) => this.state.modal.create.open()}>Send to Tasks</SendToT>
-                        </Tooltip>                        
+                        </Tooltip>
                     </ButtonToolbar>
                     {task.Options !== undefined && task.Options.map(option =>
                         <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote

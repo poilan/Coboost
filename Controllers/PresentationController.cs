@@ -159,13 +159,10 @@ namespace Slagkraft.Controllers
                     }
                 }
                 Response.Body.Close();
-                //Response.StatusCode = 200;
-                //return;
             }
             else
             {
-                Response.StatusCode = 404;
-                //return;
+                Response.StatusCode = 412;
             }
         }
 
