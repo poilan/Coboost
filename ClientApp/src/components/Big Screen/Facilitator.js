@@ -1,7 +1,7 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
-import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill } from "react-icons/bs";
 import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
@@ -115,6 +115,7 @@ export class Facilitator extends React.Component {
         super(props);
 
         this.state = {
+            hidden: true,
             fullscreen: false,
             showTasks: false,
 
@@ -259,10 +260,29 @@ export class Facilitator extends React.Component {
         this.setActiveQuestion(index);
     }
 
+    /* Hide/Show Logic */
+    onHover(state) {
+        console.log("Hover state: " + state);
+        this.setState({
+            hidden: !state
+        });
+    }
+
     render() {
+        if (this.props.toggle && this.state.hidden) {
+            return(
+                <>
+                    <FacilitatorContainer style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
+                        <FacilitatorButton onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                            <BsCaretRightFill/>
+                        </FacilitatorButton>
+                    </FacilitatorContainer>
+                </>
+            )
+        }
         return (
             <>
-                <FacilitatorContainer hide={this.props.hide} style={this.props.style}>
+                <FacilitatorContainer onMouseLeave={() => this.onHover(false)} hide={this.props.toggle ? this.state.hidden : this.props.hide} style={this.props.style}>
                     <FacilitatorButton onClick={this.arrowBackward}>
                         <BsArrowLeft class="icon" />
                     </FacilitatorButton>

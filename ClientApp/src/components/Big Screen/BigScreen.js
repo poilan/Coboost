@@ -280,7 +280,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -297,7 +297,7 @@ export class BigScreen extends Component {
                 <Title><b>{title}</b></Title>
                 <WelcomeContainer>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>#{code}</BottomBannerText>
@@ -338,7 +338,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
