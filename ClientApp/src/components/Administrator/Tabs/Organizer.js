@@ -495,10 +495,10 @@ export class Organizer extends Component {
                 const code = sessionStorage.getItem("code");
                 const selected = getSelected();
 
-                const master = selected[0];
+                const master = selected[selected.length - 1];
                 let change = [];
 
-                for (var i = 1; i < selected.length; i++) {
+                for (var i = 0; i < (selected.length - 1); i++) {
                     var subject = selected[i];
 
                     //if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
@@ -529,17 +529,17 @@ export class Organizer extends Component {
                     for (let i = 0; i < selected.length; i++) {
                         let subject = selected[i];
 
-                        if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
-                            subject[1] -= change[subject[0]];
-                        }
+                        //if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
+                        //    subject[1] -= change[subject[0]];
+                        //}
 
                         axios.post(`admin/${code}/question-archive-member-${subject[0]}-${subject[1]}`);
 
-                        if (change[subject[0]] == undefined) {
-                            change[subject[0]] = 1;
-                        } else {
-                            change[subject[0]] += 1;
-                        }
+                        //if (change[subject[0]] == undefined) {
+                        //    change[subject[0]] = 1;
+                        //} else {
+                        //    change[subject[0]] += 1;
+                        //}
                     }
 
                     this.setState({

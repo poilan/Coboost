@@ -63,9 +63,9 @@ const JoinEventBtn = styled.button`
     display: inline;
     text-align: center;
     width: 20%;
-    height: calc(100% - 0.2rem);
-    right: 0.1rem;
-    top: 0.1rem;
+    height: calc(100% - 1rem);
+    right: 0.5rem;
+    top: 0.5rem;
     position: absolute;
     border: 2px solid rgb(53, 57, 67);
     border-radius: 1rem;    
@@ -91,9 +91,10 @@ const RightNav = styled(Nav)`
         align: right;
         font-weight: 500;
         font-family: CircularStd;
-        padding: 10px 25px;
-        bottom: 100px;
-        right: 100px;
+        padding: 2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 2rem;
         position: relative;
         color: #fff;
     };
