@@ -170,7 +170,7 @@ export class CreateTaskModal extends Component {
         const handleTitle = (event) => {
             event.preventDefault();
             var title = this.state.title;
-            title = this.refs.title.value;
+            title = event.target.value;
             this.setState({
                 title: title,
             });
@@ -179,7 +179,7 @@ export class CreateTaskModal extends Component {
         const handleMax = (event) => {
             event.preventDefault();
             var max = this.state.max;
-            max = this.refs.max.value;
+            max = event.target.value;
             this.setState({
                 max: max,
             });
@@ -282,7 +282,7 @@ export class CreateTaskModal extends Component {
         const handleTitle = (event) => {
             event.preventDefault();
             var title = this.state.title;
-            title = this.refs.title.value;
+            title = event.target.value;
             this.setState({
                 title: title,
             });
@@ -291,7 +291,7 @@ export class CreateTaskModal extends Component {
         const handleMax = (event) => {
             event.preventDefault();
             var max = this.state.max;
-            max = this.refs.max.value;
+            max = event.target.value;
             this.setState({
                 max: max,
             });
@@ -300,7 +300,7 @@ export class CreateTaskModal extends Component {
         const handlePoints = (event) => {
             event.preventDefault();
             var points = this.state.points;
-            points = this.refs.points.value;
+            points = event.target.value;
             this.setState({
                 points: points,
             });
@@ -401,7 +401,7 @@ export class CreateTaskModal extends Component {
         const handleTitle = (event) => {
             event.preventDefault();
             var title = this.state.title;
-            title = this.refs.title.value;
+            title = event.target.value;
             this.setState({
                 title: title,
             });
@@ -410,7 +410,7 @@ export class CreateTaskModal extends Component {
         const handleMax = (event) => {
             event.preventDefault();
             var max = this.state.max;
-            max = this.refs.max.value;
+            max = event.target.value;
             this.setState({
                 max: max,
             });
@@ -419,7 +419,7 @@ export class CreateTaskModal extends Component {
         const handleMin = (event) => {
             event.preventDefault();
             var min = this.state.points;
-            min = this.refs.min.value;
+            min = event.target.value;
             this.setState({
                 points: min,
             });
