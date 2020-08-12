@@ -225,12 +225,12 @@ export class Administrator extends Component {
     update = async () => {
         this.SSE.close();
         const code = sessionStorage.getItem('code');
-        await axios.get(`admin/${code}/questions-all`).then(res => {
+        await axios.get(`admin/${code}/questions-all`).then(async (res) => {
             if (res.status === 202) {
                 this.setState({
                     tasks: res.data,
                 });
-                axios.post(`admin/${code}/save`);
+                await axios.post(`admin/${code}/save`);
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
                 else if (this.state.tasks.length > 0)

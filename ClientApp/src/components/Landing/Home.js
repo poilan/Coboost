@@ -36,11 +36,12 @@ const LeftInput = styled.input`
     width: 70%;
     height: 100%;
     border: 0;
+    outline: 0;
 `;
 
 const LeftText = styled.h2`
     font-family: CircularStd;
-    font-size: 1.25rem;
+    font-size: ${props => props.mobile === "true" ? "1" : "1.25"}rem;
     font-weight: 500;
     color: #fff;
     text-align: center;
@@ -50,7 +51,7 @@ const LeftText = styled.h2`
 const LeftTitle = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    font-size: 5rem;
+    font-size: ${props => props.mobile === "true" ? "2rem" : "5rem"};
     color: #fff;
     margin: 1rem;
 `;
@@ -62,12 +63,12 @@ const JoinEventBtn = styled.button`
     display: inline;
     text-align: center;
     width: 20%;
-    height: calc(100% - 20px);
-    right: 10px;
-    top: 10px;
+    height: calc(100% - 0.2rem);
+    right: 0.1rem;
+    top: 0.1rem;
     position: absolute;
     border: 2px solid rgb(53, 57, 67);
-    border-radius: 10px;    
+    border-radius: 1rem;    
 `;
 
 const RightHalf = styled(Col)`
@@ -101,7 +102,10 @@ const RightNav = styled(Nav)`
 const RightTitle = styled.h2`
     position: relative;
     color: #fff;
-    padding: 50px;
+    padding: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;    
     font-family: CircularStd;
     font-size: 1.5rem;
 `;
@@ -110,6 +114,7 @@ const LandingContainer = styled(Container)`
   display: table;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 `;
 
 const LoginButton = styled(Nav.Link)`
@@ -229,7 +234,7 @@ export class Home extends Component {
                     <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
-                <img src="./landing.jpg" style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
+                <img src="./landing.jpg" style={{ height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
                 <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "80%", zIndex: "-19" }} />
             </LandingContainer>
         );

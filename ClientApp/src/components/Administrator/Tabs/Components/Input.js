@@ -17,7 +17,7 @@ const Container = styled.div`
         border-radius: 0.8em;
         box-shadow: 0 1px 0 1px rgba(0, 0, 0, .08);
         background: #fff;
-        border: ${props => props.vote ? "2px solid #000" : ""};
+        border: ${props => props.vote ? "1px solid #000" : ""};
         position: relative;
         overflow: hidden;
         white-space: nowrap;
@@ -31,9 +31,9 @@ const CheckboxContainer = styled.div`
 `;
 
 const Checkbox = styled.input`
-    border-radius: 0.5em;
-    height: 1.3em;
-    width: 1.3em;
+    border-radius: 0.5rem;
+    height: 1rem;
+    width: 1rem;
     border: 1px solid #aaa;
     box-sizing: border-box;
     background: #fff;
