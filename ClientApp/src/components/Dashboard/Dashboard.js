@@ -333,7 +333,7 @@ export class Dashboard extends Component {
                 const deleteSession = (e) => {
                     e.preventDefault();
 
-                    axios.post(`admin/delete-${this.state.modal.code}`).then(this.getSessions());
+                    axios.post(`admin/${this.state.modal.code}/delete`).then(this.getSessions());
                     this.modal.delete.close();
                 }
 
