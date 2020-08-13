@@ -45,8 +45,11 @@ namespace Slagkraft.Models.Admin
         public int Admin { get; set; }
 
         public int EventCode { get; set; }
+
         public bool Open { get; set; }
+
         public string Owner { get; set; }
+
         public List<BaseTask> Tasks { get; set; }
 
         #endregion Public Properties
@@ -205,12 +208,24 @@ namespace Slagkraft.Models.Admin
                     Tasks.RemoveAt(current);
                     Tasks.Insert(target, choice);
                 }
+                else if (Tasks[current] is Points)
+                {
+                    Points choice = Tasks[current] as Points;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
+                }
+                else if (Tasks[current] is Rate)
+                {
+                    Rate choice = Tasks[current] as Rate;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
+                }
                 UpdateIndexes();
+
                 if (active == current)
                 {
                     active = target;
                     Tasks[target].Reset.Set();
-                    ClientSet();
                 }
                 else if (active == target)
                 {
@@ -218,26 +233,22 @@ namespace Slagkraft.Models.Admin
                     {
                         active -= 1;
                         Tasks[active].Reset.Set();
-                        ClientSet();
                     }
                     else if (target < current)
                     {
                         active += 1;
                         Tasks[active].Reset.Set();
-                        ClientSet();
                     }
                 }
-                else if (active <= target && active > current)
+                else if (active < target && active > current)
                 {
                     active -= 1;
                     Tasks[active].Reset.Set();
-                    ClientSet();
                 }
-                else if (active >= target && active < current)
+                else if (active > target && active < current)
                 {
                     active += 1;
                     Tasks[active].Reset.Set();
-                    ClientSet();
                 }
             }
         }
@@ -248,7 +259,9 @@ namespace Slagkraft.Models.Admin
             {
                 TypeNameHandling = TypeNameHandling.All
             };
-            string json = JsonConvert.SerializeObject(Tasks, settings);
+            List<BaseTask> tasks = Tasks;
+
+            string json = JsonConvert.SerializeObject(tasks, settings);
 
             return json;
         }
@@ -265,6 +278,13 @@ namespace Slagkraft.Models.Admin
 
         #region Private Methods
 
+        private void ClientSet()
+        {
+            if (Client == null)
+                Client = new ManualResetEvent(false);
+            Client.Set();
+        }
+
         private void UpdateIndexes()
         {
             for (int i = 0; i < Tasks.Count; i++)
@@ -272,13 +292,6 @@ namespace Slagkraft.Models.Admin
                 Tasks[i].Index = i;
                 Tasks[i].Reset.Set();
             }
-        }
-
-        private void ClientSet()
-        {
-            if (Client == null)
-                Client = new ManualResetEvent(false);
-            Client.Set();
         }
 
         #endregion Private Methods

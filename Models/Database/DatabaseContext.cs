@@ -13,14 +13,6 @@ namespace Slagkraft.Models.Database
     /// </summary>
     public class DatabaseContext : DbContext
     {
-        #region Database Constructor (REQUIRED)
-
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
-        {
-        }
-
-        #endregion Database Constructor (REQUIRED)
-
         #region Public Properties
 
         /// <summary>
@@ -35,15 +27,23 @@ namespace Slagkraft.Models.Database
         }
 
         /// <summary>
-        /// The stored Users
-        /// </summary>
-        public DbSet<User> Users { get; set; }
-
-        /// <summary>
         /// The stored sessions
         /// </summary>
         public DbSet<Session> Sessions { get; set; }
 
+        /// <summary>
+        /// The stored Users
+        /// </summary>
+        public DbSet<User> Users { get; set; }
+
         #endregion Public Properties
+
+        #region Public Constructors
+
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+        {
+        }
+
+        #endregion Public Constructors
     }
 }

@@ -496,7 +496,8 @@ export class Organizer extends Component {
                 const selected = getSelected();
 
                 const master = selected[selected.length - 1];
-                let change = [];
+
+                //let change = [];
 
                 for (var i = 0; i < (selected.length - 1); i++) {
                     var subject = selected[i];
@@ -524,7 +525,8 @@ export class Organizer extends Component {
                     const code = sessionStorage.getItem('code');
 
                     const selected = getSelected();
-                    let change = []
+
+                    //let change = []
 
                     for (let i = 0; i < selected.length; i++) {
                         let subject = selected[i];

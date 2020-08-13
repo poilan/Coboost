@@ -36,6 +36,8 @@ namespace Slagkraft.Models.Admin.Questions
 
         #endregion Public Properties
 
+        #region Public Methods
+
         public void AddClientVote(Points_Vote vote)
         {
             lock (QuestionLock)
@@ -46,6 +48,10 @@ namespace Slagkraft.Models.Admin.Questions
             }
             EventStream();
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private void RecountVotes()
         {
@@ -62,5 +68,7 @@ namespace Slagkraft.Models.Admin.Questions
                 }
             }
         }
+
+        #endregion Private Methods
     }
 }

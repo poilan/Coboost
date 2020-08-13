@@ -418,10 +418,8 @@ export class Mobile extends Component {
                     //}
 
                     if (data.Type === 2) {
-
                     }
                     else if (data.Type === 3) {
-
                     }
 
                     var inputs = this.state.inputs;
@@ -468,11 +466,9 @@ export class Mobile extends Component {
                     }
                     answer.value = values;
                     question.Spent = 0;
-
                 }
                 else if (question.Type === 3) {
                     let values = [];
-
 
                     for (let i = 0; i < question.Options.length; i++) {
                         values.push(question.Min);
@@ -488,7 +484,6 @@ export class Mobile extends Component {
             else {
                 answers.push(answer);
             }
-
         });
 
         this.setState({
@@ -664,8 +659,6 @@ export class Mobile extends Component {
         let tasks = this.getTasks();
         const change = value - answers[index];
 
-
-
         if (tasks[this.getTaskIndex()].Amount < tasks[this.getTaskIndex()].Spent + change) {
             let maximum = tasks[this.getTaskIndex()].Amount - tasks[this.getTaskIndex()].Spent;
 
@@ -673,7 +666,6 @@ export class Mobile extends Component {
                 return;
             else
                 value = maximum;
-
         }
         for (let i = 0; i < this.getTaskOptions().length; i++) {
             if (answers[i] == undefined)

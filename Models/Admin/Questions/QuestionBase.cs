@@ -11,6 +11,24 @@ namespace Slagkraft.Models.Admin.Questions
     /// </summary>
     public abstract class BaseTask
     {
+        #region Public Enums
+
+        /// <summary>
+        /// The types of questions that exists.
+        /// </summary>
+        public enum TaskType
+        {
+            OpenText,
+
+            MultipleChoice,
+
+            Points,
+
+            Rate,
+        }
+
+        #endregion Public Enums
+
         #region Public Fields
 
         /// <summary>
@@ -35,31 +53,16 @@ namespace Slagkraft.Models.Admin.Questions
         public int Index { get; set; }
 
         /// <summary>
-        /// The type of question this is.
-        /// </summary>
-        public TaskType Type { get; set; }
-
-        /// <summary>
         /// The question that is asked.
         /// </summary>
         public string Title { get; set; }
 
-        #endregion Public Properties
-
-        #region Public Enums
-
         /// <summary>
-        /// The types of questions that exists.
+        /// The type of question this is.
         /// </summary>
-        public enum TaskType
-        {
-            OpenText,
-            MultipleChoice,
-            Points,
-            Rate,
-        }
+        public TaskType Type { get; set; }
 
-        #endregion Public Enums
+        #endregion Public Properties
 
         #region Protected Methods
 

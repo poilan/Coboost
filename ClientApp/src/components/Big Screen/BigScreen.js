@@ -164,6 +164,7 @@ export class BigScreen extends Component {
 
     componentDidMount() {
         const email = localStorage.getItem("user");
+
         //let code = sessionStorage.getItem("present_code");
 
         //if (code == null)
@@ -314,9 +315,11 @@ export class BigScreen extends Component {
             const question = state.task;
             if (question.Type === 0) {
                 return this.renderOpenTextResult();
+
                 //return <p>Open Text</p>;
             }
             else if (question.Type === 1) {
+
                 //return <p>Multiple Choice</p>;
                 return this.renderMultipleChoiceResult();
             }

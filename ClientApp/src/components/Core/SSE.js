@@ -25,7 +25,6 @@
         }, false);
     }
 
-
     startEventSource = (callback) => {
         if (this.eventSource !== undefined)
             this.eventSource.close();

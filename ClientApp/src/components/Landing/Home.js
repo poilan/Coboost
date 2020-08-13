@@ -25,7 +25,7 @@ const InputContainer = styled.div`
     background: #fff;
     border-radius: 1rem;
     left: 50%;
-    transform: translateX(-50%);    
+    transform: translateX(-50%);
     margin: 1rem;
 `;
 
@@ -68,7 +68,7 @@ const JoinEventBtn = styled.button`
     top: 0.5rem;
     position: absolute;
     border: 2px solid rgb(53, 57, 67);
-    border-radius: 1rem;    
+    border-radius: 1rem;
 `;
 
 const RightHalf = styled(Col)`
@@ -84,6 +84,9 @@ const RightHalf = styled(Col)`
 `;
 
 const RightNav = styled(Nav)`
+    top: 50%;
+    transform: translateY(-50%);
+
     .nav-link {
         &.active {
             color: rgb(71, 114, 224);
@@ -91,9 +94,7 @@ const RightNav = styled(Nav)`
         align: right;
         font-weight: 500;
         font-family: CircularStd;
-        padding: 2rem;
-        top: 50%;
-        transform: translateY(-50%);
+        padding: 10px 25px;
         right: 2rem;
         position: relative;
         color: #fff;
@@ -106,7 +107,7 @@ const RightTitle = styled.h2`
     padding: 2rem;
     top: 50%;
     transform: translateY(-50%);
-    height: 100%;    
+    height: 100%;
     font-family: CircularStd;
     font-size: 1.5rem;
 `;
@@ -132,13 +133,12 @@ const EventCodeText = styled.h5`
     width: 7.5rem;
     left: 0;
     position: absolute;
-    font-family: CircularStd; 
+    font-family: CircularStd;
     text-align: right;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
 `;
-
 
 export class Home extends Component {
     static displayName = Home.name;
@@ -188,6 +188,7 @@ export class Home extends Component {
                 sessionStorage.setItem("code", code);
                 this.props.history.push(`/mobile`)
             } else {
+
                 //Tell the user this code didn't work
             }
         })
@@ -213,7 +214,6 @@ export class Home extends Component {
     }
 
     render() {
-
         const state = this.state;
         const width = state.width;
         const mobile = width <= 500;

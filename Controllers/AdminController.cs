@@ -21,12 +21,6 @@ namespace Slagkraft.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        #region Private Fields
-
-        private readonly DatabaseContext Context;
-
-        #endregion Private Fields
-
         #region Public Structs
 
         public struct Help
@@ -39,6 +33,12 @@ namespace Slagkraft.Controllers
         }
 
         #endregion Public Structs
+
+        #region Private Fields
+
+        private readonly DatabaseContext Context;
+
+        #endregion Private Fields
 
         #region Public Constructors
 
@@ -149,6 +149,22 @@ namespace Slagkraft.Controllers
             {
                 HttpContext.Response.StatusCode = 412;
             }
+        }
+
+        [HttpPost("{code}/close")]
+        public async void CloseSession(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                await SaveAdmin(admin);
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
+            Context.Active.Sessions.Remove(code);
+            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpPost("{code}/question-create-group-c{column}")]
@@ -322,7 +338,6 @@ namespace Slagkraft.Controllers
                 HttpContext.Response.StatusCode = 202;
                 string tasks = JsonConvert.SerializeObject(admin.Tasks);
 
-
                 return tasks;
             }
             else
@@ -480,39 +495,14 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/save")]
-        public async Task SaveSession(int code)
+        public async void SaveSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                Session session = await Context.Sessions.FindAsync(code);
-                session.Questions = admin.SaveSession();
-                session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
-                Console.WriteLine(session.Questions);
-
-                Context.Sessions.Update(session);
-                Context.SaveChanges();
+                await SaveAdmin(admin);
                 HttpContext.Response.StatusCode = 200;
             }
         }
-
-        [HttpPost("{code}/close")]
-        public async Task CloseSession(int code)
-        {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                await SaveSession(code);
-            }
-            else
-            {
-                HttpContext.Response.StatusCode = 412;
-                return;
-            }
-            Context.Active.Sessions.Remove(code);
-            Context.SaveChanges();
-            HttpContext.Response.StatusCode = 200;
-        }
-
-
 
         [HttpGet("{code}/stream-question-{index}")]
         public async void StreamQuestion(int code, int index)
@@ -646,5 +636,23 @@ namespace Slagkraft.Controllers
         }
 
         #endregion Public Methods
+
+        #region Private Methods
+
+        private async Task SaveAdmin(AdminInstance admin)
+        {
+            Session session = await Context.Sessions.FindAsync(admin.EventCode);
+            if (session != null)
+            {
+                session.Questions = admin.SaveSession();
+                session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+                Console.WriteLine(session.Questions);
+
+                Context.Sessions.Update(session);
+                Context.SaveChanges();
+            }
+        }
+
+        #endregion Private Methods
     }
 }

@@ -42,7 +42,7 @@ const BreadCrumb = styled(Breadcrumbs)`
 
 const BreadText = styled(Link)`
     color: #fff;
-    font-size: 1.25rem;    
+    font-size: 1.25rem;
 `;
 
 const BannerCode = styled.div`
@@ -110,7 +110,7 @@ const BannerButton = styled(DropdownButton)`
     }
 `;
 
-const HeaderTabs = styled(Nav)`    
+const HeaderTabs = styled(Nav)`
     position: relative;
     height: 100%;
     top: 0;
@@ -129,10 +129,9 @@ const HeaderTabs = styled(Nav)`
         font-family: CircularStd;
         font-weight: 600;
         font-size: 1rem;
-        margin: 0;        
+        margin: 0;
         padding: 0;
         line-height: 50px;
-        
 
         &:hover {
             border: 0;
@@ -207,7 +206,6 @@ export class Administrator extends Component {
         let title = sessionStorage.getItem("title");
         let presentManager = new Presentation(code);
 
-
         this.setState({
             title: title,
             code: code,
@@ -236,6 +234,7 @@ export class Administrator extends Component {
                 else if (this.state.tasks.length > 0)
                     this.SSE.start(0);
             } else if (res.status === 412) {
+
                 //session not found
             }
         })
@@ -309,6 +308,7 @@ export class Administrator extends Component {
                     var data = JSON.parse(e.data);
                     var tasks = this.state.tasks;
                     tasks[target].Options = data;
+
                     //if (tasks[target].options !== undefined) {
                     //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
                     //}
@@ -425,9 +425,7 @@ export class Administrator extends Component {
         },
 
         toggleHide: () => {
-
         },
-
     }
 
     render() {

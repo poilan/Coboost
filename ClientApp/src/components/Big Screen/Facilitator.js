@@ -199,7 +199,6 @@ export class Facilitator extends React.Component {
             this.props.back();
         }
         else {
-
             const state = this.state;
             const questions = state.questions;
             const active = this.props.active;

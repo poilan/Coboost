@@ -18,7 +18,9 @@ namespace Slagkraft.Services
         #region Private Fields
 
         private readonly string _contentType;
+
         private readonly Action<Stream, CancellationToken, int> _onStreamAvailable;
+
         private readonly int _required;
 
         #endregion Private Fields

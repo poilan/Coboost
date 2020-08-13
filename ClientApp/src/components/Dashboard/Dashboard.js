@@ -289,7 +289,7 @@ const BreadCrumb = styled(Breadcrumbs)`
 
 const BreadText = styled(Link)`
     color: ${props => props.active ? "#4C7AD3" : "#fff"};
-    font-size: 1.25rem;    
+    font-size: 1.25rem;
 `;
 
 export class Dashboard extends Component {
@@ -393,10 +393,12 @@ export class Dashboard extends Component {
 
         axios.post(`admin/create`, data).then(res => {
             if (res.status === 202) {
+
                 //Created Session
                 this.getSessions();
             }
             else if (res.status === 406) {
+
                 //Title can't be empty!
             }
         });
@@ -416,21 +418,25 @@ export class Dashboard extends Component {
     sessionClick(e) {
         axios.post(`admin/load-${e.id}`).then(res => {
             if (res.status === 200) {
+
                 //Session already active?
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute('name'));
                 this.props.history.push('/administrator');
             }
             else if (res.status === 201) {
+
                 //Session Created!
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute('name'));
                 this.props.history.push('/administrator');
             }
             else if (res.status === 404) {
+
                 //Session not found
             }
             else {
+
                 //Unknown error
             }
         })

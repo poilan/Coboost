@@ -76,6 +76,7 @@ namespace Slagkraft.Models.Admin.Questions
                     Votes = new List<MultipleChoice_Input>(),
                     Description = input.Description,
                     UserID = input.UserID,
+
                     //Title = input.Title,
                 };
 

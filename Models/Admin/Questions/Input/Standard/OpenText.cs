@@ -12,20 +12,6 @@ namespace Slagkraft.Models.Admin.Questions
     /// </summary>
     public class OpenText : BaseTask
     {
-        #region Public Properties
-
-        /// <summary>
-        /// "Removed" inputs are stored here
-        /// </summary>
-        public List<OpenText_Input> Archive { get; set; }
-
-        /// <summary>
-        /// All groups of inputs
-        /// </summary>
-        public List<OpenText_Group> Groups { get; set; }
-
-        #endregion Public Properties
-
         #region Public Structs
 
         /// <summary>
@@ -49,6 +35,20 @@ namespace Slagkraft.Models.Admin.Questions
         }
 
         #endregion Public Structs
+
+        #region Public Properties
+
+        /// <summary>
+        /// "Removed" inputs are stored here
+        /// </summary>
+        public List<OpenText_Input> Archive { get; set; }
+
+        /// <summary>
+        /// All groups of inputs
+        /// </summary>
+        public List<OpenText_Group> Groups { get; set; }
+
+        #endregion Public Properties
 
         #region Public Constructors
 
@@ -160,6 +160,9 @@ namespace Slagkraft.Models.Admin.Questions
         {
             lock (QuestionLock)
             {
+                if (parent.Group >= Groups.Count || parent.Member >= Groups[parent.Group].Members.Count || child.Group >= Groups.Count || child.Member >= Groups[child.Group].Members.Count)
+                    return;
+
                 //Check if parent is already merged with something
                 if (Groups[parent.Group].Members[parent.Member] is OpenText_Merged mergedParent)
                 {
@@ -190,6 +193,7 @@ namespace Slagkraft.Models.Admin.Questions
                         //Add the Child to parent
                         mergedParent.Children.Add(Groups[child.Group].Members[child.Member]);
                     }
+
                     //Remove the child from its old location
                     Groups[child.Group].Members.RemoveAt(child.Member);
                     UpdateMemberIndexes(child.Group);
@@ -317,6 +321,7 @@ namespace Slagkraft.Models.Admin.Questions
                 Groups[input.Group].Members.RemoveAt(input.Member);
 
                 Input.Index = Groups[targetGroup].Members.Count;
+
                 //Add it to the desired group
                 Groups[targetGroup].Members.Add(Input);
 

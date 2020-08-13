@@ -21,12 +21,17 @@ namespace Slagkraft.Models.Database
         public int Identity { get; set; }
 
         public string LastOpen { get; set; }
+
         public string Questions { get; set; }
+
         public string Settings { get; set; }
+
         public string Slides { get; set; }
+
         public string Title { get; set; }
-        //public User User { get; set; }
 
         #endregion Public Properties
+
+        //public User User { get; set; }
     }
 }

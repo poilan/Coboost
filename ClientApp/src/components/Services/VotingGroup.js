@@ -32,15 +32,15 @@ const TickKick = styled.div`
 const Tick = styled.div`
     width: 24px;
     height: 24px;
-    
+
     float: left;
-    
+
     border-radius: 12px;
     border: 1px solid black;
-    
+
     margin-top: 3px;
     margin-right: 20px;
-    
+
     display: inline-block;
 `;
 
@@ -49,25 +49,25 @@ export const MultipleChoiceButton = styled(ToggleButton)`
     border-radius: 10px;
     border-color: black !important;
     color: black !important;
-    
+
     text-align: left;
     padding-left: 20px;
-    
+
     ${Tick} {
         ${TickKick} {
             background-color: transparent;
         };
-        
+
         ${TickStem} {
             background-color: transparent;
         };
     };
-    
+
     &.active {
         color: white !important;
         background-color: rgb(71, 114, 224) !important;
         border-color: rgb(71, 114, 224) !important;
-        
+
         ${Tick} {
             display: inline;
             background-color: white;
@@ -76,7 +76,7 @@ export const MultipleChoiceButton = styled(ToggleButton)`
             ${TickKick} {
                 background-color: rgb(71, 114, 224);
             };
-            
+
             ${TickStem} {
                 background-color: rgb(71, 114, 224);
             };

@@ -20,12 +20,6 @@ namespace Slagkraft.Controllers
     [ApiController]
     public class PresentationController : ControllerBase
     {
-        #region Private Fields
-
-        private readonly DatabaseContext Context;
-
-        #endregion Private Fields
-
         #region Public Structs
 
         public struct Help
@@ -38,6 +32,12 @@ namespace Slagkraft.Controllers
         }
 
         #endregion Public Structs
+
+        #region Private Fields
+
+        private readonly DatabaseContext Context;
+
+        #endregion Private Fields
 
         #region Public Constructors
 

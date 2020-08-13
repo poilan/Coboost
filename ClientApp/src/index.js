@@ -12,4 +12,3 @@ ReactDOM.render(
         <App />
     </BrowserRouter>,
     rootElement);
-

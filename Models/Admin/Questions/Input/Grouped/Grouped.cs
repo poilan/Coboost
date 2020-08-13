@@ -10,6 +10,7 @@ namespace Slagkraft.Models.Admin.Questions
         #region Public Properties
 
         public List<Grouped_Option> Archive { get; set; }
+
         public List<Grouped_Option> Options { get; set; }
 
         #endregion Public Properties

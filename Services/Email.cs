@@ -19,7 +19,9 @@ namespace Slagkraft.Services
         #region Public Properties
 
         public string Body { get; set; }
+
         public string Recipient { get; set; }
+
         public string Title { get; set; }
 
         #endregion Public Properties

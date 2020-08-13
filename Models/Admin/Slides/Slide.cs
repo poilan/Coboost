@@ -10,7 +10,9 @@ namespace Slagkraft.Models.Admin.Slides
         #region Public Properties
 
         public int Index { get; set; }
+
         public int QuestIndex { get; set; }
+
         public string Titel { get; set; }
 
         #endregion Public Properties

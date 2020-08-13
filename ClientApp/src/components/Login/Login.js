@@ -92,6 +92,7 @@ export class Login extends Component {
     }
 
     forgotPassword() {
+
         // TODO: forgotPassword
     }
 
@@ -130,12 +131,15 @@ export class Login extends Component {
         await axios.post(`user/login`, data
         ).then(res => {
             if (res.status === 202) {
+
                 //Login Success
                 localStorage.setItem("user", data.Email);
                 this.props.history.go(-1);
             } else if (res.status === 406) {
+
                 //Wrong password
             } else {
+
                 //Wrong email / user not found
             }
         });
@@ -182,17 +186,21 @@ export class Login extends Component {
 
         await axios.post(`user/register`, data).then(res => {
             if (res.status === 202) {
+
                 //Registration Succeeded
                 //Redirect to log in?
             }
             else if (res.status === 406) {
+
                 //User didn't write in a correct email address
                 //or password was too short (needs to be 8 or more characters)
             }
             else if (res.status === 409) {
+
                 //That email is already in use
             }
             else if (res.status === 400) {
+
                 //Data wasn't recieved by server
             }
         });

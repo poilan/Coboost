@@ -20,7 +20,7 @@ namespace Slagkraft.Controllers
 
         #endregion Private Fields
 
-        #region Public Methods
+        #region Public Constructors
 
         /// <summary>
         /// Instantiates the controller and retrieves an instance of the database context
@@ -30,6 +30,10 @@ namespace Slagkraft.Controllers
         {
             Context = context;
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         /// <summary>
         /// Attempts to find the user with the specified index and returns it. If no user is found,
@@ -122,6 +126,7 @@ namespace Slagkraft.Controllers
 
             User userExistence = await Context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence != null)
+
             //if (_context.Users.Find(user.Email) != null)
             {
                 //Email address is already in use
