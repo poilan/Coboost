@@ -152,6 +152,46 @@ namespace Slagkraft.Controllers
             return;
         }
 
+        [HttpPost("start-recovery")]
+        public async Task StartRecovery([FromBody] User user)
+        {
+            if (user == null)
+            {
+                // Data not recieved
+                HttpContext.Response.StatusCode = 400;
+                return;
+            }
+
+            if (!Email.IsEmail(user.Email))
+            {
+                // Invalid Email address
+                HttpContext.Response.StatusCode = 406;
+                return;
+            }
+
+            User userExistence = await Context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
+            if (userExistence == null)
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+
+            string Recipient = user.Email;
+            string Title = "Coboost Account Recovery";
+
+            int code = 239210;
+
+            string Body = $"Dear {userExistence.FirstName},\n" + 
+                $"You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" +
+                $"Code: {code}\n\n" +
+                $"Regards\nTeam Coboost";
+            
+            Email email = new Email(Recipient, Title, Body);
+            await email.Send();
+            HttpContext.Response.StatusCode = 202;
+            return;
+        }
+
         #endregion Public Methods
     }
 }
