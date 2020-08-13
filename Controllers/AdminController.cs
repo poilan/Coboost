@@ -497,11 +497,11 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/save")]
-        public void SaveSession(int code)
+        public async void SaveSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                object WarningSupresser = SaveAdmin(admin);
+                await SaveAdmin(admin);
 
                 //HttpContext.Response.StatusCode = 200;
                 return;
