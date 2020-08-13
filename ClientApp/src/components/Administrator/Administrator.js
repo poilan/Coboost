@@ -9,6 +9,9 @@ import { Presentation } from './Presentation';
 import { Breadcrumbs, Link, Typography, Tooltip } from '@material-ui/core';
 import { Facilitator } from '../Big Screen/Facilitator';
 
+import { BsJustify } from 'react-icons/bs';
+import BannerDropdown, {BannerLink} from '../Classes/Dropdown';
+
 const MainContainer = styled.div`
     display: table;
     height: 100%;
@@ -199,6 +202,7 @@ export class Administrator extends Component {
         }
 
         this.present = this.present.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
@@ -409,6 +413,12 @@ export class Administrator extends Component {
         presentor.PresentInNewWindow();
     }
 
+    logout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        this.props.history.push("/");
+    }
+
     controls = {
         next: () => {
             let index = this.state.active + 1;
@@ -442,16 +452,16 @@ export class Administrator extends Component {
                     </BreadCrumb>
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
-                    <BannerButton title="User">
-                        <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
-                    </BannerButton>
+                    <BannerDropdown title={<BsJustify/>} style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                            <BannerLink onClick={this.logout}>Logout</BannerLink>
+                        </BannerDropdown>
 
-                    <BannerButton title="Presentation">
-                        <Dropdown.Item disabled="true">Presentation mode</Dropdown.Item>
-                        <Dropdown.Item onClick={this.present}>Present in a new window</Dropdown.Item>
-                        <Dropdown.Item disabled="true">Mirror Screen</Dropdown.Item>
-                        <Dropdown.Item disabled="true">Get Presentation Link</Dropdown.Item>
-                    </BannerButton>
+                    <BannerDropdown title="Presentation" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                        <BannerLink disabled>Presentation Mode</BannerLink>
+                        <BannerLink onClick={this.present}>Present in a new window</BannerLink>
+                        <BannerLink disabled>Mirror Screen</BannerLink>
+                        <BannerLink disabled>Get Presentation Link</BannerLink>
+                    </BannerDropdown>
                 </Banner>
 
                 <ContentCard>

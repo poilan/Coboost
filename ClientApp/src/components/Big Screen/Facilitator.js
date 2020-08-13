@@ -1,7 +1,7 @@
 ﻿import React from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
-import { BsFullscreen, BsFullscreenExit, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill } from "react-icons/bs";
 import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
@@ -9,10 +9,10 @@ const FacilitatorContainer = styled.div`
     flex-direction: row;
 
     opacity: ${props => props.hide ? "0%" : "100%"};
-    outline: 0;
+    /*outline: 0;
     box-shadow: 0;
     border: solid rgb(106, 114, 137);
-    border-width: 0 1px;
+    border-width: 0 1px;*/
 
     &:hover {
         opacity:  100%;
@@ -42,6 +42,11 @@ const FacilitatorButton = styled.button`
 
     :active {
         border-color: rgb(83, 87, 97);
+    }
+
+    :last-child {
+        border-top-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
+        border-bottom-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
     }
 
     &:hover {
@@ -115,6 +120,7 @@ export class Facilitator extends React.Component {
         super(props);
 
         this.state = {
+            hidden: true,
             fullscreen: false,
             showTasks: false,
 
@@ -258,20 +264,38 @@ export class Facilitator extends React.Component {
         this.setActiveQuestion(index);
     }
 
+    /* Hide/Show Logic */
+    onHover(state) {
+        this.setState({
+            hidden: !state
+        });
+    }
+
     render() {
+        if (this.props.toggle && this.state.hidden) {
+            return(
+                <>
+                    <FacilitatorContainer style={{ left: "0px", bottom: this.props.style.bottom, position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} style={{borderTopRightRadius: "5px", borderBottomRightRadius: "5px"}} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                            <BsCaretRightFill/>
+                        </FacilitatorButton>
+                    </FacilitatorContainer>
+                </>
+            )
+        }
         return (
             <>
-                <FacilitatorContainer hide={this.props.hide} style={this.props.style}>
-                    <FacilitatorButton onClick={this.arrowBackward}>
+                <FacilitatorContainer onMouseLeave={() => this.onHover(false)} hide={this.props.toggle ? this.state.hidden : this.props.hide} style={this.props.style}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowBackward}>
                         <BsArrowLeft class="icon" />
                     </FacilitatorButton>
 
-                    <FacilitatorButton onClick={this.arrowForward}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowForward}>
                         <BsArrowRight class="icon" />
                     </FacilitatorButton>
 
                     {this.props.allTasks &&
-                        <FacilitatorButton onClick={this.openTasks}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.openTasks}>
                             {this.state.showTasks ? <>
                                 <BsCollectionFill class="icon" />
                             </> : <>
@@ -282,12 +306,12 @@ export class Facilitator extends React.Component {
                     </FacilitatorButton>
                     }
 
-                    {/*<FacilitatorButton onClick={this.handleMinimize}>
+                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.handleMinimize}>
                         <BsInfoCircle class="icon" /><br />
                         Information
                     </FacilitatorButton>*/}
 
-                    <FacilitatorButton onClick={this.hideResults}>
+                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
                         {this.props.showingResult ? <>
                             <BsEyeSlash class="icon" /><br />
                             Hide Results
@@ -297,7 +321,7 @@ export class Facilitator extends React.Component {
                         </>}
                     </FacilitatorButton>
 
-                    {/*<FacilitatorButton onClick={this.closeVoting}>
+                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.closeVoting}>
                         <BsLock class="icon" /><br/>
                         Lock answers
                     </FacilitatorButton>
@@ -308,7 +332,7 @@ export class Facilitator extends React.Component {
                     </FacilitatorButton>*/}
 
                     {this.props.fullscreen &&
-                        <FacilitatorButton onClick={this.toggleFullscreen}>
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleFullscreen}>
                             {this.state.fullscreen ? <>
                                 <BsFullscreenExit class="icon" /><br />
                             Exit Fullscreen

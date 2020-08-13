@@ -281,7 +281,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -298,7 +298,7 @@ export class BigScreen extends Component {
                 <Title><b>{title}</b></Title>
                 <WelcomeContainer>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>#{code}</BottomBannerText>
@@ -341,7 +341,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator hide={true} style={{ left: "15px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
@@ -352,8 +352,14 @@ export class BigScreen extends Component {
 
     renderOpenTextResult() {
         const results = this.state.task.Groups;
+        console.log(results[0].Members);
         return (
             <>
+                {results[0].Members.length > 0 && <Column key="C0" width={1} empty>
+                    <Group key={0} title="Unorganized" size={1} showcase>
+                        {results[0].Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
+                    </Group>
+                </Column>}
                 {results.slice(1).map(group =>
                     <>
                         {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
