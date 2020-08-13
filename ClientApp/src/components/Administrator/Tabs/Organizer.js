@@ -488,7 +488,7 @@ export class Organizer extends Component {
                 return keys.sort(compare);
             }
 
-            const merge = () => {
+            const merge = async () => {
                 if (this.state.selected == undefined || this.state.selected.length <= 1)
                     return;
 
@@ -502,17 +502,7 @@ export class Organizer extends Component {
                 for (var i = 0; i < (selected.length - 1); i++) {
                     var subject = selected[i];
 
-                    //if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
-                    //    subject[1] -= change[subject[0]];
-                    //}
-
-                    axios.post(`admin/${code}/question-merge${master[0]}-${master[1]}with${subject[0]}-${subject[1]}`);
-
-                    //if (change[subject[0]] == undefined) {
-                    //    change[subject[0]] = 1;
-                    //} else {
-                    //    change[subject[0]] += 1;
-                    //}
+                    await setTimeout(axios.post(`admin/${code}/question-merge${master[0]}-${master[1]}with${subject[0]}-${subject[1]}`), 500);
                 }
 
                 this.setState({
@@ -521,7 +511,7 @@ export class Organizer extends Component {
             }
 
             const archive = {
-                members: () => {
+                members: async () => {
                     const code = sessionStorage.getItem('code');
 
                     const selected = getSelected();
@@ -531,17 +521,7 @@ export class Organizer extends Component {
                     for (let i = 0; i < selected.length; i++) {
                         let subject = selected[i];
 
-                        //if (change[subject[0]] !== undefined && change[subject[0]] > 0) {
-                        //    subject[1] -= change[subject[0]];
-                        //}
-
-                        axios.post(`admin/${code}/question-archive-member-${subject[0]}-${subject[1]}`);
-
-                        //if (change[subject[0]] == undefined) {
-                        //    change[subject[0]] = 1;
-                        //} else {
-                        //    change[subject[0]] += 1;
-                        //}
+                        await setTimeout(axios.post(`admin/${code}/question-archive-member-${subject[0]}-${subject[1]}`), 500);
                     }
 
                     this.setState({
@@ -550,12 +530,12 @@ export class Organizer extends Component {
                 }
             }
 
-            const duplicate = () => {
+            const duplicate = async () => {
                 const code = sessionStorage.getItem("code");
                 const options = getOptions();
 
                 options.forEach(option => {
-                    axios.post(`client/${code}/add-opentext`, option);
+                    await setTimeout(axios.post(`client/${code}/add-opentext`, option), 500);
                 });
             }
 
