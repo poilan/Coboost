@@ -56,19 +56,9 @@ export class Recovery extends Component {
         super(props);
         this.state = {
             tab: 'login',
-            login: {
-                email: '',
-                password: '',
-                validated: false,
-            },
 
-            register: {
-                firstName: '',
-                lastName: '',
+            recover: {
                 email: '',
-                password: '',
-                repeatPassword: '',
-                validated: false,
             }
         }
 
@@ -132,6 +122,28 @@ export class Recovery extends Component {
                 //Wrong email / user not found
             }
         });*/
+    }
+
+    async submitRegistration(event) {
+        event.preventDefault();
+        const data = this.state.recover;
+
+        await axios.post(`user/register`, data).then(res => {
+            if (res.status === 202) {
+                //Registration Succeeded
+                //Redirect to log in?
+            }
+            else if (res.status === 406) {
+                //User didn't write in a correct email address
+                //or password was too short (needs to be 8 or more characters)
+            }
+            else if (res.status === 409) {
+                //That email is already in use
+            }
+            else if (res.status === 400) {
+                //Data wasn't recieved by server
+            }
+        });
     }
 
     selectTab(key) {
