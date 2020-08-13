@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import "circular-std";
 import { Ico_Box } from '../Classes/Icons';
 import { Breadcrumbs, Link } from '@material-ui/core';
+import BannerDropdown, { BannerButton, BannerLink } from '../Classes/Dropdown';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -34,7 +35,7 @@ const BannerText = styled.h1`
     position: absolute;
 `;
 
-const BannerButton = styled(Nav.Link)`
+/*const BannerButton = styled(Nav.Link)`
     background: #fff;
     font-family: CircularStd;
     border-radius: 100px;
@@ -46,7 +47,7 @@ const BannerButton = styled(Nav.Link)`
     float: right;
 
     padding: 6px 20px;
-`;
+`;*/
 
 const BannerDropButton = styled(DropdownButton)`
     background: #fff;
@@ -538,10 +539,12 @@ export class Dashboard extends Component {
                             <BreadText color="initial" href="/">Coboost</BreadText>
                             <BreadText color="initial" href="/dashboard">Sessions</BreadText>
                         </BreadCrumb>
-                        <BannerDropButton title="User">
-                            <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
-                        </BannerDropButton>
-                        <BannerButton onClick={this.newProject}>New Session</BannerButton>
+
+                        <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                            <BannerLink onClick={this.logout}>Logout</BannerLink>
+                        </BannerDropdown>
+
+                        <BannerButton style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}} onClick={this.newProject}>New Session</BannerButton>
                     </Banner>
                     <Header>
                         <HeaderText>Overview</HeaderText>

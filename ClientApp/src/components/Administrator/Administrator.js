@@ -201,6 +201,7 @@ export class Administrator extends Component {
         }
 
         this.present = this.present.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
@@ -410,6 +411,12 @@ export class Administrator extends Component {
         presentor.PresentInNewWindow();
     }
 
+    logout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        this.props.history.push("/");
+    }
+
     controls = {
         next: () => {
             let index = this.state.active + 1;
@@ -446,7 +453,7 @@ export class Administrator extends Component {
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
                     <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
-                        <BannerLink onClick={this.present}>Logout</BannerLink>
+                        <BannerLink onClick={this.logout}>Logout</BannerLink>
                     </BannerDropdown>
 
                     <BannerDropdown title="Presentation" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>

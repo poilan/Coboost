@@ -267,7 +267,6 @@ export class Facilitator extends React.Component {
 
     /* Hide/Show Logic */
     onHover(state) {
-        console.log("Hover state: " + state);
         this.setState({
             hidden: !state
         });

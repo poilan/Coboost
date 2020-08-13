@@ -34,10 +34,14 @@ const DropButton = styled.button`
     }
 `;
 
-const DropItem = styled.a`
+const DropItem = styled.button`
     display: block;
     padding: 12px 16px;
-    /*text-align: center;*/
+    
+    width: 100%;
+    background-color: none;
+    border: none;
+
     color: ${props => props.disabled ? "rgba(0, 0, 0, 0.3)" : "black"} !important;
 
     user-select: ${props => props.disabled ? "none" : "all"};
@@ -45,7 +49,6 @@ const DropItem = styled.a`
     :hover {
         text-decoration: none;
         background-color: rgba(0, 0, 0, 0.05);
-        cursor: ${props => props.disabled ? "default" : "pointer"};
     }
 
     :not(:last-child) {
@@ -69,6 +72,20 @@ const DropdownContent = styled.div`
     border-radius: 10px;
 `;
 
+export class BannerButton extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return(
+            <>
+                <DropButton style={this.props.style} disabled={this.props.disabled} onClick={this.props.onClick}>{this.props.children}</DropButton>
+            </>
+        );
+    }
+}
+
 export class BannerLink extends Component {
     constructor(props) {
         super(props);
@@ -77,7 +94,7 @@ export class BannerLink extends Component {
     render() {
         return(
             <>
-                <DropItem disabled={this.props.disabled} href={this.props.href} onClick={this.props.onClick}>{this.props.children}</DropItem>
+                <DropItem disabled={this.props.disabled} onClick={this.props.onClick}>{this.props.children}</DropItem>
             </>
         );
     }
@@ -111,8 +128,8 @@ export default class BannerDropdown extends Component {
         return(
             <>
                 <DropStyle style={this.props.style}>
-                    <DropButton onClick={() => this.onClick()} onBlur={() => this.onFocusLoss()}>{this.props.title}</DropButton>
-                    <DropdownContent hide={this.state.hidden}>
+                    <DropButton onClick={() => this.onClick()}>{this.props.title}</DropButton>
+                    <DropdownContent hide={this.state.hidden} onMouseLeave={() => this.onFocusLoss()}>
                         {this.props.children}
                     </DropdownContent>
                 </DropStyle>
