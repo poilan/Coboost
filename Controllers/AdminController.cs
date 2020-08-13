@@ -154,13 +154,18 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/close")]
         public async void CloseSession(int code)
         {
-            if (!Context.Active.Sessions.ContainsKey(code))
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                HttpContext.Response.StatusCode = 409;
-                return;
+                Session session = await Context.Sessions.FindAsync(admin.EventCode);
+                if (session != null)
+                {
+                    session.Questions = admin.SaveSession();
+                    session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+                    Context.Sessions.Update(session);
+                }
             }
-            await SaveAdmin(code);
             Context.Active.Sessions.Remove(code);
+            Context.SaveChanges();
 
             HttpContext.Response.StatusCode = 200;
         }
@@ -499,12 +504,17 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/save")]
         public async void SaveSession(int code)
         {
-            if (!Context.Active.Sessions.ContainsKey(code))
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                HttpContext.Response.StatusCode = 412;
-                return;
+                Session session = await Context.Sessions.FindAsync(admin.EventCode);
+                if (session != null)
+                {
+                    session.Questions = admin.SaveSession();
+                    session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+                    Context.Sessions.Update(session);
+                    Context.SaveChanges();
+                }
             }
-            await SaveAdmin(code);
 
             HttpContext.Response.StatusCode = 200;
         }
