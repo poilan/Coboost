@@ -154,19 +154,15 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/close")]
         public async void CloseSession(int code)
         {
-            if (Context.Active.Sessions.ContainsKey(code))
-            {
-                await SaveAdmin(code);
-                Context.Active.Sessions.Remove(code);
-
-                HttpContext.Response.StatusCode = 200;
-                return;
-            }
-            else
+            if (!Context.Active.Sessions.ContainsKey(code))
             {
                 HttpContext.Response.StatusCode = 409;
                 return;
             }
+            await SaveAdmin(code);
+            Context.Active.Sessions.Remove(code);
+
+            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpPost("{code}/question-create-group-c{column}")]
@@ -503,18 +499,14 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/save")]
         public async void SaveSession(int code)
         {
-            if (Context.Active.Sessions.ContainsKey(code))
+            if (!Context.Active.Sessions.ContainsKey(code))
             {
-                await SaveAdmin(code);
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
+            await SaveAdmin(code);
 
-                //HttpContext.Response.StatusCode = 200;
-                return;
-            }
-            else
-            {
-                //HttpContext.Response.StatusCode = 412;
-                return;
-            }
+            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpGet("{code}/stream-question-{index}")]
