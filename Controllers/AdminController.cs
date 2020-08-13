@@ -154,17 +154,17 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/close")]
         public async void CloseSession(int code)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            if (Context.Active.Sessions.ContainsKey(code))
             {
-                await SaveAdmin(admin);
+                await SaveAdmin(code);
                 Context.Active.Sessions.Remove(code);
 
-                //HttpContext.Response.StatusCode = 200;
+                HttpContext.Response.StatusCode = 200;
                 return;
             }
             else
             {
-                //HttpContext.Response.StatusCode = 412;
+                HttpContext.Response.StatusCode = 409;
                 return;
             }
         }
@@ -503,9 +503,9 @@ namespace Slagkraft.Controllers
         [HttpPost("{code}/save")]
         public async void SaveSession(int code)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            if (Context.Active.Sessions.ContainsKey(code))
             {
-                await SaveAdmin(admin);
+                await SaveAdmin(code);
 
                 //HttpContext.Response.StatusCode = 200;
                 return;
@@ -678,16 +678,18 @@ namespace Slagkraft.Controllers
 
         #region Private Methods
 
-        private async Task SaveAdmin(AdminInstance admin)
+        private async Task SaveAdmin(int code)
         {
-            Session session = await Context.Sessions.FindAsync(admin.EventCode);
-            if (session != null)
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                session.Questions = admin.SaveSession();
-                session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
-                Context.Sessions.Update(session);
-                Context.SaveChanges();
-                return;
+                Session session = await Context.Sessions.FindAsync(admin.EventCode);
+                if (session != null)
+                {
+                    session.Questions = admin.SaveSession();
+                    session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+                    Context.Sessions.Update(session);
+                    Context.SaveChanges();
+                }
             }
             return;
         }
