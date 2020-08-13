@@ -157,14 +157,15 @@ namespace Slagkraft.Controllers
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 await SaveAdmin(admin);
+                Context.Active.Sessions.Remove(code);
+                HttpContext.Response.StatusCode = 200;
+                return;
             }
             else
             {
                 HttpContext.Response.StatusCode = 412;
                 return;
             }
-            Context.Active.Sessions.Remove(code);
-            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpPost("{code}/question-create-group-c{column}")]
@@ -495,12 +496,18 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/save")]
-        public async void SaveSession(int code)
+        public void SaveSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                await SaveAdmin(admin);
+                SaveAdmin(admin);
                 HttpContext.Response.StatusCode = 200;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
             }
         }
 
@@ -650,7 +657,9 @@ namespace Slagkraft.Controllers
 
                 Context.Sessions.Update(session);
                 Context.SaveChanges();
+                return;
             }
+            return;
         }
 
         #endregion Private Methods
