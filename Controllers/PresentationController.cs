@@ -100,51 +100,69 @@ namespace Slagkraft.Controllers
 
                     if (question is OpenText open)
                     {
+                        List<OpenText_Group> groups = open.Groups;
                         await Response.WriteAsync("event:" + "Groups\n");
-                        string group = $"data: {JsonConvert.SerializeObject(open.Groups)}\n\n";
-                        await Response.WriteAsync(group);
+                        string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                        await Response.WriteAsync(json);
                         await Response.Body.FlushAsync();
                     }
                     else if (question is MultipleChoice choice)
                     {
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(choice.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Total\n");
-                        string total = $"data: {JsonConvert.SerializeObject(choice.TotalVotes)}\n\n";
-                        await Response.WriteAsync(total);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<MultipleChoice_Option> options = choice.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            int total = choice.TotalVotes;
+                            await Response.WriteAsync("event:" + "Total\n");
+                            string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
                     }
                     else if (question is Points point)
                     {
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(point.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Votes\n");
-                        string votes = $"data: {JsonConvert.SerializeObject(point.Votes)}\n\n";
-                        await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Amount\n");
-                        string amount = $"data: {JsonConvert.SerializeObject(point.Amount)}\n\n";
-                        await Response.WriteAsync(amount);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<Points_Option> options = point.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<Points_Vote> votes = point.Votes;
+                            await Response.WriteAsync("event:" + "Votes\n");
+                            string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            int amount = point.Amount;
+                            await Response.WriteAsync("event:" + "Amount\n");
+                            string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
                     }
                     else if (question is Rate slider)
                     {
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(slider.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Votes\n");
-                        string votes = $"data: {JsonConvert.SerializeObject(slider.Votes)}\n\n";
-                        await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<Rate_Option> options = slider.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<Rate_Vote> votes = slider.Votes;
+                            await Response.WriteAsync("event:" + "Votes\n");
+                            string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
                     }
 
                     if (question != null)

@@ -531,17 +531,20 @@ namespace Slagkraft.Controllers
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
-
-                        await Response.WriteAsync("event:" + "Groups\n");
-                        string group = $"data: {JsonConvert.SerializeObject(subject.Groups)}\n\n";
-                        await Response.WriteAsync(group);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Archive\n");
-                        string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";
-                        await Response.WriteAsync(archive);
-                        await Response.Body.FlushAsync();
-
+                        {
+                            List<OpenText_Group> groups = subject.Groups;
+                            await Response.WriteAsync("event:" + "Groups\n");
+                            string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<OpenText_Input> archive = subject.Archive;
+                            await Response.WriteAsync("event:" + "Archive\n");
+                            string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
                         subject.Reset.Reset();
                         subject.Reset.WaitOne();
                     }
@@ -553,21 +556,27 @@ namespace Slagkraft.Controllers
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
-
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(subject.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Total\n");
-                        string total = $"data: {JsonConvert.SerializeObject(subject.TotalVotes)}\n\n";
-                        await Response.WriteAsync(total);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Archive\n");
-                        string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";
-                        await Response.WriteAsync(archive);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<MultipleChoice_Option> options = subject.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            int total = subject.TotalVotes;
+                            await Response.WriteAsync("event:" + "Total\n");
+                            string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<MultipleChoice_Option> archive = subject.Archive;
+                            await Response.WriteAsync("event:" + "Archive\n");
+                            string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
                         subject.Reset.Reset();
                         subject.Reset.WaitOne();
@@ -576,31 +585,41 @@ namespace Slagkraft.Controllers
                 else if (admin.Tasks[index] is Points)
                 {
                     Points subject = admin.Tasks[index] as Points;
-
-                    await Response.WriteAsync("event:" + "Amount\n");
-                    string amount = $"data: {JsonConvert.SerializeObject(subject.Amount)}\n\n";
-                    await Response.WriteAsync(amount);
-                    await Response.Body.FlushAsync();
+                    {
+                        int amount = subject.Amount;
+                        await Response.WriteAsync("event:" + "Amount\n");
+                        string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
+                        await Response.WriteAsync(json);
+                        await Response.Body.FlushAsync();
+                    }
 
                     while (true)
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
 
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(subject.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<Points_Option> options = subject.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
-                        await Response.WriteAsync("event:" + "Votes\n");
-                        string votes = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
-                        await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();
+                        {
+                            await Response.WriteAsync("event:" + "Votes\n");
+                            string json = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
-                        await Response.WriteAsync("event:" + "Archive\n");
-                        string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";
-                        await Response.WriteAsync(archive);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<Points_Option> archive = subject.Archive;
+                            await Response.WriteAsync("event:" + "Archive\n");
+                            string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
                         subject.Reset.Reset();
                         subject.Reset.WaitOne();
@@ -613,21 +632,27 @@ namespace Slagkraft.Controllers
                     {
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
-
-                        await Response.WriteAsync("event:" + "Options\n");
-                        string options = $"data: {JsonConvert.SerializeObject(subject.Options)}\n\n";
-                        await Response.WriteAsync(options);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Votes\n");
-                        string votes = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
-                        await Response.WriteAsync(votes);
-                        await Response.Body.FlushAsync();
-
-                        await Response.WriteAsync("event:" + "Archive\n");
-                        string archive = $"data: {JsonConvert.SerializeObject(subject.Archive)}\n\n";
-                        await Response.WriteAsync(archive);
-                        await Response.Body.FlushAsync();
+                        {
+                            List<Rate_Option> options = subject.Options;
+                            await Response.WriteAsync("event:" + "Options\n");
+                            string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<Rate_Vote> votes = subject.Votes;
+                            await Response.WriteAsync("event:" + "Votes\n");
+                            string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
+                        {
+                            List<Rate_Option> archive = subject.Archive;
+                            await Response.WriteAsync("event:" + "Archive\n");
+                            string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
                         subject.Reset.Reset();
                         subject.Reset.WaitOne();
