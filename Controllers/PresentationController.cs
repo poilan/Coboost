@@ -100,7 +100,7 @@ namespace Slagkraft.Controllers
 
                     if (question is OpenText open)
                     {
-                        List<OpenText_Group> groups = open.Groups;
+                        List<OpenText_Group> groups = open.Groups.ToList();
                         await Response.WriteAsync("event:" + "Groups\n");
                         string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
                         await Response.WriteAsync(json);
@@ -109,7 +109,7 @@ namespace Slagkraft.Controllers
                     else if (question is MultipleChoice choice)
                     {
                         {
-                            List<MultipleChoice_Option> options = choice.Options;
+                            List<MultipleChoice_Option> options = choice.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
@@ -126,14 +126,14 @@ namespace Slagkraft.Controllers
                     else if (question is Points point)
                     {
                         {
-                            List<Points_Option> options = point.Options;
+                            List<Points_Option> options = point.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<Points_Vote> votes = point.Votes;
+                            List<Points_Vote> votes = point.Votes.ToList();
                             await Response.WriteAsync("event:" + "Votes\n");
                             string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
                             await Response.WriteAsync(json);
@@ -150,14 +150,14 @@ namespace Slagkraft.Controllers
                     else if (question is Rate slider)
                     {
                         {
-                            List<Rate_Option> options = slider.Options;
+                            List<Rate_Option> options = slider.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<Rate_Vote> votes = slider.Votes;
+                            List<Rate_Vote> votes = slider.Votes.ToList();
                             await Response.WriteAsync("event:" + "Votes\n");
                             string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
                             await Response.WriteAsync(json);

@@ -500,7 +500,7 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                SaveAdmin(admin);
+                ThreadPool.QueueUserWorkItem(async o => await SaveAdmin(admin));
                 HttpContext.Response.StatusCode = 200;
                 return;
             }
@@ -532,14 +532,14 @@ namespace Slagkraft.Controllers
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
                         {
-                            List<OpenText_Group> groups = subject.Groups;
+                            List<OpenText_Group> groups = subject.Groups.ToList();
                             await Response.WriteAsync("event:" + "Groups\n");
                             string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<OpenText_Input> archive = subject.Archive;
+                            List<OpenText_Input> archive = subject.Archive.ToList();
                             await Response.WriteAsync("event:" + "Archive\n");
                             string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
                             await Response.WriteAsync(json);
@@ -557,7 +557,7 @@ namespace Slagkraft.Controllers
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
                         {
-                            List<MultipleChoice_Option> options = subject.Options;
+                            List<MultipleChoice_Option> options = subject.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
@@ -571,7 +571,7 @@ namespace Slagkraft.Controllers
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<MultipleChoice_Option> archive = subject.Archive;
+                            List<MultipleChoice_Option> archive = subject.Archive.ToList();
                             await Response.WriteAsync("event:" + "Archive\n");
                             string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
                             await Response.WriteAsync(json);
@@ -599,7 +599,7 @@ namespace Slagkraft.Controllers
                             break;
 
                         {
-                            List<Points_Option> options = subject.Options;
+                            List<Points_Option> options = subject.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
@@ -607,14 +607,15 @@ namespace Slagkraft.Controllers
                         }
 
                         {
+                            List<Points_Vote> votes = subject.Votes.ToList();
                             await Response.WriteAsync("event:" + "Votes\n");
-                            string json = $"data: {JsonConvert.SerializeObject(subject.Votes)}\n\n";
+                            string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
 
                         {
-                            List<Points_Option> archive = subject.Archive;
+                            List<Points_Option> archive = subject.Archive.ToList();
                             await Response.WriteAsync("event:" + "Archive\n");
                             string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
                             await Response.WriteAsync(json);
@@ -633,21 +634,21 @@ namespace Slagkraft.Controllers
                         if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                             break;
                         {
-                            List<Rate_Option> options = subject.Options;
+                            List<Rate_Option> options = subject.Options.ToList();
                             await Response.WriteAsync("event:" + "Options\n");
                             string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<Rate_Vote> votes = subject.Votes;
+                            List<Rate_Vote> votes = subject.Votes.ToList();
                             await Response.WriteAsync("event:" + "Votes\n");
                             string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
                         {
-                            List<Rate_Option> archive = subject.Archive;
+                            List<Rate_Option> archive = subject.Archive.ToList();
                             await Response.WriteAsync("event:" + "Archive\n");
                             string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
                             await Response.WriteAsync(json);
