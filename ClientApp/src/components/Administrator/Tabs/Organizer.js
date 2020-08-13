@@ -534,7 +534,7 @@ export class Organizer extends Component {
                 const code = sessionStorage.getItem("code");
                 const options = getOptions();
 
-                options.forEach(option => {
+                options.forEach(async option => {
                     await setTimeout(axios.post(`client/${code}/add-opentext`, option), 500);
                 });
             }
