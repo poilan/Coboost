@@ -381,7 +381,7 @@ export class CreateTaskModal extends Component {
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
                     <Box component="fieldset" pt={1} px={1} borderColor="transparent">
                         <Typography component="legend" variant="subtitle2">Options</Typography>
-                        {this.state.options !== undefined && this.state.options.map(option =>
+                        {this.state.options !== undefined && this.props.options.map(option =>
                             <Box component="fieldset" mb={1} borderColor="transparent">
                                 <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
                             </Box>
