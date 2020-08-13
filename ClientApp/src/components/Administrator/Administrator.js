@@ -10,7 +10,7 @@ import { Breadcrumbs, Link, Typography, Tooltip } from '@material-ui/core';
 import { Facilitator } from '../Big Screen/Facilitator';
 
 import { BsJustify } from 'react-icons/bs';
-import BannerDropdown, {BannerLink} from '../Classes/Dropdown';
+import BannerDropdown, { BannerLink } from '../Classes/Dropdown';
 
 const MainContainer = styled.div`
     display: table;
@@ -227,12 +227,13 @@ export class Administrator extends Component {
     update = async () => {
         this.SSE.close();
         const code = sessionStorage.getItem('code');
-        await axios.get(`admin/${code}/questions-all`).then(async (res) => {
+        await axios.get(`admin/${code}/questions-all`).then((res) => {
             if (res.status === 202) {
                 this.setState({
                     tasks: res.data,
                 });
-                await axios.post(`admin/${code}/save`);
+
+                //await axios.post(`admin/${code}/save`);
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
                 else if (this.state.tasks.length > 0)
@@ -452,11 +453,11 @@ export class Administrator extends Component {
                     </BreadCrumb>
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
-                    <BannerDropdown title={<BsJustify/>} style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
-                            <BannerLink onClick={this.logout}>Logout</BannerLink>
-                        </BannerDropdown>
+                    <BannerDropdown title={<BsJustify />} style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                        <BannerLink onClick={this.logout}>Logout</BannerLink>
+                    </BannerDropdown>
 
-                    <BannerDropdown title="Presentation" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                    <BannerDropdown title="Presentation" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
                         <BannerLink disabled>Presentation Mode</BannerLink>
                         <BannerLink onClick={this.present}>Present in a new window</BannerLink>
                         <BannerLink disabled>Mirror Screen</BannerLink>
