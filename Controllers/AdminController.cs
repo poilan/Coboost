@@ -403,7 +403,11 @@ namespace Slagkraft.Controllers
                     return; //Session doesn't exist!
                 }
 
-                AdminInstance model = new AdminInstance();
+                AdminInstance model = new AdminInstance
+                {
+                    EventCode = session.Identity,
+                    Owner = session.Email
+                };
 
                 if (!session.Questions.Equals("{}"))
                     model.LoadSession(session.Questions);
