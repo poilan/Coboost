@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import Rating from '@material-ui/lab/Rating';
 
+import BannerDropdown, { BannerLink } from '../Classes/Dropdown';
+
 const MainContainer = styled(Col)`
     display: table;
     height: 100%;
@@ -907,9 +909,9 @@ export class Mobile extends Component {
                 <MainContainer>
                     <Banner>
                         <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
-                        {this.state.loggedIn && < BannerButton title="User">
-                            <Dropdown.Item onClick={this.logout}>Logout</Dropdown.Item>
-                        </BannerButton>}
+                        {this.state.loggedIn && <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                                <BannerLink onClick={this.logout}>Test</BannerLink>
+                            </BannerDropdown>}
                     </Banner>
                     <Header>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>
