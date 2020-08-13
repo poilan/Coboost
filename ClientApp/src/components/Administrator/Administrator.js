@@ -233,7 +233,7 @@ export class Administrator extends Component {
                     tasks: res.data,
                 });
 
-                await axios.post(`admin/${code}/save`);
+                axios.post(`admin/${code}/save`);
 
                 if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
