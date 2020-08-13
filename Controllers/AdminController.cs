@@ -152,7 +152,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/close")]
-        public async void CloseSession(int code)
+        public async Task CloseSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
@@ -502,7 +502,7 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/save")]
-        public async void SaveSession(int code)
+        public async Task SaveSession(int code)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
