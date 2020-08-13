@@ -8,6 +8,8 @@ import { Organizer } from './Tabs/Organizer';
 import { Presentation } from './Presentation';
 import { Breadcrumbs, Link, Typography, Tooltip } from '@material-ui/core';
 import { Facilitator } from '../Big Screen/Facilitator';
+
+import { BsJustify } from 'react-icons/bs';
 import BannerDropdown, {BannerLink} from '../Classes/Dropdown';
 
 const MainContainer = styled.div`
@@ -452,9 +454,9 @@ export class Administrator extends Component {
                     </BreadCrumb>
                     <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
-                    <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
-                        <BannerLink onClick={this.logout}>Logout</BannerLink>
-                    </BannerDropdown>
+                    <BannerDropdown title={<BsJustify/>} style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                            <BannerLink onClick={this.logout}>Logout</BannerLink>
+                        </BannerDropdown>
 
                     <BannerDropdown title="Presentation" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
                         <BannerLink disabled>Presentation Mode</BannerLink>

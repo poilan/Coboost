@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import "circular-std";
 import { Ico_Box } from '../Classes/Icons';
 import { Breadcrumbs, Link } from '@material-ui/core';
+
+import { BsJustify } from 'react-icons/bs';
 import BannerDropdown, { BannerButton, BannerLink } from '../Classes/Dropdown';
 
 const MainContainer = styled(Col)`
@@ -540,7 +542,7 @@ export class Dashboard extends Component {
                             <BreadText color="initial" href="/dashboard">Sessions</BreadText>
                         </BreadCrumb>
 
-                        <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                        <BannerDropdown title={<BsJustify/>} style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
                             <BannerLink onClick={this.logout}>Logout</BannerLink>
                         </BannerDropdown>
 

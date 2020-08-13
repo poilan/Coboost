@@ -21,6 +21,10 @@ const DropButton = styled.button`
     text-align: center;
     padding: 7px 20px;
 
+    :not(:first-child) {
+        margin: 0px 2px;
+    }
+
     :hover {
         /*background: none;*/
         border: none;
@@ -39,7 +43,7 @@ const DropItem = styled.button`
     padding: 12px 16px;
     
     width: 100%;
-    background-color: none;
+    background-color: transparent;
     border: none;
 
     color: ${props => props.disabled ? "rgba(0, 0, 0, 0.3)" : "black"} !important;
