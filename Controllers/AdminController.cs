@@ -158,12 +158,13 @@ namespace Slagkraft.Controllers
             {
                 await SaveAdmin(admin);
                 Context.Active.Sessions.Remove(code);
-                HttpContext.Response.StatusCode = 200;
+
+                //HttpContext.Response.StatusCode = 200;
                 return;
             }
             else
             {
-                HttpContext.Response.StatusCode = 412;
+                //HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -501,12 +502,13 @@ namespace Slagkraft.Controllers
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 object WarningSupresser = SaveAdmin(admin);
-                HttpContext.Response.StatusCode = 200;
+
+                //HttpContext.Response.StatusCode = 200;
                 return;
             }
             else
             {
-                HttpContext.Response.StatusCode = 412;
+                //HttpContext.Response.StatusCode = 412;
                 return;
             }
         }
@@ -679,8 +681,6 @@ namespace Slagkraft.Controllers
             {
                 session.Questions = admin.SaveSession();
                 session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
-                Console.WriteLine(session.Questions);
-
                 Context.Sessions.Update(session);
                 Context.SaveChanges();
                 return;
