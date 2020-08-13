@@ -500,7 +500,7 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                ThreadPool.QueueUserWorkItem(async o => await SaveAdmin(admin));
+                object WarningSupresser = SaveAdmin(admin);
                 HttpContext.Response.StatusCode = 200;
                 return;
             }
