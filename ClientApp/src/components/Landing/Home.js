@@ -13,7 +13,6 @@ const LeftHalf = styled(Col)`
   width: 100%;
   max-width: 1080px;
   transform: translate(-50%, -50%);
-  padding: 20px;
   display: flex;
   flex-direction: column;
 `;
@@ -34,7 +33,7 @@ const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
     left: ${props => props.mobile ? "5.5" : "7"}rem;
-    width: 70%;
+    width: calc(70% - 5.5rem);
     height: 100%;
     border: 0;
     outline: 0;
@@ -52,7 +51,7 @@ const LeftText = styled.h2`
 const LeftTitle = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    font-size: ${props => props.mobile === "true" ? "2rem" : "4rem"};
+    font-size: ${props => props.mobile ? "2rem" : "4rem"};
     color: #fff;
     margin: 1rem;
 `;
