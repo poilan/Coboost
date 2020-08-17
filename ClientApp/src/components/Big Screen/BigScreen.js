@@ -352,7 +352,6 @@ export class BigScreen extends Component {
 
     renderOpenTextResult() {
         const results = this.state.task.Groups;
-        console.log(results[0].Members);
         return (
             <>
                 {results[0].Members.length > 0 && <Column key="C0" width={1} empty>

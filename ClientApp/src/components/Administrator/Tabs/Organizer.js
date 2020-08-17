@@ -450,16 +450,17 @@ export class Organizer extends Component {
                 for (var i = 0; i < selected.length; i++) {
                     var key = selected[i];
                     var answer = task.Groups[key[0]].Members[key[1]];
-                    if (answer !== undefined) {
-                        var data = {
-                            UserID: answer.UserID,
-                            Index: options.length,
-                            Description: answer.Description,
-                            Title: answer.Title,
-                        }
-                        options.push(data);
+                    var data = {
+                        UserID: answer.UserID,
+                        Index: options.length,
+                        Description: answer.Description,
+                        Title: answer.Title,
                     }
+                    options.push(data);
                 }
+                console.log(options);
+                console.log(selected);
+                console.log("Returning...");
                 return options;
             }
 
@@ -603,7 +604,7 @@ export class Organizer extends Component {
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                     {this.state.modal.answer && <PageModal title="Send Input" body={() => this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={() => this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={() => getOptions()} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} />}
                 </MainContainer >
             );
