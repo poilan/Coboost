@@ -103,13 +103,16 @@ export class Input extends Component {
     handleClicks = e => {
         console.log(this.state.clickTimeout);
         if (this.state.clickTimeout !== null) {
-            this.props.double(e);
+            if (this.props.double !== undefined) {
+                this.props.double(e);
+            }
             clearTimeout(this.state.clickTimeout);
             this.state.clickTimeout = null;
         } else {
             this.state.clickTimeout = setTimeout(() => {
-                this.props.onClick(this.props.id);
-                console.log(this.state.clickTimeout);
+                if (this.props.onClick !== undefined) {
+                    this.props.onClick(this.props.id);
+                }
                 clearTimeout(this.state.clickTimeout);
                 this.state.clickTimeout = null;
             }, 250)

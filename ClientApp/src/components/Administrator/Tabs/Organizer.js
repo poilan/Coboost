@@ -602,8 +602,8 @@ export class Organizer extends Component {
                     )
                     }
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                    {this.state.modal.answer && <PageModal title="Send Input" body={() => this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
-                    {this.state.modal.rename && <PageModal title="Rename" body={() => this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
+                    {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
+                    {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} />}
                 </MainContainer >

@@ -210,10 +210,35 @@ namespace Slagkraft.Models.Admin.Questions
                         Index = Groups[parent.Group].Members[parent.Member].Index,
                     };
 
-                    //Add child to new parent
-                    merge.Children.Add(Groups[child.Group].Members[child.Member]);
+                    //Check if child is merged with something
+                    if (Groups[child.Group].Members[child.Member] is OpenText_Merged mergedChild)
+                    {
+                        //Seperate the child from all the grand-kids(The childs children)
+                        OpenText_Input singleChild = new OpenText_Input
+                        {
+                            Description = mergedChild.Description,
+                            Title = mergedChild.Title,
+                            UserID = mergedChild.UserID,
+                        };
+
+                        //Gather the grand-kids
+                        List<OpenText_Input> grandKids = mergedChild.Children;
+
+                        //Add child and all grand-kids to parent
+                        merge.Children.Add(singleChild);
+
+                        foreach (OpenText_Input kid in grandKids)
+                        {
+                            merge.Children.Add(kid);
+                        }
+                    }
+                    else
+                    {
+                        //Add child to new parent
+                        merge.Children.Add(Groups[child.Group].Members[child.Member]);
+                        Groups[child.Group].Members.RemoveAt(child.Member);
+                    }
                     Groups[parent.Group].Members[parent.Member] = merge;
-                    Groups[child.Group].Members.RemoveAt(child.Member);
                     UpdateMemberIndexes(child.Group);
                 }
             }

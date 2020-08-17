@@ -26,8 +26,8 @@ const Banner = styled(Col)`
     position: sticky;
     /*background: #4C7AD3;*/
     background: rgb(53, 57, 67);
-    height: 75px;
-    top: 0;
+    height: 50px;
+    bottom: 0;
     left: 0;
     z-index: 11;
     padding-right: 15%;
@@ -128,7 +128,7 @@ const ContentContainer = styled(Col)`
     min-height: 50%;
     left: 0;
     margin-top: 2px;
-    padding: 50px 0;
+    padding: 25px 0;
 `;
 
 const Content = styled.div`
@@ -148,7 +148,7 @@ const ContentTitle = styled.h3`
     text-align: center;
 
     position: relative;
-    padding: 30px;
+    padding: 10px 30px;
     padding-bottom: 0;
 
     color: ${props => props.blue ? "#4C7AD3" : "black"};
@@ -620,8 +620,8 @@ export class Mobile extends Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} placeholder="Give your input a title..." />}
-                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} placeholder="Write your answer..." />
+                {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Give your input a title"} placeholder="Give your input a title..." />}
+                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Write your answer"} placeholder="Write your answer..." />
                 <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" : "Send Input!"}</ContentButton>
             </ContentContainer>
         );
@@ -901,13 +901,14 @@ export class Mobile extends Component {
                 <MainContainer>
                     <Banner>
                         <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
-                        {this.state.loggedIn && <BannerDropdown title="User" style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
-                                <BannerLink onClick={this.logout}>Test</BannerLink>
-                            </BannerDropdown>}
+                        {this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                            <BannerLink onClick={this.logout}>Test</BannerLink>
+                        </BannerDropdown>}
                     </Banner>
                     <Header>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>
-                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
+                        {//<HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
+                        }
                     </Header>
                     {this.renderPage()}
                 </MainContainer>

@@ -20,7 +20,8 @@ const LeftHalf = styled(Col)`
 
 const InputContainer = styled.div`
     height: 75px;
-    width: 80%;
+    width: calc(100% - 2rem);
+    max-width: 720px;
     position: absolute;
     background: #fff;
     border-radius: 1rem;
@@ -32,7 +33,7 @@ const InputContainer = styled.div`
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    left: 8rem;
+    left: ${props => props.mobile ? "6.4" : "8"}rem;
     width: 70%;
     height: 100%;
     border: 0;
@@ -41,7 +42,7 @@ const LeftInput = styled.input`
 
 const LeftText = styled.h2`
     font-family: CircularStd;
-    font-size: ${props => props.mobile === "true" ? "1" : "1.25"}rem;
+    font-size: ${props => props.mobile ? "1" : "1.25"}rem;
     font-weight: 500;
     color: #fff;
     text-align: center;
@@ -51,7 +52,7 @@ const LeftText = styled.h2`
 const LeftTitle = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    font-size: ${props => props.mobile === "true" ? "2rem" : "5rem"};
+    font-size: ${props => props.mobile === "true" ? "1.5rem" : "4rem"};
     color: #fff;
     margin: 1rem;
 `;
@@ -62,7 +63,8 @@ const JoinEventBtn = styled.button`
     color: rgb(255, 255, 255);
     display: inline;
     text-align: center;
-    width: 20%;
+    width: 8rem;
+    max-width: 40%;
     height: calc(100% - 1rem);
     right: 0.5rem;
     top: 0.5rem;
@@ -130,7 +132,8 @@ const LoginButton = styled(Nav.Link)`
 
 const EventCodeText = styled.h5`
     display: inline;
-    width: 7.5rem;
+    width: ${props => props.mobile ? "6" : "7.5"}rem;rem;
+    font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     left: 0;
     position: absolute;
     font-family: CircularStd;
@@ -223,9 +226,9 @@ export class Home extends Component {
                     <LeftTitle mobile={mobile.toString()} id="ParticipantText">The Tool for<br />Digital Co-Creation</LeftTitle>
                     <LeftText mobile={mobile.toString()} id="JoinText">Co-create and innovate with your team members by creating an<br />event or joining an existing event below.</LeftText>
                     <form onSubmit={this.connectToSession.bind(this)}>
-                        <InputContainer>
-                            <EventCodeText mobile={mobile.toString()}>Event code: </EventCodeText>
-                            <LeftInput type="number" mobile={mobile.toString()} ref="code" placeholder="eg. 404 404" name="code" />
+                        <InputContainer mobile={mobile}>
+                            <EventCodeText mobile={mobile}>Event code: </EventCodeText>
+                            <LeftInput autoComplete={false} type="number" mobile={mobile.toString()} ref="code" placeholder="eg. 404 404" name="code" />
                             <JoinEventBtn mobile={mobile.toString()} type="submit">Join Event</JoinEventBtn>
                         </InputContainer>
                     </form>
@@ -235,7 +238,7 @@ export class Home extends Component {
                     <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
-                <img src="./landing.jpg" style={{ height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
+                <img src="./landing.jpg" style={mobile ? { height: "100%", width: "auto", position: "fixed", top: "0", left: "0", zIndex: "-20" } : { height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
                 <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "80%", zIndex: "-19" }} />
             </LandingContainer>
         );
