@@ -20,7 +20,7 @@ const LeftHalf = styled(Col)`
 
 const InputContainer = styled.div`
     height: 75px;
-    width: calc(100% - 2rem);
+    width: calc(80% - 2rem);
     max-width: 720px;
     position: absolute;
     background: #fff;
@@ -33,7 +33,7 @@ const InputContainer = styled.div`
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    left: ${props => props.mobile ? "6.4" : "8"}rem;
+    left: ${props => props.mobile ? "5.5" : "7"}rem;
     width: 70%;
     height: 100%;
     border: 0;
@@ -52,7 +52,7 @@ const LeftText = styled.h2`
 const LeftTitle = styled.h1`
     font-family: CircularStd;
     text-align: center;
-    font-size: ${props => props.mobile === "true" ? "1.5rem" : "4rem"};
+    font-size: ${props => props.mobile === "true" ? "2rem" : "4rem"};
     color: #fff;
     margin: 1rem;
 `;
@@ -63,18 +63,19 @@ const JoinEventBtn = styled.button`
     color: rgb(255, 255, 255);
     display: inline;
     text-align: center;
-    width: 8rem;
-    max-width: 40%;
+    width: ${props => props.mobile ? "5.2" : "6.5"}rem;
+    font-size: ${props => props.mobile ? "0.8" : "1"}rem;
+    max-width: 30%;
     height: calc(100% - 1rem);
-    right: 0.5rem;
-    top: 0.5rem;
+    right: ${props => props.mobile ? "0.25" : "0.5"}rem;;
+    top: ${props => props.mobile ? "0.25" : "0.5"}rem;
     position: absolute;
     border: 2px solid rgb(53, 57, 67);
     border-radius: 1rem;
 `;
 
 const RightHalf = styled(Col)`
-  display: ${props => props.mobile === "true" ? "none" : "block"};
+  display: ${props => props.mobile ? "none" : "block"};
   position: absolute;
   top: 0;
   left: 50%;
@@ -132,7 +133,7 @@ const LoginButton = styled(Nav.Link)`
 
 const EventCodeText = styled.h5`
     display: inline;
-    width: ${props => props.mobile ? "6" : "7.5"}rem;rem;
+    width: ${props => props.mobile ? "5.2" : "6.5"}rem;
     font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     left: 0;
     position: absolute;
@@ -222,24 +223,24 @@ export class Home extends Component {
         const mobile = width <= 500;
         return (
             <LandingContainer>
-                <LeftHalf mobile={mobile.toString()}>
-                    <LeftTitle mobile={mobile.toString()} id="ParticipantText">The Tool for<br />Digital Co-Creation</LeftTitle>
-                    <LeftText mobile={mobile.toString()} id="JoinText">Co-create and innovate with your team members by creating an<br />event or joining an existing event below.</LeftText>
+                <LeftHalf mobile={mobile}>
+                    <LeftTitle mobile={mobile} id="ParticipantText">The Tool for<br />Digital Co-Creation</LeftTitle>
+                    <LeftText mobile={mobile} id="JoinText">Co-create and innovate with your team members by creating an<br />event or joining an existing event below.</LeftText>
                     <form onSubmit={this.connectToSession.bind(this)}>
                         <InputContainer mobile={mobile}>
                             <EventCodeText mobile={mobile}>Event code: </EventCodeText>
                             <LeftInput autoComplete={false} type="number" mobile={mobile.toString()} ref="code" placeholder="eg. 404 404" name="code" />
-                            <JoinEventBtn mobile={mobile.toString()} type="submit">Join Event</JoinEventBtn>
+                            <JoinEventBtn mobile={mobile} type="submit">Join Event</JoinEventBtn>
                         </InputContainer>
                     </form>
                 </LeftHalf>
 
-                <RightHalf mobile={mobile.toString()}>
+                <RightHalf mobile={mobile}>
                     <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
                 <img src="./landing.jpg" style={mobile ? { height: "100%", width: "auto", position: "fixed", top: "0", left: "0", zIndex: "-20" } : { height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
-                <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "80%", zIndex: "-19" }} />
+                <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "70%", zIndex: "-19" }} />
             </LandingContainer>
         );
     }
