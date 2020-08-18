@@ -132,7 +132,7 @@ const LoginButton = styled(Nav.Link)`
 
 const EventCodeText = styled.h5`
     display: inline;
-    width: ${props => props.mobile ? "5.25" : "7"}rem;
+    width: ${props => props.mobile ? "5.5" : "8"}rem;
     font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     left: 0;
     position: absolute;
