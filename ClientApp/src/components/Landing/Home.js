@@ -8,11 +8,11 @@ import { IconMain, IconLogo } from '../Classes/Icons';
 const LeftHalf = styled(Col)`
   position: absolute;
   left: 50%;
-  height: 60%;
-  top: 50%;
+  height: 100%;
+  top: ${props => props.mobile ? "5%" : "50%"};
   width: 100%;
   max-width: 1080px;
-  transform: translate(-50%, -50%);
+  transform: ${props => props.mobile ? "translateX(-50%)" : "translate(-50%, -50%)"};
   display: flex;
   flex-direction: column;
 `;
@@ -26,7 +26,6 @@ const InputContainer = styled.div`
     border-radius: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    margin: 1rem;
 `;
 
 const LeftInput = styled.input`
@@ -54,7 +53,6 @@ const LeftTitle = styled.h1`
     text-align: center;
     font-size: ${props => props.mobile ? "2rem" : "4rem"};
     color: #fff;
-    margin: 1rem;
 `;
 
 const JoinEventBtn = styled.button`
