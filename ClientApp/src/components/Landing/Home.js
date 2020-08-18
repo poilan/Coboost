@@ -88,7 +88,6 @@ const RightNav = styled(Nav)`
     transform: translateY(-50%);
     height: 100%;
     position: absolute;
-    right: 2rem;
     .nav-link {
         &.active {
             color: rgb(71, 114, 224);
@@ -104,7 +103,6 @@ const RightNav = styled(Nav)`
 const RightTitle = styled.h2`
     position: absolute;
     color: #fff;
-    left: 2rem;
     top: 50%;
     transform: translateY(-50%);
     height: 100%;

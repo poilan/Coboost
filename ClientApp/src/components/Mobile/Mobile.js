@@ -23,7 +23,7 @@ const MainContainer = styled(Col)`
 `;
 
 const Banner = styled(Col)`
-    position: sticky;
+    position: fixed;
     /*background: #4C7AD3;*/
     background: rgb(53, 57, 67);
     height: 50px;
@@ -621,7 +621,7 @@ export class Mobile extends Component {
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
                 {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Give your input a title"} placeholder="Give your input a title..." />}
-                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Write your answer"} placeholder="Write your answer..." />
+                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} onFocus={(this) => this.placeholder = ""} onBlur={(this) => this.placeholder = "Write your answer..."} placeholder="Write your answer..." />
                 <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" : "Send Input!"}</ContentButton>
             </ContentContainer>
         );
