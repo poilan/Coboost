@@ -31,7 +31,7 @@ const InputContainer = styled.div`
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    left: ${props => props.mobile ? "5.5" : "9"}rem;
+    left: ${props => props.mobile ? "5.5" : "8.5"}rem;
     width: ${props => props.mobile ? "calc(75% - 2rem)" : "80%"};
     border-radius: 1rem;
     height: 100%;
@@ -75,16 +75,20 @@ const JoinEventBtn = styled.button`
 const RightHalf = styled(Col)`
   display: ${props => props.mobile ? "none" : "block"};
   position: absolute;
-  top: 0;
+  top: 25px;
   left: 50%;
-  transform: translateX(-50%);
   width: 100%;
   height: 10%;
   max-width: 1280px;
 `;
 
 const RightNav = styled(Nav)`
-
+    font-size: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    position: absolute;
+    right: 2rem;
     .nav-link {
         &.active {
             color: rgb(71, 114, 224);
@@ -92,17 +96,15 @@ const RightNav = styled(Nav)`
         align: right;
         font-weight: 500;
         font-family: CircularStd;
-        padding: 10px 25px;
-        right: 2rem;
         position: relative;
         color: #fff;
     };
 `;
 
 const RightTitle = styled.h2`
-    position: relative;
+    position: absolute;
     color: #fff;
-    padding: 2rem;
+    left: 2rem;
     top: 50%;
     transform: translateY(-50%);
     height: 100%;
