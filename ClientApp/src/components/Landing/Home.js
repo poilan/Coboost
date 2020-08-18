@@ -81,13 +81,10 @@ const RightHalf = styled(Col)`
   transform: translateX(-50%);
   width: 100%;
   height: 10%;
-  padding: 10px;
   max-width: 1280px;
 `;
 
 const RightNav = styled(Nav)`
-    top: 50%;
-    transform: translateY(-50%);
 
     .nav-link {
         &.active {
