@@ -8,7 +8,7 @@ import { IconMain, IconLogo } from '../Classes/Icons';
 const LeftHalf = styled(Col)`
   position: absolute;
   left: 50%;
-  height: 100%;
+  height: 50%;
   top: ${props => props.mobile ? "5%" : "50%"};
   width: 100%;
   max-width: 1080px;
