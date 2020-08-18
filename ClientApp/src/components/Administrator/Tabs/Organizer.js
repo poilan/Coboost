@@ -628,7 +628,7 @@ export class Organizer extends Component {
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
@@ -665,7 +665,7 @@ export class Organizer extends Component {
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
@@ -701,7 +701,7 @@ export class Organizer extends Component {
             }
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.state.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
                             <SendToT disabled={this.state.selected.length !== 1} onClick={(e) => this.modal.create.open(0)}>Send to Tasks</SendToT>
