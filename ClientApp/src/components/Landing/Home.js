@@ -32,8 +32,8 @@ const InputContainer = styled.div`
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    left: ${props => props.mobile ? "5.5" : "7"}rem;
-    width: calc(70% - 5.5rem);
+    left: ${props => props.mobile ? "5.5" : "8"}rem;
+    width: 70%;
     height: 100%;
     border: 0;
     outline: 0;
@@ -132,7 +132,7 @@ const LoginButton = styled(Nav.Link)`
 
 const EventCodeText = styled.h5`
     display: inline;
-    width: ${props => props.mobile ? "5.2" : "6.5"}rem;
+    width: ${props => props.mobile ? "5.25" : "7"}rem;
     font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     left: 0;
     position: absolute;
