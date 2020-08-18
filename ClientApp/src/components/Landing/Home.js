@@ -32,8 +32,9 @@ const InputContainer = styled.div`
 const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
-    left: ${props => props.mobile ? "5.5" : "8"}rem;
-    width: ${props => props.mobile ? "calc(80% - 2rem)" : "80%"};
+    left: ${props => props.mobile ? "5.5" : "9"}rem;
+    width: ${props => props.mobile ? "calc(75% - 2rem)" : "80%"};
+    border-radius: 1rem;
     height: 100%;
     border: 0;
     outline: 0;
