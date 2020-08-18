@@ -226,7 +226,7 @@ export class Home extends Component {
                     <form onSubmit={this.connectToSession.bind(this)}>
                         <InputContainer mobile={mobile}>
                             <EventCodeText mobile={mobile}>Event code: </EventCodeText>
-                            <LeftInput autoComplete={false} type="number" mobile={mobile.toString()} ref="code" placeholder="eg. 404 404" name="code" />
+                            <LeftInput autoComplete={false} type="number" mobile={mobile} ref="code" placeholder="eg. 404 404" name="code" />
                             <JoinEventBtn mobile={mobile} type="submit">Join Event</JoinEventBtn>
                         </InputContainer>
                     </form>
