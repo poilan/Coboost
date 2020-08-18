@@ -19,7 +19,7 @@ const LeftHalf = styled(Col)`
 
 const InputContainer = styled.div`
     height: 75px;
-    width: calc(80% - 2rem);
+    width: ${props => props.mobile ? "calc(95% - 2rem)" : "calc(80% - 2rem)"};
     max-width: 720px;
     position: absolute;
     background: #fff;
@@ -33,7 +33,7 @@ const LeftInput = styled.input`
     position: absolute;
     font-family: CircularStd;
     left: ${props => props.mobile ? "5.5" : "8"}rem;
-    width: 70%;
+    width: ${props => props.mobile ? "calc(70% - 2rem)" : "70%"};
     height: 100%;
     border: 0;
     outline: 0;
