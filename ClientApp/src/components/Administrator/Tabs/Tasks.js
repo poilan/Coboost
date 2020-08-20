@@ -229,7 +229,7 @@ export class Tasks extends Component {
         ];
         return (
             <>
-                {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={[]} onClose={modalCreateClose.bind(this)} />}
+                {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} onClose={modalCreateClose.bind(this)} />}
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
