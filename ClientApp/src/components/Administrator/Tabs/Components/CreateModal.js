@@ -117,11 +117,16 @@ export class CreateTaskModal extends Component {
             max: 3,
             points: 1,
 
-            options: props.options(),
+            options: [],
             showing: true,
             success: false,
             extra: false,
         }
+    }
+
+    componentDidMount() {
+        if (props.options !== undefined)
+            this.setState({ options: props.options() });
     }
 
     TextContent() {

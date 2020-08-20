@@ -20,6 +20,7 @@ const MainContainer = styled(Col)`
     background: #E4E4E4;
     position: absolute;
     padding: 0px;
+
 `;
 
 const Banner = styled(Col)`
@@ -205,6 +206,8 @@ const ContentButton = styled(Button)`
 
     display: block;
     margin: 35px auto 0 auto;
+
+    margin-bottom: 50px;
 `;
 
 const ContentFooter = styled.p`
