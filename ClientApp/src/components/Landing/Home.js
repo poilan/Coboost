@@ -77,17 +77,19 @@ const RightHalf = styled(Col)`
   position: absolute;
   top: 25px;
   left: 50%;
+  transform: translateY(-50%);
   width: 100%;
   height: 10%;
   max-width: 1280px;
 `;
 
 const RightNav = styled(Nav)`
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     top: 50%;
     transform: translateY(-50%);
     height: 100%;
     position: absolute;
+    float: right;
     .nav-link {
         &.active {
             color: rgb(71, 114, 224);
@@ -107,7 +109,7 @@ const RightTitle = styled.h2`
     transform: translateY(-50%);
     height: 100%;
     font-family: CircularStd;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 `;
 
 const LandingContainer = styled(Container)`
