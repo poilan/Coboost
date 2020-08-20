@@ -109,7 +109,7 @@ const RightTitle = styled.h2`
     transform: translateY(-50%);
     height: 100%;
     font-family: CircularStd;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
 `;
 
 const LandingContainer = styled(Container)`
