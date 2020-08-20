@@ -77,7 +77,7 @@ const RightHalf = styled(Col)`
   position: absolute;
   top: 25px;
   left: 50%;
-  transform: translateY(-50%);
+  transform: translateX(-50%);
   width: 100%;
   height: 10%;
   max-width: 1280px;
