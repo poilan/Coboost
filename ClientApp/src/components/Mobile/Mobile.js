@@ -20,11 +20,11 @@ const MainContainer = styled(Col)`
     background: #E4E4E4;
     position: absolute;
     padding: 0px;
-
+    padding-bottom: 50px;
 `;
 
 const Banner = styled(Col)`
-    position: fixed;
+    position: absolute;
     /*background: #4C7AD3;*/
     background: rgb(53, 57, 67);
     height: 50px;
@@ -129,7 +129,7 @@ const ContentContainer = styled(Col)`
     min-height: 50%;
     left: 0;
     margin-top: 2px;
-    padding: 25px 0;
+    padding: 25px;
 `;
 
 const Content = styled.div`
@@ -795,7 +795,8 @@ export class Mobile extends Component {
             <ContentContainer>
                 <ContentQuestion>{task.Title}</ContentQuestion>
                 <Box component="fieldset" mb={3} pt={2} px={2} borderColor="transparent">
-                    <Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
+                    { //<Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
+                    }
                     {task.Options.map((point) =>
                         <Box key={point.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
                             <Typography component="legend">{point.Title}</Typography>
@@ -876,6 +877,7 @@ export class Mobile extends Component {
 
     tabTitle(type) {
         var title = null;
+        let task = this.getCurrentTask();
 
         switch (type) {
             case 0:
@@ -885,7 +887,7 @@ export class Mobile extends Component {
                 title = "Multiple Choice";
                 break;
             case 2:
-                title = "Points";
+                title = "Points" + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " left to assign!";
                 break;
             case 3:
                 title = "Slider";
