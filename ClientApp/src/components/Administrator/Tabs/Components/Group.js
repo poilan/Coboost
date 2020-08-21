@@ -46,6 +46,7 @@ const GroupTitle = styled.h1`
     font-family: CircularStd;
     font-weight: 600;
     font-size: 1rem;
+    text-transform: uppercase;
     opacity: 90%;
     position: absolute;
     top: 20px;
