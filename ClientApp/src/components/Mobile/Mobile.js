@@ -24,7 +24,7 @@ const MainContainer = styled(Col)`
 `;
 
 const Banner = styled(Col)`
-    position: absolute;
+    position: fixed;
     /*background: #4C7AD3;*/
     background: rgb(53, 57, 67);
     height: 50px;
@@ -91,10 +91,10 @@ const BannerButton = styled(DropdownButton)`
 
 const Header = styled(Col)`
     background: #fff;
-    position: sticky;
+    position: fixed;
     height: 50px;
-    left: 0;
-    top: 75px;
+    left: 0px;
+    top: 0px;
 
     display: flex;
     flex-direction: row;
@@ -126,9 +126,9 @@ const ContentContainer = styled(Col)`
     box-shadow: 0px 0px 10px 0px #cfcfcf;
     position: relative;
     width: 100%;
-    min-height: 50%;
+    min-height: 85%;
     left: 0;
-    margin-top: 2px;
+    margin-top: 53px;
     padding: 25px;
 `;
 
