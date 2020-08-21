@@ -21,18 +21,23 @@ const FacilitatorContainer = styled.div`
 
 const FacilitatorButton = styled.button`
     color: rgb(249, 251, 247);
-    background-color: rgb(53, 57, 67);
+    background-color: ${props => props.isBigScreen ? "rgb(53, 57, 67)" : "rgb(66, 67, 85)"};
     height: 100%;
-    border: solid rgb(106, 114, 137);
+    border: ${props => props.isBigScreen ? "solid rgb(106, 114, 137)" : "none"};
     border-width: 2px 1px;
     outline: none;
     box-shadow: none;
+    border-top: ${props => props.isBigScreen ? "none" : "1px solid white"};
 
     flex: 1 1 auto;
 
     .icon {
         width: 24px;
         height: 24px;
+    }
+
+    :not(:last-child) {
+        border-right: ${props => props.isBigScreen ? "none" : "1px solid white"};
     }
 
     :focus {
@@ -50,7 +55,7 @@ const FacilitatorButton = styled.button`
     }
 
     &:hover {
-        background-color: rgb(73, 77, 87);
+        background-color: ${props => props.isBigScreen ? "rgb(73, 77, 87)" : "rgb(76, 77, 95)"};
     }
 `;
 
@@ -287,11 +292,13 @@ export class Facilitator extends React.Component {
             <>
                 <FacilitatorContainer onMouseLeave={() => this.onHover(false)} hide={this.props.toggle ? this.state.hidden : this.props.hide} style={this.props.style}>
                     <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowBackward}>
-                        <BsArrowLeft class="icon" />
+                        <BsArrowLeft class="icon" /><br />
+                        Previous Task
                     </FacilitatorButton>
 
                     <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowForward}>
-                        <BsArrowRight class="icon" />
+                        <BsArrowRight class="icon" /><br />
+                        Next Task
                     </FacilitatorButton>
 
                     {this.props.allTasks &&
