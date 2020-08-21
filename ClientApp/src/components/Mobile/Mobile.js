@@ -623,7 +623,7 @@ export class Mobile extends Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                {this.getTaskAnswers().length > 20 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="20" onChange={titleChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Give your input a title"} placeholder="Give your input a title..." />}
+                {this.getTaskAnswers().length > 40 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="40" onChange={titleChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Give your input a title"} placeholder="Give your input a title..." />}
                 <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Write your answer..."} placeholder="Write your answer..." />
                 <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" : "Send Input!"}</ContentButton>
             </ContentContainer>
