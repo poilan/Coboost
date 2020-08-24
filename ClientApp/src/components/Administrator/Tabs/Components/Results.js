@@ -76,17 +76,27 @@ export function ResultItem(props) {
 }
 
 export function ResultSlider(props) {
+    let marks = [
+        {
+            value: props.min,
+            label: `${props.min}`,
+        },
+        {
+            value: props.max,
+            label: `${props.max}`,
+        },
+    ]
     return (
-        <Box key={props.index} component="fieldset" mb={3} pt={1} px={1} borderColor="grey.500" border={1}>
-            <Input vote size="1" component="legend"
+        <Box key={props.index} component="fieldset" mb={1} pt={0} px={1} borderColor="grey.500" border={0}>
+            <Input vote size="1"
                 id={props.id} index={props.index} title={props.title}
                 checked={props.checked}
                 onCheck={props.onCheck} showcase={props.showcase}
             />
-            <Box component="fieldset" px={5} borderRadius={3} borderColor="transparent">
+            <Box component="fieldset" px={2} borderColor="transparent">
                 <Slider name={props.title} value={props.average}
-                    step={1} marks min={props.min} max={props.max}
-                    aria-labledby="discrete-slider" valueLabelDisplay="auto"
+                    marks={marks} min={props.min} max={props.max}
+                    aria-labledby="discrete-slider" valueLabelDisplay="on"
                 />
             </Box>
         </Box>

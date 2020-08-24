@@ -18,12 +18,12 @@ const LeftHalf = styled(Col)`
 `;
 
 const InputContainer = styled.div`
-    height: 75px;
+    height: ${props => props.mobile ? "55px" : "75px"};
     width: ${props => props.mobile ? "calc(95% - 2rem)" : "calc(80% - 2rem)"};
     max-width: 720px;
     position: absolute;
     background: #fff;
-    border-radius: 1rem;
+    border-radius: 1rem;    
     left: 50%;
     transform: translateX(-50%);
 `;
@@ -64,7 +64,7 @@ const JoinEventBtn = styled.button`
     width: ${props => props.mobile ? "5.2" : "6.5"}rem;
     font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     max-width: 30%;
-    height: calc(100% - 1rem);
+    height: ${props => props.mobile ? "calc(100% - 0.5rem)" : "calc(100% - 1rem)"};
     right: ${props => props.mobile ? "0.25" : "0.5"}rem;;
     top: ${props => props.mobile ? "0.25" : "0.5"}rem;
     position: absolute;
@@ -130,7 +130,7 @@ const LoginButton = styled(Nav.Link)`
 
 const EventCodeText = styled.h5`
     display: inline;
-    width: ${props => props.mobile ? "5.5" : "8"}rem;
+    width: ${props => props.mobile ? "5" : "8"}rem;
     font-size: ${props => props.mobile ? "0.8" : "1"}rem;
     left: 0;
     position: absolute;
@@ -226,7 +226,7 @@ export class Home extends Component {
                     <form onSubmit={this.connectToSession.bind(this)}>
                         <InputContainer mobile={mobile}>
                             <EventCodeText mobile={mobile}>Event code: </EventCodeText>
-                            <LeftInput autoComplete={false} type="number" mobile={mobile} ref="code" placeholder="eg. 404 404" name="code" />
+                            <LeftInput onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "eg. 404 404"} autoComplete="off" type="number" mobile={mobile} ref="code" placeholder="eg. 404 404" name="code" />
                             <JoinEventBtn mobile={mobile} type="submit">Join Event</JoinEventBtn>
                         </InputContainer>
                     </form>

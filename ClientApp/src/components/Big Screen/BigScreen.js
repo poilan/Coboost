@@ -49,10 +49,14 @@ const ContentContainer = styled(Col)`
     left: 0;
     top: calc(max(10%, 100px));
     overflow: hidden;
+    overflow-y: auto;
 
     display: table-cell;
     veritical-align: middle;
     text-align: center;
+
+    scrollbar-width: thin;
+    scrollbar-color: #424355 #fff;
 `;
 
 const Title = styled.h1`
@@ -107,6 +111,12 @@ const WelcomeContainer = styled.div`
     height: 100%;
     position: absolute;
     margin: 0 auto;
+    padding: 1rem;
+    ${props => props.text ?
+        `column-count: auto;
+        column-width: 320px;
+        column - gap: 1rem;`
+        : ""}
 `;
 
 const BottomBanner = styled(Col)`
@@ -338,7 +348,7 @@ export class BigScreen extends Component {
         return (
             <>
                 <ContentContainer>
-                    <WelcomeContainer>
+                    <WelcomeContainer text={this.state.task.Type == 0}>
                         {this.viewResult()}
                     </WelcomeContainer>
                     {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}

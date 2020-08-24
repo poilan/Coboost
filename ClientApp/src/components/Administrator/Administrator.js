@@ -51,6 +51,7 @@ const BreadText = styled(Link)`
 const BannerCode = styled.div`
     font-family: CircularStd;
     font-Size: 1.25rem;
+    display: none;
     color: #fff;
     top: 50%;
     position: absolute;
@@ -138,14 +139,16 @@ const HeaderTabs = styled(Nav)`
 
         &:hover {
             border: 0;
-            background: #4C7AD3;
+            background: #424355;
+            color: #fff;
+            border-top: 2px solid #fff;
         }
 
         &.active {
             border: 0;
             opacity: 100%;
             color: black;
-            border-bottom: 3px solid #4C7AD3;
+            border-bottom: 3px solid #424355;
             cursor: default;
             background: #FFF;
         };

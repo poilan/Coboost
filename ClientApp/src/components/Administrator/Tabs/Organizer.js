@@ -16,7 +16,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const MainContainer = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 75px);
     position: absolute;
     overflow: hidden;
     overflow-x: auto;
@@ -28,14 +28,14 @@ const MainContainer = styled.div`
     left 0;
 
     scrollbar-width: thin;
-    scrollbar-color: #4C7AD3 #fff;
+    scrollbar-color: #424355 #fff;
 `;
 
 const ButtonToolbar = styled.div`
     display: flex;
     flex-direction: row;
     z-index: 10;
-    position: absolute;
+    position: fixed;
     height: 75px;
     left: 0;
     width: 100%;
@@ -80,11 +80,12 @@ const ItemTask = styled.div`
 
 const AnswerButton = styled(Nav.Link)`
     color: #fff;
-    background: #4C7AD3;
+    background: #424355;
     font-family: CircularStd;
     font-weight: 450;
     text-align: center;
-    border: 1px solid #fff;
+    border: solid #fff;
+    border-width: 2px 1px;
     flex: 1 1 auto;
     height: 100%;
     line-height: 75px;
@@ -594,7 +595,7 @@ export class Organizer extends Component {
 
                             {column.index + 1 == this.props.columns.length &&
                                 <Group id="new"
-                                    group="new" column={column.index} title="➕ Create Group" size={column.width}
+                                    group="new" column={column.index} title="Create New Group" size={column.width}
                                     onClick={createGroup.bind(this)}
                                 />
                             }

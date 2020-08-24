@@ -12,11 +12,11 @@ namespace Slagkraft.Models.Admin.Questions
         /// <summary>
         /// The average rating of this option
         /// </summary>
-        public int Average
+        public double Average
         {
             get
             {
-                int i = 0;
+                double i = 0;
                 foreach (int rateing in Ratings)
                 {
                     i += rateing;
@@ -24,7 +24,7 @@ namespace Slagkraft.Models.Admin.Questions
                 if (Ratings.Count > 1)
                     i /= Ratings.Count;
 
-                return i;
+                return Math.Round(i, 2);
             }
         }
 

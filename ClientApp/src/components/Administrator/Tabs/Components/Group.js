@@ -8,11 +8,12 @@ import { Ico_Box } from '../../../Classes/Icons';
 import { Collapse, IconButton } from '@material-ui/core';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { grey } from '@material-ui/core/colors';
 
 const GroupContainer = styled.div`
         width: 100%;
         display: ${props => props.empty ? "none" : "block"};
-        background: ${props => props.group == "0" ? "#808ca2" : "#4C7AD3"};
+        background: ${props => props.group == "0" ? "#8c8da6" : "#424355"};
         padding: 10px;
         padding-top: 65px;
         margin-bottom: 20px;
@@ -47,11 +48,14 @@ const GroupTitle = styled.h1`
     font-weight: 600;
     font-size: 1rem;
     text-transform: uppercase;
+    width: ${props => props.new ? "100%" : ""};
+    text-align: ${props => props.new ? "center" : ""};
     opacity: 90%;
     position: absolute;
-    top: 20px;
+    top: ${props => props.new ? "50%" : "20px"};
     vertical-align: center;
-    left: 15px;
+    left: ${props => props.new ? "50%" : "15px"};
+    transform: ${props => props.new ? "translate(-50%, -50%)" : ""};
 `;
 
 const GroupMenu = styled(Ico_Box)`
@@ -208,7 +212,7 @@ export class Group extends Component {
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }}/>}</IconButton>}</GroupTitle>
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?

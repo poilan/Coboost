@@ -38,7 +38,9 @@ const BannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1rem;
     color: #fff;
-    padding: 25px 5px;
+    text-align: center;
+    line-height: 50px;
+    left: 10px;
     position: absolute;
 `;
 
@@ -91,7 +93,7 @@ const BannerButton = styled(DropdownButton)`
 
 const Header = styled(Col)`
     background: #fff;
-    position: fixed;
+    position: absolute;
     height: 50px;
     left: 0px;
     top: 0px;
@@ -106,7 +108,7 @@ const HeaderText = styled.h1`
     text-align: center;
     font-family: CircularStd;
     font-weight: 425;
-    padding: 10px 35px;
+    line-height: 50px;
     font-size: 1rem;
     /*border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #4C7AD3;*/
     border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} rgb(53, 57, 67);
@@ -117,19 +119,20 @@ const HeaderText = styled.h1`
     }
 
     flex: 1 1 auto;
-    margin: 5px;
     margin-bottom: 0px;
 `;
 
 const ContentContainer = styled(Col)`
     background: #fff;
     box-shadow: 0px 0px 10px 0px #cfcfcf;
-    position: relative;
+    position: absolute;
     width: 100%;
-    min-height: 85%;
+    height: calc(100% - 100px);
     left: 0;
-    margin-top: 53px;
-    padding: 25px;
+    top: 50px;
+    padding: 15px 0;
+    overflow: auto;
+    overflow-x: hidden;
 `;
 
 const Content = styled.div`
@@ -170,44 +173,52 @@ const ContentBody = styled.p`
 
 const ContentQuestion = styled.p`
     font-family: CircularStd;
-    text-align: left;
-    color: #4C7AD3;
+    text-align: center;
+    color: #100E0E;
 
     position: relative;
-    padding: 0px 30px 10px 30px;
-    border-bottom: 2px solid #cfcfcf;
+    padding: 5px 0;
+    border-bottom: 2px solid rgb(53, 57, 67);
+    height: 30px;
 `;
 
 const ContentInput = styled.textarea`
     display: block;
     width: calc(100% - 60px);
-
+    max-height: ${props => props.title ? "50px" : "calc(100% - 185px)"};
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: center;
+    text-align: ${props => props.title ? "center" : "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid #cfcfcf;
+    border-bottom: 1px solid ${props => props.title ? "#4C7AD3" : "#cfcfcf"};
     margin: 30px;
     resize: none;
 `;
 
 const ContentButton = styled(Button)`
-    background: #fff;
-    color: #100E0E;
+    background: rgb(53, 57, 67);
+    color: #fff;
 
     font-family: CircularStd;
     font-weight: 450;
     text-align: center;
-
-    border-radius: 100px;
-    padding-left: 20px;
-    padding-right: 20px;
+    border: 4px solid #4C7AD3;
+    outline: 0;
+    border-radius: 0; 
 
     display: block;
-    margin: 35px auto 0 auto;
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    left: 0;
+    bottom: 0;  
 
-    margin-bottom: 50px;
+    &:disabled {
+        background: rgb(53, 57, 67);
+        opacity: 100%;
+        border: 4px solid rgb(93, 97, 107);
+    }
 `;
 
 const ContentFooter = styled.p`
@@ -623,9 +634,9 @@ export class Mobile extends Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                {this.getTaskAnswers().length > 40 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} maxLength="40" onChange={titleChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Give your input a title"} placeholder="Give your input a title..." />}
-                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={this.questionChange} onFocus={this.placeholder = ""} onBlur={this.placeholder = "Write your answer..."} placeholder="Write your answer..." />
-                <ContentButton disabled={(this.getTaskAnswers().length <= 20 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 20 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input" : (this.getTaskAnswers().length > 20 && this.state.title < 3) ? "Write Title" : "Send Input!"}</ContentButton>
+                {this.getTaskAnswers().length > 24 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} title={true} maxLength="24" onChange={titleChange} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
+                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
+                <ContentButton disabled={(this.getTaskAnswers().length <= 24 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 24 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write Input..." : (this.getTaskAnswers().length > 24 && this.state.title < 3) ? "Write Title..." : "Send Input!"}</ContentButton>
             </ContentContainer>
         );
     }
@@ -811,18 +822,28 @@ export class Mobile extends Component {
 
     sliderRender() {
         let task = this.getCurrentTask();
-        let answers = this.state.answers[this.getTaskIndex()];;
+        let answers = this.state.answers[this.getTaskIndex()];
+        let marks = [
+            {
+                value: task.Min,
+                label: `${task.Min}`,
+            },
+            {
+                value: task.Max,
+                label: `${task.Max}`,
+            },
+        ]
 
         return (
             <ContentContainer>
                 <ContentQuestion>{task.Title}</ContentQuestion>
-                <Box component="fieldset" mb={3} pt={2} px={2} borderColor="transparent">
+                <Box component="fieldset" mb={2} pt={1} px={2} borderColor="transparent">
                     {task.Options.map((slider) =>
-                        <Box key={slider.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
+                        <Box key={slider.Index} component="fieldset" mb={2} pt={1} px={1} borderColor="transparent">
                             <Typography component="legend">{slider.Title}</Typography>
                             <Slider name={slider.Title} value={answers.value[slider.Index]}
-                                step={1} marks min={task.Min} max={task.Max}
-                                aria-labledby="discrete-slider" valueLabelDisplay="auto"
+                                step={1} marks={marks} min={task.Min} max={task.Max}
+                                aria-labledby="discrete-slider" valueLabelDisplay="on"
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)} />
                         </Box>
                     )}
@@ -887,7 +908,7 @@ export class Mobile extends Component {
                 title = "Multiple Choice";
                 break;
             case 2:
-                title = "Points" + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " left to assign!";
+                title = "Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";
                 break;
             case 3:
                 title = "Slider";
@@ -906,9 +927,11 @@ export class Mobile extends Component {
                 <MainContainer>
                     <Banner>
                         <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
-                        {this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
-                            <BannerLink onClick={this.logout}>Test</BannerLink>
-                        </BannerDropdown>}
+                        {
+                            //this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                            //    <BannerLink onClick={this.logout}>Test</BannerLink>
+                            //</BannerDropdown>
+                        }
                     </Banner>
                     <Header>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>

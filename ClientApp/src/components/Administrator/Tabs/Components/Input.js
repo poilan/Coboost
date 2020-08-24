@@ -9,15 +9,16 @@ const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
         width: calc((${props => props.size <= "2" ? (props.size == "2" ? "(100% - 20px) / 2" : "100% - 20px") : (props.size == "4" ? "(100% - 20px) / 4" : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
-        font-size: 1rem;
+        font-size: 1rem;    
+        line-height: 2rem;
         font-weight: 600;
-        margin: 1%;
+        margin: ${props => props.vote ? "0.5" : "1"}%;
         box-sizing: border-box;
-        padding: 10px;
-        border-radius: 0.8em;
-        box-shadow: 0 1px 0 1px rgba(0, 0, 0, .08);
+        padding: ${props => props.vote ? "5" : "10"}px;
+        border-radius: ${props => props.vote ? "0" : "0.8rem"};
+        box-shadow: ${props => props.vote ? "" : "0 1px 0 1px rgba(0, 0, 0, .08)"};
         background: #fff;
-        border: ${props => props.vote ? "1px solid #000" : ""};
+        border-top: ${props => props.vote ? "2px solid #cfcfcf" : ""};
         position: relative;
         overflow: hidden;
         white-space: nowrap;
@@ -32,8 +33,8 @@ const CheckboxContainer = styled.div`
 
 const Checkbox = styled.input`
     border-radius: 0.5rem;
-    height: 1rem;
-    width: 1rem;
+    height: 2rem;
+    width: 2rem;
     border: 1px solid #aaa;
     box-sizing: border-box;
     background: #fff;
@@ -41,7 +42,6 @@ const Checkbox = styled.input`
     -webkit-appearance: none;
     outline: none;
     appearance: none;
-    margin: 0 5%;
 
     &:checked {
         background: #4C7AD3;

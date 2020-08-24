@@ -5,16 +5,17 @@ import axios from 'axios';
 
 const Container = styled.div`
     width: ${props => props.width * 320}px;
-    height: 100%;
+    height: ${props => props.showcase ? "" : "95%"};
     position: relative;
-    overflow: auto;
-    padding: 10px;
-    display: ${props => props.empty ? "none" : "inline-block"};
+    overflow: ${props => props.showcase ? "hidden" : "auto"};
+    padding: ${props => props.showcase ? "0" : "10px"};
+    display: ${props => props.empty ? "none" : props.showcase ? "block" : "inline-block"};
     white-space: normal;
-    margin-top: 20px;
+    margin-top: ${props => props.showcase ? "" : "20px"};
     border-right: ${props => props.showcase ? "none" : "2px solid #C4C4C4"};
     scrollbar-width: thin;
-    scrollbar-color: #4C7AD3 #fff;
+    scrollbar-color: #424355 #fff;
+    vertical-align: top;
 `;
 
 const WidthControl = styled.div`

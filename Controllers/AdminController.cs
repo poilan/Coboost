@@ -160,6 +160,11 @@ namespace Slagkraft.Controllers
                 if (session != null)
                 {
                     session.Questions = admin.SaveSession();
+                    if(session.Questions == null)
+                    {
+                        HttpContext.Response.StatusCode = 500;
+                        return;
+                    }
                     session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
                     Context.Sessions.Update(session);
                 }
@@ -510,6 +515,11 @@ namespace Slagkraft.Controllers
                 if (session != null)
                 {
                     session.Questions = admin.SaveSession();
+                    if (session.Questions == null)
+                    {
+                        HttpContext.Response.StatusCode = 500;
+                        return;
+                    }
                     session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
                     Context.Sessions.Update(session);
                     Context.SaveChanges();

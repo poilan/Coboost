@@ -255,15 +255,23 @@ namespace Slagkraft.Models.Admin
 
         public string SaveSession()
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings
+            try
             {
-                TypeNameHandling = TypeNameHandling.All
-            };
-            List<BaseTask> tasks = Tasks;
+                JsonSerializerSettings settings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                List<BaseTask> tasks = Tasks;
 
-            string json = JsonConvert.SerializeObject(tasks, settings);
+                string json = JsonConvert.SerializeObject(tasks, settings);
 
-            return json;
+                return json;
+            } catch (Exception e)
+            {
+                Console.WriteLine("Saving error: {0}", e);
+
+                return null;
+            }
         }
 
         public void Start(int index)

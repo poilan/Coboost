@@ -73,7 +73,7 @@ const TaskContainer = styled.div`
     padding: 10px;
     height: 100px;
     overflow: hidden;
-    background: ${props => props.active ? "#c8ddfe" : "#fff"};
+    background: ${props => props.active ? "#d4d4de" : "#fff"};
 
     &:hover {
         cursor: pointer;
