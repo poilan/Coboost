@@ -184,7 +184,7 @@ const ContentQuestion = styled.p`
 const ContentInput = styled.textarea`
     display: block;
     width: calc(100% - 60px);
-    max-height: ${props => props.title ? "50px" : "calc(100% - 185px)"};
+    max-height: ${props => props.title ? "50px" : "300px"};
     min-height: 50px;
     font-family: CircularStd;
     font-size: 1rem;
@@ -193,6 +193,7 @@ const ContentInput = styled.textarea`
     border: 0;
     border-bottom: 1px solid ${props => props.title ? "#4C7AD3" : "#cfcfcf"};
     margin: 30px;
+    margin-bottom: 0;
     resize: none;
 `;
 
@@ -925,14 +926,16 @@ export class Mobile extends Component {
         return (
             <>
                 <MainContainer>
-                    <Banner>
-                        <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
-                        {
-                            //this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
-                            //    <BannerLink onClick={this.logout}>Test</BannerLink>
-                            //</BannerDropdown>
-                        }
-                    </Banner>
+                    {
+                        //<Banner>
+                        //    <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
+
+                        //        //this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                        //        //    <BannerLink onClick={this.logout}>Test</BannerLink>
+                        //        //</BannerDropdown>
+
+                        //    </Banner>
+                    }
                     <Header>
                         <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>
                         {//<HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
