@@ -20,18 +20,17 @@ const MainContainer = styled(Col)`
     background: #E4E4E4;
     position: absolute;
     padding: 0px;
-    padding-bottom: 50px;
 `;
 
 const Banner = styled(Col)`
-    position: fixed;
+    position: absolute;
+    display: none;
     /*background: #4C7AD3;*/
     background: rgb(53, 57, 67);
     height: 50px;
     bottom: 0;
     left: 0;
     z-index: 11;
-    padding-right: 15%;
 `;
 
 const BannerText = styled.h1`
@@ -186,6 +185,7 @@ const ContentInput = styled.textarea`
     display: block;
     width: calc(100% - 60px);
     max-height: ${props => props.title ? "50px" : "calc(100% - 185px)"};
+    min-height: 50px;
     font-family: CircularStd;
     font-size: 1rem;
     text-align: ${props => props.title ? "center" : "left"};
@@ -205,14 +205,14 @@ const ContentButton = styled(Button)`
     text-align: center;
     border: 4px solid #4C7AD3;
     outline: 0;
-    border-radius: 0; 
+    border-radius: 0;
 
     display: block;
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 50px;
     left: 0;
-    bottom: 0;  
+    bottom: 0;
 
     &:disabled {
         background: rgb(53, 57, 67);
