@@ -23,7 +23,7 @@ const InputContainer = styled.div`
     max-width: 720px;
     position: absolute;
     background: #fff;
-    border-radius: 1rem;    
+    border-radius: 1rem;
     left: 50%;
     transform: translateX(-50%);
 `;
@@ -113,10 +113,14 @@ const RightTitle = styled.h2`
 `;
 
 const LandingContainer = styled(Container)`
-  display: table;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+    display: table;
+    height: 100%;
+    width: 100%;
+    background: #E4E4E4;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 `;
 
 const LoginButton = styled(Nav.Link)`

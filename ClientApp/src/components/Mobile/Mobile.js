@@ -21,7 +21,7 @@ const MainContainer = styled(Col)`
     position: absolute;
     padding: 0;
     margin: 0;
-    overflow-x: hidden;
+    overflow: hidden;
 `;
 
 const Banner = styled(Col)`
