@@ -126,7 +126,7 @@ const ContentContainer = styled(Col)`
     box-shadow: 0px 0px 10px 0px #cfcfcf;
     position: absolute;
     width: 100%;
-    height: calc(100% - 100px);
+    height: calc(100% - 50px);
     left: 0;
     top: 50px;
     padding: 15px 0;
