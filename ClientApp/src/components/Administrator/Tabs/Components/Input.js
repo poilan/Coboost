@@ -10,7 +10,7 @@ const Container = styled.div`
         width: calc((${props => props.size <= "2" ? (props.size == "2" ? "(100% - 20px) / 2" : "100% - 20px") : (props.size == "4" ? "(100% - 20px) / 4" : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
         font-size: 1rem;
-        line-height: 2rem;
+        line-height: ${props => props.vote ? "1.25rem" : "2rem"};
         font-weight: 600;
         margin: ${props => props.vote ? "0.5" : "1"}%;
         box-sizing: border-box;
@@ -20,8 +20,8 @@ const Container = styled.div`
         background: #fff;
         border-top: ${props => props.vote ? "2px solid #cfcfcf" : ""};
         position: relative;
-        overflow: hidden;
-        white-space: nowrap;
+        overflow: ${props => props.vote ? "visible" : "hidden"};
+        white-space: ${props => props.vote ? "normal" : "nowrap"};
 `;
 
 const CheckboxContainer = styled.div`

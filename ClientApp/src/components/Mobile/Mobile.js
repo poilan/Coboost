@@ -637,9 +637,9 @@ export class Mobile extends Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                {this.getTaskAnswers().length > 30 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = ""; this.state.title.length < 1 }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
+                {this.getTaskAnswers().length > 30 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
                 <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
-                <ContentButton disabled={(this.getTaskAnswers().length <= 30 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 30 && this.state.title < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write a input to send" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "NB! Write title before sending" : "Send Input!"}</ContentButton>
+                <ContentButton disabled={(this.getTaskAnswers().length <= 30 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 30 && this.state.title.length < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write a input to send" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "NB! Write title before sending" : "Send Input!"}</ContentButton>
             </ContentContainer>
         );
     }
@@ -911,7 +911,7 @@ export class Mobile extends Component {
                 title = "Multiple Choice";
                 break;
             case 2:
-                title = "Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";
+                title = "Give Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";
                 break;
             case 3:
                 title = "Slider";

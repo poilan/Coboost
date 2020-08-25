@@ -33,8 +33,7 @@ const ItemContainer = styled.div`
     height: 100%;
     width: ${props => 97 / props.total}%;
     left: ${props => ((97 / props.total) * props.index) + 3}%;
-    position:absolute;
-    overflow: hidden;
+    position: absolute;
 `;
 
 const PercentageContainer = styled.div`

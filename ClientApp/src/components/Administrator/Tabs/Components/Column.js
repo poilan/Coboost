@@ -28,11 +28,11 @@ const WidthControl = styled.div`
 
 const Grow = styled.div`
     position: absolute;
-    right: -17px;
-    top: -15px;
-    font-size: 2.5rem;
+    right: -24px;
+    top: -26px;
+    font-size: 3.5rem;
     font-family: CircularStd;
-    color: #C4C4C4;
+    color: #A4A4A4;
     display ${props => props.id == "new" ? "none" : props.available ? "inline-block" : "none"};
     text-align: right;
 
@@ -44,7 +44,7 @@ const Grow = styled.div`
 
 const Shrink = styled(Grow)`
     text-align: left;
-    right: -3px;
+    right: -2px;
 `;
 
 export function Column(props) {

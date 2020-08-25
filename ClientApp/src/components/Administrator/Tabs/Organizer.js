@@ -149,6 +149,7 @@ export class Organizer extends Component {
                 key: '',
                 answer: false,
                 rename: false,
+                description: '',
                 create: false,
                 remove: false,
                 type: 1,
@@ -182,13 +183,17 @@ export class Organizer extends Component {
                     const sendInput = (e) => {
                         e.preventDefault();
                         const title = this.state.modal.string;
+                        const description = this.state.modal.description;
                         const user = localStorage.getItem("user");
                         const code = sessionStorage.getItem("code");
 
                         let data = {
-                            Description: title,
+                            Description: description,
                             UserID: user,
                         }
+
+                        if (description.length > 30)
+                            data.Title = title;
 
                         axios.post(`client/${code}/add-opentext`, data);
                         this.modal.answer.close();
@@ -197,7 +202,16 @@ export class Organizer extends Component {
                     const handleTitle = (event) => {
                         event.preventDefault();
                         var modal = this.state.modal;
-                        modal.string = this.refs.title.value;
+                        modal.string = event.target.value;
+                        this.setState({
+                            modal: modal,
+                        });
+                    }
+
+                    const handleDescription = (event) => {
+                        event.preventDefault();
+                        var modal = this.state.modal;
+                        modal.description = event.target.value;
                         this.setState({
                             modal: modal,
                         });
@@ -205,13 +219,23 @@ export class Organizer extends Component {
 
                     return (
                         <Form autoComplete="off" onSubmit={sendInput}>
-                            <NewOptionNumber>Title</NewOptionNumber>
-                            <Form.Group controlId="validateTitle">
-                                <InputGroup>
-                                    <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
-                                </InputGroup>
-                            </Form.Group>
-                            <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
+                            {
+                                //<NewOptionNumber>Title</NewOptionNumber>
+                                //<Form.Group controlId="validateTitle">
+                                //    <InputGroup>
+                                //        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
+                                //    </InputGroup>
+                                //</Form.Group>
+                            }
+                            {this.state.modal.description > 30 &&
+                                <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                                    <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
+                                </Box>
+                            }
+                            <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                                <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
+                            </Box>
+                            <CancelButton onClick={this.modal.answer.close} disabled={(this.state.modal.description.length <= 30 && this.state.modal.description.length < 3) || (this.state.modal.description.length > 30 && this.state.modal.string.length < 3)}>Cancel</CancelButton>
                             <CreateButton type="submit" value="Submit" />
                         </Form>
                     );
@@ -660,7 +684,7 @@ export class Organizer extends Component {
                 else {
                     this.setState({
                         selected: '',
-                    })
+                    });
                 }
             }
 
@@ -734,6 +758,9 @@ export class Organizer extends Component {
                 return slider(task);
             }
         } else {
+            if (this.props.tasks.length > 0)
+                this.setState({ overview: false });
+
             return (
                 <MainContainer>
                     {this.props.tasks.map(task =>

@@ -160,7 +160,7 @@ namespace Slagkraft.Controllers
                 if (session != null)
                 {
                     session.Questions = admin.SaveSession();
-                    if(session.Questions == null)
+                    if (session.Questions == null)
                     {
                         HttpContext.Response.StatusCode = 500;
                         return;
@@ -302,11 +302,12 @@ namespace Slagkraft.Controllers
         }
 
         [HttpPost("{code}/task-delete-{index}")]
-        public void DeleteTask(int code, int index)
+        public async Task DeleteTask(int code, int index)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 ThreadPool.QueueUserWorkItem(o => admin.DeleteTask(index));
+                await Task.Delay(1000);
                 HttpContext.Response.StatusCode = 200;
             }
             else

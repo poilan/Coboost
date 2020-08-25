@@ -113,7 +113,8 @@ export class CreateTaskModal extends Component {
         super(props);
         this.state = {
             type: props.type,
-            title: props.title,
+            description: props.title,
+            title: "",
             max: 3,
             points: 1,
 
@@ -134,7 +135,7 @@ export class CreateTaskModal extends Component {
             event.preventDefault();
             const code = sessionStorage.getItem('code');
             var data = {
-                Title: this.state.title,
+                Title: this.state.description,
             }
 
             axios.post(`admin/${code}/questions-create-opentext`, data, {
@@ -145,9 +146,20 @@ export class CreateTaskModal extends Component {
                 if (res.status === 201) {
                     this.setState({
                         success: true,
+                        description: '',
+                        type: '',
                     });
                     this.onClose();
                 }
+            });
+        }
+
+        const handleDescription = (event) => {
+            event.preventDefault();
+            var description = this.state.description;
+            description = event.target.value;
+            this.setState({
+                description: description,
             });
         }
 
@@ -162,8 +174,13 @@ export class CreateTaskModal extends Component {
 
         return (
             <Form onSubmit={createOpenText.bind(this)}>
+                {false &&
+                    <Box component="fieldset" mb={1} pt={1} px={3} borderColor="transparent">
+                        <TextField type="text" value={this.state.title} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
+                    </Box>
+                }
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth />
+                    <TextField type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.description} fullWidth />
                 </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
                 <CreateButton type="submit" value="Add new Task" />
@@ -174,10 +191,10 @@ export class CreateTaskModal extends Component {
     MultipleChoiceContent() {
         const handleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.title;
+            var title = this.state.description;
             title = event.target.value;
             this.setState({
-                title: title,
+                description: title,
             });
         }
 
@@ -225,7 +242,7 @@ export class CreateTaskModal extends Component {
             let code = sessionStorage.getItem("code");
 
             let data = {
-                Title: this.state.title,
+                Title: this.state.description,
                 Options: this.state.options,
                 Max: parseInt(this.state.max),
             }
@@ -241,7 +258,7 @@ export class CreateTaskModal extends Component {
                 if (res.status === 201) {
                     this.setState({
                         type: '',
-                        title: '',
+                        description: '',
                         options: [],
                         success: true,
                     });
@@ -254,7 +271,7 @@ export class CreateTaskModal extends Component {
             <Form onSubmit={createMultipleChoice.bind(this)}>
 
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
                 </Box>
 
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
@@ -286,10 +303,10 @@ export class CreateTaskModal extends Component {
     PointsContent() {
         const handleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.title;
+            var title = this.state.description;
             title = event.target.value;
             this.setState({
-                title: title,
+                description: title,
             });
         }
 
@@ -344,7 +361,7 @@ export class CreateTaskModal extends Component {
             let code = sessionStorage.getItem("code");
 
             let data = {
-                Title: this.state.title,
+                Title: this.state.description,
                 Options: this.state.options,
                 Amount: parseInt(this.state.points),
                 Max: parseInt(this.state.max),
@@ -358,7 +375,7 @@ export class CreateTaskModal extends Component {
                 if (res.status === 201) {
                     this.setState({
                         type: '',
-                        title: '',
+                        description: '',
                         options: [],
                         success: true,
                     });
@@ -371,7 +388,7 @@ export class CreateTaskModal extends Component {
         return (
             <Form onSubmit={createPoints.bind(this)}>
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
                 </Box>
 
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
@@ -405,10 +422,10 @@ export class CreateTaskModal extends Component {
     SliderContent() {
         const handleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.title;
+            var title = this.state.description;
             title = event.target.value;
             this.setState({
-                title: title,
+                description: title,
             });
         }
 
@@ -463,7 +480,7 @@ export class CreateTaskModal extends Component {
             let code = sessionStorage.getItem("code");
 
             let data = {
-                Title: this.state.title,
+                Title: this.state.description,
                 Options: this.state.options,
                 Min: parseInt(this.state.points),
                 Max: parseInt(this.state.max),
@@ -477,7 +494,7 @@ export class CreateTaskModal extends Component {
                 if (res.status === 201) {
                     this.setState({
                         type: '',
-                        title: '',
+                        description: '',
                         options: [],
                         success: true,
                     });
@@ -490,7 +507,7 @@ export class CreateTaskModal extends Component {
         return (
             <Form onSubmit={createSlider.bind(this)}>
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.title} fullWidth autoFocus={this.state.title == undefined || this.state.title.length < 1} />
+                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
                 </Box>
 
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">

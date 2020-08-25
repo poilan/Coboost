@@ -118,7 +118,7 @@ const HeaderText = styled.h1`
     font-size: 1rem;
 
     padding: 10px 35px;
-    border-bottom: 4px solid #4C7AD3;
+    border-bottom: 4px solid #575b75;
     cursor: pointer;
 
     flex: 1 1 auto;
