@@ -16,6 +16,7 @@ const Container = styled.div`
     scrollbar-width: thin;
     scrollbar-color: #575b75 #fff;
     vertical-align: top;
+    page-break-inside: avoid;
 `;
 
 const WidthControl = styled.div`
