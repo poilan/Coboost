@@ -240,8 +240,8 @@ export class Home extends Component {
                     <RightTitle id="AdminText">Coboost</RightTitle>
                     {this.rightNav()}
                 </RightHalf>
-                <img src="./landing.jpg" style={mobile ? { height: "100%", width: "auto", position: "fixed", top: "0", left: "0", zIndex: "-20" } : { height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
-                <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#424355", opacity: "70%", zIndex: "-19" }} />
+                <img src="./landing.jpg" style={window.innerHeight >= window.innerWidth ? { height: "100%", width: "auto", position: "fixed", top: "0", left: "0", zIndex: "-5" } : { height: "auto", width: "100%", position: "fixed", top: "0", left: "0", zIndex: "-20" }} />
+                <div style={{ height: "100%", width: "100%", position: "fixed", top: "0", left: "0", background: "#575b75", opacity: "70%", zIndex: "-4" }} />
             </LandingContainer>
         );
     }

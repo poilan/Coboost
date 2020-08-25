@@ -21,7 +21,7 @@ const MainContainer = styled(Col)`
 
 const Banner = styled(Col)`
     position: sticky;
-    background: #424355;
+    background: #575b75;
     height: 75px;
     top: 0;
     left: 0;
@@ -548,11 +548,11 @@ export class Dashboard extends Component {
                             <BreadText color="initial" href="/dashboard">Sessions</BreadText>
                         </BreadCrumb>
 
-                        <BannerDropdown title={<BsJustify/>} style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}}>
+                        <BannerDropdown title={<BsJustify />} style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
                             <BannerLink onClick={this.logout}>Logout</BannerLink>
                         </BannerDropdown>
 
-                        <BannerButton style={{float: "right", position: "relative", top: "50%", transform: "translateY(-50%)"}} onClick={this.newProject}>New Session</BannerButton>
+                        <BannerButton style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }} onClick={this.newProject}>New Session</BannerButton>
                     </Banner>
                     <Header>
                         <HeaderText>Overview</HeaderText>

@@ -9,7 +9,7 @@ const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
         width: calc((${props => props.size <= "2" ? (props.size == "2" ? "(100% - 20px) / 2" : "100% - 20px") : (props.size == "4" ? "(100% - 20px) / 4" : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
-        font-size: 1rem;    
+        font-size: 1rem;
         line-height: 2rem;
         font-weight: 600;
         margin: ${props => props.vote ? "0.5" : "1"}%;
@@ -224,7 +224,7 @@ const Child = styled(DetailsContainer)`
 
 export class InputDetails extends React.Component {
     state = {
-        showChildren: false,
+        showChildren: true,
         answer: this.props.answer,
         showing: true,
     }
@@ -236,9 +236,9 @@ export class InputDetails extends React.Component {
             <DetailsContainer>
                 {this.details(this.props.answer)}
                 {children != undefined && //If this is merged input add button to show them.
-                    <ShowChildren value={this.state.showChildren ? "Show Merged Answers" : "Hide Merged Answers"} onClick={() => this.setState({ showChildren: !this.state.showChildren })} />}
+                    <ShowChildren value={this.state.showChildren ? "Hide Merged Inputs" : "Show Merged Inputs"} onClick={() => this.setState({ showChildren: !this.state.showChildren })} />}
 
-                {this.state.showChildren &&
+                {this.state.showChildren && children != undefined &&
                     <Children>{children.map(child =>
                         <Child>{this.details(child)}</Child>)}
                     </Children>}
@@ -274,7 +274,7 @@ export class InputDetails extends React.Component {
         return this.props.answer == undefined ? null :
             <ModalPage show={this.state.showing} centered onHide={this.close.bind(this)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Answer Details</Modal.Title>
+                    <Modal.Title>Input Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{this.content()}</Modal.Body>
             </ModalPage>

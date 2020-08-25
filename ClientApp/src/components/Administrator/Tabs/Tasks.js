@@ -18,7 +18,7 @@ const SlideContainer = styled.div`
     max-width: calc(97% - max(400px, 25%));
     height: 1080px;
     max-height: 98%;
-    border: 1px solid #424355;
+    border: 1px solid #575b75;
     overflow: hidden;
 `;
 

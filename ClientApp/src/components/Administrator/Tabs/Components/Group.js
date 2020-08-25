@@ -13,7 +13,7 @@ import { grey } from '@material-ui/core/colors';
 const GroupContainer = styled.div`
         width: 100%;
         display: ${props => props.empty ? "none" : "block"};
-        background: ${props => props.group == "0" ? "#8c8da6" : "#424355"};
+        background: ${props => props.group == "0" ? "#8c8da6" : "#575b75"};
         padding: 10px;
         padding-top: 65px;
         margin-bottom: 20px;
@@ -212,7 +212,7 @@ export class Group extends Component {
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }}/>}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?

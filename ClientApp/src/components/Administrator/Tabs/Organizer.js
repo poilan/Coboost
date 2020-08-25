@@ -28,7 +28,7 @@ const MainContainer = styled.div`
     left 0;
 
     scrollbar-width: thin;
-    scrollbar-color: #424355 #fff;
+    scrollbar-color: #575b75 #fff;
 `;
 
 const ButtonToolbar = styled.div`
@@ -80,7 +80,7 @@ const ItemTask = styled.div`
 
 const AnswerButton = styled(Nav.Link)`
     color: #fff;
-    background: #424355;
+    background: #575b75;
     font-family: CircularStd;
     font-weight: 450;
     text-align: center;
@@ -564,7 +564,7 @@ export class Organizer extends Component {
 
                     {this.props.columns !== undefined && this.props.columns.map(column =>
 
-                        <Column column={column.index} width={column.width} empty={column.index + 1 == this.props.columns.length}
+                        <Column column={column.index} width={column.width} last={column.index + 1 == this.props.columns.length}
                             grow={() => grow(column.index)}
                             shrink={() => shrink(column.index)}>
 

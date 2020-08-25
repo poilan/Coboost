@@ -14,7 +14,7 @@ const Container = styled.div`
     margin-top: ${props => props.showcase ? "" : "20px"};
     border-right: ${props => props.showcase ? "none" : "2px solid #C4C4C4"};
     scrollbar-width: thin;
-    scrollbar-color: #424355 #fff;
+    scrollbar-color: #575b75 #fff;
     vertical-align: top;
 `;
 
@@ -28,7 +28,7 @@ const WidthControl = styled.div`
 const Grow = styled.div`
     position: absolute;
     right: -17px;
-    top: -12px;
+    top: -15px;
     font-size: 2.5rem;
     font-family: CircularStd;
     color: #C4C4C4;
@@ -73,7 +73,7 @@ export function Column(props) {
 
     return (
         <>
-            <WidthControl empty={props.empty || (props.column == 0 && props.children[0][0] !== undefined && props.children[0][0].props.children.length < 1)} width={props.width}>
+            <WidthControl empty={props.empty || props.last || (props.column == 0 && props.children[0][0] !== undefined && props.children[0][0].props.children.length < 1)} width={props.width}>
                 <Shrink available={props.width > 1} onClick={() => props.shrink(props.column)}>&#129080;</Shrink>
                 <Grow available={props.width < 4} onClick={() => props.grow(props.column)}>&#129082;</Grow>
             </WidthControl>

@@ -56,7 +56,7 @@ const ContentContainer = styled(Col)`
     text-align: center;
 
     scrollbar-width: thin;
-    scrollbar-color: #424355 #fff;
+    scrollbar-color: #575b75 #fff;
 `;
 
 const Title = styled.h1`

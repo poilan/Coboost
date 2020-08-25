@@ -23,7 +23,7 @@ const MainContainer = styled.div`
 
 const Banner = styled(Col)`
     position: fixed;
-    background: #424355;
+    background: #575b75;
     height: 5%;
     width: 100%;
     min-height: 50px;
@@ -139,7 +139,7 @@ const HeaderTabs = styled(Nav)`
 
         &:hover {
             border: 0;
-            background: #424355;
+            background: #575b75;
             color: #fff;
             border-top: 2px solid #fff;
         }
@@ -148,7 +148,7 @@ const HeaderTabs = styled(Nav)`
             border: 0;
             opacity: 100%;
             color: black;
-            border-bottom: 3px solid #424355;
+            border-bottom: 3px solid #575b75;
             cursor: default;
             background: #FFF;
         };
