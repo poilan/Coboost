@@ -57,7 +57,7 @@ const LeftTitle = styled.h1`
 
 const JoinEventBtn = styled.button`
     font-family: CircularStd;
-    background-color: rgb(53, 57, 67);
+    background-color: #575b75;
     color: rgb(255, 255, 255);
     display: inline;
     text-align: center;
@@ -68,7 +68,7 @@ const JoinEventBtn = styled.button`
     right: ${props => props.mobile ? "0.25" : "0.5"}rem;;
     top: ${props => props.mobile ? "0.25" : "0.5"}rem;
     position: absolute;
-    border: 2px solid rgb(53, 57, 67);
+    border: 2px solid #575b75;
     border-radius: 1rem;
 `;
 

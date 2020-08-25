@@ -36,7 +36,7 @@ const BannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1rem;
     /*color: #4C7AD3;*/
-    color: rgb(53, 57, 67);
+    color: #575b75;
     padding: 25px 5px;
     position: absolute;
 `;
@@ -99,7 +99,7 @@ const Code = styled.h1`
     font-family: CircularStd;
     text-align: center;
     color: #4C7AD3;
-    color: rgb(53, 57, 67);
+    color: #575b75;
     font-weight: 600;
 `;
 
@@ -133,7 +133,7 @@ const BottomBanner = styled(Col)`
 const BottomBannerText = styled.h1`
     font-family: CircularStd;
     font-Size: 1rem;
-    color: rgb(53, 57, 67);
+    color: #575b75;
     padding: 0 35px;
     float: right;
     top:50%;

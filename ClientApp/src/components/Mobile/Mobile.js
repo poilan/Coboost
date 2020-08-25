@@ -28,7 +28,7 @@ const Banner = styled(Col)`
     position: absolute;
     display: none;
     /*background: #4C7AD3;*/
-    background: rgb(53, 57, 67);
+    background: #575b75;
     height: 50px;
     bottom: 0;
     left: 0;
@@ -112,11 +112,11 @@ const HeaderText = styled.h1`
     line-height: 50px;
     font-size: 1rem;
     /*border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #4C7AD3;*/
-    border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} rgb(53, 57, 67);
+    border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #575b75;
     cursor: pointer;
 
     :hover {
-        border-bottom: 4px solid ${props => props.active === props.id ? "rgb(53, 57, 67)" : "#4f4f4f"};
+        border-bottom: 4px solid ${props => props.active === props.id ? "#575b75" : "#4f4f4f"};
     }
 
     flex: 1 1 auto;
@@ -179,7 +179,7 @@ const ContentQuestion = styled.p`
 
     position: relative;
     padding: 5px 0;
-    border-bottom: 2px solid rgb(53, 57, 67);
+    border-bottom: 2px solid #575b75;
     height: 30px;
 `;
 
@@ -200,7 +200,7 @@ const ContentInput = styled.textarea`
 `;
 
 const ContentButton = styled(Button)`
-    background: rgb(53, 57, 67);
+    background: #575b75;
     color: #fff;
 
     font-family: CircularStd;
@@ -218,7 +218,7 @@ const ContentButton = styled(Button)`
     bottom: 0;
 
     &:disabled {
-        background: rgb(53, 57, 67);
+        background: #575b75;
         opacity: 100%;
         border: 4px solid rgb(93, 97, 107);
     }

@@ -21,7 +21,7 @@ const FacilitatorContainer = styled.div`
 
 const FacilitatorButton = styled.button`
     color: rgb(249, 251, 247);
-    background-color: ${props => props.isBigScreen ? "rgb(53, 57, 67)" : "rgb(66, 67, 85)"};
+    background-color: ${props => props.isBigScreen ? "#575b75" : "rgb(66, 67, 85)"};
     height: 100%;
     border: ${props => props.isBigScreen ? "solid rgb(106, 114, 137)" : "none"};
     border-width: 2px 1px;
@@ -102,7 +102,7 @@ const Slide = styled.div`
     height: 64px;
     width: 128px;
     background: ${props => props.isActive ? "#F4F4F4" : "white"};
-    border: 2px solid ${props => props.isActive ? "#4C7ADC" : "rgb(53, 57, 67)"};
+    border: 2px solid ${props => props.isActive ? "#4C7ADC" : "#575b75"};
     border-radius: 4px;
 
     flex: 1 1 auto;
@@ -278,11 +278,11 @@ export class Facilitator extends React.Component {
 
     render() {
         if (this.props.toggle && this.state.hidden) {
-            return(
+            return (
                 <>
                     <FacilitatorContainer style={{ left: "0px", bottom: this.props.style.bottom, position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
-                        <FacilitatorButton isBigScreen={this.props.toggle} style={{borderTopRightRadius: "5px", borderBottomRightRadius: "5px"}} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
-                            <BsCaretRightFill/>
+                        <FacilitatorButton isBigScreen={this.props.toggle} style={{ borderTopRightRadius: "5px", borderBottomRightRadius: "5px" }} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                            <BsCaretRightFill />
                         </FacilitatorButton>
                     </FacilitatorContainer>
                 </>
