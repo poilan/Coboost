@@ -117,7 +117,6 @@ const LandingContainer = styled(Container)`
     height: 100%;
     width: 100%;
     background: #E4E4E4;
-    position: absolute;
     padding: 0;
     margin: 0;
     overflow: hidden;
