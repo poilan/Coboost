@@ -14,10 +14,8 @@ const SlideContainer = styled.div`
     display: inline-block;
     position: absolute;
     left: max(27%, calc(400px + 2%));
-    width: 1980px;
-    max-width: calc(97% - max(400px, 25%));
-    height: 1080px;
-    max-height: 98%;
+    width: calc(97% - max(400px, 25%));
+    height: 98%;
     border: 1px solid #575b75;
     overflow: hidden;
 `;

@@ -14,7 +14,7 @@ const Container = styled.div`
         font-weight: 600;
         margin: ${props => props.vote ? "0.5" : "1"}%;
         box-sizing: border-box;
-        padding: ${props => props.vote ? "5" : "10"}px;
+        padding: 10px;
         border-radius: ${props => props.vote ? "0" : "0.8rem"};
         box-shadow: ${props => props.vote ? "" : "0 1px 0 1px rgba(0, 0, 0, .08)"};
         background: #fff;
@@ -26,15 +26,15 @@ const Container = styled.div`
 
 const CheckboxContainer = styled.div`
     height: 100%;
-    float: left;
+    position: relative;
     display: inline-block;
     margin-right: 10px;
 `;
 
 const Checkbox = styled.input`
     border-radius: 0.5rem;
-    height: 2rem;
-    width: 2rem;
+    height: 1.5rem;
+    width: 1.5rem;
     border: 1px solid #aaa;
     box-sizing: border-box;
     background: #fff;

@@ -13,6 +13,7 @@ import { ContextMenu } from './Components/ContextMenu';
 import { Tooltip, Collapse, IconButton, Menu, MenuItem } from '@material-ui/core';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Box from '@material-ui/core/Box';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -641,12 +642,12 @@ export class Organizer extends Component {
 
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
-                        selected: key,
+                        selected: [key],
                     });
                 }
                 else {
                     this.setState({
-                        selected: '',
+                        selected: [],
                     })
                 }
             }
@@ -678,12 +679,12 @@ export class Organizer extends Component {
 
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
-                        selected: key,
+                        selected: [key],
                     });
                 }
                 else {
                     this.setState({
-                        selected: '',
+                        selected: [],
                     });
                 }
             }
@@ -715,12 +716,12 @@ export class Organizer extends Component {
 
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
-                        selected: key,
+                        selected: [key],
                     });
                 }
                 else {
                     this.setState({
-                        selected: '',
+                        selected: [],
                     })
                 }
             }

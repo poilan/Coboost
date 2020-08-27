@@ -111,12 +111,10 @@ const WelcomeContainer = styled.div`
     height: 100%;
     position: absolute;
     margin: 0 auto;
-    padding: 1rem;
-    ${props => props.text ?
-        `column-count: auto;
-        column-width: 320px;
-        column - gap: 1rem;`
-        : ""}
+    padding: 1rem 0;    
+    column-count: ${props => props.text ? "auto" : "initial"};
+    column-width: ${props => props.text ? "320px" : "initial"};
+    column-gap: ${props => props.text ? "1rem" : "initial"};
 `;
 
 const BottomBanner = styled(Col)`
@@ -386,9 +384,9 @@ export class BigScreen extends Component {
 
         return (
             <>
-                <ResultBackground style={{ width: "95%", height: "80%" }} />
+                <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="80%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -400,9 +398,9 @@ export class BigScreen extends Component {
 
         return (
             <>
-                <ResultBackground style={{ width: "95%", height: "80%" }} />
+                <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height="80%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );

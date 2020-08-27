@@ -31,8 +31,8 @@ export function ResultBackground(props) {
 const ItemContainer = styled.div`
     display: inline-block;
     height: 100%;
-    width: ${props => 97 / props.total}%;
-    left: ${props => ((97 / props.total) * props.index) + 3}%;
+    width: ${props => 100 / props.total}%;
+    left: ${props => ((100 / props.total) * props.index)}%;
     position: absolute;
 `;
 

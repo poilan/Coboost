@@ -814,7 +814,7 @@ export class Mobile extends Component {
                     {task.Options.map((point) =>
                         <Box key={point.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
                             <Typography component="legend">{point.Title}</Typography>
-                            <Rating name={point.Title} value={answers.value[point.Index]} max={task.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
+                            <Rating name={point.Title} value={answers !== undefined ? answers.value[point.Index] : 0} max={task.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
                         </Box>
                     )}
                 </Box>
@@ -842,9 +842,9 @@ export class Mobile extends Component {
                 <ContentQuestion>{task.Title}</ContentQuestion>
                 <Box component="fieldset" mb={2} pt={1} px={2} borderColor="transparent">
                     {task.Options.map((slider) =>
-                        <Box key={slider.Index} component="fieldset" mb={2} pt={1} px={1} borderColor="transparent">
+                        <Box key={slider.Index} component="fieldset" mb={4} pt={2} px={1} borderColor="transparent">
                             <Typography component="legend">{slider.Title}</Typography>
-                            <Slider name={slider.Title} value={answers.value[slider.Index]}
+                            <Slider name={slider.Title} value={answers !== undefined ? answers.value[slider.Index] : task.Min}
                                 step={1} marks={marks} min={task.Min} max={task.Max}
                                 aria-labledby="discrete-slider" valueLabelDisplay="on"
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)} />
