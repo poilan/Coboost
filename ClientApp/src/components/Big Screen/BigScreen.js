@@ -111,7 +111,7 @@ const WelcomeContainer = styled.div`
     height: 100%;
     position: absolute;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: ${props => props.text ? "1rem" : "0 1rem"};
     column-count: ${props => props.text ? "auto" : "initial"};
     column-width: ${props => props.text ? "320px" : "initial"};
     column-gap: ${props => props.text ? "1rem" : "initial"};

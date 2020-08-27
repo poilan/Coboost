@@ -11,7 +11,7 @@ const Container = styled.div`
     padding: ${props => props.showcase ? "0" : "10px"};
     display: ${props => props.empty ? "none" : props.showcase ? "block" : "inline-block"};
     white-space: normal;
-    margin-top: ${props => props.showcase ? "10px" : "20px"};
+    margin-top: ${props => props.showcase ? "0" : "20px"};
     border-right: ${props => props.showcase ? "none" : "2px solid #C4C4C4"};
     scrollbar-width: thin;
     scrollbar-color: #575b75 #fff;
