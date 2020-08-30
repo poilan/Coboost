@@ -642,7 +642,7 @@ export class Mobile extends Component {
             const description = this.getTaskAnswers();
 
             if (description.length < 3) {
-                if (description.current)
+                if (this.TextDescription.current)
                     this.TextDescription.current.focus();
 
                 return;
@@ -650,7 +650,7 @@ export class Mobile extends Component {
                 let title = this.state.title;
 
                 if (title.length < 3) {
-                    if (titleRef.current)
+                    if (this.TextTitle.current)
                         this.TextTitle.current.focus();
 
                     return;
