@@ -11,6 +11,7 @@ import { ResultBackground, ResultItem, ResultSlider } from "../Administrator/Tab
 import { Facilitator } from "./Facilitator";
 
 import SSE from "../Core/SSE";
+import { Typography } from '@material-ui/core';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -350,6 +351,8 @@ export class BigScreen extends Component {
                 return this.renderSlider();
             }
         }
+        else
+            return this.renderHidden();
     }
 
     renderQuestion() {
@@ -429,6 +432,14 @@ export class BigScreen extends Component {
                         showcase
                     />
                 )}
+            </>
+        );
+    }
+
+    renderHidden() {
+        return (
+            <>
+                <Typography variant="h2" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} align="center">Results are hidden</Typography>
             </>
         );
     }

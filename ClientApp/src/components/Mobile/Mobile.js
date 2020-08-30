@@ -1,4 +1,4 @@
-﻿import React, { Component, useRef } from 'react';
+﻿import React, { Component, useRef, createRef } from 'react';
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form } from 'react-bootstrap';
@@ -381,8 +381,8 @@ export class Mobile extends Component {
         this.logout = this.logout.bind(this);
 
         //DOM Refrences
-        this.TextTitle = React.createRef();
-        this.TextDescription = React.createRef();
+        this.TextTitle = createRef();
+        this.TextDescription = createRef();
     }
 
     componentWillMount() {
@@ -638,15 +638,12 @@ export class Mobile extends Component {
                 title: value,
             });
         }
-        const titleRef = useRef(null);
-        const descriptionRef = useRef(null);
-
-        const handleInvalid = (e) => {
+        const handleInvalid = () => {
             const description = this.getTaskAnswers();
 
             if (description.length < 3) {
                 if (description.current)
-                    descriptionRef.current.focus();
+                    this.TextDescription.current.focus();
 
                 return;
             } else if (description.length > 30) {
@@ -654,18 +651,19 @@ export class Mobile extends Component {
 
                 if (title.length < 3) {
                     if (titleRef.current)
-                        titleRef.current.focus();
+                        this.TextTitle.current.focus();
 
                     return;
                 }
             }
         }
+
         return (
             <ContentContainer>
                 <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                    {this.getTaskAnswers().length > 30 && <ContentInput required ref={titleRef} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
-                    <ContentInput required autoFocus type="text" minLength="3" ref={descriptionRef} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
+                    {this.getTaskAnswers().length > 30 && <ContentInput required ref={this.TextTitle} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
+                    <ContentInput required autoFocus type="text" minLength="3" ref={this.TextDescription} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
                     <ContentButton onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write a input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write title before sending!" : "Send Input!"}</ContentButton>
                 </Form>
             </ContentContainer>
