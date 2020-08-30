@@ -383,6 +383,7 @@ export class Mobile extends Component {
         //DOM Refrences
         this.TextTitle = createRef();
         this.TextDescription = createRef();
+        this.TextForm = createRef();
     }
 
     componentWillMount() {
@@ -662,7 +663,9 @@ export class Mobile extends Component {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                this.onSubmit();
+                if (this.TextForm.current) {
+                    this.TextForm.current.click();
+                }
             }
         }
 
@@ -670,9 +673,9 @@ export class Mobile extends Component {
             <ContentContainer>
                 <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                    {this.getTaskAnswers().length > 30 && <ContentInput required ref={this.TextTitle} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
-                    <ContentInput onKeyDown={handleEnter} required autoFocus type="text" minLength="3" ref={this.TextDescription} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
-                    <ContentButton type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write a input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write title before sending!" : "Send Input!"}</ContentButton>
+                    {this.getTaskAnswers().length > 30 && <ContentInput onKeyDown={handleEnter.bind(this)} required ref={this.TextTitle} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
+                    <ContentInput onKeyDown={handleEnter.bind(this)} required autoFocus type="text" minLength="3" ref={this.TextDescription} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
+                    <ContentButton ref={this.TextForm} type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write a input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write title before sending!" : "Send Input!"}</ContentButton>
                 </Form>
             </ContentContainer>
         );
@@ -746,7 +749,8 @@ export class Mobile extends Component {
         this.setTaskAnswers(answers);
     }
 
-    inputsClick() {
+    inputsClick(e) {     
+        e.preventDefault();
         const state = this.state;
         const questions = this.getTasks().length;
         const current = this.getTaskIndex();
