@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
-import { Ico_Text, Ico_MultipleChoice, Ico_Box } from '../../../Classes/Icons';
+import { Ico_Text, Ico_MultipleChoice, Ico_Box, Ico_Points, Ico_Slider } from '../../../Classes/Icons';
 import { Nav, Form } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 
@@ -232,7 +232,8 @@ export class Task extends Component {
                     onClick={this.props.onClick.bind(this)} onDoubleClick={this.props.onDoubleClick}
                     active={this.props.active} type={this.props.type}>
                     <TaskIndex id={this.props.id}>{this.props.id + 1}</TaskIndex>
-                    {this.props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", marginTop: "10px", }} /> : <Ico_MultipleChoice style={{ height: "60px", marginTop: "10px", }} />}
+                    {this.props.type < 2 ? this.props.type == 0 ? <Ico_Text id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px", }} /> : <Ico_MultipleChoice style={{ height: "60px", width: "60px", marginTop: "10px", }} />
+                        : this.props.type == 2 ? <Ico_Points id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px", }} /> : <Ico_Slider id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px", }} />}
                     <TitleContainer id={this.props.id}>
                         <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : this.props.type == 2 ? "Points" : "Slider"}</TaskType>
                         <TaskTitle id={this.props.id}>{this.props.title}</TaskTitle>

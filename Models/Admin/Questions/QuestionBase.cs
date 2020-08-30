@@ -50,7 +50,15 @@ namespace Slagkraft.Models.Admin.Questions
 
         #region Public Properties
 
+        /// <summary>
+        /// The Index this task has.
+        /// </summary>
         public int Index { get; set; }
+
+        /// <summary>
+        /// Decides whether the results should be shown or hidden.
+        /// </summary>
+        public bool ShowResults { get; set; }
 
         /// <summary>
         /// The question that is asked.

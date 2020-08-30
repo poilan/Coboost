@@ -142,7 +142,7 @@ export class Organizer extends Component {
         super(props);
         this.state = {
             overview: true,
-            selected: '',
+            selected: [],
             collapse: [],
 
             modal: {

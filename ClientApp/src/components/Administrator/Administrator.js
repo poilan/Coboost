@@ -51,15 +51,14 @@ const BreadText = styled(Link)`
 const BannerCode = styled.div`
     font-family: CircularStd;
     font-Size: 1.25rem;
-    display: none;
+    display: inline-block;
     color: #fff;
     top: 50%;
-    position: absolute;
-    width: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin-left: 0;
+    position: relative;
+    margin-right: 20px;
+    transform: translateY(-50%);
     text-align: center;
+    float: right;
 `;
 
 const BannerButton = styled(DropdownButton)`
@@ -455,7 +454,6 @@ export class Administrator extends Component {
                         <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.state.tab == "task" ? this.selectTab("organize") : this.selectTab("task") }}>{this.state.tab == "task" ? "Tasks" : "Organize"}</BreadText>
                         {this.state.tasks[this.state.active] != undefined && <Tooltip title="Organize"><BreadText color="initial" active={this.state.tab == "organize"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("organize") }}>{this.state.tasks[this.state.active].Title}</BreadText></Tooltip>}
                     </BreadCrumb>
-                    <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : ""}</BannerCode>
 
                     <BannerDropdown title={<BsJustify />} style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
                         <BannerLink onClick={this.logout}>Logout</BannerLink>
@@ -467,6 +465,7 @@ export class Administrator extends Component {
                         <BannerLink disabled>Mirror Screen</BannerLink>
                         <BannerLink disabled>Get Presentation Link</BannerLink>
                     </BannerDropdown>
+                    <BannerCode>{this.state.code > 0 ? "Event code: " + this.state.code.substr(0, 3) + " " + this.state.code.substr(3, 3) : null}</BannerCode>
                 </Banner>
 
                 <ContentCard>

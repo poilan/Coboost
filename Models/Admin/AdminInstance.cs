@@ -111,6 +111,7 @@ namespace Slagkraft.Models.Admin
             question.Index = Tasks.Count;
             question.Archive = new List<MultipleChoice_Option>();
             question.Type = BaseTask.TaskType.MultipleChoice;
+            question.ShowResults = true;
             foreach (MultipleChoice_Option option in question.Options)
             {
                 option.Votes = new List<MultipleChoice_Input>();
@@ -126,6 +127,7 @@ namespace Slagkraft.Models.Admin
             question.AddGroup("Unorganized", 0);
             question.Archive = new List<OpenText_Input>();
             question.Type = BaseTask.TaskType.OpenText;
+            question.ShowResults = true;
             Tasks.Add(question);
         }
 
@@ -133,6 +135,7 @@ namespace Slagkraft.Models.Admin
         {
             task.Index = Tasks.Count;
             task.Type = BaseTask.TaskType.Points;
+            task.ShowResults = true;
             task.Votes = new List<Points_Vote>();
             task.Archive = new List<Points_Option>();
             foreach (Points_Option option in task.Options)
@@ -146,6 +149,7 @@ namespace Slagkraft.Models.Admin
         {
             task.Index = Tasks.Count;
             task.Type = BaseTask.TaskType.Rate;
+            task.ShowResults = true;
             task.Votes = new List<Rate_Vote>();
             task.Archive = new List<Rate_Option>();
             foreach (Rate_Option option in task.Options)

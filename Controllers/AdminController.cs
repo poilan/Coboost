@@ -530,6 +530,22 @@ namespace Slagkraft.Controllers
             HttpContext.Response.StatusCode = 200;
         }
 
+        [HttpPost("{code}/question-showresults-toggle")]
+        public void ShowResultsToggle(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                BaseTask task = admin.Tasks[admin.Active];
+                task.ShowResults = !task.ShowResults;
+                task.Reset.Set();
+                HttpContext.Response.StatusCode = 201;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpGet("{code}/stream-question-{index}")]
         public async void StreamQuestion(int code, int index)
         {

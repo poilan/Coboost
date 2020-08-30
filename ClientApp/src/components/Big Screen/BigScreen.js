@@ -268,6 +268,19 @@ export class BigScreen extends Component {
                     sse.log("Failed to parse server event: Total");
                 }
             });
+
+            sse.addListener("ShowResults", (e) => {
+                try {
+                    let showReults = JSON.parse(e.data);
+                    let task = this.state.task
+                    task.ShowResults = showReults;
+                    this.setState({
+                        task: task
+                    });
+                } catch (e) {
+                    sse.log("Failed to parse server event: Total");
+                }
+            });
         })
     }
 
@@ -289,7 +302,7 @@ export class BigScreen extends Component {
                     <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
                     <Code>#{code}</Code>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>Waiting on participants...</BottomBannerText>
@@ -306,7 +319,7 @@ export class BigScreen extends Component {
                 <Title><b>{title}</b></Title>
                 <WelcomeContainer>
                 </WelcomeContainer>
-                {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
             </ContentContainer>
             <BottomBanner>
                 <BottomBannerText>#{code}</BottomBannerText>
@@ -317,10 +330,9 @@ export class BigScreen extends Component {
 
     viewResult() {
         const state = this.state;
-        const canShow = state.showResults;
+        const question = state.task;
 
-        if (canShow === true) {
-            const question = state.task;
+        if (question.ShowResults === true) {
             if (question.Type === 0) {
                 return this.renderOpenTextResult();
 
@@ -349,7 +361,7 @@ export class BigScreen extends Component {
                     <WelcomeContainer text={this.state.task.Type == 0}>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
                 </ContentContainer>
                 {/*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>

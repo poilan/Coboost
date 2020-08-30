@@ -97,6 +97,12 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync(json);
                         await Response.Body.FlushAsync();
                     }
+                    {
+                        await Response.WriteAsync("event:" + "ShowResults\n");
+                        string results = $"data: {JsonConvert.SerializeObject(question.ShowResults)}\n\n";
+                        await Response.WriteAsync(results);
+                        await Response.Body.FlushAsync();
+                    }
 
                     if (question is OpenText open)
                     {

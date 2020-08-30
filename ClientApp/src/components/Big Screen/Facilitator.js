@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import axios from 'axios';
 import { BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill } from "react-icons/bs";
-import { Ico_Text, Ico_MultipleChoice } from "../Classes/Icons";
+import { Ico_Text, Ico_MultipleChoice, Ico_Points, Ico_Slider } from "../Classes/Icons";
 
 const FacilitatorContainer = styled.div`
     display: flex;
@@ -79,12 +79,42 @@ const MultipleIcon = styled(Ico_MultipleChoice)`
     }
 `;
 
+const PointsIcon = styled(Ico_Points)`
+    width: 32px;
+    height: 32px;
+
+    img {
+        width: inherit;
+        height: inherit;
+    }
+`;
+
+const SliderIcon = styled(Ico_Slider)`
+    width: 32px;
+    height: 32px;
+
+    img {
+        width: inherit;
+        height: inherit;
+    }
+`;
+
 const IconText = styled(TextIcon)`
     position: relative;
     top: 14px;
 `;
 
 const IconMP = styled(MultipleIcon)`
+    position: relative;
+    top: 14px;
+`;
+
+const IconPoints = styled(PointsIcon)`
+    position: relative;
+    top: 14px;
+`;
+
+const IconSlider = styled(SliderIcon)`
     position: relative;
     top: 14px;
 `;
@@ -172,7 +202,15 @@ export class Facilitator extends React.Component {
     }
 
     hideResults() {
-        this.props.onResultToggle();
+
+        //this.props.onResultToggle();
+        const code = sessionStorage.getItem('code');
+
+        axios.post(`admin/${code}/question-showresults-toggle`).then(res => {
+            this.getActiveQuestion(() => {
+                console.log("Results Toggled!");
+            })
+        });
     }
 
     componentDidMount() {
@@ -303,9 +341,12 @@ export class Facilitator extends React.Component {
 
                     {this.props.allTasks &&
                         <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.openTasks}>
-                            {this.state.showTasks ? <>
-                                <BsCollectionFill class="icon" />
-                            </> : <>
+                            {this.state.showTasks ?
+                                <>
+                                    <BsCollectionFill class="icon" />
+                                </>
+                                :
+                                <>
                                     <BsCollection class="icon" />
                                 </>}
                             <br />
@@ -318,15 +359,17 @@ export class Facilitator extends React.Component {
                         Information
                     </FacilitatorButton>*/}
 
-                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
-                        {this.props.showingResult ? <>
-                            <BsEyeSlash class="icon" /><br />
+                    {this.state.questions[this.props.active] != undefined  &&
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
+                            {this.state.questions[this.props.active].ShowResults ? <>
+                                <BsEyeSlash class="icon" /><br />
                             Hide Results
                         </> : <>
-                                <BsEye class="icon" /><br />
+                                    <BsEye class="icon" /><br />
                             Show Results
                         </>}
-                    </FacilitatorButton>
+                        </FacilitatorButton>
+                    }
 
                     {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.closeVoting}>
                         <BsLock class="icon" /><br/>
@@ -354,6 +397,8 @@ export class Facilitator extends React.Component {
                     {this.state.questions.map(question => <Slide id={question.Index} isActive={question.Index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>
                         {question.Type === 0 && <IconText id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
                         {question.Type === 1 && <IconMP id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        {question.Type === 2 && <IconPoints id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
+                        {question.Type === 3 && <IconSlider id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
                         <SlideText>{question.Index + 1}</SlideText>
                     </Slide>)}
                 </SlideContainer>

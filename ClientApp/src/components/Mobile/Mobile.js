@@ -1,7 +1,7 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, useRef } from 'react';
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
-import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton } from 'react-bootstrap';
+import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
@@ -379,6 +379,10 @@ export class Mobile extends Component {
         this.inputsClick = this.inputsClick.bind(this);
         this.inputsEdit = this.inputsEdit.bind(this);
         this.logout = this.logout.bind(this);
+
+        //DOM Refrences
+        this.TextTitle = React.createRef();
+        this.TextDescription = React.createRef();
     }
 
     componentWillMount() {
@@ -634,12 +638,36 @@ export class Mobile extends Component {
                 title: value,
             });
         }
+        const titleRef = useRef(null);
+        const descriptionRef = useRef(null);
+
+        const handleInvalid = (e) => {
+            const description = this.getTaskAnswers();
+
+            if (description.length < 3) {
+                if (description.current)
+                    descriptionRef.current.focus();
+
+                return;
+            } else if (description.length > 30) {
+                let title = this.state.title;
+
+                if (title.length < 3) {
+                    if (titleRef.current)
+                        titleRef.current.focus();
+
+                    return;
+                }
+            }
+        }
         return (
             <ContentContainer>
-                <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                {this.getTaskAnswers().length > 30 && <ContentInput type="text" value={this.state.title} name={`q-${this.getTaskIndex()}-title`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
-                <ContentInput type="text" value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
-                <ContentButton disabled={(this.getTaskAnswers().length <= 30 && this.getTaskAnswers().length < 3) || (this.getTaskAnswers().length > 30 && this.state.title.length < 3)} onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write a input to send" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "NB! Write title before sending" : "Send Input!"}</ContentButton>
+                <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
+                    <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
+                    {this.getTaskAnswers().length > 30 && <ContentInput required ref={titleRef} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
+                    <ContentInput required autoFocus type="text" minLength="3" ref={descriptionRef} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
+                    <ContentButton onClick={this.inputsClick}>{this.getTaskAnswers().length < 3 ? "Write a input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write title before sending!" : "Send Input!"}</ContentButton>
+                </Form>
             </ContentContainer>
         );
     }
@@ -748,7 +776,7 @@ export class Mobile extends Component {
                 data.Option = index;
 
                 axios.post(`client/${code}/add-multiplechoice`, data);
-            })
+            });
         }
         else if (type === 2) { // Points
             data.Points = answer;

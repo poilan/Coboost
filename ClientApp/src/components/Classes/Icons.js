@@ -210,7 +210,31 @@ export class Ico_MultipleChoice extends Component {
 
     render() {
         return (
-            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/Group 220.svg" /></span>
+            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/MultipleChoice.svg" /></span>
+        );
+    }
+}
+
+export class Ico_Points extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <span><img {...this.props} draggable={false} alt="Points" src="./icons/Points.svg" /> </span>
+        );
+    }
+}
+
+export class Ico_Slider extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <span><img {...this.props} draggable={false} alt="Slider" src="./icons/Slider.svg" /> </span>
         );
     }
 }
