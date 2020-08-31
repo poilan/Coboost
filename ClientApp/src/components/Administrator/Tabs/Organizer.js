@@ -236,7 +236,7 @@ export class Organizer extends Component {
                             <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
                                 <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
                             </Box>
-                            <CancelButton onClick={this.modal.answer.close} disabled={(this.state.modal.description.length <= 30 && this.state.modal.description.length < 3) || (this.state.modal.description.length > 30 && this.state.modal.string.length < 3)}>Cancel</CancelButton>
+                            <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
                             <CreateButton type="submit" value="Submit" />
                         </Form>
                     );
