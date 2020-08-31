@@ -49,7 +49,7 @@ namespace Slagkraft.Models.Admin.Questions
                 {
                     Description = value;
                 }
-                else if (string.Equals(value, Description) || string.IsNullOrWhiteSpace(value))
+                else if (string.IsNullOrWhiteSpace(value) || string.Equals(value, Description))
                 {
                     title = "";
                 }

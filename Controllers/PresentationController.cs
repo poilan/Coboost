@@ -97,9 +97,11 @@ namespace Slagkraft.Controllers
                         await Response.WriteAsync(json);
                         await Response.Body.FlushAsync();
                     }
+
                     {
+                        bool show = question.ShowResults;
                         await Response.WriteAsync("event:" + "ShowResults\n");
-                        string results = $"data: {JsonConvert.SerializeObject(question.ShowResults)}\n\n";
+                        string results = $"data: {JsonConvert.SerializeObject(show)}\n\n";
                         await Response.WriteAsync(results);
                         await Response.Body.FlushAsync();
                     }
