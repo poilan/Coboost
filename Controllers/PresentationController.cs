@@ -98,6 +98,7 @@ namespace Slagkraft.Controllers
                         await Response.Body.FlushAsync();
                     }
 
+                    if (question != null)
                     {
                         bool show = question.ShowResults;
                         await Response.WriteAsync("event:" + "ShowResults\n");
