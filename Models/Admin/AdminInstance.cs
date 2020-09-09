@@ -34,8 +34,7 @@ namespace Slagkraft.Models.Admin
                 }
                 else
                 {
-                    active = Tasks.Count - 1;
-                    return active;
+                    return 0;
                 }
             }
             set

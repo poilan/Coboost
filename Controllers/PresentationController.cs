@@ -82,7 +82,7 @@ namespace Slagkraft.Controllers
                     if (Response.HttpContext.RequestAborted.IsCancellationRequested)
                         break;
 
-                    if (admin.Active < admin.Tasks.Count && (question == null || question.Index != admin.Active))
+                    if (admin.Tasks.Count > 0 && (admin.Active < admin.Tasks.Count && (question == null || question.Index != admin.Active)))
                     {
                         question = admin.Tasks[admin.Active].Type switch
                         {
