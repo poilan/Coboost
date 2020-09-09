@@ -24,6 +24,7 @@ const GroupContainer = styled.div`
         vertical-align: top;
         position: relative;
         opacity: ${props => props.group == "new" ? "50%" : "100%"};
+        overflow: hidden;
 
         &:hover {
            opacity: 90%;
