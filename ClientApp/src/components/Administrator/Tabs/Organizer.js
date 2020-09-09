@@ -758,7 +758,7 @@ export class Organizer extends Component {
                     {task.Options !== undefined && task.Options.map(option =>
                         <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
                             vote height="80%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select.bind(this)}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
                             percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length} showPercentage={this.state.resultsAsPercentage}
                         />
                     )}
