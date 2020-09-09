@@ -40,7 +40,7 @@ namespace Slagkraft.Models.Admin.Questions
 
         public void AddClientVote(Points_Vote vote)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 vote.Index = Votes.Count;
                 Votes.Add(vote);

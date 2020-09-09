@@ -373,6 +373,25 @@ namespace Slagkraft.Controllers
             return userSessions;
         }
 
+        [HttpPost("{code}/group{group}-recolor{color}")]
+        public void GroupColor(int code, int group, string color)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                if (admin.Tasks[admin.Active] is OpenText open)
+                {
+                    ThreadPool.QueueUserWorkItem(o => open.ColorGroup(group, color));
+                    HttpContext.Response.StatusCode = 202;
+                }
+                else
+                    HttpContext.Response.StatusCode = 400;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpPost("{code}/group{group}-member{member}")]
         public void LastGroup(int code, int group, int member)
         {
@@ -521,7 +540,9 @@ namespace Slagkraft.Controllers
                         HttpContext.Response.StatusCode = 500;
                         return;
                     }
-                    session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+
+                    //session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
+                    session.LastOpen = DateTime.UtcNow.ToString("G", new CultureInfo("en-US"));
                     Context.Sessions.Update(session);
                     Context.SaveChanges();
                 }
@@ -703,26 +724,29 @@ namespace Slagkraft.Controllers
             }
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
-        private async Task SaveAdmin(int code)
+        [HttpPost("{code}/question-unmerge{masterGroup}-{masterMember}")]
+        public void Unmerge(int code, int masterGroup, int masterMember)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                Session session = await Context.Sessions.FindAsync(admin.EventCode);
-                if (session != null)
+                OpenText.Key master = new OpenText.Key
                 {
-                    session.Questions = admin.SaveSession();
-                    session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
-                    Context.Sessions.Update(session);
-                    Context.SaveChanges();
-                }
+                    Group = masterGroup,
+                    Member = masterMember,
+                };
+
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+                ThreadPool.QueueUserWorkItem(o => open.Unmerge(master));
+                HttpContext.Response.StatusCode = 202;
+                return;
             }
-            return;
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
         }
 
-        #endregion Private Methods
+        #endregion Public Methods
     }
 }

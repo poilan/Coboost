@@ -63,12 +63,11 @@ export function ResultItem(props) {
     return (
         <ItemContainer total={props.total} index={props.index}>
             <PercentageContainer height={`${props.height}`}>
-                <Percentage percentage={props.percentage}> {props.percentage > 0 && Math.floor(props.percentage) + "%"} </Percentage>
+                <Percentage percentage={props.percentage}>{props.showPercentage ? (props.percentage > 0 && Math.floor(props.percentage) + "%") : props.points}</Percentage>
             </PercentageContainer>
-            <Input vote size="1"
+            <Input vote size="1" showcase={props.showcase}
                 id={props.id} index={props.index} title={props.title}
-                checked={props.checked}
-                onCheck={props.onCheck} showcase={props.showcase}
+                checked={props.checked} onCheck={props.onCheck}
             />
         </ItemContainer>
     );

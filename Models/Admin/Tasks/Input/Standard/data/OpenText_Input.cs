@@ -6,29 +6,41 @@ using System.Threading.Tasks;
 namespace Slagkraft.Models.Admin.Questions
 {
     /// <summary>
-    /// A Merged OpenText_Input
-    /// <para>Keeps a record of the individual inputs</para>
+    /// Contains the Data from a Participant Input
     /// </summary>
-    public class OpenText_Merged : OpenText_Input
+    public class OpenText_Input
     {
+        #region Protected Fields
+
+        protected string title;
+
+        #endregion Protected Fields
+
         #region Public Properties
 
         /// <summary>
-        /// The Inputs that was merged into this one
+        /// The Main Data of the Input
         /// </summary>
-        public List<OpenText_Input> Children { get; set; }
+        public string Description { get; set; }
 
-        public new string Title
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Optional Title
+        /// <para>Becomes null if set to empty or whitespace</para>
+        /// Returns Description if null
+        /// </summary>
+        public string Title
         {
             get
             {
                 if (string.IsNullOrWhiteSpace(title))
                 {
-                    return Description + " (" + (Children.Count + 1) + ")";
+                    return Description;
                 }
                 else
                 {
-                    return title + " (" + (Children.Count + 1) + ")";
+                    return title;
                 }
             }
             set
@@ -37,7 +49,7 @@ namespace Slagkraft.Models.Admin.Questions
                 {
                     Description = value;
                 }
-                else if (string.Equals(value, Description) || string.IsNullOrWhiteSpace(value))
+                else if (string.IsNullOrWhiteSpace(value) || string.Equals(value, Description))
                 {
                     title = "";
                 }
@@ -47,6 +59,11 @@ namespace Slagkraft.Models.Admin.Questions
                 }
             }
         }
+
+        /// <summary>
+        /// The User that sent it in
+        /// </summary>
+        public string UserID { get; set; }
 
         #endregion Public Properties
     }

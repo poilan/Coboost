@@ -68,7 +68,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="input">A Open Text input, that is converted into a option</param>
         public void AddOption(OpenText_Input input)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 MultipleChoice_Option option = new MultipleChoice_Option
                 {
@@ -91,7 +91,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="input">The Vote the user sent in</param>
         public void AddUserVote(MultipleChoice_Input input)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 Options[input.Option].Votes.Add(input);
             }
@@ -104,7 +104,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="option">The index of the option you want removed</param>
         public void RemoveOptions(int option)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 Options.RemoveAt(option);
             }

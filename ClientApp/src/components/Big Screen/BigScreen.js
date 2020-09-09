@@ -19,6 +19,7 @@ const MainContainer = styled(Col)`
     width: 100%;
     background: #FFFFFF;
     position: absolute;
+    font-Size: 1.5rem;
     padding: 0px;
 `;
 
@@ -31,15 +32,17 @@ const Banner = styled(Col)`
     left: 0;
     z-index: 10;
     border-bottom: 1px dotted black;
+    font-Size: 1.5rem;
 `;
 
 const BannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 1rem;
+    font-Size: 1.5rem;
     /*color: #4C7AD3;*/
     color: #575b75;
     padding: 25px 5px;
     position: absolute;
+
 `;
 
 const ContentContainer = styled(Col)`
@@ -58,6 +61,7 @@ const ContentContainer = styled(Col)`
 
     scrollbar-width: thin;
     scrollbar-color: #575b75 #fff;
+    font-Size: 1.5rem;
 `;
 
 const Title = styled.h1`
@@ -73,6 +77,7 @@ const Title = styled.h1`
     transform: translate(-50%, -50%);
 
     text-align: center;
+    font-Size: 1.5rem;
 `;
 
 const IconLoader = styled(Ico_Loading)`
@@ -101,6 +106,7 @@ const Code = styled.h1`
     text-align: center;
     color: #4C7AD3;
     color: #575b75;
+    font-Size: 1.5rem;
     font-weight: 600;
 `;
 
@@ -111,6 +117,7 @@ const WelcomeContainer = styled.div`
     width: 100%;
     height: 100%;
     position: absolute;
+    font-Size: 1.5rem;
     margin: 0 auto;
     padding: ${props => props.text ? "1rem" : "0 1rem"};
     column-count: ${props => props.text ? "auto" : "initial"};
@@ -127,11 +134,12 @@ const BottomBanner = styled(Col)`
     bottom: 0;
     left: 0;
     z-index: 10;
+    font-Size: 1.5rem;
 `;
 
 const BottomBannerText = styled.h1`
     font-family: CircularStd;
-    font-Size: 1rem;
+    font-Size: 1.5rem;
     color: #575b75;
     padding: 0 35px;
     float: right;
@@ -166,20 +174,23 @@ export class BigScreen extends Component {
 
             task: null,
             sse: null,
+
+            resultsAsPercentage: false
         };
 
         this.facilitatorToggleResults = this.facilitatorToggleResults.bind(this);
     }
 
-    componentDidMount() {
-        const email = localStorage.getItem("user");
+    async componentDidMount() {
+
+        //const email = await localStorage.getItem("user");
 
         //let code = sessionStorage.getItem("present_code");
 
         //if (code == null)
         //    code = sessionStorage.getItem("code");
 
-        let code = sessionStorage.getItem("code");
+        let code = await sessionStorage.getItem("code");
 
         this.setState({
             code: code,
@@ -198,6 +209,17 @@ export class BigScreen extends Component {
 
             this.beginSSE();
         });
+
+        this.AutoResultToggle();
+    }
+
+    async AutoResultToggle() {
+        await setTimeout(() => {
+            this.setState({
+                resultsAsPercentage: !this.state.resultsAsPercentage,
+            });
+            this.AutoResultToggle();
+        }, 6660);
     }
 
     beginSSE() {
@@ -385,7 +407,7 @@ export class BigScreen extends Component {
                 {results.slice(1).map(group =>
                     <>
                         {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
-                            <Group key={group.Index} title={group.Title} size={1} showcase>
+                            <Group key={group.Index} title={group.Title} size={1} color={group.Color} showcase>
                                 {group.Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
                             </Group>
                         </Column>}
@@ -401,7 +423,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote points={option.Votes.length} showPercentage={this.state.resultsAsPercentage} percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -415,7 +437,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote points={option.Points} showPercentage={this.state.resultsAsPercentage} percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );

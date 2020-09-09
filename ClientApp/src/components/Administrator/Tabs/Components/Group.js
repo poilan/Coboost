@@ -5,15 +5,17 @@ import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 import { Ico_Box } from '../../../Classes/Icons';
-import { Collapse, IconButton } from '@material-ui/core';
+import { Collapse, IconButton, Menu, MenuItem } from '@material-ui/core';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import MenuIcon from '@material-ui/icons/Menu';
 import { grey } from '@material-ui/core/colors';
+import { ColorPicker } from './ColorPicker';
 
 const GroupContainer = styled.div`
         width: 100%;
         display: ${props => props.empty ? "none" : "block"};
-        background: ${props => props.group == "0" ? "#8c8da6" : "#575b75"};
+        background: ${props => props.group == "0" ? "#8c8da6" : props.color};
         padding: 10px;
         padding-top: 65px;
         margin-bottom: 20px;
@@ -24,7 +26,7 @@ const GroupContainer = styled.div`
         opacity: ${props => props.group == "new" ? "50%" : "100%"};
 
         &:hover {
-           opacity: ${props => props.group == "new" ? "90%" : "100%"};
+           opacity: 90%;
            cursor: ${props => props.group == "new" ? "pointer" : "default"};
         }
     `;
@@ -58,13 +60,18 @@ const GroupTitle = styled.h1`
     transform: ${props => props.new ? "translate(-50%, -50%)" : ""};
 `;
 
-const GroupMenu = styled(Ico_Box)`
+const GroupMenu = styled(MenuIcon)`
     position: absolute;
     right: 15px;
     top: 25px;
     color: #fff;
     font-weight: 600;
     display: ${props => props.showcase ? "none" : "block"};
+
+    &:hover {
+        background: rgba(0, 0, 0, .15);
+        cursor: pointer;
+    }
 `;
 
 const CancelButton = styled(Nav.Link)`
@@ -112,6 +119,17 @@ export class Group extends Component {
             archive: false,
         },
         collapse: true,
+        menuAnchor: null,
+        colorAnchor: null,
+        color: '#575b75'
+    }
+
+    componentDidMount() {
+        if (this.props.color !== undefined && this.props.color.length == 7 && this.props.color[0] == '#') {
+            this.setState({
+                color: this.props.color,
+            });
+        }
     }
 
     modal = {
@@ -205,9 +223,36 @@ export class Group extends Component {
         });
     }
 
+    colorChange = (color) => {
+        if (color.length == 7 && color[0] == '#') {
+            this.setState({
+                color: color.hex,
+                colorAnchor: null
+            });
+            const code = sessionStorage.getItem("code");
+
+            axios.post(`admin/${code}/group${this.props.group}-recolor${color}`);
+        }
+    }
+
+    colorOpen = () => {
+        const anchor = this.state.menuAnchor;
+        this.setState({
+            menuAnchor: null,
+            colorAnchor: anchor
+        });
+    }
+
+    deleteOpen = () => {
+        this.setState({
+            menuAnchor: null,
+        });
+        this.modal.archive.open();
+    }
+
     render() {
         return (
-            <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column}
+            <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.state.color}
                 onClick={this.props.onClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
@@ -242,8 +287,22 @@ export class Group extends Component {
                     {this.props.children}
                 </Collapse>
 
-                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={() => this.modal.archive.open()} />}
+                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })} />}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
+
+                <Menu
+                    anchorEl={this.state.menuAnchor} keepMounted
+                    open={Boolean(this.state.menuAnchor)} onClose={() => this.setState({ menuAnchor: null })}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <MenuItem onClick={this.colorOpen}>
+                        Change Color
+                    </MenuItem>
+                    <MenuItem onClick={this.deleteOpen}>
+                        Delete Group
+                    </MenuItem>
+                </Menu>
+                <ColorPicker color={this.state.color} anchorEl={this.state.colorAnchor} onChangeComplete={this.colorChange} onClose={() => this.setState({ colorAnchor: null })} />
             </GroupContainer>
         );
     }

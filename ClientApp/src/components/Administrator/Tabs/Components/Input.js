@@ -2,8 +2,9 @@
 import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
-import { PageModal } from '../../../Services/PageModal';
 import { Modal } from 'react-bootstrap';
+import { Button, Popper, Box, Typography } from '@material-ui/core';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 const Container = styled.div`
         display: ${props => props.vote ? "block" : "inline-block"};
@@ -19,48 +20,37 @@ const Container = styled.div`
         box-shadow: ${props => props.vote ? "" : "0 1px 0 1px rgba(0, 0, 0, .08)"};
         background: #fff;
         border-top: ${props => props.vote ? "2px solid #cfcfcf" : ""};
+        box-shadow: ${props => props.checked ? "0 0 0 5px #4075ff" : ""};
         position: relative;
         overflow: ${props => props.vote ? "visible" : "hidden"};
         white-space: ${props => props.vote ? "normal" : "nowrap"};
 `;
 
-const CheckboxContainer = styled.div`
+const MergeStack = styled.div`
     height: 100%;
-    position: relative;
-    display: inline-block;
-    margin-right: 10px;
-`;
-
-const Checkbox = styled.input`
-    border-radius: 0.5rem;
-    height: 1.5rem;
-    width: 1.5rem;
-    border: 1px solid #aaa;
-    box-sizing: border-box;
-    background: #fff;
-    vertical-align: middle;
-    -webkit-appearance: none;
-    outline: none;
-    appearance: none;
-
-    &:checked {
-        background: #4C7AD3;
-    }
-
-    &:hover {
-        cursor: pointer;
-    }
-`;
-
-const Percentage = styled.div`
-    height: 100%;
+    width: 100%;
     position: absolute;
-    background: #4C7AD3;
-    opacity: 40%;
-    width: ${props => props.percentage}%;
-    border-radius: 0.8em;
-    left: 0;
-    top: 0;
+    box-shadow: 0 0 4px 2px #000;
+    top: -4px;
+    left: -4px;
+    border-radius: 0.8rem;
+    pointer-events: none;
+`;
+
+const MergedNumber = styled.div`
+    position: absolute;
+    opacity: 70%;
+    right: 12px;
+    top: -5px;
+    font-size: 0.8rem;
+    pointer-events: none;
+`;
+
+const MoreText = styled(MoreHorizIcon)`
+    position: absolute;
+    right: 15px;
+    opacity: 70%;
+    bottom: 0px;
     pointer-events: none;
 `;
 
@@ -78,11 +68,13 @@ const RowNumber = styled.h1`
     vertical-align: center;
     height: 44px;
     font-weight: 700;
+    pointer-events: none;
 `;
 
 export class Input extends Component {
     state = {
         clickTimeout: null,
+        poppingAnchor: null,
     }
 
     dragStart = e => {
@@ -94,50 +86,71 @@ export class Input extends Component {
         e.dataTransfer.setData('drag', JSON.stringify(data));
     }
 
-    handleDouble = e => {
-        if (this.props.double !== undefined) {
-            this.props.double(e);
-        }
-    }
-
     handleClicks = e => {
-        console.log(this.state.clickTimeout);
+        e.stopPropagation();
+        const id = e.target.id;
         if (this.state.clickTimeout !== null) {
             if (this.props.double !== undefined) {
-                this.props.double(e);
+                this.props.double(id);
             }
             clearTimeout(this.state.clickTimeout);
             this.state.clickTimeout = null;
         } else {
             this.state.clickTimeout = setTimeout(() => {
                 if (this.props.onClick !== undefined) {
-                    this.props.onClick(this.props.id);
+                    this.props.onClick(id);
                 }
                 clearTimeout(this.state.clickTimeout);
                 this.state.clickTimeout = null;
-            }, 250)
+            }, 200)
         }
+    }
+
+    hover = {
+        enter: (e) => {
+            if (this.props.title === this.props.description)
+                return;
+
+            this.setState({
+                poppingAnchor: e.currentTarget,
+            });
+        },
+        leave: () => {
+            if (this.props.title === this.props.description)
+                return;
+
+            this.setState({
+                poppingAnchor: null,
+            });
+        },
     }
 
     render() {
         return (
             <>
-                {this.props.member % this.props.size == 0 &&
+                {!this.props.showcase && this.props.member % this.props.size == 0 &&
                     <RowNumber id={this.props.id}>{(this.props.member / this.props.size) + 1}</RowNumber>}
                 <Container id={this.props.id} member={this.props.member} group={this.props.group} column={this.props.column}
                     size={this.props.size} vote={this.props.vote}
                     onClick={(e) => this.handleClicks(e)}
-                    draggable={!this.props.showcase} onDragStart={this.dragStart}>
-                    {!this.props.showcase &&
-                        <CheckboxContainer>
-                            <Checkbox id={this.props.id} type="checkbox"
-                                checked={this.props.checked}
-                                onChange={this.props.onCheck}
-                                onClick={(e) => { e.stopPropagation() }}
-                                onDoubleClick={(e) => { e.stopPropagation() }}
-                            />
-                        </CheckboxContainer>}
+                    draggable={!this.props.showcase} onDragStart={this.dragStart}
+                    checked={this.props.checked}
+                    onMouseEnter={this.hover.enter} onMouseLeave={this.hover.leave}
+                >
                     {this.props.title}
+
+                    {this.props.isMerged != undefined && !this.props.showcase && this.props.isMerged != 0 &&
+                        <>
+                            <MergedNumber>{this.props.isMerged}</MergedNumber>
+                            <MergeStack />
+                        </>
+                    }
+                    {this.props.title !== this.props.description &&
+                        <>
+                            <MoreText />
+                            <PopoverDetails anchorEl={this.state.poppingAnchor} title={this.props.title} description={this.props.description} />
+                        </>
+                    }
                 </Container>
             </>
         );
@@ -222,6 +235,13 @@ const Child = styled(DetailsContainer)`
     max-height: 200px;
 `;
 
+const Unmerge = styled(Button)`
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+    display: ${props => props.isMerged ? "block" : "none"} !important;
+`;
+
 export class InputDetails extends React.Component {
     state = {
         showChildren: true,
@@ -235,6 +255,7 @@ export class InputDetails extends React.Component {
         return (
             <DetailsContainer>
                 {this.details(this.props.answer)}
+                <Unmerge isMerged={children != undefined} variant="contained" onClick={() => this.unmerge(this.props.answer.group, this.props.answer.Index)}>Unmerge All</Unmerge>
                 {children != undefined && //If this is merged input add button to show them.
                     <ShowChildren value={this.state.showChildren ? "Hide Merged Inputs" : "Show Merged Inputs"} onClick={() => this.setState({ showChildren: !this.state.showChildren })} />}
 
@@ -246,13 +267,22 @@ export class InputDetails extends React.Component {
         );
     }
 
+    unmerge(group, member) {
+        if (this.props.answer.Children != undefined) {
+            const code = sessionStorage.getItem("code");
+
+            axios.post(`admin/${code}/question-unmerge${group}-${member}`);
+            this.close();
+        }
+    }
+
     details(answer) {
         const title = answer.Title;
         const description = answer.Description;
         const user = answer.UserID;
         return (
             <>
-                <Title>{title}</Title>
+                <Title id={answer.group != undefined ? answer.group + "-" + answer.Index : "merged"} onDoubleClick={answer.group != undefined ? (e) => this.props.rename(e) : ""}>{title}</Title>
                 <User>{user}</User>
                 {title != description && <Description>{description}</Description>}
             </>
@@ -278,5 +308,32 @@ export class InputDetails extends React.Component {
                 </Modal.Header>
                 <Modal.Body>{this.content()}</Modal.Body>
             </ModalPage>
+    }
+}
+
+class PopoverDetails extends Component {
+    state = {
+        lock: false, //If true the popover will not disapear when you stop hovering
+    }
+    open = Boolean(this.props.anchorEl);
+
+    handleClick = (e) => {
+        e.stopPropagation();
+        const lock = !this.state.lock
+        this.setState({
+            lock: lock
+        });
+        console.log("Input Popper was " + lock ? "LOCKED" : "UNLOCKED");
+    }
+
+    render() {
+        return (
+            <Popper anchorEl={this.props.anchorEl} open={this.open}>
+                <Box component="fieldset" margin={1} padding={1} maxWidth={40}>
+                    <Typography component="legend">{this.props.title}</Typography>
+                    <Typography variant="body1">{this.props.description}</Typography>
+                </Box>
+            </Popper>
+        );
     }
 }

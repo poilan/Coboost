@@ -68,7 +68,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="title">The name the group should have</param>
         public void AddGroup(string title, int column)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 OpenText_Group group = new OpenText_Group
                 {
@@ -76,6 +76,7 @@ namespace Slagkraft.Models.Admin.Questions
                     Title = title,
                     Index = Groups.Count,
                     Column = column,
+                    Color = "#575b75",
                 };
                 Groups.Add(group);
             }
@@ -88,7 +89,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="input">The Input the user sent us.</param>
         public void AddUserInput(OpenText_Input input)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 Groups[0].Members.Add(input);
                 UpdateMemberIndexes(0);
@@ -98,7 +99,7 @@ namespace Slagkraft.Models.Admin.Questions
 
         public void ArchiveGroup(int group)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (group >= Groups.Count)
                     return;
@@ -122,7 +123,7 @@ namespace Slagkraft.Models.Admin.Questions
 
         public void ArchiveMember(Key input)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count)
                     return;
@@ -141,7 +142,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="column">Index of the Column you want it in</param>
         public void ChangeColumn(int group, int column)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (group < Groups.Count)
                 {
@@ -152,13 +153,32 @@ namespace Slagkraft.Models.Admin.Questions
         }
 
         /// <summary>
+        /// Changes the "Background" Color of a Group
+        /// </summary>
+        /// <param name="group">Index of the Group to Recolor</param>
+        /// <param name="color">The new Color in Hex format</param>
+        public void ColorGroup(int group, string color)
+        {
+            lock (ThreadLock)
+            {
+                if (group >= Groups.Count)
+                    return;
+
+                if (color.Length == 7 && color.StartsWith("#"))
+                {
+                    Groups[group].Color = color;
+                }
+            }
+        }
+
+        /// <summary>
         /// Merges two inputs into one another
         /// </summary>
         /// <param name="parent">This is the input that will still be visible</param>
         /// <param name="child">This input will be hidden inside parent</param>
         public void Merge(Key parent, Key child)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (parent.Group >= Groups.Count || parent.Member >= Groups[parent.Group].Members.Count || child.Group >= Groups.Count || child.Member >= Groups[child.Group].Members.Count)
                     return;
@@ -206,9 +226,12 @@ namespace Slagkraft.Models.Admin.Questions
                         Children = new List<OpenText_Input>(),
                         Description = Groups[parent.Group].Members[parent.Member].Description,
                         Title = Groups[parent.Group].Members[parent.Member].Title,
-                        UserID = Groups[parent.Group].Members[parent.Member].UserID,
+                        UserID = "Multiple Users",
                         Index = Groups[parent.Group].Members[parent.Member].Index,
                     };
+
+                    //Add Parent as the first child
+                    merge.Children.Add(Groups[parent.Group].Members[parent.Member]);
 
                     //Check if child is merged with something
                     if (Groups[child.Group].Members[child.Member] is OpenText_Merged mergedChild)
@@ -252,7 +275,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="target">The new Index you want the input to have</param>
         public void MoveInput(Key input, int target)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count || target >= Groups[input.Group].Members.Count)
                     return;
@@ -305,7 +328,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="title">The new name of the group</param>
         public void RenameGroup(int group, string title)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (Groups.Count > group)
                 {
@@ -317,7 +340,7 @@ namespace Slagkraft.Models.Admin.Questions
 
         public void RenameMember(Key target, string title)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (Groups.Count > target.Group && Groups[target.Group].Members.Count > target.Member)
                 {
@@ -334,7 +357,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="targetGroup">The Index of the Group you want the input moved to</param>
         public void SwitchGroup(Key input, int targetGroup)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count || targetGroup >= Groups.Count)
                     return;
@@ -361,7 +384,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="target">The Input Key to the Input you want Unmerged</param>
         public void Unmerge(Key target)
         {
-            lock (QuestionLock)
+            lock (ThreadLock)
             {
                 if (target.Group >= Groups.Count || target.Member >= Groups[target.Group].Members.Count)
                     return;
@@ -375,16 +398,11 @@ namespace Slagkraft.Models.Admin.Questions
                         Groups[target.Group].Members.Add(inp);
                     }
 
-                    //Make target into a normal input
-                    OpenText_Input parent = new OpenText_Input
-                    {
-                        Description = merged.Description,
-                        Title = merged.Title,
-                        UserID = merged.UserID,
-                    };
+                    //Remove the merged input
+                    Groups[target.Group].Members.RemoveAt(target.Member);
 
-                    //Put the new target into its old place.
-                    Groups[target.Group].Members[target.Member] = parent;
+                    //Update indexes
+                    UpdateMemberIndexes(target.Group);
                 }
             }
             EventStream();

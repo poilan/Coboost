@@ -32,10 +32,13 @@ namespace Slagkraft.Models.Admin
             }
             set
             {
+                if (Tasks == null || value >= Tasks.Count || value < 0 || Tasks[value].Type == BaseTask.TaskType.Planned)
+                    return;
+
                 int i = active;
                 active = value;
                 ClientSet();
-                if (Tasks != null && Tasks.Count > i)
+                if (Tasks.Count > i)
                 {
                     Tasks[i].Reset.Set();
                 }
@@ -193,6 +196,7 @@ namespace Slagkraft.Models.Admin
             foreach (BaseTask task in Tasks)
             {
                 task.Reset = new ManualResetEvent(false);
+                task.ShowResults = true;
             }
         }
 
@@ -270,7 +274,8 @@ namespace Slagkraft.Models.Admin
                 string json = JsonConvert.SerializeObject(tasks, settings);
 
                 return json;
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("Saving error: {0}", e);
 

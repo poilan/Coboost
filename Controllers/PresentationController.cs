@@ -99,7 +99,7 @@ namespace Slagkraft.Controllers
                     }
 
                     {
-                        bool show = true;
+                        bool show = question.ShowResults;
                         await Response.WriteAsync("event:" + "ShowResults\n");
                         string results = $"data: {JsonConvert.SerializeObject(show)}\n\n";
                         await Response.WriteAsync(results);

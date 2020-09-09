@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, useRef, createRef } from 'react';
 import axios from 'axios';
 import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -137,6 +137,22 @@ const NewOptionNumber = styled.h2`
     font-size: 1rem;
 `;
 
+const ContentInput = styled.textarea`
+    display: block;
+    width: calc(100% - 60px);
+    max-height: ${props => props.isTitle ? "50px" : "300px"};
+    min-height: 50px;
+    font-family: CircularStd;
+    font-size: 1rem;
+    text-align: ${props => props.isTitle ? "center" : "left"};
+    color: black;
+    border: 0;
+    border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
+    margin: 0 30px;
+    margin-top: ${props => props.isTitle ? "30px" : "0"};
+    resize: none;
+`;
+
 export class Organizer extends Component {
     constructor(props) {
         super(props);
@@ -166,8 +182,15 @@ export class Organizer extends Component {
                 x: 0,
                 y: 0,
                 visible: false,
-            }
+            },
+
+            resultsAsPercentage: false
         }
+
+
+        this.Title = createRef();
+        this.Description = createRef();
+        this.Submit = createRef();
 
         //Contains all the modals
         this.modal = {
@@ -180,7 +203,7 @@ export class Organizer extends Component {
                     })
                 },
 
-                content: () => {
+                Content: () => {
                     const sendInput = (e) => {
                         e.preventDefault();
                         const title = this.state.modal.string;
@@ -218,8 +241,51 @@ export class Organizer extends Component {
                         });
                     }
 
+
+                    const onTitleFocus = (e) => {
+                        e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
+
+                        if (this.state.modal.string.trim() == "") {
+                            var modal = this.state.modal;
+                            modal.string = this.state.modal.description.substring(0, 29);
+                            this.setState({
+                                modal: modal,
+                            });
+                        }
+                    }
+
+                    const handleInvalid = () => {
+                        const description = this.state.modal.description;
+
+                        if (description.length < 3) {
+                            if (this.Description.current)
+                                this.Description.current.focus();
+
+                            return;
+                        } else if (description.length > 30) {
+                            let title = this.state.modal.string;
+
+                            if (title.length < 3) {
+                                if (this.Title.current)
+                                    this.Title.current.focus();
+
+                                return;
+                            }
+                        }
+                    }
+
+                    const handleEnter = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (this.Submit.current) {
+                                this.Submit.current.click();
+                            }
+                        }
+                    }
+
                     return (
-                        <Form autoComplete="off" onSubmit={sendInput}>
+                        <Form autoComplete="off" onSubmit={sendInput} onInvalid={handleInvalid}>
                             {
                                 //<NewOptionNumber>Title</NewOptionNumber>
                                 //<Form.Group controlId="validateTitle">
@@ -227,18 +293,34 @@ export class Organizer extends Component {
                                 //        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
                                 //    </InputGroup>
                                 //</Form.Group>
+                                //{this.state.modal.description.length > 30 &&
+                                //    <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                                //        <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
+                                //    </Box>
+                                //}
+                                //<Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                                //    <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
+                                //</Box>
                             }
-                            {this.state.modal.description > 30 &&
-                                <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                                    <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
-                                </Box>
-                            }
-                            <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                                <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
-                            </Box>
+                            <ContentInput ref={this.Title} disabled={this.state.modal.description == undefined || this.state.modal.description.length <= 30}
+                                required placeholder={this.state.modal.description == undefined || this.state.modal.description.length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
+                                type="text" minLength="3" maxLength="30" name="opentext-titlefield" isTitle
+                                value={this.state.modal.string} onChange={handleTitle}
+                                onFocus={(e) => onTitleFocus(e)}
+                                onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
+                            />
+
+                            <ContentInput ref={this.Description}
+                                required autoFocus placeholder="Write your input..."
+                                type="text" minLength="3" name={`description`}
+                                value={this.state.modal.description} onChange={handleDescription}
+                                onFocus={(e) => e.target.placeholder = ""}
+                                onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
+                            />
+
                             <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
-                            <CreateButton type="submit" value="Submit" />
-                        </Form>
+                            <CreateButton ref={this.Submit} type="submit" value="Submit" />
+                        </Form >
                     );
                 },
 
@@ -255,11 +337,13 @@ export class Organizer extends Component {
             rename: {
                 open: (event) => {
                     const key = event.target.id.split("-");
+                    const title = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
 
                     this.setState({
                         modal: {
                             rename: true,
                             key: key,
+                            string: title,
                         }
                     });
                 },
@@ -343,8 +427,11 @@ export class Organizer extends Component {
 
             details: {
                 open: (id) => {
+                    console.log(id);
                     let key = id.split("-");
+                    console.log(key);
                     let answer = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]];
+                    answer.group = key[0];
                     this.setState({
                         details: {
                             answer: answer,
@@ -365,7 +452,7 @@ export class Organizer extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         document.addEventListener('contextmenu', (event) => {
             event.preventDefault();
             const clickX = event.clientX;
@@ -377,7 +464,7 @@ export class Organizer extends Component {
                     visible: true,
                 }
             })
-        })
+        });
 
         document.addEventListener('click', () => {
             this.setState({
@@ -387,7 +474,18 @@ export class Organizer extends Component {
                     visible: false,
                 }
             })
-        })
+        });
+
+        this.AutoResultToggle();
+    }
+
+    async AutoResultToggle() {
+        await setTimeout(() => {
+            this.setState({
+                resultsAsPercentage: !this.state.resultsAsPercentage,
+            });
+            this.AutoResultToggle();
+        }, 6660);
     }
 
     componentWillUnmount() {
@@ -449,9 +547,9 @@ export class Organizer extends Component {
                 axios.post(`admin/${code}/question-create-group-C${this.props.columns.length - 1}`);
             }
 
-            const select = (event) => {
-                event.stopPropagation();
-                const key = event.target.id;
+            const select = (id) => {
+                const key = id;
+                console.log(id);
 
                 if (this.state.selected.indexOf(key) == -1) {
                     let selected = this.state.selected;
@@ -468,6 +566,7 @@ export class Organizer extends Component {
                         selected: selected,
                     })
                 }
+                console.log(this.state.selected);
             }
 
             const getOptions = () => {
@@ -484,9 +583,6 @@ export class Organizer extends Component {
                     }
                     options.push(data);
                 }
-                console.log(options);
-                console.log(selected);
-                console.log("Returning...");
                 return options;
             }
 
@@ -599,16 +695,15 @@ export class Organizer extends Component {
                                         return (
                                             <Group id={group.Index} key={group.Index}
                                                 group={group.Index} column={group.Column} title={group.Title} size={column.width}
-                                                double={this.modal.rename.open}>
+                                                double={this.modal.rename.open} color={group.Color}>
                                                 {group.Members !== undefined &&
                                                     group.Members.map(member =>
 
                                                         <Input id={group.Index + "-" + member.Index} key={member.Index}
                                                             member={member.Index} group={group.Index} column={group.Column} title={member.Title} size={column.width}
-                                                            double={this.modal.rename.open.bind(this)}
+                                                            double={this.modal.details.open} description={member.Description}
                                                             checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
-                                                            onCheck={select.bind(this)}
-                                                            onClick={this.modal.details.open}
+                                                            onClick={select} isMerged={member.Children != undefined ? member.Children.length : 0}
                                                         />
 
                                                     )}
@@ -628,10 +723,10 @@ export class Organizer extends Component {
                     )
                     }
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                    {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.content()} onClose={this.modal.answer.close.bind(this)} />}
+                    {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.Content()} onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
-                    {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} />}
+                    {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
                 </MainContainer >
             );
         }
@@ -658,15 +753,15 @@ export class Organizer extends Component {
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
+                            <SendToT disabled={this.state.selected.length >= 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
-                    <ResultBackground style={{ width: "95%", height: "70%" }} />
+                    <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
                         <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
-                            vote percentage={((option.Votes.length / task.TotalVotes) * 100)} height="70%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                            onCheck={select.bind(this)}
+                            vote height="80%" total={task.Options.length}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onCheck={select.bind(this)}
+                            percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length} showPercentage={this.state.resultsAsPercentage}
                         />
                     )}
                 </MainContainer>
@@ -698,12 +793,12 @@ export class Organizer extends Component {
                             <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
-                    <ResultBackground style={{ width: "95%", height: "70%" }} />
+                    <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
                         <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
-                            vote percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} height="70%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                            onCheck={select.bind(this)}
+                            vote height="80%" total={task.Options.length}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onCheck={select.bind(this)}
+                            percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={option.Points} showPercentage={this.state.resultsAsPercentage}
                         />
                     )}
                 </MainContainer>

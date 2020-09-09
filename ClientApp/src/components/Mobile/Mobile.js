@@ -669,13 +669,38 @@ export class Mobile extends Component {
             }
         }
 
+        const onTitleFocus = (e) => {
+            e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
+
+            if (this.state.title.trim() == "") {
+                this.setState({
+                    title: this.getTaskAnswers().substring(0, 29)
+                });
+            }
+        }
+
         return (
             <ContentContainer>
                 <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                    {this.getTaskAnswers().length > 30 && <ContentInput onKeyDown={handleEnter.bind(this)} required ref={this.TextTitle} type="text" minLength="3" value={this.state.title} name={`opentext-titlefield`} title={true} maxLength="30" onChange={titleChange} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />}
-                    <ContentInput onKeyDown={handleEnter.bind(this)} required autoFocus type="text" minLength="3" ref={this.TextDescription} value={this.getTaskAnswers()} name={`q-${this.getTaskIndex()}`} onChange={(e) => this.questionChange(e)} onFocus={(e) => e.target.placeholder = ""} onBlur={(e) => e.target.placeholder = "Write your answer..."} placeholder="Write your answer..." />
-                    <ContentButton ref={this.TextForm} type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write a input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write title before sending!" : "Send Input!"}</ContentButton>
+
+                    <ContentInput ref={this.TextTitle} disabled={this.getTaskAnswers().length <= 30}
+                        required placeholder={this.getTaskAnswers().length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
+                        type="text" minLength="3" maxLength="30" name="opentext-titlefield" title={true}
+                        value={this.state.title} onChange={titleChange}
+                        onFocus={(e) => onTitleFocus(e)}
+                        onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
+                    />
+
+                    <ContentInput ref={this.TextDescription}
+                        required autoFocus placeholder="Write your answer..."
+                        type="text" minLength="3" name={`q-${this.getTaskIndex()}`}
+                        value={this.getTaskAnswers()} onChange={(e) => this.questionChange(e)}
+                        onFocus={(e) => e.target.placeholder = ""}
+                        onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
+                    />
+
+                    <ContentButton ref={this.TextForm} type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write an input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write a title before sending!" : "Send Input!"}</ContentButton>
                 </Form>
             </ContentContainer>
         );
@@ -749,7 +774,7 @@ export class Mobile extends Component {
         this.setTaskAnswers(answers);
     }
 
-    inputsClick(e) {     
+    inputsClick(e) {
         e.preventDefault();
         const state = this.state;
         const questions = this.getTasks().length;
@@ -771,10 +796,10 @@ export class Mobile extends Component {
 
         // Send
         if (type === 0) { // Open Text
-            data.Description = answer;
+            data.Description = answer.trim();
 
             if (data.Description.length > 30) {
-                data.Title = this.state.title;
+                data.Title = this.state.title.trim();
             }
 
             axios.post(`client/${code}/add-opentext`, data);
@@ -946,7 +971,7 @@ export class Mobile extends Component {
                 title = "Open Text";
                 break;
             case 1:
-                title = "Multiple Choice";
+                title = "Pick " + this.getOptionMax() + " favorites!";
                 break;
             case 2:
                 title = "Give Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";

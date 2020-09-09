@@ -25,6 +25,8 @@ namespace Slagkraft.Models.Admin.Questions
             Points,
 
             Rate,
+
+            Planned,
         }
 
         #endregion Public Enums
@@ -44,7 +46,7 @@ namespace Slagkraft.Models.Admin.Questions
         /// Lock to prevent bugs from MultiThreading Client Requests
         /// <para>We don't need things to run parellel, we just need them to not hog the main thread</para>
         /// </summary>
-        protected readonly object QuestionLock = new object();
+        protected readonly object ThreadLock = new object();
 
         #endregion Protected Fields
 
@@ -76,6 +78,8 @@ namespace Slagkraft.Models.Admin.Questions
 
         protected void EventStream()
         {
+            if (Reset == null)
+                Reset = new ManualResetEvent(false);
             Reset.Set();
         }
 
