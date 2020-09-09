@@ -300,7 +300,8 @@ export class Dashboard extends Component {
         super(props);
         this.state = {
             sessions: [],
-            showModal: false,
+            showNewSessionModal: false,
+            showNewTemplateModal: false,
             title: '',
 
             modal: {
@@ -310,6 +311,7 @@ export class Dashboard extends Component {
         }
         this.createProject = this.createProject.bind(this);
         this.newProject = this.newProject.bind(this);
+        this.newTemplate = this.newTemplate.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.sessionClick = this.sessionClick.bind(this);
@@ -378,7 +380,13 @@ export class Dashboard extends Component {
 
     newProject() {
         this.setState({
-            showModal: true,
+            showNewSessionModal: true,
+        });
+    }
+
+    newTemplate() {
+        this.setState({
+            showNewTemplateModal: true,
         });
     }
 
@@ -512,7 +520,10 @@ export class Dashboard extends Component {
     }
 
     closeModal() {
-        this.setState({ showModal: false });
+        this.setState({
+            showNewSessionModal: false,
+            showNewTemplateModal: false,
+        });
     }
 
     logout() {
@@ -538,6 +549,35 @@ export class Dashboard extends Component {
         );
     }
 
+    modalTemplateContent() {
+        return (
+            <ProjectModalContent>
+                <Form autoComplete="on" onSubmit={(e) => this.createProject(e)}>
+                    <PopupText>Title</PopupText>
+                    <Form.Group controlId="validateTitle">
+                        <InputGroup>
+                            <Form.Control name="title" onChange={this.handleChange} placeholder="Session title..." required />
+                        </InputGroup>
+                    </Form.Group>
+
+                    <PopupText>Template</PopupText>
+                    <Form.Group controlId="validateTemplate">
+                        <InputGroup>
+                            <Form.Control as="select">
+                                <option>Template A</option>
+                                <option>Template B</option>
+                                <option>Template C</option>
+                                <option>Template D</option>
+                            </Form.Control>
+                        </InputGroup>
+                    </Form.Group>
+                    <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
+                    <CreateButton type="submit" value="Create Template" />
+                </Form>
+            </ProjectModalContent>
+        );
+    }
+
     render() {
         return (
             <>
@@ -552,7 +592,12 @@ export class Dashboard extends Component {
                             <BannerLink onClick={this.logout}>Logout</BannerLink>
                         </BannerDropdown>
 
-                        <BannerButton style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }} onClick={this.newProject}>New Session</BannerButton>
+                        <BannerDropdown title="New Session" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                            <BannerLink onClick={this.newProject}>Create Empty Session</BannerLink>
+                            <BannerLink disabled onClick={this.newTemplate}>Use Session Template</BannerLink>
+                        </BannerDropdown>
+
+                        {/*<BannerButton style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }} onClick={this.newProject}>New Session</BannerButton>*/}
                     </Banner>
                     <Header>
                         <HeaderText>Overview</HeaderText>
@@ -561,7 +606,8 @@ export class Dashboard extends Component {
                         {this.sessionRender()}
                     </CategoryContainer>
                 </MainContainer>
-                {this.state.showModal && <PageModal title="New Session" body={this.modalContent()} onClose={this.closeModal} />}
+                {this.state.showNewSessionModal && <PageModal title="New Session" body={this.modalContent()} onClose={this.closeModal} />}
+                {this.state.showNewTemplateModal && <PageModal title="New Template" body={this.modalTemplateContent()} onClose={this.closeModal} />}
                 {this.state.modal.delete && <PageModal title="Confirm Delete" body={this.modal.delete.content()} onClose={this.modal.delete.close.bind(this)} />}
             </>
         );
