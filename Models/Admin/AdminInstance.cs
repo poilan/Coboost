@@ -164,9 +164,12 @@ namespace Slagkraft.Models.Admin
 
         public void DeleteTask(int index)
         {
-            Tasks[index].Reset.Set();
-            Tasks.RemoveAt(index);
-            UpdateIndexes();
+            if (index < Tasks.Count)
+            {
+                Tasks[index].Reset.Set();
+                Tasks.RemoveAt(index);
+                UpdateIndexes();
+            }
         }
 
         public BaseTask GetActiveQuestion()
