@@ -136,6 +136,7 @@ export class CreateTaskModal extends Component {
             const code = sessionStorage.getItem('code');
             var data = {
                 Title: this.state.description,
+                ShowResults: true,
             }
 
             axios.post(`admin/${code}/questions-create-opentext`, data, {
@@ -245,6 +246,7 @@ export class CreateTaskModal extends Component {
                 Title: this.state.description,
                 Options: this.state.options,
                 Max: parseInt(this.state.max),
+                ShowResults: true,
             }
 
             if (!this.state.extra)
@@ -365,6 +367,7 @@ export class CreateTaskModal extends Component {
                 Options: this.state.options,
                 Amount: parseInt(this.state.points),
                 Max: parseInt(this.state.max),
+                ShowResults: true,
             }
 
             axios.post(`admin/${code}/questions-create-points`, data, {
@@ -484,6 +487,7 @@ export class CreateTaskModal extends Component {
                 Options: this.state.options,
                 Min: parseInt(this.state.points),
                 Max: parseInt(this.state.max),
+                ShowResults: true,
             }
 
             axios.post(`admin/${code}/questions-create-slider`, data, {
