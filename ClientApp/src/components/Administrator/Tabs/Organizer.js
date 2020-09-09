@@ -749,7 +749,7 @@ export class Organizer extends Component {
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT disabled={this.state.selected.length >= 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
+                            <SendToT disabled={this.state.selected.length != 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
