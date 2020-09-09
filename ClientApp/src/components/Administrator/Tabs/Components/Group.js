@@ -225,15 +225,13 @@ export class Group extends Component {
     }
 
     colorChange = (color) => {
-        if (color.length == 7 && color[0] == '#') {
-            this.setState({
-                color: color.hex,
-                colorAnchor: null
-            });
-            const code = sessionStorage.getItem("code");
+        this.setState({
+            color: color.hex,
+            colorAnchor: null
+        });
+        const code = sessionStorage.getItem("code");
 
-            axios.post(`admin/${code}/group${this.props.group}-recolor${color}`);
-        }
+        axios.post(`admin/${code}/group${this.props.group}-recolor${color}`);
     }
 
     colorOpen = () => {
