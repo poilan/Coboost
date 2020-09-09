@@ -730,9 +730,7 @@ export class Organizer extends Component {
         }
 
         const multipleChoice = (task) => {
-            const select = (event) => {
-                const key = event.target.id;
-
+            const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
                         selected: [key],
