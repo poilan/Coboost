@@ -28,7 +28,15 @@ namespace Slagkraft.Models.Admin
         {
             get
             {
-                return active;
+                if (active < Tasks.Count)
+                {
+                    return active;
+                }
+                else
+                {
+                    active = Tasks.Count - 1;
+                    return active;
+                }
             }
             set
             {
