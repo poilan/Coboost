@@ -238,7 +238,7 @@ export class Task extends Component {
                         <TaskType id={this.props.id}>{this.props.type == 0 ? "Text" : this.props.type == 1 ? "Multiple Choice" : this.props.type == 2 ? "Points" : "Slider"}</TaskType>
                         <TaskTitle id={this.props.id}>{this.props.title}</TaskTitle>
                     </TitleContainer>
-                    <RemoveButton id={this.props.id} onClick={this.modal.delete.open.bind(this)}></RemoveButton>
+                    <RemoveButton id={this.props.key} onClick={this.modal.delete.open.bind(this)}></RemoveButton>
                 </TaskContainer>
                 {this.state.modal.delete && <PageModal title="Confirm Delete" body={this.modal.delete.content()} onClose={this.modal.delete.close.bind(this)} />}
             </>
