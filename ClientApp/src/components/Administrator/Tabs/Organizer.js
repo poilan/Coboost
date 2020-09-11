@@ -792,7 +792,7 @@ export class Organizer extends Component {
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index}
+                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
                             vote height="80%" total={task.Options.length}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
                             percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={option.Points} showPercentage={this.state.resultsAsPercentage}
