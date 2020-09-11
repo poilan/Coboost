@@ -332,7 +332,7 @@ export class Organizer extends Component {
             rename: {
                 open: (event) => {
                     const key = event.target.id.split("-");
-                    const title = '';
+                    let title = '';
 
                     if (key.indexOf("title") !== -1) {
                         title = this.props.tasks[this.props.active].Groups[key[0]].Title;
