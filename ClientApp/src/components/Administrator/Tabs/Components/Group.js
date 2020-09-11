@@ -127,7 +127,7 @@ export class Group extends Component {
     validateHexColor = /^#([0-9A-F]{3}){1,2}$/;
 
     componentDidMount() {
-        if (this.validateHexColor(this.props.color)) {
+        if (this.validateHexColor.test(this.props.color)) {
             this.setState({
                 color: this.props.color,
             });
