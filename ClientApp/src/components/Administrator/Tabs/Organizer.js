@@ -334,8 +334,6 @@ export class Organizer extends Component {
                     const key = event.target.id.split("-");
                     const title = '';
 
-                    this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
-
                     if (key.indexOf("title") !== -1) {
                         title = this.props.tasks[this.props.active].Groups[key[0]].Title;
                     } else {
