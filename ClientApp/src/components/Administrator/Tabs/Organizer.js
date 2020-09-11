@@ -770,9 +770,7 @@ export class Organizer extends Component {
         }
 
         const points = (task) => {
-            const select = (event) => {
-                const key = event.target.id;
-
+            const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
                         selected: [key],
@@ -796,9 +794,9 @@ export class Organizer extends Component {
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
+                        <ResultItem id={option.Index} id={option.Index} index={option.Index}
                             vote height="80%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onCheck={select.bind(this)}
+                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
                             percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={option.Points} showPercentage={this.state.resultsAsPercentage}
                         />
                     )}
@@ -807,9 +805,7 @@ export class Organizer extends Component {
         }
 
         const slider = (task) => {
-            const select = (event) => {
-                const key = event.target.id;
-
+            const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
                     this.setState({
                         selected: [key],
@@ -833,7 +829,7 @@ export class Organizer extends Component {
                         <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote
                             average={option.Average} min={task.Min} max={task.Max}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                            onCheck={select.bind(this)}
+                            onClick={select}
                         />
                     )}
                 </MainContainer>

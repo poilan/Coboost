@@ -89,7 +89,7 @@ export function ResultSlider(props) {
             <Input vote size="1"
                 id={props.id} index={props.index} title={props.title}
                 checked={props.checked}
-                onCheck={props.onCheck} showcase={props.showcase}
+                onClick={props.onClick} showcase={props.showcase}
             />
             <Box component="fieldset" px={2} borderColor="transparent">
                 <Slider name={props.title} value={props.average}
