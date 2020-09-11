@@ -140,13 +140,14 @@ const NewOptionNumber = styled.h2`
 const ContentInput = styled.textarea`
     display: block;
     width: calc(100% - 60px);
-    max-height: ${props => props.isTitle ? "50px" : "300px"};
-    min-height: 50px;
+    max-height: ${props => props.isTitle ? "1.4rem" : "8.4rem"};
+    min-height: 1.4rem;
     font-family: CircularStd;
     font-size: 1rem;
     text-align: ${props => props.isTitle ? "center" : "left"};
     color: black;
     border: 0;
+    padding: 0.2rem 0.1rem;
     border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
     margin: 0 30px;
     margin-top: ${props => props.isTitle ? "30px" : "0"};
@@ -187,10 +188,6 @@ export class Organizer extends Component {
             resultsAsPercentage: false
         }
 
-        this.Title = createRef();
-        this.Description = createRef();
-        this.Submit = createRef();
-
         //Contains all the modals
         this.modal = {
             answer: {
@@ -202,125 +199,125 @@ export class Organizer extends Component {
                     })
                 },
 
-                Content: () => {
-                    const sendInput = (e) => {
-                        e.preventDefault();
-                        const title = this.state.modal.string;
-                        const description = this.state.modal.description;
-                        const user = localStorage.getItem("user");
-                        const code = sessionStorage.getItem("code");
+                //Content: () => {
+                //    const sendInput = (e) => {
+                //        e.preventDefault();
+                //        const title = this.state.modal.string;
+                //        const description = this.state.modal.description;
+                //        const user = localStorage.getItem("user");
+                //        const code = sessionStorage.getItem("code");
 
-                        let data = {
-                            Description: description,
-                            UserID: user,
-                        }
+                //        let data = {
+                //            Description: description,
+                //            UserID: user,
+                //        }
 
-                        if (description.length > 30)
-                            data.Title = title;
+                //        if (description.length > 30)
+                //            data.Title = title;
 
-                        axios.post(`client/${code}/add-opentext`, data);
-                        this.modal.answer.close();
-                    }
+                //        axios.post(`client/${code}/add-opentext`, data);
+                //        this.modal.answer.close();
+                //    }
 
-                    const handleTitle = (event) => {
-                        event.preventDefault();
-                        var modal = this.state.modal;
-                        modal.string = event.target.value;
-                        this.setState({
-                            modal: modal,
-                        });
-                    }
+                //    const handleTitle = (event) => {
+                //        event.preventDefault();
+                //        var modal = this.state.modal;
+                //        modal.string = event.target.value;
+                //        this.setState({
+                //            modal: modal,
+                //        });
+                //    }
 
-                    const handleDescription = (event) => {
-                        event.preventDefault();
-                        var modal = this.state.modal;
-                        modal.description = event.target.value;
-                        this.setState({
-                            modal: modal,
-                        });
-                    }
+                //    const handleDescription = (event) => {
+                //        event.preventDefault();
+                //        var modal = this.state.modal;
+                //        modal.description = event.target.value;
+                //        this.setState({
+                //            modal: modal,
+                //        });
+                //    }
 
-                    const onTitleFocus = (e) => {
-                        e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
+                //    const onTitleFocus = (e) => {
+                //        e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
 
-                        if (this.state.modal.string.trim() == "") {
-                            var modal = this.state.modal;
-                            modal.string = this.state.modal.description.substring(0, 29);
-                            this.setState({
-                                modal: modal,
-                            });
-                        }
-                    }
+                //        if (this.state.modal.string.trim() == "") {
+                //            var modal = this.state.modal;
+                //            modal.string = this.state.modal.description.substring(0, 29);
+                //            this.setState({
+                //                modal: modal,
+                //            });
+                //        }
+                //    }
 
-                    const handleInvalid = () => {
-                        const description = this.state.modal.description;
+                //    const handleInvalid = () => {
+                //        const description = this.state.modal.description;
 
-                        if (description.length < 3) {
-                            if (this.Description.current)
-                                this.Description.current.focus();
+                //        if (description.length < 3) {
+                //            if (this.Description.current)
+                //                this.Description.current.focus();
 
-                            return;
-                        } else if (description.length > 30) {
-                            let title = this.state.modal.string;
+                //            return;
+                //        } else if (description.length > 30) {
+                //            let title = this.state.modal.string;
 
-                            if (title.length < 3) {
-                                if (this.Title.current)
-                                    this.Title.current.focus();
+                //            if (title.length < 3) {
+                //                if (this.Title.current)
+                //                    this.Title.current.focus();
 
-                                return;
-                            }
-                        }
-                    }
+                //                return;
+                //            }
+                //        }
+                //    }
 
-                    const handleEnter = (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (this.Submit.current) {
-                                this.Submit.current.click();
-                            }
-                        }
-                    }
+                //    const handleEnter = (e) => {
+                //        if (e.key === 'Enter') {
+                //            e.preventDefault();
+                //            e.stopPropagation();
+                //            if (this.Submit.current) {
+                //                this.Submit.current.click();
+                //            }
+                //        }
+                //    }
 
-                    return (
-                        <Form autoComplete="off" onSubmit={sendInput} onInvalid={handleInvalid}>
-                            {
-                                //<NewOptionNumber>Title</NewOptionNumber>
-                                //<Form.Group controlId="validateTitle">
-                                //    <InputGroup>
-                                //        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
-                                //    </InputGroup>
-                                //</Form.Group>
-                                //{this.state.modal.description.length > 30 &&
-                                //    <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                                //        <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
-                                //    </Box>
-                                //}
-                                //<Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                                //    <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
-                                //</Box>
-                            }
-                            <ContentInput ref={this.Title} disabled={this.state.modal.description == undefined || this.state.modal.description.length <= 30}
-                                required placeholder={this.state.modal.description == undefined || this.state.modal.description.length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
-                                type="text" minLength="3" maxLength="30" name="opentext-titlefield" isTitle
-                                value={this.state.modal.string} onChange={handleTitle}
-                                onFocus={(e) => onTitleFocus(e)}
-                                onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
-                            />
+                //    return (
+                //        <Form autoComplete="off" onSubmit={sendInput} onInvalid={handleInvalid}>
+                //            {
+                //                //<NewOptionNumber>Title</NewOptionNumber>
+                //                //<Form.Group controlId="validateTitle">
+                //                //    <InputGroup>
+                //                //        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
+                //                //    </InputGroup>
+                //                //</Form.Group>
+                //                //{this.state.modal.description.length > 30 &&
+                //                //    <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                //                //        <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
+                //                //    </Box>
+                //                //}
+                //                //<Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
+                //                //    <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
+                //                //</Box>
+                //            }
+                //            <ContentInput ref={this.Title} disabled={this.state.modal.description == undefined || this.state.modal.description.length <= 30}
+                //                required placeholder={this.state.modal.description != undefined && this.state.modal.description.length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
+                //                type="text" minLength="3" maxLength="30" name="opentext-titlefield" isTitle
+                //                value={this.state.modal.string} onChange={handleTitle}
+                //                onFocus={(e) => onTitleFocus(e)}
+                //                onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
+                //            />
 
-                            <ContentInput ref={this.Description}
-                                required autoFocus placeholder="Write your input..."
-                                type="text" minLength="3" name={`description`}
-                                value={this.state.modal.description} onChange={handleDescription}
-                                onFocus={(e) => e.target.placeholder = ""}
-                                onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
-                            />
+                //            <ContentInput ref={this.Description}
+                //                required autoFocus placeholder="Write your input..."
+                //                type="text" minLength="3" name={`description`}
+                //                value={this.state.modal.description} onChange={handleDescription}
+                //                onFocus={(e) => e.target.placeholder = ""}
+                //                onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
+                //            />
 
-                            <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
-                            <CreateButton ref={this.Submit} type="submit" value="Submit" />
-                        </Form >
-                    );
-                },
+                //            <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
+                //            <CreateButton ref={this.Submit} type="submit" value="Submit" />
+                //        </Form >
+                //    );
+                //},
 
                 close: () => {
                     this.setState({
@@ -335,7 +332,15 @@ export class Organizer extends Component {
             rename: {
                 open: (event) => {
                     const key = event.target.id.split("-");
-                    const title = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
+                    const title = '';
+
+                    this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
+
+                    if (key.indexOf("title") !== -1) {
+                        title = this.props.tasks[this.props.active].Groups[key[0]].Title;
+                    } else {
+                        title = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
+                    }
 
                     this.setState({
                         modal: {

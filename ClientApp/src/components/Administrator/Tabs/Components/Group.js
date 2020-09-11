@@ -124,9 +124,10 @@ export class Group extends Component {
         colorAnchor: null,
         color: '#575b75'
     }
+    validateHexColor = /^#([0-9A-F]{3}){1,2}$/;
 
     componentDidMount() {
-        if (this.props.color !== undefined && this.props.color.length == 7 && this.props.color[0] == '#') {
+        if (this.validateHexColor(this.props.color)) {
             this.setState({
                 color: this.props.color,
             });
@@ -225,13 +226,16 @@ export class Group extends Component {
     }
 
     colorChange = (color) => {
+        if (!this.validateHexColor.test(color.hex))
+            return;
+
         this.setState({
             color: color.hex,
             colorAnchor: null
         });
         const code = sessionStorage.getItem("code");
 
-        axios.post(`admin/${code}/group${this.props.group}-recolor${color}`);
+        axios.post(`admin/${code}/group${this.props.group}-recolor${color.hex}`);
     }
 
     colorOpen = () => {
