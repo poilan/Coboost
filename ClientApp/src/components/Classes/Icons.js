@@ -198,7 +198,7 @@ export class Ico_Text extends Component {
 
     render() {
         return (
-            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/Group 222.svg" /></span>
+            <span><img {...this.props} draggable={false} alt="Multiple Choice" src="./icons/OpenText.svg" /></span>
         );
     }
 }

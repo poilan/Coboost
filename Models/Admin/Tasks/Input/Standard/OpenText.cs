@@ -161,7 +161,7 @@ namespace Slagkraft.Models.Admin.Questions
         {
             lock (ThreadLock)
             {
-                if (group >= Groups.Count)
+                if (group >= Groups.Count || group < 0 || color == null)
                     return;
 
                 if (color.Length == 7 && color.StartsWith("#"))
@@ -169,6 +169,7 @@ namespace Slagkraft.Models.Admin.Questions
                     Groups[group].Color = color;
                 }
             }
+            EventStream();
         }
 
         /// <summary>

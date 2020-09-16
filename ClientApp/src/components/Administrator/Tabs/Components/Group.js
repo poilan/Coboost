@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MenuIcon from '@material-ui/icons/Menu';
 import { grey } from '@material-ui/core/colors';
 import { ColorPicker } from './ColorPicker';
+import { color } from '@material-ui/system';
 
 const GroupContainer = styled.div`
         width: 100%;
@@ -27,7 +28,7 @@ const GroupContainer = styled.div`
         overflow: hidden;
 
         &:hover {
-           opacity: 90%;
+           filter: saturate(150%) drop-shadow(6px 6px 3px black);
            cursor: ${props => props.group == "new" ? "pointer" : "default"};
         }
     `;
@@ -122,17 +123,8 @@ export class Group extends Component {
         collapse: true,
         menuAnchor: null,
         colorAnchor: null,
-        color: '#575b75'
     }
-    validateHexColor = /^#([0-9A-F]{3}){1,2}$/;
-
-    componentDidMount() {
-        if (this.validateHexColor.test(this.props.color)) {
-            this.setState({
-                color: this.props.color,
-            });
-        }
-    }
+    validateHexColor = /^#([0-9A-Fa-f]{3}){1,2}$/;
 
     modal = {
         archive: {
@@ -184,7 +176,7 @@ export class Group extends Component {
 
         over: (e) => {
             e.preventDefault();
-            e.stopPropagation();
+            //e.stopPropagation();
         },
 
         drop: (e) => {
@@ -225,17 +217,18 @@ export class Group extends Component {
         });
     }
 
-    colorChange = (color) => {
-        if (!this.validateHexColor.test(color.hex))
+    colorChange = (ColorEvent) => {
+        if (!this.validateHexColor.test(ColorEvent.hex))
             return;
 
         this.setState({
-            color: color.hex,
             colorAnchor: null
         });
         const code = sessionStorage.getItem("code");
 
-        axios.post(`admin/${code}/group${this.props.group}-recolor${color.hex}`);
+        let color = ColorEvent.hex;
+
+        axios.post(`admin/${code}/group${this.props.group}-recolor`, JSON.stringify(color), { headers: { 'Content-Type': 'application/json', } });
     }
 
     colorOpen = () => {
@@ -255,12 +248,12 @@ export class Group extends Component {
 
     render() {
         return (
-            <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.state.color}
+            <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.props.color}
                 onClick={this.props.onClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {this.props.group != "new" && !this.props.showcase && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?
@@ -290,11 +283,11 @@ export class Group extends Component {
                     {this.props.children}
                 </Collapse>
 
-                {(this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })} />}
+                {(!this.props.showcase && this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })} />}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
 
                 <Menu
-                    anchorEl={this.state.menuAnchor} keepMounted
+                    anchorEl={this.state.menuAnchor}
                     open={Boolean(this.state.menuAnchor)} onClose={() => this.setState({ menuAnchor: null })}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
@@ -305,7 +298,7 @@ export class Group extends Component {
                         Delete Group
                     </MenuItem>
                 </Menu>
-                <ColorPicker color={this.state.color} anchorEl={this.state.colorAnchor} onChangeComplete={this.colorChange} onClose={() => this.setState({ colorAnchor: null })} />
+                <ColorPicker color={this.props.color} anchorEl={this.state.colorAnchor} transformOrigin={{ vertical: 'top', horizontal: 'right' }} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onChangeComplete={this.colorChange} onClose={() => this.setState({ colorAnchor: null })} />
             </GroupContainer>
         );
     }

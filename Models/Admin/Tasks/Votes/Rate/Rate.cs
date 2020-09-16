@@ -59,6 +59,26 @@ namespace Slagkraft.Models.Admin.Questions
             EventStream();
         }
 
+        /// <summary>
+        /// Changes the Color of a option
+        /// </summary>
+        /// <param name="option">List Index of the Option</param>
+        /// <param name="color">Color in Hex format eg. '#AABBCC'</param>
+        public void ColorOption(int option, string color)
+        {
+            lock (ThreadLock)
+            {
+                if (option >= Options.Count || option < 0 || color == null)
+                    return;
+
+                if (color.Length == 7 && color.StartsWith("#"))
+                {
+                    Options[option].Color = color;
+                }
+            }
+            EventStream();
+        }
+
         #endregion Public Methods
 
         #region Private Methods

@@ -373,11 +373,16 @@ namespace Slagkraft.Controllers
             return userSessions;
         }
 
-        [HttpPost("{code}/group{group}-recolor{color}")]
-        public void GroupColor(int code, int group, string color)
+        [HttpPost("{code}/group{group}-recolor")]
+        public void GroupColor(int code, int group, [FromBody] string color)
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
+                if (color == null)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                }
+
                 if (admin.Tasks[admin.Active] is OpenText open)
                 {
                     ThreadPool.QueueUserWorkItem(o => open.ColorGroup(group, color));
@@ -483,6 +488,40 @@ namespace Slagkraft.Controllers
             }
             else
                 Response.StatusCode = 412;
+        }
+
+        [HttpPost("{code}/option{option}-recolor")]
+        public void OptionColor(int code, int option, [FromBody] string color)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                if (color == null)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                }
+
+                if (admin.Tasks[admin.Active] is MultipleChoice mp)
+                {
+                    ThreadPool.QueueUserWorkItem(o => mp.ColorOption(option, color));
+                    HttpContext.Response.StatusCode = 202;
+                }
+                else if (admin.Tasks[admin.Active] is Points points)
+                {
+                    ThreadPool.QueueUserWorkItem(o => points.ColorOption(option, color));
+                    HttpContext.Response.StatusCode = 202;
+                }
+                else if (admin.Tasks[admin.Active] is Rate slider)
+                {
+                    ThreadPool.QueueUserWorkItem(o => slider.ColorOption(option, color));
+                    HttpContext.Response.StatusCode = 202;
+                }
+                else
+                    HttpContext.Response.StatusCode = 400;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
         }
 
         [HttpPost("{code}/question-rename-group-{group}")]

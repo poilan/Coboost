@@ -291,7 +291,7 @@ export class CreateTaskModal extends Component {
                             </Box>
                         )}
                         <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
                         </Box>
                     </Box>
                 </Box>
@@ -412,7 +412,7 @@ export class CreateTaskModal extends Component {
                             </Box>
                         )}
                         <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
                         </Box>
                     </Box>
                 </Box>
@@ -532,7 +532,7 @@ export class CreateTaskModal extends Component {
                             </Box>
                         )}
                         <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onClick={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
                         </Box>
                     </Box>
                 </Box>

@@ -1,8 +1,9 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, createRef } from 'react';
 import axios from 'axios';
-import { Modal, Form } from 'react-bootstrap';
+import { Modal, Nav, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import "circular-std";
+import { TextField, Box } from '@material-ui/core';
 
 const ModalPage = styled(Modal)`
     border-radius: 20px;
@@ -14,20 +15,45 @@ const ModalPage = styled(Modal)`
     }
 `;
 
-const ContentInput = styled.textarea`
+const ContentInput = styled(TextField)`
     display: block;
-    width: calc(100% - 60px);
-    max-height: ${props => props.isTitle ? "50px" : "300px"};
-    min-height: 50px;
+    max-height: ${props => props.isTitle ? "2rem" : "8rem"};
+    min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
     text-align: ${props => props.isTitle ? "center" : "left"};
     color: black;
     border: 0;
     border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
-    margin: 0 30px;
-    margin-top: ${props => props.isTitle ? "30px" : "0"};
     resize: none;
+`;
+
+const CancelButton = styled(Nav.Link)`
+    color: #100e0e;
+    background: #fff;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
+`;
+
+const CreateButton = styled.input`
+    color: #fff;
+    background: #4C7AD3;
+    position: relative;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    font-family: CircularStd;
+    border-radius: 100px;
+    font-weight: 450;
+    text-align: center;
+    width: 200px;
 `;
 
 export class InputModal extends Component {
@@ -85,10 +111,8 @@ export class InputModal extends Component {
     }
 
     OnTitleFocus = (e) => {
-        e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
-
         if (this.state.title.trim() == "") {
-            var title = this.state.description.substring(0, 29);
+            var title = this.state.description.substring(0, 30);
             this.setState({
                 title: title,
             });
@@ -137,28 +161,27 @@ export class InputModal extends Component {
 
     Content = () => {
         return (
-            <Form autoComplete="off" onSubmit={this.SendInput} onInvalid={this.HandleInvalid} >
-                < ContentInput ref={this.Title} disabled={this.state.description == undefined || this.state.description.length <= 30}
-                    required placeholder={this.state.description != undefined && this.state.description.length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
-                    type="text" minLength="3" maxLength="30" name="opentext-titlefield" isTitle
-                    value={this.state.title} onChange={this.HandleTitle}
-                    onFocus={this.OnTitleFocus}
-                    onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={this.HandleEnter.bind(this)}
-                />
-
-                <ContentInput ref={this.Description}
-                    required autoFocus placeholder="Write your input..."
-                    type="text" minLength="3" name={`description`}
-                    value={this.state.description} onChange={this.HandleDescription}
-                    onFocus={(e) => e.target.placeholder = ""}
-                    onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={this.HandleEnter.bind(this)}
-                />
-
+            <Form autoComplete="off" onSubmit={this.SendInput} onInvalid={this.HandleInvalid}>
+                <Box p={1} m={1} mb={2}>
+                    <ContentInput inputRef={this.Title} disabled={this.state.description == undefined || this.state.description.length <= 30} fullWidth
+                        label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.state.description == undefined || this.state.description.length <= 30} margin="normal" 
+                        inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }} onFocus={this.OnTitleFocus}
+                        value={this.state.title} onChange={this.HandleTitle} onKeyDown={this.HandleEnter.bind(this)}
+                    />
+                </Box>
+                <Box p={1} m={1} mb={2}>
+                    <ContentInput inputRef={this.Description} name="description" variant="outlined" multiline margin="normal" rowsMax={5} fullWidth
+                        label="Description" required helperText={`${250 - this.state.description.length}${this.state.description.length > 30 ? "" : ` | ${30 - this.state.description.length}`}`}
+                        inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                        value={this.state.description} onChange={this.HandleDescription}
+                        onKeyDown={this.HandleEnter.bind(this)}
+                    />
+                </Box>
                 <CancelButton onClick={this.OnClose}>Cancel</CancelButton>
                 <CreateButton ref={this.Submit} type="submit" value="Submit" />
             </Form >
         );
-    },
+    };
 
     render() {
         return (

@@ -400,15 +400,15 @@ export class BigScreen extends Component {
         return (
             <>
                 {results[0].Members.length > 0 && <Column key="C0" width={1} empty>
-                    <Group key={0} title="Unorganized" size={1} showcase>
-                        {results[0].Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
+                    <Group key={0} title="Unorganized" size={1} showcase group={0}>
+                        {results[0].Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
                     </Group>
                 </Column>}
                 {results.slice(1).map(group =>
                     <>
                         {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
-                            <Group key={group.Index} title={group.Title} size={1} color={group.Color} showcase>
-                                {group.Members.map(member => <Input key={member.Index} title={member.Title} size={1} showcase />)}
+                            <Group key={group.Index} title={group.Title} size={1} color={group.Color} showcase group={group.Index}>
+                                {group.Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
                             </Group>
                         </Column>}
                     </>)}
@@ -423,7 +423,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote points={option.Votes.length} showPercentage={this.state.resultsAsPercentage} percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} color={option.Color} title={option.Title} description={option.Description} vote points={option.Votes.length} showPercentage={this.state.resultsAsPercentage} percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -437,7 +437,7 @@ export class BigScreen extends Component {
             <>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
                 {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} title={option.Title} vote points={option.Points} showPercentage={this.state.resultsAsPercentage} percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
+                    <ResultItem key={option.Index} id={option.Index} index={option.Index} color={option.Color} title={option.Title} description={option.Description} vote points={option.Points} showPercentage={this.state.resultsAsPercentage} percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
                 )}
             </>
         );
@@ -449,7 +449,7 @@ export class BigScreen extends Component {
         return (
             <>
                 {task.Options.map(option =>
-                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote
+                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} color={option.Color}  vote
                         average={option.Average} min={task.Min} max={task.Max}
                         showcase
                     />

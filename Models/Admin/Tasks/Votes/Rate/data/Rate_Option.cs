@@ -7,6 +7,12 @@ namespace Slagkraft.Models.Admin.Questions
 {
     public class Rate_Option : OpenText_Input
     {
+        #region Private Fields
+
+        private string color;
+
+        #endregion Private Fields
+
         #region Public Properties
 
         /// <summary>
@@ -25,6 +31,25 @@ namespace Slagkraft.Models.Admin.Questions
                     i /= Ratings.Count;
 
                 return Math.Round(i, 2);
+            }
+        }
+
+        /// <summary>
+        /// The color of the option Hex code (eg. '#575b75')
+        /// </summary>
+        public string Color
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(color))
+                    color = "#575b75";
+
+                return color;
+            }
+            set
+            {
+                if (value.Length == 7 && value.StartsWith("#"))
+                    color = value;
             }
         }
 

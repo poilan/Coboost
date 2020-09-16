@@ -8,7 +8,7 @@ const Container = styled.div`
     height: ${props => props.showcase ? "" : "95%"};
     position: relative;
     overflow: ${props => props.showcase ? "hidden" : "auto"};
-    padding: ${props => props.showcase ? "0" : "10px"};
+    padding: ${props => props.showcase ? "10px" : "10px"};
     display: ${props => props.empty ? "none" : props.showcase ? "block" : "inline-block"};
     white-space: normal;
     margin-top: ${props => props.showcase ? "0" : "20px"};

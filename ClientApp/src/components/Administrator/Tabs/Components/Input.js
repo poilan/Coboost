@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import "circular-std";
 import axios from 'axios';
 import { Modal } from 'react-bootstrap';
-import { Button, Popper, Box, Typography } from '@material-ui/core';
+import { Button, Popper, Box, Typography, Paper, Hidden } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 const Container = styled.div`
@@ -24,6 +24,14 @@ const Container = styled.div`
         position: relative;
         overflow: ${props => props.vote ? "visible" : "hidden"};
         white-space: ${props => props.vote ? "normal" : "nowrap"};
+
+        &:hover {
+            filter: brightness(80%) drop-shadow(6px 6px 3px black);
+            cursor: grab;
+        }
+        &:active {
+            cursor: grabbing;
+        }
 `;
 
 const MergeStack = styled.div`
@@ -79,6 +87,8 @@ export class Input extends Component {
 
     dragStart = e => {
         e.stopPropagation();
+        if (this.props.showcase)
+            return;
         let data = {
             member: this.props.member,
             group: this.props.group,
@@ -88,6 +98,9 @@ export class Input extends Component {
 
     handleClicks = e => {
         e.stopPropagation();
+        if (this.props.showcase)
+            return;
+
         const id = e.target.id;
         if (this.state.clickTimeout !== null) {
             if (this.props.double !== undefined) {
@@ -328,11 +341,15 @@ class PopoverDetails extends Component {
 
     render() {
         return (
-            <Popper anchorEl={this.props.anchorEl} open={this.open}>
-                <Box component="fieldset" margin={1} padding={1} maxWidth={40}>
-                    <Typography component="legend">{this.props.title}</Typography>
-                    <Typography variant="body1">{this.props.description}</Typography>
-                </Box>
+            <Popper anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} placement="right" onClick={this.handleClick}>
+                <Paper elevation={3} >
+                    <Box p={1}>
+                        <Box component="fieldset" m={1} p={1} maxWidth={500} width={350} textOverflow="ellipsis" overflow="hidden">
+                            <Typography component="legend" variant="h6">{this.props.title}</Typography>
+                            <Typography variant="body1">{this.props.description}</Typography>
+                        </Box>
+                    </Box>
+                </Paper>
             </Popper>
         );
     }

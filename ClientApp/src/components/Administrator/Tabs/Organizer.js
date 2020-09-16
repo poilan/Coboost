@@ -14,6 +14,7 @@ import { Tooltip, Collapse, IconButton, Menu, MenuItem } from '@material-ui/core
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Box from '@material-ui/core/Box';
+import { InputModal } from './Components/InputModal';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -90,6 +91,17 @@ const AnswerButton = styled(Nav.Link)`
     flex: 1 1 auto;
     height: 100%;
     line-height: 75px;
+
+    &:hover {
+        filter: brightness(150%);
+        cursor: pointer;
+        color: #ddd;
+    }
+
+    &:active {
+        color: #fff;
+        filter: brightness(75%);
+    }
 `;
 
 const SendToMC = styled(AnswerButton)`
@@ -380,7 +392,7 @@ export class Organizer extends Component {
                             <NewOptionNumber>Title</NewOptionNumber>
                             <Form.Group controlId="validateTitle">
                                 <InputGroup>
-                                    <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
+                                    <Form.Control name="title" ref="title" defaultValue={this.state.modal.string} onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
                                 </InputGroup>
                             </Form.Group>
                             <CancelButton onClick={this.modal.rename.close}>Cancel</CancelButton>
@@ -397,6 +409,7 @@ export class Organizer extends Component {
                             string: '',
                         }
                     });
+                    this.modal.details.close();
                 },
             },
 
@@ -416,7 +429,8 @@ export class Organizer extends Component {
                         modal: {
                             create: false,
                             type: 1,
-                        }
+                        },
+                        selected: [],
                     });
 
                     if (success == true) {
@@ -661,6 +675,10 @@ export class Organizer extends Component {
                 options.forEach(async option => {
                     await setTimeout(axios.post(`client/${code}/add-opentext`, option), 500);
                 });
+
+                this.setState({
+                    selected: [],
+                });
             }
 
             const menu = [
@@ -674,10 +692,11 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     <ButtonToolbar>
-                        <AnswerButton onClick={this.modal.answer.open}>Write input</AnswerButton>
-                        <Tooltip title="Creates a new task using the selected answer"><SendToMC onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to vote</SendToMC></Tooltip>
-                        <MergeButton onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                        <AnswerButton draggable="false" onClick={this.modal.answer.open}>Write input</AnswerButton>
+                        <SendToMC draggable="false" onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to vote</SendToMC>
+                        <MergeButton draggable="false" onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
+                        >
                             <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>
                             <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>
                             <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>
@@ -715,8 +734,8 @@ export class Organizer extends Component {
                                 )}
 
                             {column.index + 1 == this.props.columns.length &&
-                                <Group id="new"
-                                    group="new" column={column.index} title="Create New Group" size={column.width}
+                                <Group id="new" color="#575b75"
+                                    group="new" column={column.index} title="CREATE NEW GROUP" size={column.width}
                                     onClick={createGroup.bind(this)}
                                 />
                             }
@@ -724,7 +743,7 @@ export class Organizer extends Component {
                     )
                     }
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                    {this.state.modal.answer && <PageModal title="Send Input" body={this.modal.answer.Content()} onClose={this.modal.answer.close.bind(this)} />}
+                    {this.state.modal.answer && <InputModal title="Send Input" onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
@@ -752,12 +771,12 @@ export class Organizer extends Component {
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT disabled={this.state.selected.length != 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
+                            <SendToT draggable="false" disabled={this.state.selected.length != 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
+                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title} color={option.Color} description={option.Description}
                             vote height="80%" total={task.Options.length}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
                             percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length} showPercentage={this.state.resultsAsPercentage}
@@ -787,12 +806,12 @@ export class Organizer extends Component {
 
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT disabled={this.state.selected.length !== 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
+                            <SendToT draggable="false" disabled={this.state.selected.length !== 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title}
+                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title} color={option.Color} description={option.Description}
                             vote height="80%" total={task.Options.length}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
                             percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={option.Points} showPercentage={this.state.resultsAsPercentage}
@@ -820,12 +839,12 @@ export class Organizer extends Component {
                     {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
                     <ButtonToolbar>
                         <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT disabled={this.state.selected.length !== 1} onClick={(e) => this.modal.create.open(0)}>Send to Tasks</SendToT>
+                            <SendToT draggable="false" disabled={this.state.selected.length !== 1} onClick={(e) => this.modal.create.open(0)}>Send to Tasks</SendToT>
                         </Tooltip>
                     </ButtonToolbar>
                     {task.Options !== undefined && task.Options.map(option =>
-                        <ResultSlider id={option.Index} index={option.Index} title={option.Title} vote
-                            average={option.Average} min={task.Min} max={task.Max}
+                        <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} vote
+                            average={option.Average} min={task.Min} max={task.Max} color={option.Color}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
                             onClick={select}
                         />

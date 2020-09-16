@@ -11,7 +11,7 @@ export class ColorPicker extends Component {
 
     render() {
         return (
-            <Popover anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} transformOrigin={{ vertical: 'top', horizontal: 'center' }} anchorOrigin={{ vertical: 'center', horizontal: 'center' }} onClose={this.props.onClose}>
+            <Popover anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} transformOrigin={this.props.transformOrigin} anchorOrigin={this.props.transformOrigin} onClose={this.props.onClose}>
                 <BlockPicker color={this.props.color} onChangeComplete={this.props.onChangeComplete} />
             </Popover>
         );

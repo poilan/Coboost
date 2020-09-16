@@ -12,6 +12,7 @@ import Slider from '@material-ui/core/Slider';
 import Rating from '@material-ui/lab/Rating';
 
 import BannerDropdown, { BannerLink } from '../Classes/Dropdown';
+import { TextField } from '@material-ui/core';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -108,14 +109,13 @@ const Header = styled(Col)`
 const HeaderText = styled.h1`
     text-align: center;
     font-family: CircularStd;
-    font-weight: 425;
+    font-weight: 525;
     line-height: 50px;
-    font-size: 1rem;
-    /*border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #4C7AD3;*/
+    font-size: 1.5rem;
     border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #575b75;
     cursor: pointer;
-
-    :hover {
+    box-sizing: border-box;
+    &:hover {
         border-bottom: 4px solid ${props => props.active === props.id ? "#575b75" : "#4f4f4f"};
     }
 
@@ -183,19 +183,16 @@ const ContentQuestion = styled.p`
     height: 30px;
 `;
 
-const ContentInput = styled.textarea`
+const ContentInput = styled(TextField)`
     display: block;
-    width: calc(100% - 60px);
-    max-height: ${props => props.title ? "50px" : "300px"};
-    min-height: 50px;
+    max-height: ${props => props.isTitle ? "2rem" : "8rem"};
+    min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: ${props => props.title ? "center" : "left"};
+    text-align: ${props => props.isTitle ? "center" : "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid ${props => props.title ? "#4C7AD3" : "#cfcfcf"};
-    margin: 30px;
-    margin-bottom: 0;
+    border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
     resize: none;
 `;
 
@@ -615,7 +612,7 @@ export class Mobile extends Component {
             <ContentContainer>
                 <ContentTitle blue>{word} sent!</ContentTitle>
                 <IconDone />
-                <ContentBody boxed>Take it easy while waiting for the next task, or you can send another {word}!</ContentBody>
+                <ContentBody boxed>You may send another {word}! or you can take it easy while waiting for the next task.</ContentBody>
                 <ContentButton onClick={this.inputsEdit}>New {word}</ContentButton>
             </ContentContainer>
         );
@@ -670,8 +667,6 @@ export class Mobile extends Component {
         }
 
         const onTitleFocus = (e) => {
-            e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
-
             if (this.state.title.trim() == "") {
                 this.setState({
                     title: this.getTaskAnswers().substring(0, 29)
@@ -684,21 +679,22 @@ export class Mobile extends Component {
                 <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
-                    <ContentInput ref={this.TextTitle} disabled={this.getTaskAnswers().length <= 30}
-                        required placeholder={this.getTaskAnswers().length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
-                        type="text" minLength="3" maxLength="30" name="opentext-titlefield" title={true}
-                        value={this.state.title} onChange={titleChange}
-                        onFocus={(e) => onTitleFocus(e)}
-                        onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
-                    />
+                    <Box p={1} m={1} mb={2}>
+                        <ContentInput inputRef={this.TextTitle} disabled={this.getTaskAnswers().length <= 30} fullWidth
+                            label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.getTaskAnswers().length <= 30} margin="normal"
+                            inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }} onFocus={(e) => onTitleFocus(e)}
+                            value={this.state.title} onChange={titleChange} onKeyDown={handleEnter.bind(this)}
+                        />
+                    </Box>
 
-                    <ContentInput ref={this.TextDescription}
-                        required autoFocus placeholder="Write your answer..."
-                        type="text" minLength="3" name={`q-${this.getTaskIndex()}`}
-                        value={this.getTaskAnswers()} onChange={(e) => this.questionChange(e)}
-                        onFocus={(e) => e.target.placeholder = ""}
-                        onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
-                    />
+                    <Box p={1} m={1} mb={2}>
+                        <ContentInput inputRef={this.TextDescription} name="description" variant="outlined" multiline margin="normal" rowsMax={5} fullWidth
+                            label="Description" required helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30 ? "" : ` | ${30 - this.getTaskAnswers().length}`}`}
+                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                            value={this.getTaskAnswers()} onChange={(e) => this.questionChange(e)}
+                            onKeyDown={handleEnter.bind(this)}
+                        />
+                    </Box>
 
                     <ContentButton ref={this.TextForm} type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write an input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write a title before sending!" : "Send Input!"}</ContentButton>
                 </Form>
@@ -971,7 +967,7 @@ export class Mobile extends Component {
                 title = "Open Text";
                 break;
             case 1:
-                title = "Pick " + this.getOptionMax() + " favorites!";
+                title = "Pick your " + this.getOptionMax() > 1 ? this.getOptionMax() + " favorites!" : "favorite!";
                 break;
             case 2:
                 title = "Give Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";

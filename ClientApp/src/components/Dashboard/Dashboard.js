@@ -318,7 +318,7 @@ export class Dashboard extends Component {
         this.logout = this.logout.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getSessions();
     }
 
@@ -338,7 +338,7 @@ export class Dashboard extends Component {
                 const deleteSession = (e) => {
                     e.preventDefault();
 
-                    axios.post(`admin/${this.state.modal.code}/delete`).then(this.getSessions());
+                    axios.post(`admin/${this.state.modal.code}/delete`).then(setTimeout(this.getSessions(), 500));
                     this.modal.delete.close();
                 }
 
@@ -535,11 +535,11 @@ export class Dashboard extends Component {
     modalContent() {
         return (
             <ProjectModalContent>
-                <Form autoComplete="on" onSubmit={(e) => this.createProject(e)}>
+                <Form autoComplete="off" onSubmit={(e) => this.createProject(e)}>
                     <PopupText>Title</PopupText>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control name="title" onChange={this.handleChange} placeholder="Session title..." required />
+                            <Form.Control autoComplete="off" name="title" onChange={this.handleChange} placeholder="Session title..." required />
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
@@ -552,11 +552,11 @@ export class Dashboard extends Component {
     modalTemplateContent() {
         return (
             <ProjectModalContent>
-                <Form autoComplete="on" onSubmit={(e) => this.createProject(e)}>
+                <Form autoComplete="off" onSubmit={(e) => this.createProject(e)}>
                     <PopupText>Title</PopupText>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control name="title" onChange={this.handleChange} placeholder="Session title..." required />
+                            <Form.Control autoComplete="off" name="title" onChange={this.handleChange} placeholder="Session title..." required />
                         </InputGroup>
                     </Form.Group>
 
