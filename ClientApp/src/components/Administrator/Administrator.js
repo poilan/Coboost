@@ -388,6 +388,7 @@ export class Administrator extends Component {
             this.SSE.source.addEventListener("error", (e) => {
                 if (e.readyState == EventSource.CLOSED) {
                     console.log("SSE: connection closed");
+                    this.SSE.start(this.state.active);
                 } else {
                     console.log(e);
                 }

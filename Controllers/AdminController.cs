@@ -611,13 +611,15 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                Response.ContentType = "text/event-stream";
-
                 if (index >= admin.Tasks.Count)
                 {
                     Response.StatusCode = 406;
                     return;
                 }
+
+                Response.Headers.Add("connection", "keep-alive");
+                Response.Headers.Add("cach-control", "no-cache");
+                Response.Headers.Add("content-type", "text/event-stream");
 
                 if (admin.Tasks[index] is OpenText)
                 {
@@ -647,10 +649,8 @@ namespace Slagkraft.Controllers
                 else if (admin.Tasks[index] is MultipleChoice)
                 {
                     MultipleChoice subject = admin.Tasks[index] as MultipleChoice;
-                    while (true)
+                    while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
                     {
-                        if (Response.HttpContext.RequestAborted.IsCancellationRequested)
-                            break;
                         {
                             MultipleChoice_Option[] options = subject.Options.ToArray();
                             await Response.WriteAsync("event:" + "Options\n");

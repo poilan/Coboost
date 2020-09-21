@@ -103,14 +103,13 @@ namespace Slagkraft.Controllers
         {
             if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                Response.ContentType = "text/event-stream";
+                Response.Headers.Add("connection", "keep-alive");
+                Response.Headers.Add("cach-control", "no-cache");
+                Response.Headers.Add("content-type", "text/event-stream");
                 BaseTask question = null;
 
-                while (true)
+                while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
                 {
-                    if (Response.HttpContext.RequestAborted.IsCancellationRequested)
-                        break;
-
                     if (admin.Active < admin.Tasks.Count)
                     {
                         question = admin.Tasks[admin.Active].Type switch

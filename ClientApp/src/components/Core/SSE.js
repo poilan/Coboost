@@ -35,6 +35,7 @@
         this.addListener("error", (e) => {
             if (e.readyState === EventSource.CLOSED) {
                 this.log(`Error. connection has been closed (${e})`);
+                this.startEventSource(callback);                
             }
         });
 
