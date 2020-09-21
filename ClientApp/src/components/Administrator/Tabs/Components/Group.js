@@ -208,11 +208,13 @@ export class Group extends Component {
 
     handleDouble = (e) => {
         if (this.props.double !== undefined && this.props.group != 0) {
+            e.stopPropagation();
             this.props.double(e);
         }
     }
 
-    collapse = () => {
+    collapse = (e) => {
+        e.stopPropagation();
         this.setState({
             collapse: !this.state.collapse,
         });
@@ -247,6 +249,13 @@ export class Group extends Component {
         this.modal.archive.open();
     }
 
+    handleClick = (e) => {
+        if (!this.props.showcase && this.props.onClick !== undefined) {
+            this.props.onClick(this.props.group);
+            e.stopPropagation();
+        }
+    }
+
     render() {
         return (
             <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.props.color}
@@ -254,7 +263,7 @@ export class Group extends Component {
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start} >
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="medium" onClick={(e) => this.collapse(e)}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?
@@ -284,7 +293,7 @@ export class Group extends Component {
                     {this.props.children}
                 </Collapse>
 
-                {(!this.props.showcase && this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })} />}
+                {!(this.props.showcase) && (this.props.group != 0 && this.props.group != "new") && <GroupMenu showcase={this.props.showcase} id={this.props.id + "-title"} onClick={(e) => { e.stopPropagation(); this.setState({ menuAnchor: e.currentTarget }); }} />}
                 {this.state.modal.archive && <PageModal title="Confirm Archiving" body={this.modal.archive.content()} onClose={this.modal.archive.close} />}
 
                 <Menu
