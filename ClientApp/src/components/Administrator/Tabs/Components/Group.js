@@ -176,6 +176,7 @@ export class Group extends Component {
 
         over: (e) => {
             e.preventDefault();
+
             //e.stopPropagation();
         },
 
@@ -249,9 +250,9 @@ export class Group extends Component {
     render() {
         return (
             <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.props.color}
-                onClick={this.props.onClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
+                onClick={() => this.props.onClick(this.props.group)} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
-                draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start}>
+                draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start} >
 
                 <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={() => this.collapse()}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 

@@ -369,12 +369,22 @@ namespace Slagkraft.Models.Admin.Questions
                 //Remove it from its old location
                 Groups[input.Group].Members.RemoveAt(input.Member);
 
+                //Update the Index of the Input
                 Input.Index = Groups[targetGroup].Members.Count;
 
                 //Add it to the desired group
                 Groups[targetGroup].Members.Add(Input);
 
-                UpdateMemberIndexes(input.Group);
+                //Remove the Group if it is empty
+                if (Groups[input.Group].Members.Count < 1)
+                {
+                    Groups.RemoveAt(input.Group);
+                    UpdateGroupIndexes();
+                }
+                else //Otherwise update the Member Indexes
+                {
+                    UpdateMemberIndexes(input.Group);
+                }
             }
             EventStream();
         }

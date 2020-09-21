@@ -173,6 +173,7 @@ export class Organizer extends Component {
             overview: true,
             selected: [],
             collapse: [],
+            previous: -1,
 
             modal: {
                 string: '',
@@ -196,7 +197,6 @@ export class Organizer extends Component {
                 y: 0,
                 visible: false,
             },
-
             resultsAsPercentage: false
         }
 
@@ -491,6 +491,13 @@ export class Organizer extends Component {
             })
         });
 
+        document.addEventListener('keydown', (event) => {
+            if (event.key == "R" || event.key == "r") {
+                this.setState({
+                    selected: [],
+                })
+            }
+        });
         this.AutoResultToggle();
     }
 
@@ -564,8 +571,6 @@ export class Organizer extends Component {
 
             const select = (id) => {
                 const key = id;
-                console.log(id);
-
                 if (this.state.selected.indexOf(key) == -1) {
                     let selected = this.state.selected;
                     selected !== undefined ? selected.push(key) : selected = [key];
@@ -581,7 +586,27 @@ export class Organizer extends Component {
                         selected: selected,
                     })
                 }
-                console.log(this.state.selected);
+            }
+
+            const groupSelect = (id) => {
+                let countSelected = 0; //This counts every input in the group that was selected, deselects all only if all were already selected.
+                task.Groups[id].Members.forEach((member) => {
+                    let key = `${id}-${member.Index}`;
+
+                    if (this.state.selected.indexOf(key) == -1) {
+                        select(key);
+                    }
+                    else {
+                        countSelected += 1;
+                    }
+                });
+
+                if (task.Groups[id].Members.length == countSelected) {
+                    task.Groups[id].Members.forEach((member) => {
+                        let key = `${id}-${member.Index}`;
+                        select(key);
+                    });
+                }
             }
 
             const getOptions = () => {
@@ -693,13 +718,14 @@ export class Organizer extends Component {
                 <MainContainer>
                     <ButtonToolbar>
                         <AnswerButton draggable="false" onClick={this.modal.answer.open}>Write input</AnswerButton>
-                        <SendToMC draggable="false" onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to vote</SendToMC>
+                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
                         <MergeButton draggable="false" onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
                         <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
                         >
-                            <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>
-                            <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>
-                            <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>
+                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
                         </Menu>
                     </ButtonToolbar>
 
@@ -713,7 +739,7 @@ export class Organizer extends Component {
                                 task.Groups.map(group => {
                                     if (column.index === group.Column) {
                                         return (
-                                            <Group id={group.Index} key={group.Index}
+                                            <Group id={group.Index} key={group.Index} onClick={groupSelect}
                                                 group={group.Index} column={group.Column} title={group.Title} size={column.width}
                                                 double={this.modal.rename.open} color={group.Color}>
                                                 {group.Members !== undefined &&
@@ -745,7 +771,7 @@ export class Organizer extends Component {
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                     {this.state.modal.answer && <InputModal title="Send Input" onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Groups[this.state.selected[0].split("-")[0]].Members[this.state.selected[0].split("-")[1]].Title} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
                 </MainContainer >
             );
@@ -754,25 +780,52 @@ export class Organizer extends Component {
         const multipleChoice = (task) => {
             const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
+                    let selected = this.state.selected;
+                    selected.push(key);
                     this.setState({
-                        selected: [key],
+                        selected: selected,
                     });
                 }
                 else {
+                    var selected = this.state.selected;
+                    var index = selected.indexOf(key);
+                    selected.splice(index, 1);
                     this.setState({
-                        selected: [],
+                        selected: selected,
                     })
                 }
             }
 
+            const getOptions = () => {
+                let options = [];
+                let selected = this.state.selected;
+                for (var i = 0; i < selected.length; i++) {
+                    var key = selected[i];
+                    var answer = task.Options[key];
+                    var data = {
+                        UserID: answer.UserID,
+                        Index: options.length,
+                        Description: answer.Description,
+                        Title: answer.Title,
+                    }
+                    options.push(data);
+                }
+                return options;
+            }
+
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
 
                     <ButtonToolbar>
-                        <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT draggable="false" disabled={this.state.selected.length != 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
-                        </Tooltip>
+                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to Tasks</SendToT>
+
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                        </Menu>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
@@ -789,25 +842,51 @@ export class Organizer extends Component {
         const points = (task) => {
             const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
+                    let selected = this.state.selected;
+                    selected.push(key);
                     this.setState({
-                        selected: [key],
+                        selected: selected,
                     });
                 }
                 else {
+                    var selected = this.state.selected;
+                    var index = selected.indexOf(key);
+                    selected.splice(index, 1);
                     this.setState({
-                        selected: [],
-                    });
+                        selected: selected,
+                    })
                 }
+            }
+
+            const getOptions = () => {
+                let options = [];
+                let selected = this.state.selected;
+                for (var i = 0; i < selected.length; i++) {
+                    var key = selected[i];
+                    var answer = task.Options[key];
+                    var data = {
+                        UserID: answer.UserID,
+                        Index: options.length,
+                        Description: answer.Description,
+                        Title: answer.Title,
+                    }
+                    options.push(data);
+                }
+                return options;
             }
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
 
                     <ButtonToolbar>
-                        <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT draggable="false" disabled={this.state.selected.length !== 1} onClick={() => this.modal.create.open(0)}>Send to Tasks</SendToT>
-                        </Tooltip>
+                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to Tasks</SendToT>
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                        </Menu>
                     </ButtonToolbar>
                     <ResultBackground style={{ width: "95%", height: "80%" }} />
                     {task.Options !== undefined && task.Options.map(option =>
@@ -824,23 +903,49 @@ export class Organizer extends Component {
         const slider = (task) => {
             const select = (key) => {
                 if (this.state.selected.indexOf(key) == -1) {
+                    let selected = this.state.selected;
+                    selected.push(key);
                     this.setState({
-                        selected: [key],
+                        selected: selected,
                     });
                 }
                 else {
+                    var selected = this.state.selected;
+                    var index = selected.indexOf(key);
+                    selected.splice(index, 1);
                     this.setState({
-                        selected: [],
+                        selected: selected,
                     })
                 }
             }
+
+            const getOptions = () => {
+                let options = [];
+                let selected = this.state.selected;
+                for (var i = 0; i < selected.length; i++) {
+                    var key = selected[i];
+                    var answer = task.Options[key];
+                    var data = {
+                        UserID: answer.UserID,
+                        Index: options.length,
+                        Description: answer.Description,
+                        Title: answer.Title,
+                    }
+                    options.push(data);
+                }
+                return options;
+            }
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type="0" title={task.Options[parseInt(this.state.selected)].Description} onClose={this.modal.create.close.bind(this)} />}
+                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     <ButtonToolbar>
-                        <Tooltip title="Creates a new task using the selected answer">
-                            <SendToT draggable="false" disabled={this.state.selected.length !== 1} onClick={(e) => this.modal.create.open(0)}>Send to Tasks</SendToT>
-                        </Tooltip>
+                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to new Task</SendToT>
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                        </Menu>
                     </ButtonToolbar>
                     {task.Options !== undefined && task.Options.map(option =>
                         <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} vote
@@ -855,6 +960,12 @@ export class Organizer extends Component {
 
         if (!this.state.overview && this.props.tasks[this.props.active] != undefined) {
             let task = this.props.tasks[this.props.active];
+            if (this.props.active != this.state.previous) {
+                this.setState({
+                    selected: [],
+                    previous: this.props.active,
+                });
+            }
 
             if (task.Type == 0) {
                 return text(task);

@@ -60,6 +60,11 @@ const Percentage = styled.div`
     left: 50%;
     z-index: 1;
     box-shadow: 1px 0 1px 0 rgba(0, 0, 0, .04);
+
+    &:hover {
+           filter: saturate(150%) drop-shadow(6px -3px 3px black);
+           cursor: ${props => props.group == "new" ? "pointer" : "default"};
+        }
 `;
 
 export class ResultItem extends Component {
@@ -95,7 +100,7 @@ export class ResultItem extends Component {
         return (
             <ItemContainer total={this.props.total} index={this.props.index}>
                 <PercentageContainer height={`${this.props.height}`} >
-                    <Percentage color={this.props.color} percentage={this.props.percentage} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })}>{this.props.showPercentage ? (this.props.percentage > 0 && Math.floor(this.props.percentage) + "%") : this.props.points != 0 ? this.props.points : ""}</Percentage>
+                    <Percentage color={this.props.color} percentage={this.props.percentage} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })}>{this.props.showPercentage ? (this.props.percentage > 0 && Math.round(this.props.percentage) + "%") : this.props.points != 0 ? this.props.points : ""}</Percentage>
                 </PercentageContainer>
                 <Input vote size="1" showcase={this.props.showcase}
                     id={this.props.id} index={this.props.index} title={this.props.title} description={this.props.description}

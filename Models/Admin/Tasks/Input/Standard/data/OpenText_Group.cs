@@ -46,6 +46,11 @@ namespace Slagkraft.Models.Admin.Questions
         public int Column { get; set; }
 
         /// <summary>
+        /// Decides if the group is collapsed in organizer and hidden on Big Screen
+        /// </summary>
+        public bool Hidden { get; set; }
+
+        /// <summary>
         /// The index of this group
         /// </summary>
         public int Index { get; set; }

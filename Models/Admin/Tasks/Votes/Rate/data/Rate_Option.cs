@@ -8,6 +8,7 @@ namespace Slagkraft.Models.Admin.Questions
     public class Rate_Option : OpenText_Input
     {
         #region Private Fields
+        private readonly string[] DefaultColors = { "#F47373", "#697689", "#37D67A", "#2CCCE4", "#555555", "#dce775", "#ff8a65", "#ba68c8", "#D9E3F0" };
 
         private string color;
 
@@ -30,7 +31,7 @@ namespace Slagkraft.Models.Admin.Questions
                 if (Ratings.Count > 1)
                     i /= Ratings.Count;
 
-                return Math.Round(i, 2);
+                return Math.Round(i, 1);
             }
         }
 
@@ -42,7 +43,14 @@ namespace Slagkraft.Models.Admin.Questions
             get
             {
                 if (string.IsNullOrWhiteSpace(color))
-                    color = "#575b75";
+                {
+                    int i = Index;
+                    while (i > 8)
+                    {
+                        i -= 9;
+                    }
+                    color = DefaultColors[i];
+                }
 
                 return color;
             }

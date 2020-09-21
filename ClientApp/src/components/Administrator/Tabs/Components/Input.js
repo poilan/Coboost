@@ -341,7 +341,7 @@ class PopoverDetails extends Component {
 
     render() {
         return (
-            <Popper anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} placement="right" onClick={this.handleClick}>
+            <Popper anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} placement="right" onClick={this.handleClick} style={{ pointerEvents: "none" }}>
                 <Paper elevation={3} >
                     <Box p={1}>
                         <Box component="fieldset" m={1} p={1} maxWidth={500} width={350} textOverflow="ellipsis" overflow="hidden">
