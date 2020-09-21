@@ -30,12 +30,13 @@
             this.eventSource.close();
         console.log("Attempting to start event source");
         this.eventSource = new EventSource(this.address);
+
         this.open = true;
 
         this.addListener("error", (e) => {
             if (e.readyState === EventSource.CLOSED) {
                 this.log(`Error. connection has been closed (${e})`);
-                this.startEventSource(callback);                
+                this.startEventSource(callback);
             }
         });
 

@@ -176,12 +176,12 @@ namespace Slagkraft.Controllers
                     if (question != null)
                     {
                         question.Reset.Reset();
-                        question.Reset.WaitOne();
+                        question.Reset.WaitOne(30000);
                     }
                     else
                     {
                         admin.Client.Reset();
-                        admin.Client.WaitOne();
+                        admin.Client.WaitOne(30000);
                     }
                 }
                 Response.Body.Close();

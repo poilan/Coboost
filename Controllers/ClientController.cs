@@ -130,7 +130,7 @@ namespace Slagkraft.Controllers
                     }
 
                     admin.Client.Reset();
-                    admin.Client.WaitOne();
+                    admin.Client.WaitOne(30000);
                 }
                 Response.Body.Close();
             }

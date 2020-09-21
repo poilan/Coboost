@@ -27,10 +27,10 @@ const Container = styled.div`
 
         &:hover {
             filter: brightness(80%) drop-shadow(6px 6px 3px black);
-            cursor: grab;
+            cursor: ${props => props.showcase ? "default" : "cell"};
         }
         &:active {
-            cursor: grabbing;
+            cursor: ${props => props.showcase ? "default" : "grabbing"};
         }
 `;
 
@@ -115,7 +115,7 @@ export class Input extends Component {
                 }
                 clearTimeout(this.state.clickTimeout);
                 this.state.clickTimeout = null;
-            }, 200)
+            }, 250)
         }
     }
 
@@ -149,6 +149,7 @@ export class Input extends Component {
                     draggable={!this.props.showcase} onDragStart={this.dragStart}
                     checked={this.props.checked}
                     onMouseEnter={this.hover.enter} onMouseLeave={this.hover.leave}
+                    showcase={this.props.showcase}
                 >
                     {this.props.title}
 

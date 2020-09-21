@@ -617,17 +617,13 @@ namespace Slagkraft.Controllers
                     return;
                 }
 
-                Response.Headers.Add("connection", "keep-alive");
-                Response.Headers.Add("cach-control", "no-cache");
-                Response.Headers.Add("content-type", "text/event-stream");
+                Response.ContentType = "text/event-stream";
 
                 if (admin.Tasks[index] is OpenText)
                 {
                     OpenText subject = admin.Tasks[index] as OpenText;
-                    while (true)
+                    while (!HttpContext.RequestAborted.IsCancellationRequested)
                     {
-                        if (Response.HttpContext.RequestAborted.IsCancellationRequested)
-                            break;
                         {
                             OpenText_Group[] groups = subject.Groups.ToArray();
                             await Response.WriteAsync("event:" + "Groups\n");
@@ -643,13 +639,13 @@ namespace Slagkraft.Controllers
                             await Response.Body.FlushAsync();
                         }
                         subject.Reset.Reset();
-                        subject.Reset.WaitOne();
+                        subject.Reset.WaitOne(30000);
                     }
                 }
                 else if (admin.Tasks[index] is MultipleChoice)
                 {
                     MultipleChoice subject = admin.Tasks[index] as MultipleChoice;
-                    while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
+                    while (!HttpContext.RequestAborted.IsCancellationRequested)
                     {
                         {
                             MultipleChoice_Option[] options = subject.Options.ToArray();
@@ -674,7 +670,7 @@ namespace Slagkraft.Controllers
                         }
 
                         subject.Reset.Reset();
-                        subject.Reset.WaitOne();
+                        subject.Reset.WaitOne(30000);
                     }
                 }
                 else if (admin.Tasks[index] is Points)
@@ -688,11 +684,8 @@ namespace Slagkraft.Controllers
                         await Response.Body.FlushAsync();
                     }
 
-                    while (true)
+                    while (HttpContext.RequestAborted.IsCancellationRequested)
                     {
-                        if (Response.HttpContext.RequestAborted.IsCancellationRequested)
-                            break;
-
                         {
                             Points_Option[] options = subject.Options.ToArray();
                             await Response.WriteAsync("event:" + "Options\n");
@@ -718,16 +711,14 @@ namespace Slagkraft.Controllers
                         }
 
                         subject.Reset.Reset();
-                        subject.Reset.WaitOne();
+                        subject.Reset.WaitOne(30000);
                     }
                 }
                 else if (admin.Tasks[index] is Rate)
                 {
                     Rate subject = admin.Tasks[index] as Rate;
-                    while (true)
+                    while (!HttpContext.RequestAborted.IsCancellationRequested)
                     {
-                        if (Response.HttpContext.RequestAborted.IsCancellationRequested)
-                            break;
                         {
                             Rate_Option[] options = subject.Options.ToArray();
                             await Response.WriteAsync("event:" + "Options\n");
@@ -751,7 +742,7 @@ namespace Slagkraft.Controllers
                         }
 
                         subject.Reset.Reset();
-                        subject.Reset.WaitOne();
+                        subject.Reset.WaitOne(30000);
                     }
                 }
 

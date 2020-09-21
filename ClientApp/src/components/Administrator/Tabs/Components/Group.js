@@ -29,7 +29,7 @@ const GroupContainer = styled.div`
 
         &:hover {
            filter: saturate(150%) drop-shadow(6px 6px 3px black);
-           cursor: ${props => props.group == "new" ? "pointer" : "default"};
+           cursor: ${props => props.group == "new" ? "pointer" : props.showcase ? "default" : "cell"};
         }
     `;
 
@@ -53,13 +53,20 @@ const GroupTitle = styled.h1`
     font-size: 1rem;
     text-transform: uppercase;
     width: ${props => props.new ? "100%" : ""};
+    max-width: ${props => props.new ? "100%" : "85%"};
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: ${props => props.new ? "center" : ""};
-    opacity: 90%;
+    opacity: 98%;
     position: absolute;
     top: ${props => props.new ? "50%" : "20px"};
     vertical-align: center;
     left: ${props => props.new ? "50%" : "15px"};
     transform: ${props => props.new ? "translate(-50%, -50%)" : ""};
+
+    &:hover {
+        cursor: ${props => props.showcase ? "default" : "text"};
+    }
 `;
 
 const GroupMenu = styled(MenuIcon)`
@@ -263,7 +270,7 @@ export class Group extends Component {
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start} >
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} id={this.props.id + "-title"} new={this.props.group == "new"}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="medium" onClick={(e) => this.collapse(e)}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} onClick={(e) => e.stopPropagation()} id={this.props.id + "-title"} new={this.props.group == "new"} showcase={this.props.showcase}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={(e) => this.collapse(e)}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 
                 <Collapse timeout="auto" in={this.state.collapse}>
                     {this.props.size <= "2" ?

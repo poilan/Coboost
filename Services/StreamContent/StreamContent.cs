@@ -15,13 +15,13 @@ namespace Slagkraft.Services
     /// </summary>
     public class StreamContent : IActionResult
     {
+        //private readonly string ContentType;
+
         #region Private Fields
 
-        private readonly string _contentType;
+        private readonly Action<Stream, CancellationToken> OnStreamAvailable;
 
-        private readonly Action<Stream, CancellationToken, int> _onStreamAvailable;
-
-        private readonly int _required;
+        private CancellationToken CancelToken;
 
         #endregion Private Fields
 
@@ -33,11 +33,12 @@ namespace Slagkraft.Services
         /// <param name="onStreamAvailable">The Method Containing the Logic you want performed.<para>This method will require the Parameters: {"Stream", "CancelationToken", "int"}</para>These parameters are: What you are writing into, Token that knows if the client disconnected, the eventcode for the session you are reading from</param>
         /// <param name="contentType">The content type that will be written in the header of the response</param>
         /// <param name="required">The int you need for the Stream method</param>
-        public StreamContent(Action<Stream, CancellationToken, int> onStreamAvailable, string contentType, int required)
+        public StreamContent(Action<Stream, CancellationToken> onStreamAvailable, CancellationToken cancelToken)
         {
-            _onStreamAvailable = onStreamAvailable;
-            _contentType = contentType;
-            _required = required;
+            OnStreamAvailable = onStreamAvailable;
+
+            //ContentType = contentType;
+            CancelToken = cancelToken;
         }
 
         #endregion Public Constructors
@@ -46,10 +47,9 @@ namespace Slagkraft.Services
 
         public Task ExecuteResultAsync(ActionContext context)
         {
-            context.HttpContext.Response.ContentType = _contentType;
             var stream = context.HttpContext.Response.Body;
 
-            _onStreamAvailable(stream, context.HttpContext.RequestAborted, _required);
+            OnStreamAvailable(stream, CancelToken);
             return Task.CompletedTask;
         }
 
