@@ -259,7 +259,7 @@ export class Group extends Component {
     render() {
         return (
             <GroupContainer id={this.props.id + "-title"} group={this.props.group} column={this.props.column} color={this.props.color}
-                onClick={() => this.props.onClick(this.props.group)} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
+                onClick={this.handleClick} size={this.props.size} empty={this.props.id == "0" && this.props.children.length < 1}
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start} >
 
