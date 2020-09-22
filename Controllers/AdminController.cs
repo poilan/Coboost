@@ -255,27 +255,18 @@ namespace Slagkraft.Controllers
                 return;
             }
 
-            //Session last = Context.Sessions.ElementAt(Context.Sessions.Count());
-            /*Session last = null;
-            int count = Context.Sessions.Count();
-
-            if (count > 0)
-                last = Context.Sessions.AsEnumerable().Last();
-
-            if (last == null)
-            {
-                data.Id = 100000;
-            }
-            else
-            {
-                data.Id = last.Id + 1;
-
-                if (data.Id < 100000)
-                    data.Id = 100000;
-            }*/
-
             data.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
             await Context.Sessions.AddAsync(data);
+            await Context.SaveChangesAsync();
+
+            // Join the user and session
+            UserSession userSession = new UserSession
+            {
+                UserId = data.Email,
+                SessionId = data.Identity
+            };
+
+            await Context.UserSessions.AddAsync(userSession);
             await Context.SaveChangesAsync();
 
             HttpContext.Response.StatusCode = 202;
@@ -359,18 +350,15 @@ namespace Slagkraft.Controllers
         [HttpGet("sessions-{email}")]
         public async Task<List<Session>> GetSessions(string email)
         {
-            List<Session> sessions = await Context.Sessions.ToListAsync();
+            User user = await Context.Users
+                .Include(u => u.Sessions)
+                .ThenInclude(s => s.Session)
+                .Where(u => u.Email.Equals(email))
+                .SingleOrDefaultAsync();
 
-            List<Session> userSessions = new List<Session>();
-
-            foreach (Session session in sessions)
-            {
-                if (session.Email == email)
-                {
-                    userSessions.Add(session);
-                }
-            }
-            return userSessions;
+            IEnumerable<Session> sessions = from userSession in user.Sessions
+                              select userSession.Session;
+            return sessions.ToList();
         }
 
         [HttpPost("{code}/group{group}-recolor")]

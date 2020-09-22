@@ -63,7 +63,6 @@ namespace Slagkraft.Models.Database
 
             builder.Entity<Session>()
                 .Property(o => o.Identity)
-                //.HasDefaultValue("NEXT VALUE FOR dbo.SessionOrder_seq");
                 .HasDefaultValueSql("NEXT VALUE FOR dbo.SessionOrder_seq");
         }
         #endregion
