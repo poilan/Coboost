@@ -46,7 +46,11 @@ namespace Slagkraft.Controllers
             if (email == null)
                 return null;
 
-            User User = await Context.Users.FindAsync(email);
+            User User = await Context.Users
+                .Include(u => u.Sessions)
+                .ThenInclude(s => s.Session)
+                .Where(u => u.Email.Equals(email))
+                .SingleAsync();
 
             if (User == null)
                 return null;
@@ -62,7 +66,10 @@ namespace Slagkraft.Controllers
         [HttpGet("getall")]
         public async Task<IEnumerable<User>> GetUsers()
         {
-            List<User> userList = await Context.Users.ToListAsync();
+            List<User> userList = await Context.Users
+                .Include(u => u.Sessions)
+                .ThenInclude(u => u.Session)
+                .ToListAsync();
 
             return userList;
         }

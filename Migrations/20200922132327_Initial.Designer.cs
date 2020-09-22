@@ -9,7 +9,7 @@ using Slagkraft.Models.Database;
 namespace Coboost.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200922103624_Initial")]
+    [Migration("20200922132327_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,21 @@ namespace Coboost.Migrations
                     b.ToTable("Sessions");
                 });
 
+            modelBuilder.Entity("Slagkraft.Models.Database.SessionFolder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SessionFolder");
+                });
+
             modelBuilder.Entity("Slagkraft.Models.Database.User", b =>
                 {
                     b.Property<string>("Email")
@@ -70,6 +85,26 @@ namespace Coboost.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Slagkraft.Models.Database.UserFolder", b =>
+                {
+                    b.Property<int>("FolderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FolderId", "SessionId", "UserId");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SessionFolders");
+                });
+
             modelBuilder.Entity("Slagkraft.Models.Database.UserSession", b =>
                 {
                     b.Property<string>("UserId")
@@ -85,6 +120,27 @@ namespace Coboost.Migrations
                     b.ToTable("UserSessions");
                 });
 
+            modelBuilder.Entity("Slagkraft.Models.Database.UserFolder", b =>
+                {
+                    b.HasOne("Slagkraft.Models.Database.SessionFolder", "Folder")
+                        .WithMany()
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Slagkraft.Models.Database.Session", "Session")
+                        .WithMany("Folders")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Slagkraft.Models.Database.User", "User")
+                        .WithMany("Folders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Slagkraft.Models.Database.UserSession", b =>
                 {
                     b.HasOne("Slagkraft.Models.Database.Session", "Session")
@@ -94,7 +150,7 @@ namespace Coboost.Migrations
                         .IsRequired();
 
                     b.HasOne("Slagkraft.Models.Database.User", "User")
-                        .WithMany("Sessionss")
+                        .WithMany("Sessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

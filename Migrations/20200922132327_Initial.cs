@@ -15,6 +15,19 @@ namespace Coboost.Migrations
                 startValue: 100000L);
 
             migrationBuilder.CreateTable(
+                name: "SessionFolder",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionFolder", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sessions",
                 columns: table => new
                 {
@@ -46,6 +59,37 @@ namespace Coboost.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SessionFolders",
+                columns: table => new
+                {
+                    FolderId = table.Column<int>(nullable: false),
+                    SessionId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionFolders", x => new { x.FolderId, x.SessionId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_SessionFolders_SessionFolder_FolderId",
+                        column: x => x.FolderId,
+                        principalTable: "SessionFolder",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SessionFolders_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalTable: "Sessions",
+                        principalColumn: "Identity",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SessionFolders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Email",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserSessions",
                 columns: table => new
                 {
@@ -70,6 +114,16 @@ namespace Coboost.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_SessionFolders_SessionId",
+                table: "SessionFolders",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SessionFolders_UserId",
+                table: "SessionFolders",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_SessionId",
                 table: "UserSessions",
                 column: "SessionId");
@@ -78,7 +132,13 @@ namespace Coboost.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "SessionFolders");
+
+            migrationBuilder.DropTable(
                 name: "UserSessions");
+
+            migrationBuilder.DropTable(
+                name: "SessionFolder");
 
             migrationBuilder.DropTable(
                 name: "Sessions");

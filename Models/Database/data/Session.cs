@@ -33,5 +33,6 @@ namespace Slagkraft.Models.Database
 
         //public User User { get; set; }
         public IEnumerable<UserSession> Users { get; set; }
+        public IEnumerable<UserFolder> Folders { get; set; }
     }
 }
