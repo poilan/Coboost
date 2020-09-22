@@ -36,6 +36,11 @@ namespace Slagkraft.Models.Database
         /// </summary>
         public DbSet<User> Users { get; set; }
 
+        /// <summary>
+        /// The user-session join table
+        /// </summary>
+        public DbSet<UserSession> UserSessions { get; set; }
+
         #endregion Public Properties
 
         #region Public Constructors
@@ -45,5 +50,22 @@ namespace Slagkraft.Models.Database
         }
 
         #endregion Public Constructors
+
+        #region Protected Methods
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<UserSession>().HasKey(us => new { us.UserId, us.SessionId }); // Composite Key
+
+            builder.HasSequence<int>("SessionOrder_seq", schema: "dbo")
+                .StartsAt(100000)
+                .IncrementsBy(1);
+
+            builder.Entity<Session>()
+                .Property(o => o.Identity)
+                //.HasDefaultValue("NEXT VALUE FOR dbo.SessionOrder_seq");
+                .HasDefaultValueSql("NEXT VALUE FOR dbo.SessionOrder_seq");
+        }
+        #endregion
     }
 }

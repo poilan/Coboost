@@ -256,7 +256,7 @@ namespace Slagkraft.Controllers
             }
 
             //Session last = Context.Sessions.ElementAt(Context.Sessions.Count());
-            Session last = null;
+            /*Session last = null;
             int count = Context.Sessions.Count();
 
             if (count > 0)
@@ -264,15 +264,15 @@ namespace Slagkraft.Controllers
 
             if (last == null)
             {
-                data.Identity = 100000;
+                data.Id = 100000;
             }
             else
             {
-                data.Identity = last.Identity + 1;
+                data.Id = last.Id + 1;
 
-                if (data.Identity < 100000)
-                    data.Identity = 100000;
-            }
+                if (data.Id < 100000)
+                    data.Id = 100000;
+            }*/
 
             data.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
             await Context.Sessions.AddAsync(data);

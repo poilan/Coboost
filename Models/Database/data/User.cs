@@ -36,6 +36,8 @@ namespace Slagkraft.Models.Database
         /// </summary>
         public string Password { get; set; }
 
+        public IEnumerable<UserSession> Sessionss { get; set; }
+
         #endregion Public Properties
     }
 }
