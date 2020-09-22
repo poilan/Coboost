@@ -353,6 +353,13 @@ namespace Slagkraft.Controllers
             User user = await Context.Users
                 .Include(u => u.Sessions)
                 .ThenInclude(s => s.Session)
+                .ThenInclude(s => s.Users)
+
+                .Include(u => u.Folders)
+                .ThenInclude(f => f.Session)
+                .ThenInclude(s => s.Folders)
+                .ThenInclude(f => f.Folder)
+
                 .Where(u => u.Email.Equals(email))
                 .SingleOrDefaultAsync();
 

@@ -61,7 +61,7 @@ namespace Coboost.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SessionFolder");
+                    b.ToTable("Folders");
                 });
 
             modelBuilder.Entity("Slagkraft.Models.Database.User", b =>

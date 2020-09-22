@@ -9,7 +9,7 @@ using Slagkraft.Models.Database;
 namespace Coboost.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200922132327_Initial")]
+    [Migration("20200922134044_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ namespace Coboost.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SessionFolder");
+                    b.ToTable("Folders");
                 });
 
             modelBuilder.Entity("Slagkraft.Models.Database.User", b =>

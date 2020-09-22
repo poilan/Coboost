@@ -36,6 +36,8 @@ namespace Slagkraft.Models.Database
         /// </summary>
         public DbSet<User> Users { get; set; }
 
+        public DbSet<SessionFolder> Folders { get; set; }
+
         /// <summary>
         /// The user-session join table
         /// </summary>
