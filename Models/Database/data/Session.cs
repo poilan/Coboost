@@ -14,11 +14,10 @@ namespace Slagkraft.Models.Database
     {
         #region Public Properties
 
-        [ForeignKey("User")]
-        public string Email { get; set; }
-
         [Key]
         public int Identity { get; set; }
+
+        public string Email { get; set; }
 
         public string LastOpen { get; set; }
 
@@ -33,5 +32,7 @@ namespace Slagkraft.Models.Database
         #endregion Public Properties
 
         //public User User { get; set; }
+        public IEnumerable<UserSession> Users { get; set; }
+        public IEnumerable<UserFolder> Folders { get; set; }
     }
 }

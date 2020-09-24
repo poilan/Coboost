@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.AspNetCore.Mvc;
 
 using Slagkraft.Models.Database;
 
@@ -24,11 +26,18 @@ namespace Slagkraft
         public void ConfigureServices(IServiceCollection services)
         {
 
-            // Setup MySQL
+            /* Setup MySQL
             var dbDetails = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));
+            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));*/
+            // Setup Microsoft SQL Db
+            string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(o =>
+                {
+                    o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
