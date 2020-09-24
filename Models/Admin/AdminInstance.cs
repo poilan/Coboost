@@ -52,11 +52,7 @@ namespace Slagkraft.Models.Admin
             }
         }
 
-        public int Admin { get; set; }
-
         public int EventCode { get; set; }
-
-        public bool Open { get; set; }
 
         public string Owner { get; set; }
 
@@ -69,7 +65,6 @@ namespace Slagkraft.Models.Admin
         public AdminInstance()
         {
             Active = 0;
-            Open = false;
             Tasks = new List<BaseTask>();
         }
 
@@ -207,6 +202,16 @@ namespace Slagkraft.Models.Admin
             {
                 task.Reset = new ManualResetEvent(false);
                 task.ShowResults = true;
+                task.InProgress = false;
+
+                if (task is OpenText open)
+                {
+                    foreach (OpenText_Group group in open.Groups)
+                    {
+                        if (group.Collapsed != true)
+                            group.Collapsed = false;
+                    }
+                }
             }
         }
 
@@ -287,7 +292,7 @@ namespace Slagkraft.Models.Admin
             }
             catch (Exception e)
             {
-                Console.WriteLine("Saving error: {0}", e);
+                Console.WriteLine("Error encounterd while saving session: {0}", e);
 
                 return null;
             }

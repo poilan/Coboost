@@ -27,7 +27,7 @@ const Container = styled.div`
 
         &:hover {
             filter: brightness(80%) drop-shadow(6px 6px 3px black);
-            cursor: ${props => props.showcase ? "default" : "cell"};
+            cursor: ${props => props.showcase ? "default" : "grab"};
         }
         &:active {
             cursor: ${props => props.showcase ? "default" : "grabbing"};

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill } from "react-icons/bs";
 import { Ico_Text, Ico_MultipleChoice, Ico_Points, Ico_Slider } from "../Classes/Icons";
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 const FacilitatorContainer = styled.div`
     display: flex;
@@ -279,6 +281,24 @@ export class Facilitator extends React.Component {
         }
     }
 
+    toggleTask = () => {
+        const code = sessionStorage.getItem('code');
+        if (this.state.questions[this.props.active].InProgress) {
+            axios.post(`admin/${code}/task-close`).then(res => {
+                this.getActiveQuestion(() => {
+                    console.log("Results Toggled!");
+                })
+            });
+        }
+        else {
+            axios.post(`admin/${code}/task-open`).then(res => {
+                this.getActiveQuestion(() => {
+                    console.log("Results Toggled!");
+                })
+            });
+        }
+    }
+
     toggleFullscreen() {
         var document = window.document;
         var element = document.documentElement;
@@ -359,7 +379,7 @@ export class Facilitator extends React.Component {
                         Information
                     </FacilitatorButton>*/}
 
-                    {this.state.questions[this.props.active] != undefined  &&
+                    {this.state.questions[this.props.active] != undefined &&
                         <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
                             {this.state.questions[this.props.active].ShowResults ? <>
                                 <BsEyeSlash class="icon" /><br />
@@ -371,11 +391,22 @@ export class Facilitator extends React.Component {
                         </FacilitatorButton>
                     }
 
-                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.closeVoting}>
-                        <BsLock class="icon" /><br/>
-                        Lock answers
-                    </FacilitatorButton>
-
+                    {this.state.questions[this.props.active] != undefined &&
+                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleTask}>
+                            {this.state.questions[this.props.active].InProgress ?
+                                <>
+                                    <LockIcon className="icon" /><br />
+                                    Close Task
+                                </>
+                                :
+                                <>
+                                    <LockOpenIcon className="icon" /><br />
+                                    Open Task
+                                </>
+                            }
+                        </FacilitatorButton>
+                    }
+                    {/*
                     <FacilitatorButton onClick={this.startCountdown}>
                         <BsStopwatch class="icon" /><br/>
                         Countdown

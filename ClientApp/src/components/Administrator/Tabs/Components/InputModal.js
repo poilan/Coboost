@@ -164,14 +164,14 @@ export class InputModal extends Component {
             <Form autoComplete="off" onSubmit={this.SendInput} onInvalid={this.HandleInvalid}>
                 <Box p={1} m={1} mb={2}>
                     <ContentInput inputRef={this.Title} disabled={this.state.description == undefined || this.state.description.length <= 30} fullWidth
-                        label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.state.description == undefined || this.state.description.length <= 30} margin="normal" 
+                        label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.state.description == undefined || this.state.description.length <= 30} margin="normal"
                         inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }} onFocus={this.OnTitleFocus}
                         value={this.state.title} onChange={this.HandleTitle} onKeyDown={this.HandleEnter.bind(this)}
                     />
                 </Box>
                 <Box p={1} m={1} mb={2}>
                     <ContentInput inputRef={this.Description} name="description" variant="outlined" multiline margin="normal" rowsMax={5} fullWidth
-                        label="Description" required helperText={`${250 - this.state.description.length}${this.state.description.length > 30 ? "" : ` | ${30 - this.state.description.length}`}`}
+                        label="Input" required helperText={`${250 - this.state.description.length}${this.state.description.length > 30 ? "" : ` | ${30 - this.state.description.length}`}`}
                         inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                         value={this.state.description} onChange={this.HandleDescription}
                         onKeyDown={this.HandleEnter.bind(this)}

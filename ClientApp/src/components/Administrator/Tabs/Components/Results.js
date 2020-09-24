@@ -133,11 +133,11 @@ export function ResultSlider(props) {
     let marks = [
         {
             value: props.min,
-            label: `${props.min}`,
+            label: `${props.minDescription == (undefined || null) ? props.min : props.minDescription}`,
         },
         {
             value: props.max,
-            label: `${props.max}`,
+            label: `${props.maxDescription == (undefined || null) ? props.max : props.maxDescription}`,
         },
     ]
     return (
@@ -151,6 +151,7 @@ export function ResultSlider(props) {
                 <Slider name={props.title} value={props.average}
                     marks={marks} min={props.min} max={props.max} color={props.color}
                     aria-labledby="discrete-slider" valueLabelDisplay="on"
+
                 />
             </Box>
         </Box>

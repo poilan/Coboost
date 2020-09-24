@@ -127,7 +127,8 @@ export class Group extends Component {
         modal: {
             archive: false,
         },
-        collapse: true,
+
+        //collapse: true,
         menuAnchor: null,
         colorAnchor: null,
     }
@@ -222,9 +223,12 @@ export class Group extends Component {
 
     collapse = (e) => {
         e.stopPropagation();
-        this.setState({
-            collapse: !this.state.collapse,
-        });
+        const code = sessionStorage.getItem("code");
+        axios.post(`admin/${code}/text-group${this.props.group}-collapse`);
+
+        //this.setState({
+        //    collapse: !this.state.collapse,
+        //});
     }
 
     colorChange = (ColorEvent) => {
@@ -270,25 +274,26 @@ export class Group extends Component {
                 onDrop={this.drag.drop} onDragOver={this.drag.over}
                 draggable={this.props.group != "0" && !this.props.showcase} onDragStart={this.drag.start} >
 
-                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} onClick={(e) => e.stopPropagation()} id={this.props.id + "-title"} new={this.props.group == "new"} showcase={this.props.showcase}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={(e) => this.collapse(e)}>{this.state.collapse ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
+                <GroupTitle onDoubleClick={(e) => this.handleDouble(e)} onClick={(e) => e.stopPropagation()} id={this.props.id + "-title"} new={this.props.group == "new"} showcase={this.props.showcase}>{this.props.title} {!this.props.showcase && this.props.group != "new" && <IconButton style={{ outline: "0" }} aria-label="expand" size="small" onClick={(e) => this.collapse(e)}>{!this.props.collapsed ? <KeyboardArrowUpIcon style={{ color: grey[50] }} /> : <KeyboardArrowDownIcon style={{ color: grey[50] }} />}</IconButton>}</GroupTitle>
 
-                <Collapse timeout="auto" in={this.state.collapse}>
+                <Collapse timeout="auto" in={!this.props.collapsed}>
                     {this.props.size <= "2" ?
                         (this.props.size == "2" ?
                             <>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
                             </>
-                            :
-                            ""
-                        ) : (this.props.size == "4" ?
+                            : //Middle of: this.props.size == "2" ?
+                            "")
+                        : //Middle of: this.props.size <= "2" ?
+                        (this.props.size == "4" ?
                             <>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>C</IDChars>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>D</IDChars>
                             </>
-                            :
+                            : //Middle of: this.props.size == "4" ?
                             <>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>A</IDChars>
                                 <IDChars size={this.props.size} id={this.props.id + "-title"}>B</IDChars>

@@ -492,9 +492,13 @@ export class Organizer extends Component {
         });
 
         document.addEventListener('keydown', (event) => {
-            if (event.key == "R" || event.key == "r") {
+            if (!this.state.modal.create && !this.state.modal.answer &&
+                !this.state.modal.rename && !this.state.modal.answer &&
+                !this.state.modal.rename && !this.state.details.open &&
+                (event.key == "R" || event.key == "r")) {
                 this.setState({
                     selected: [],
+                    anchor: null,
                 })
             }
         });
@@ -741,7 +745,7 @@ export class Organizer extends Component {
                                         return (
                                             <Group id={group.Index} key={group.Index} onClick={groupSelect}
                                                 group={group.Index} column={group.Column} title={group.Title} size={column.width}
-                                                double={this.modal.rename.open} color={group.Color}>
+                                                double={this.modal.rename.open} color={group.Color} collapsed={group.Collapsed}>
                                                 {group.Members !== undefined &&
                                                     group.Members.map(member =>
 
@@ -769,7 +773,7 @@ export class Organizer extends Component {
                     )
                     }
                     <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                    {this.state.modal.answer && <InputModal title="Send Input" onClose={this.modal.answer.close.bind(this)} />}
+                    {this.state.modal.answer && <InputModal title="Write Input" onClose={this.modal.answer.close.bind(this)} />}
                     {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Groups[this.state.selected[0].split("-")[0]].Members[this.state.selected[0].split("-")[1]].Title} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
                     {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
@@ -951,7 +955,7 @@ export class Organizer extends Component {
                         <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} vote
                             average={option.Average} min={task.Min} max={task.Max} color={option.Color}
                             checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                            onClick={select}
+                            onClick={select} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
                         />
                     )}
                 </MainContainer>

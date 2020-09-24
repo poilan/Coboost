@@ -451,9 +451,7 @@ export class Administrator extends Component {
                     <BreadCrumb aria-label="Breadcrumb" separator="&#187;">
                         <BreadText color="initial" href="/">Coboost</BreadText>
                         <BreadText color="initial" href="/dashboard">Sessions</BreadText>
-                        <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.selectTab("task") }}>{this.state.title}</BreadText>
-                        <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.state.tab == "task" ? this.selectTab("organize") : this.selectTab("task") }}>{this.state.tab == "task" ? "Tasks" : "Organize"}</BreadText>
-                        {this.state.tasks[this.state.active] != undefined && <Tooltip title="Organize"><BreadText color="initial" active={this.state.tab == "organize"} href="#" onClick={(e) => { e.preventDefault(); this.selectTab("organize") }}>{this.state.tasks[this.state.active].Title}</BreadText></Tooltip>}
+                        <BreadText color="initial" href="#" onClick={(e) => { e.preventDefault(); this.state.tab == "task" ? this.selectTab("organize") : this.selectTab("task") }}>{this.state.title}</BreadText>
                     </BreadCrumb>
 
                     <BannerDropdown title={<BsJustify />} style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>

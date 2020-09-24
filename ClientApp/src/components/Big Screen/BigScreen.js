@@ -11,7 +11,7 @@ import { ResultBackground, ResultItem, ResultSlider } from "../Administrator/Tab
 import { Facilitator } from "./Facilitator";
 
 import SSE from "../Core/SSE";
-import { Typography } from '@material-ui/core';
+import { Typography, Box } from '@material-ui/core';
 
 const MainContainer = styled(Col)`
     display: table;
@@ -399,14 +399,14 @@ export class BigScreen extends Component {
         const results = this.state.task.Groups;
         return (
             <>
-                {results[0].Members.length > 0 && <Column key="C0" width={1} empty>
+                {results[0].Members.length > 0 && !results[0].Collapsed && <Column key="C0" width={1} empty>
                     <Group key={0} title="Unorganized" size={1} showcase group={0}>
                         {results[0].Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
                     </Group>
                 </Column>}
                 {results.slice(1).map(group =>
                     <>
-                        {group.Members.length > 0 && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
+                        {group.Members.length > 0 && !group.Collapsed && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
                             <Group key={group.Index} title={group.Title} size={1} color={group.Color} showcase group={group.Index}>
                                 {group.Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
                             </Group>
@@ -449,8 +449,8 @@ export class BigScreen extends Component {
         return (
             <>
                 {task.Options.map(option =>
-                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} color={option.Color}  vote
-                        average={option.Average} min={task.Min} max={task.Max}
+                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} color={option.Color} vote
+                        average={option.Average} min={task.Min} max={task.Max} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
                         showcase
                     />
                 )}
@@ -461,7 +461,10 @@ export class BigScreen extends Component {
     renderHidden() {
         return (
             <>
-                <Typography variant="h2" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} align="center">Results are hidden</Typography>
+                <Box style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                    <Typography display="block" variant="h2" align="center">Keep working on your task!</Typography>
+                    <Typography display="block" variant="h2" align="center">Results will soon be shown</Typography>
+                </Box>
             </>
         );
     }

@@ -58,6 +58,11 @@ namespace Slagkraft.Models.Admin.Questions
         public int Index { get; set; }
 
         /// <summary>
+        /// Decides if this task should accept new data
+        /// </summary>
+        public bool InProgress { get; set; }
+
+        /// <summary>
         /// Decides whether the results should be shown or hidden.
         /// </summary>
         public bool ShowResults { get; set; }

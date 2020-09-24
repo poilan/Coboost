@@ -115,8 +115,10 @@ export class CreateTaskModal extends Component {
             type: props.type,
             description: props.title,
             title: "",
-            max: 3,
-            points: 1,
+            max: 5,
+            maxDescription: "Very important",
+            min: 1,
+            minDescription: "Not important",
 
             options: [],
             showing: true,
@@ -314,19 +316,23 @@ export class CreateTaskModal extends Component {
 
         const handleMax = (event) => {
             event.preventDefault();
-            var max = this.state.max;
+            var max = this.state.min;
             max = event.target.value;
+
+            if (max > this.state.max)
+                max = this.state.max;
+
             this.setState({
-                max: max,
+                min: max,
             });
         }
 
         const handlePoints = (event) => {
             event.preventDefault();
-            var points = this.state.points;
+            var points = this.state.max;
             points = event.target.value;
             this.setState({
-                points: points,
+                max: points,
             });
         }
 
@@ -365,7 +371,7 @@ export class CreateTaskModal extends Component {
             let data = {
                 Title: this.state.description,
                 Options: this.state.options,
-                Amount: parseInt(this.state.points),
+                Amount: parseInt(this.state.max),
                 Max: parseInt(this.state.max),
                 ShowResults: true,
             }
@@ -396,10 +402,10 @@ export class CreateTaskModal extends Component {
 
                 <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
                     <Box display="inline" px={1} borderColor="transparent">
-                        <TextField id="points" name="points" type="number" label="Total Points" ref="points" onChange={handlePoints.bind(this)} value={this.state.points} />
+                        <TextField id="points" name="points" type="number" label="Total Points" ref="points" onChange={handlePoints.bind(this)} value={this.state.max} />
                     </Box>
                     <Box display="inline" px={0} borderColor="transparent">
-                        <TextField id="max" name="max" type="number" label="Max per option" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
+                        <TextField id="max" name="max" type="number" label="Max per option" ref="max" onChange={handleMax.bind(this)} value={this.state.min} />
                     </Box>
                 </Box>
 
@@ -441,12 +447,30 @@ export class CreateTaskModal extends Component {
             });
         }
 
+        const handleMaxDescription = (event) => {
+            event.preventDefault();
+            var description = this.state.maxDescription;
+            description = event.target.value;
+            this.setState({
+                maxDescription: description,
+            });
+        }
+
         const handleMin = (event) => {
             event.preventDefault();
-            var min = this.state.points;
+            var min = this.state.min;
             min = event.target.value;
             this.setState({
-                points: min,
+                min: min,
+            });
+        }
+
+        const handleMinDescription = (event) => {
+            event.preventDefault();
+            var minDescription = this.state.minDescription;
+            minDescription = event.target.value;
+            this.setState({
+                minDescription: minDescription,
             });
         }
 
@@ -485,8 +509,10 @@ export class CreateTaskModal extends Component {
             let data = {
                 Title: this.state.description,
                 Options: this.state.options,
-                Min: parseInt(this.state.points),
+                Min: parseInt(this.state.min),
+                MinDescription: this.state.minDescription,
                 Max: parseInt(this.state.max),
+                MaxDescription: this.state.maxDescription,
                 ShowResults: true,
             }
 
@@ -510,20 +536,29 @@ export class CreateTaskModal extends Component {
         let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
         return (
             <Form onSubmit={createSlider.bind(this)}>
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                <Box component="fieldset" mb={2} pt={1} px={3} borderColor="transparent">
                     <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <Box display="inline" px={1} borderColor="transparent">
-                        <TextField id="min" name="min" type="number" label="Minimum Value" ref="min" onChange={handleMin.bind(this)} value={this.state.points} />
+                <Box component="fieldset" borderColor="transparent">
+
+                    <Box display="inline" width="100%" component="fieldset" px={3} pt={1} mb={3} borderColor="transparent">
+                        <Typography variant="subtitle2" component="legend">Minimum</Typography>
+
+                        <TextField id="min-desc" name="min-desc" type="text" label="Description" onChange={handleMinDescription.bind(this)} value={this.state.minDescription} />
+                        <TextField id="min" name="min" type="number" label="Value" ref="min" onChange={handleMin.bind(this)} value={this.state.min} />
                     </Box>
-                    <Box display="inline" px={0} borderColor="transparent">
-                        <TextField id="max" name="max" type="number" label="Maximum Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
+
+                    <Box display="inline" width="100%" component="fieldset" px={3} pt={1} mb={3} borderColor="transparent">
+                        <Typography variant="subtitle2" component="legend">Maximum</Typography>
+
+                        <TextField id="max-desc" name="max-desc" type="text" label="Description" onChange={handleMaxDescription.bind(this)} value={this.state.maxDescription} />
+                        <TextField id="max" name="max" type="number" label="Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />                        
                     </Box>
+
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
+                <Box component="fieldset" mb={2} pt={1} px={3} borderColor="transparent">
                     <Box component="fieldset" pt={1} px={1} borderColor="transparent">
                         <Typography component="legend" variant="subtitle2">Options</Typography>
                         {this.state.options !== undefined && this.state.options.map(option =>
@@ -548,11 +583,14 @@ export class CreateTaskModal extends Component {
         this.setState({
             type: '',
             title: '',
+            description: '',
             options: [],
             showing: false,
             success: false,
-            max: 3,
-            points: 1,
+            max: 5,
+            maxDescription: "Very important",
+            min: 1,
+            minDescription: "Not important",
         });
     }
 

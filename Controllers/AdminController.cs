@@ -175,6 +175,42 @@ namespace Slagkraft.Controllers
             HttpContext.Response.StatusCode = 200;
         }
 
+        [HttpPost("{code}/task-close")]
+        public void CloseTask(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                BaseTask task = admin.Tasks[admin.Active];
+
+                ThreadPool.QueueUserWorkItem(o => task.InProgress = false);
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
+        }
+
+        [HttpPost("{code}/text-group{group}-collapse")]
+        public void CollapseGroup(int code, int group)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open.GroupCollapse(group));
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
+        }
+
         [HttpPost("{code}/question-create-group-c{column}")]
         public void CreateGroup(int code, int column)
         {
@@ -488,6 +524,24 @@ namespace Slagkraft.Controllers
             }
             else
                 Response.StatusCode = 412;
+        }
+
+        [HttpPost("{code}/task-open")]
+        public void OpenTask(int code)
+        {
+            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                BaseTask task = admin.Tasks[admin.Active];
+
+                ThreadPool.QueueUserWorkItem(o => task.InProgress = true);
+                HttpContext.Response.StatusCode = 202;
+                return;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+                return;
+            }
         }
 
         [HttpPost("{code}/option{option}-recolor")]

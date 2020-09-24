@@ -22,6 +22,11 @@ namespace Slagkraft.Models.Admin.Questions
         #region Public Properties
 
         /// <summary>
+        /// Decides if the group is collapsed in organizer and hidden on Big Screen
+        /// </summary>
+        public bool Collapsed { get; set; }
+
+        /// <summary>
         /// The color of the group, Hex code (eg. '#575b75')
         /// </summary>
         public string Color
@@ -44,11 +49,6 @@ namespace Slagkraft.Models.Admin.Questions
         /// This is used by frontend to determine which column it is going to place the group in.
         /// </summary>
         public int Column { get; set; }
-
-        /// <summary>
-        /// Decides if the group is collapsed in organizer and hidden on Big Screen
-        /// </summary>
-        public bool Hidden { get; set; }
 
         /// <summary>
         /// The index of this group

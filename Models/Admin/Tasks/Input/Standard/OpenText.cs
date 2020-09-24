@@ -159,15 +159,31 @@ namespace Slagkraft.Models.Admin.Questions
         /// <param name="color">The new Color in Hex format</param>
         public void ColorGroup(int group, string color)
         {
+            if (group >= Groups.Count || group < 0 || color == null)
+                return;
+
             lock (ThreadLock)
             {
-                if (group >= Groups.Count || group < 0 || color == null)
-                    return;
-
                 if (color.Length == 7 && color.StartsWith("#"))
                 {
                     Groups[group].Color = color;
                 }
+            }
+            EventStream();
+        }
+
+        /// <summary>
+        /// Collapses or Expands a Group. Collapsed Groups are hidden on Big Screen
+        /// </summary>
+        /// <param name="group"></param>
+        public void GroupCollapse(int group)
+        {
+            if (group >= Groups.Count || group < 0)
+                return;
+
+            lock (ThreadLock)
+            {
+                Groups[group].Collapsed = !Groups[group].Collapsed;
             }
             EventStream();
         }
