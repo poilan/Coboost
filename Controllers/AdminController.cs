@@ -400,7 +400,7 @@ namespace Slagkraft.Controllers
                 .SingleOrDefaultAsync();
 
             IEnumerable<Session> sessions = from userSession in user.Sessions
-                              select userSession.Session;
+                                            select userSession.Session;
             return sessions.ToList();
         }
 

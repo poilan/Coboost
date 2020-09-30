@@ -370,7 +370,7 @@ export class Facilitator extends React.Component {
                                     <BsCollection class="icon" />
                                 </>}
                             <br />
-                        All tasks
+                            All tasks
                     </FacilitatorButton>
                     }
 
@@ -381,13 +381,17 @@ export class Facilitator extends React.Component {
 
                     {this.state.questions[this.props.active] != undefined &&
                         <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
-                            {this.state.questions[this.props.active].ShowResults ? <>
-                                <BsEyeSlash class="icon" /><br />
-                            Hide Results
-                        </> : <>
+                            {this.state.questions[this.props.active].ShowResults ?
+                                <>
                                     <BsEye class="icon" /><br />
-                            Show Results
-                        </>}
+                                    Results Shown
+                                </>
+                                :
+                                <>
+                                    <BsEyeSlash class="icon" /><br />
+                                    Results Hidden
+                                </>
+                            }
                         </FacilitatorButton>
                     }
 
@@ -395,13 +399,13 @@ export class Facilitator extends React.Component {
                         <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleTask}>
                             {this.state.questions[this.props.active].InProgress ?
                                 <>
-                                    <LockIcon className="icon" /><br />
-                                    Close Task
+                                    <LockOpenIcon className="icon" /><br />
+                                    Task Open
                                 </>
                                 :
                                 <>
-                                    <LockOpenIcon className="icon" /><br />
-                                    Open Task
+                                    <LockIcon className="icon" /><br />
+                                    Task Closed
                                 </>
                             }
                         </FacilitatorButton>

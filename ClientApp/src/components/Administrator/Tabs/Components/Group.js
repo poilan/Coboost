@@ -63,6 +63,7 @@ const GroupTitle = styled.h1`
     vertical-align: center;
     left: ${props => props.new ? "50%" : "15px"};
     transform: ${props => props.new ? "translate(-50%, -50%)" : ""};
+    pointer-events: ${props => props.new ? "none" : "initial"};
 
     &:hover {
         cursor: ${props => props.showcase ? "default" : "text"};
@@ -215,7 +216,7 @@ export class Group extends Component {
     }
 
     handleDouble = (e) => {
-        if (this.props.double !== undefined && this.props.group != 0) {
+        if (this.props.double !== undefined && this.props.group != 0 && this.props.group != "new") {
             e.stopPropagation();
             this.props.double(e);
         }

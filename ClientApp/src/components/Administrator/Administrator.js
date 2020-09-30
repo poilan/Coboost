@@ -6,11 +6,17 @@ import "circular-std";
 import { Tasks } from './Tabs/Tasks';
 import { Organizer } from './Tabs/Organizer';
 import { Presentation } from './Presentation';
-import { Breadcrumbs, Link, Typography, Tooltip } from '@material-ui/core';
+import { Breadcrumbs, Link, Typography, Tooltip, Menu, MenuItem, Divider } from '@material-ui/core';
 import { Facilitator } from '../Big Screen/Facilitator';
-
+import MenuIcon from '@material-ui/icons/Menu';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { BsJustify } from 'react-icons/bs';
 import BannerDropdown, { BannerLink } from '../Classes/Dropdown';
+import { CreateTaskModal } from './Tabs/Components/CreateModal';
+import { Collection, Task } from './Tabs/Components/Task';
+import { BigScreen } from '../Big Screen/BigScreen';
 
 const MainContainer = styled.div`
     display: table;
@@ -54,11 +60,11 @@ const BannerCode = styled.div`
     display: inline-block;
     color: #fff;
     top: 50%;
-    position: relative;
+    left: 50%;
+    position: absolute;
     margin-right: 20px;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
     text-align: center;
-    float: right;
 `;
 
 const BannerButton = styled(DropdownButton)`
@@ -187,6 +193,43 @@ const ContentBody = styled(Card.Body)`
     padding: 0;
 `;
 
+const SlideContainer = styled.div`
+    top: 2%;
+    transform: translateY(-1%);
+    display: inline-block;
+    position: absolute;
+    left: max(27%, calc(400px + 2%));
+    width: calc(97% - max(400px, 25%));
+    height: 98%;
+    border: 1px solid #575b75;
+    overflow: hidden;
+`;
+
+const SelectedSlide = styled.div`
+    position: relative;
+    width: 100%;
+    background: #fff;
+    height: 100%;
+    border-radius: 10px;
+`;
+
+const Viewer = styled(BigScreen)`
+    position: absolute;
+`;
+
+const DivButton = styled.div`
+    &:hover {
+        color: #ddd;
+        filter: brightness(150%);
+        cursor: pointer;
+    }
+
+    &:active {
+        color: #fff;
+        filter: brightness(75%);
+    }
+`;
+
 export class Administrator extends Component {
     constructor(props) {
         super(props);
@@ -197,10 +240,17 @@ export class Administrator extends Component {
             columns: [],
             active: 0,
 
-            tab: 'task',
+            tab: 'organize',
             presentor: null,
 
             results: true,
+            showList: true,
+            showControls: true,
+
+            modal: {
+                create: false,
+                type: 0,
+            }
         }
 
         this.present = this.present.bind(this);
@@ -211,6 +261,15 @@ export class Administrator extends Component {
         let code = sessionStorage.getItem("code");
         let title = sessionStorage.getItem("title");
         let presentManager = new Presentation(code);
+
+        document.addEventListener("keypress", (e) => {
+            if (e.key == "|") {
+                this.setState({
+                    showList: !this.state.showList,
+                    showControls: !this.state.showList
+                });
+            }
+        })
 
         this.setState({
             title: title,
@@ -438,9 +497,67 @@ export class Administrator extends Component {
                 this.SSE.start(index);
             }
         },
+    }
 
-        toggleHide: () => {
+    create = {
+        close: (success) => {
+            this.setState({
+                modal: {
+                    create: false,
+                    type: null,
+                }
+            });
+
+            if (success == true) {
+                this.update();
+            }
         },
+
+        text: () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 0,
+                },
+                anchor: null,
+            })
+        },
+
+        multipleChoice: () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 1,
+                },
+                anchor: null,
+            })
+        },
+
+        points: () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 2,
+                },
+                anchor: null,
+            })
+        },
+
+        slider: () => {
+            this.setState({
+                modal: {
+                    create: true,
+                    type: 3,
+                },
+                anchor: null,
+            })
+        },
+
+        menu: (event) => {
+            this.setState({
+                anchor: event.currentTarget,
+            });
+        }
     }
 
     render() {
@@ -471,23 +588,50 @@ export class Administrator extends Component {
                     <Tab.Container activeKey={this.state.tab} onSelect={(k) => this.selectTab(k)}>
 
                         <ContentHeader>
-                            <HeaderTabs variant="tabs">
-                                <Nav.Link eventKey="task">Tasks</Nav.Link>
-                                <Nav.Link eventKey="organize">Organize</Nav.Link>
-                            </HeaderTabs>
+                            <div style={{ width: this.state.showList || this.state.showControls ? "calc(25% + 50px)" : "50px", left: "0", position: "absolute", height: "100%", overflow: "hidden" }}>
+                                <Facilitator style={{ position: "absolute", top: "0px", left: "0", height: "50px", width: this.state.showList || this.state.showControls ? "calc(100% - 50px)" : "0" }} next={this.controls.next} back={this.controls.back} active={this.state.active} showingResult={this.state.results} onResultToggle={() => { this.setState({ results: !this.state.results, }) }} code={this.state.code} />
+                                <DivButton onClick={() => { this.state.showList ? this.setState({ showList: false, showControls: false }) : this.setState({ showControls: !this.state.showControls }) }} style={{ width: "50px", right: "0", position: "absolute", height: "100%", backgroundColor: "#414458", color: "#ffffff", border: "1px solid #fff" }}>{this.state.showList || this.state.showControls ? <MenuOpenIcon style={{ width: "100%", height: "100%", position: "absolute", top: "0", left: "0" }} className="icon" /> : <MenuIcon style={{ width: "100%", height: "100%", position: "absolute", top: "0", left: "0" }} className="icon" />}</DivButton>
+                            </div>
 
-                            <Facilitator style={{ position: "absolute", top: "0px", right: "0px", height: "50px", width: "40%" }} next={this.controls.next} back={this.controls.back} active={this.state.active} showingResult={this.state.results} onResultToggle={() => { this.setState({ results: !this.state.results, }) }} code={this.state.code} />
-
+                            <DivButton onClick={() => { this.state.tab == "task" ? this.selectTab("organize") : this.selectTab("task") }} style={{ width: "200px", right: "0", bottom: "0", position: "absolute", height: "100%", backgroundColor: "#414458", color: "#ffffff", fontSize: "1rem", fontWeight: "600", lineHeight: "50px", textAlign: "center", border: "1px solid #fff" }}>Presenter Screen</DivButton>
                         </ContentHeader>
                         <ContentBody>
-                            <Tab.Content>
-                                <Tab.Pane eventKey="task">
-                                    <Tasks tasks={this.state.tasks} active={this.state.active} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
-                                </Tab.Pane>
-                                <Tab.Pane eventKey="organize">
-                                    <Organizer tasks={this.state.tasks} active={this.state.active} columns={this.state.columns} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
-                                </Tab.Pane>
-                            </Tab.Content>
+
+                            { /* This is the task list */}
+                            <div style={{ width: this.state.showList ? "calc(25% + 50px)" : "50px", left: "0", position: "absolute", height: "100%" }}>
+                                {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} onClose={this.create.close} />}
+                                <Menu anchorOrigin={{ vertical: "bottom", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
+                                >
+                                    <MenuItem onClick={this.create.text}>Input: Open Text</MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={this.create.multipleChoice}>Vote: Multiple Choice</MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={this.create.points}>Vote: Points</MenuItem>
+                                    <Divider />
+                                    <MenuItem onClick={this.create.slider}>Vote: Slider</MenuItem>
+                                </Menu>
+                                <Collection shown={this.state.showList} createTask={(event) => this.create.menu(event)} update={this.update.bind(this)}>
+                                    {this.state.tasks != undefined && this.state.tasks.map(task =>
+                                        <Task key={task.Index} id={task.Index} update={this.update.bind(this)}
+                                            onClick={(e) => this.SSE.start(e.target.id)} active={this.state.active == task.Index}
+                                            type={task.Type} title={task.Title}
+                                        />
+                                    )}
+                                </Collection>
+                                <DivButton onClick={() => { this.state.showList ? this.setState({ showList: false, showControls: true }) : this.setState({ showList: !this.state.showList }) }} style={{ width: "50px", right: "0", position: "absolute", height: "100%", backgroundColor: "#414458", color: "#ffffff", borderRight: "1px solid #fff" }}>{this.state.showList ? <KeyboardArrowLeftIcon style={{ width: "100%", height: "auto", position: "absolute", top: "50%", left: "0", transform: "translateY(-50%)" }} className="icon" /> : <KeyboardArrowRightIcon style={{ width: "100%", height: "auto", position: "absolute", top: "50%", left: "0", transform: "translateY(-50%)" }} className="icon" />}</DivButton>
+                            </div>
+                            { /* This is the end of the task list */}
+
+                            <div style={{ width: this.state.showList ? "calc(75% - 50px)" : "calc(100% - 50px)", left: this.state.showList ? "calc(25% + 50px)" : "50px", position: "absolute", height: "100%" }}>
+                                <Tab.Content>
+                                    <Tab.Pane eventKey="task">
+                                        <Tasks tasks={this.state.tasks} active={this.state.active} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} />
+                                    </Tab.Pane>
+                                    <Tab.Pane eventKey="organize">
+                                        <Organizer tasks={this.state.tasks} active={this.state.active} columns={this.state.columns} SSE={this.SSE.start} update={this.update.bind(this)} changeTab={this.selectTab.bind(this)} showControls={this.state.showList ? true : this.state.showControls} />
+                                    </Tab.Pane>
+                                </Tab.Content>
+                            </div>
                         </ContentBody>
                     </Tab.Container>
                 </ContentCard>

@@ -342,9 +342,10 @@ class PopoverDetails extends Component {
 
     render() {
         return (
-            <Popper anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} placement="right" onClick={this.handleClick} style={{ pointerEvents: "none" }}>
+            <Popper anchorEl={this.props.anchorEl} open={Boolean(this.props.anchorEl)} placement="bottom" onClick={this.handleClick} style={{ pointerEvents: "none" }}
+                modifiers={{ arrow: { enabled: true }, }}>
                 <Paper elevation={3} >
-                    <Box p={1}>
+                    <Box p={0}>
                         <Box component="fieldset" m={1} p={1} maxWidth={500} width={350} textOverflow="ellipsis" overflow="hidden">
                             <Typography component="legend" variant="h6">{this.props.title}</Typography>
                             <Typography variant="body1">{this.props.description}</Typography>

@@ -15,10 +15,16 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Box from '@material-ui/core/Box';
 import { InputModal } from './Components/InputModal';
+import CreateIcon from '@material-ui/icons/Create';
+import AllInclusiveIcon from '@material-ui/icons/AllInclusive';
+import AllOutIcon from '@material-ui/icons/AllOut';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import CallMergeIcon from '@material-ui/icons/CallMerge';
+import ArchiveIcon from '@material-ui/icons/Archive';
 
 const MainContainer = styled.div`
     width: 100%;
-    height: calc(100% - 75px);
+    height: 100%;
     position: absolute;
     overflow: hidden;
     overflow-x: auto;
@@ -37,11 +43,35 @@ const ButtonToolbar = styled.div`
     display: flex;
     flex-direction: row;
     z-index: 10;
-    position: fixed;
+    position: absolute;
     height: 75px;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    min-width: 300px;
     bottom: 0;
+    transform: translateX(-50%);
+
+    ${props => props.disabled ? ""
+        : `&&& {
+            &:hover {
+                filter: brightness(150%);
+                cursor: pointer;
+            }
+            &:active {
+                filter: brightness(75%);
+            }
+        }`
+    }
+`;
+
+const Tools = styled.div`
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    position: fixed;
+    height: 50px;
+    left: ${props => props.showControls ? "calc(25% + 50px)" : "50px"};
+    min-width: 300px;
+    top: max(50px, 5%);
 `;
 
 const TitleBreadCrumb = styled.h2`
@@ -84,18 +114,20 @@ const AnswerButton = styled(Nav.Link)`
     color: #fff;
     background: #575b75;
     font-family: CircularStd;
-    font-weight: 450;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 0 1rem;
     text-align: center;
-    border: solid #fff;
-    border-width: 2px 1px;
+    border: 1px solid #fff;
+    border-right: 0;
     flex: 1 1 auto;
     height: 100%;
-    line-height: 75px;
+    line-height: 25px;
 
     &:hover {
+        color: #ddd;
         filter: brightness(150%);
         cursor: pointer;
-        color: #ddd;
     }
 
     &:active {
@@ -104,8 +136,24 @@ const AnswerButton = styled(Nav.Link)`
     }
 `;
 
-const SendToMC = styled(AnswerButton)`
-    right: calc(6% + 250px);
+const SendToMC = styled(Nav.Link)`
+    color: #fff;
+    background: #575b75;
+    font-family: CircularStd;
+    font-weight: 450;
+    text-align: center;
+    border-top: 1px solid #fff;
+    flex: 1 1 auto;
+    height: 100%;
+    line-height: 75px;
+
+    &:hover {
+        color: #ddd;
+    }
+
+    &:active {
+        color: #fff;
+    }
 `;
 
 const SendToT = styled(SendToMC)`
@@ -210,126 +258,6 @@ export class Organizer extends Component {
                         }
                     })
                 },
-
-                //Content: () => {
-                //    const sendInput = (e) => {
-                //        e.preventDefault();
-                //        const title = this.state.modal.string;
-                //        const description = this.state.modal.description;
-                //        const user = localStorage.getItem("user");
-                //        const code = sessionStorage.getItem("code");
-
-                //        let data = {
-                //            Description: description,
-                //            UserID: user,
-                //        }
-
-                //        if (description.length > 30)
-                //            data.Title = title;
-
-                //        axios.post(`client/${code}/add-opentext`, data);
-                //        this.modal.answer.close();
-                //    }
-
-                //    const handleTitle = (event) => {
-                //        event.preventDefault();
-                //        var modal = this.state.modal;
-                //        modal.string = event.target.value;
-                //        this.setState({
-                //            modal: modal,
-                //        });
-                //    }
-
-                //    const handleDescription = (event) => {
-                //        event.preventDefault();
-                //        var modal = this.state.modal;
-                //        modal.description = event.target.value;
-                //        this.setState({
-                //            modal: modal,
-                //        });
-                //    }
-
-                //    const onTitleFocus = (e) => {
-                //        e.target.placeholder = ""; //We do not want pesky placeholders while the input is being focused.
-
-                //        if (this.state.modal.string.trim() == "") {
-                //            var modal = this.state.modal;
-                //            modal.string = this.state.modal.description.substring(0, 29);
-                //            this.setState({
-                //                modal: modal,
-                //            });
-                //        }
-                //    }
-
-                //    const handleInvalid = () => {
-                //        const description = this.state.modal.description;
-
-                //        if (description.length < 3) {
-                //            if (this.Description.current)
-                //                this.Description.current.focus();
-
-                //            return;
-                //        } else if (description.length > 30) {
-                //            let title = this.state.modal.string;
-
-                //            if (title.length < 3) {
-                //                if (this.Title.current)
-                //                    this.Title.current.focus();
-
-                //                return;
-                //            }
-                //        }
-                //    }
-
-                //    const handleEnter = (e) => {
-                //        if (e.key === 'Enter') {
-                //            e.preventDefault();
-                //            e.stopPropagation();
-                //            if (this.Submit.current) {
-                //                this.Submit.current.click();
-                //            }
-                //        }
-                //    }
-
-                //    return (
-                //        <Form autoComplete="off" onSubmit={sendInput} onInvalid={handleInvalid}>
-                //            {
-                //                //<NewOptionNumber>Title</NewOptionNumber>
-                //                //<Form.Group controlId="validateTitle">
-                //                //    <InputGroup>
-                //                //        <Form.Control name="title" ref="title" onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
-                //                //    </InputGroup>
-                //                //</Form.Group>
-                //                //{this.state.modal.description.length > 30 &&
-                //                //    <Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                //                //        <textarea type="text" value={this.state.modal.string} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
-                //                //    </Box>
-                //                //}
-                //                //<Box component="fieldset" mb={1} pt={1} px={1} borderColor="transparent">
-                //                //    <textarea type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.modal.description} fullWidth />
-                //                //</Box>
-                //            }
-                //            <ContentInput ref={this.Title} disabled={this.state.modal.description == undefined || this.state.modal.description.length <= 30}
-                //                required placeholder={this.state.modal.description != undefined && this.state.modal.description.length <= 30 ? "Short inputs dont need a title" : "Please write a fitting title for your input"}
-                //                type="text" minLength="3" maxLength="30" name="opentext-titlefield" isTitle
-                //                value={this.state.modal.string} onChange={handleTitle}
-                //                onFocus={(e) => onTitleFocus(e)}
-                //                onBlur={(e) => e.target.placeholder = "Please write a fitting title for your input"} onKeyDown={handleEnter.bind(this)}
-                //            />
-
-                //            <ContentInput ref={this.Description}
-                //                required autoFocus placeholder="Write your input..."
-                //                type="text" minLength="3" name={`description`}
-                //                value={this.state.modal.description} onChange={handleDescription}
-                //                onFocus={(e) => e.target.placeholder = ""}
-                //                onBlur={(e) => e.target.placeholder = "Write your answer..."} onKeyDown={handleEnter.bind(this)}
-                //            />
-
-                //            <CancelButton onClick={this.modal.answer.close}>Cancel</CancelButton>
-                //            <CreateButton ref={this.Submit} type="submit" value="Submit" />
-                //        </Form >
-                //    );
-                //},
 
                 close: () => {
                     this.setState({
@@ -720,10 +648,11 @@ export class Organizer extends Component {
 
             return (
                 <MainContainer>
-                    <ButtonToolbar>
-                        <AnswerButton draggable="false" onClick={this.modal.answer.open}>Write input</AnswerButton>
+                    <ButtonToolbar disabled={this.state.selected.length < 1}>
                         <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
-                        <MergeButton draggable="false" onClick={merge.bind(this)}>Merge selected inputs</MergeButton>
+                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+
                         <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
                         >
                             {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
@@ -732,6 +661,15 @@ export class Organizer extends Component {
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
                         </Menu>
                     </ButtonToolbar>
+
+                    <Tools showControls={this.props.showControls}>
+                        <AnswerButton draggable="false" onClick={this.modal.answer.open}><CreateIcon className="icon" /><br />Write input</AnswerButton>
+                        <MergeButton draggable="false" disabled><AllInclusiveIcon className="icon" /><br />Select All</MergeButton>
+                        <AnswerButton draggable="false" onClick={() => this.setState({ selected: [] })}><AllOutIcon className="icon" /><br />Deselect All</AnswerButton>
+                        <MergeButton draggable="false" onClick={merge}><CallMergeIcon className="icon" /><br />Merge</MergeButton>
+                        <AnswerButton draggable="false" onClick={duplicate}><FileCopyIcon className="icon" /><br />Duplicate</AnswerButton>
+                        <MergeButton draggable="false" onClick={archive.members}><ArchiveIcon className="icon" /><br />Archive</MergeButton>
+                    </Tools>
 
                     {this.props.columns !== undefined && this.props.columns.map(column =>
 
@@ -821,10 +759,13 @@ export class Organizer extends Component {
                 <MainContainer>
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
 
-                    <ButtonToolbar>
-                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to Tasks</SendToT>
+                    <ButtonToolbar disabled={this.state.selected.length < 1}>
+                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
+                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
 
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
+                        >
                             {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
@@ -883,9 +824,13 @@ export class Organizer extends Component {
                 <MainContainer>
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
 
-                    <ButtonToolbar>
-                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to Tasks</SendToT>
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                    <ButtonToolbar disabled={this.state.selected.length < 1}>
+                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
+                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
+                        >
                             {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
@@ -942,9 +887,13 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
-                    <ButtonToolbar>
-                        <SendToT draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send to new Task</SendToT>
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}>
+                    <ButtonToolbar disabled={this.state.selected.length < 1}>
+                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
+                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+
+                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
+                        >
                             {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
                             {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}

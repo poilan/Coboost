@@ -13,9 +13,9 @@ const SlideContainer = styled.div`
     transform: translateY(-1%);
     display: inline-block;
     position: absolute;
-    left: max(27%, calc(400px + 2%));
-    width: calc(97% - max(400px, 25%));
-    height: 98%;
+    left: 2%;
+    width: 96%;
+    height: 96%;
     border: 1px solid #575b75;
     overflow: hidden;
 `;
@@ -26,55 +26,6 @@ const SelectedSlide = styled.div`
     background: #fff;
     height: 100%;
     border-radius: 10px;
-`;
-
-const SlideTitle = styled.h1`
-    position: absolute;
-    width: 80%;
-    font-family: CircularStd;
-    font-size: 1rem;
-    text-align: center;
-    top: 25%;
-    left: 10%;
-`;
-
-const SlideBody = styled.h3`
-    position: absolute;
-    left: 10%;
-    top: 35%;
-    width: 80%;
-    text-align: center;
-    font-family: CircularStd;
-`;
-
-const AddOption = styled.div`
-    display: ${props => props.possible ? "inline-block" : "none"};
-    opacity: 50%;
-    width: 100%;
-    font-family: CircularStd;
-    font-size: 1rem;
-    font:weight: 700;
-    padding: .2em .5em .17em .26em;
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
-    border-radius: .5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #fff;
-
-    &:hover {
-        opacity: 75%;
-        cursor:pointer;
-    }
-`;
-
-const VoteOption = styled(AddOption)`
-    display: inline-block;
-    width: 30%;
-    margin: 1.5%;
-    opacity: 100%;
 `;
 
 const Viewer = styled(BigScreen)`
@@ -136,7 +87,7 @@ export class Tasks extends Component {
         this.loadTask(event);
     }
 
-    loadTask = async (event) => {
+    loadTask = (event) => {
         let key = event.target.id;
         this.props.SSE(key);
     }
@@ -227,7 +178,7 @@ export class Tasks extends Component {
         ];
         return (
             <>
-                {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} onClose={modalCreateClose.bind(this)} />}
+                {/* this.state.modal.create && <CreateTaskModal type={this.state.modal.type} onClose={modalCreateClose.bind(this)} />}
                 <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
                 <Collection createTask={(event) => this.createTask(event)} update={this.props.update}>
                     {this.props.tasks.map(task =>
@@ -236,7 +187,7 @@ export class Tasks extends Component {
                             type={task.Type} title={task.Title}
                         />
                     )}
-                </Collection>
+                </Collection>*/}
                 <SlideContainer>
                     {this.renderActive()}
                 </SlideContainer>

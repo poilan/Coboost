@@ -392,7 +392,7 @@ namespace Slagkraft.Models.Admin.Questions
                 Groups[targetGroup].Members.Add(Input);
 
                 //Remove the Group if it is empty
-                if (Groups[input.Group].Members.Count < 1)
+                if (input.Group != 0 && Groups[input.Group].Members.Count < 1)
                 {
                     Groups.RemoveAt(input.Group);
                     UpdateGroupIndexes();

@@ -54,6 +54,7 @@ const Percentage = styled.div`
     overflow: hidden;
     font-size: 1rem;
     text-align: center;
+    font-size: calc(${props => props.percentage}px + 10px);
     font-weight: 600;
     position: absolute;
     bottom: 0;

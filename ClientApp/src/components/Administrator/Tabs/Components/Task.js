@@ -7,18 +7,21 @@ import { Nav, Form } from 'react-bootstrap';
 import { PageModal } from '../../../Services/PageModal';
 
 const CollectionContainer = styled.div`
-    width: 25%;
-    min-width: 400px;
+    width: ${props => props.shown ? "calc(100% - 50px)" : "0%"};
     background: #fff;
-    height: 98%;
-    top: 1%;
-    border-radius: 10px;
+    height: 100%;
+    top: 0;
+    border: 1px solid #575b75;
+    border-left: 0;
+    border-bottom: 0;
     display: inline-block;
     position: absolute;
-    overflow: auto;
-    left: 1%;
+    overflow: hidden;
+    overflow-y: ${props => props.shown ? "auto" : "hidden"};
+    left: 0;
     scrollbar-width: thin;
     scrollbar-color: #4C7AD3 #fff;
+    z-index: 10;
 `;
 
 const CreateTask = styled.div`
@@ -55,7 +58,7 @@ export function Collection(props) {
     }
 
     return (
-        <CollectionContainer onDrop={drop} onDragOver={dragOver}>
+        <CollectionContainer shown={props.shown} onDrop={drop} onDragOver={dragOver}>
             {props.children}
             <CreateTask onClick={props.createTask}>➕ Create new task</CreateTask>
         </CollectionContainer>

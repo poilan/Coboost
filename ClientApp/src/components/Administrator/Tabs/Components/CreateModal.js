@@ -113,7 +113,7 @@ export class CreateTaskModal extends Component {
         super(props);
         this.state = {
             type: props.type,
-            description: props.title,
+            description: "",
             title: "",
             max: 5,
             maxDescription: "Very important",
@@ -128,8 +128,10 @@ export class CreateTaskModal extends Component {
     }
 
     componentDidMount() {
-        if (this.props.options !== undefined)
+        if (this.props.type != 0 && this.props.options !== undefined)
             this.setState({ options: this.props.options() });
+        else
+            this.setState({ description: this.props.title });
     }
 
     TextContent() {
@@ -553,7 +555,7 @@ export class CreateTaskModal extends Component {
                         <Typography variant="subtitle2" component="legend">Maximum</Typography>
 
                         <TextField id="max-desc" name="max-desc" type="text" label="Description" onChange={handleMaxDescription.bind(this)} value={this.state.maxDescription} />
-                        <TextField id="max" name="max" type="number" label="Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />                        
+                        <TextField id="max" name="max" type="number" label="Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
                     </Box>
 
                 </Box>
