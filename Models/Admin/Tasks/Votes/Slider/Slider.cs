@@ -1,54 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Coboost.Models.Admin.Tasks.Votes.Slider.data;
 
-namespace Slagkraft.Models.Admin.Questions
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+namespace Coboost.Models.Admin.Tasks.Votes.Slider
 {
-    public class Rate : BaseTask
+    public class Slider : BaseTask
     {
         #region Public Properties
 
         /// <summary>
-        /// The deleted options
+        ///     The deleted options
         /// </summary>
-        public List<Rate_Option> Archive { get; set; }
+        public List<SliderOption> Archive { get; set; }
 
         /// <summary>
-        /// The maximum value a option can recieve
+        ///     The maximum value a option can receive
         /// </summary>
         public int Max { get; set; }
 
         /// <summary>
-        /// The description of what the max represents
+        ///     The description of what the max represents
         /// </summary>
         public string MaxDescription { get; set; }
 
         /// <summary>
-        /// The minimum value a option can recieve
+        ///     The minimum value a option can receive
         /// </summary>
         public int Min { get; set; }
 
         /// <summary>
-        /// The description of what the minimum represents
+        ///     The description of what the minimum represents
         /// </summary>
         public string MinDescription { get; set; }
 
         /// <summary>
-        /// The options for this vote
+        ///     The options for this vote
         /// </summary>
-        public List<Rate_Option> Options { get; set; }
+        public List<SliderOption> Options { get; set; }
 
         /// <summary>
-        /// The total amount of votes we have recieved
+        ///     The total amount of votes we have received
         /// </summary>
-        public List<Rate_Vote> Votes { get; set; }
+        public List<SliderVote> Votes { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-        public void AddClientVote(Rate_Vote vote)
+        public void AddClientVote(SliderVote vote)
         {
             lock (ThreadLock)
             {
@@ -56,14 +57,15 @@ namespace Slagkraft.Models.Admin.Questions
                 Votes.Add(vote);
                 RecountVotes();
             }
+
             EventStream();
         }
 
         /// <summary>
-        /// Changes the Color of a option
+        ///     Changes the Color of a option
         /// </summary>
         /// <param name="option">List Index of the Option</param>
-        /// <param name="color">Color in Hex format eg. '#AABBCC'</param>
+        /// <param name="color">Color in Hex format E.G. '#AABBCC'</param>
         public void ColorOption(int option, string color)
         {
             lock (ThreadLock)
@@ -71,11 +73,9 @@ namespace Slagkraft.Models.Admin.Questions
                 if (option >= Options.Count || option < 0 || color == null)
                     return;
 
-                if (color.Length == 7 && color.StartsWith("#"))
-                {
-                    Options[option].Color = color;
-                }
+                if (color.Length == 7 && color.StartsWith("#")) Options[option].Color = color;
             }
+
             EventStream();
         }
 
@@ -85,18 +85,11 @@ namespace Slagkraft.Models.Admin.Questions
 
         private void RecountVotes()
         {
-            for (int i = 0; i < Options.Count; i++)
-            {
-                Options[i].Ratings.Clear();
-            }
+            foreach (SliderOption rating in Options) rating.Ratings.Clear();
 
-            for (int i = 0; i < Votes.Count; i++)
-            {
-                for (int j = 0; j < Votes[i].Ratings.Count; j++)
-                {
-                    Options[j].Ratings.Add(Votes[i].Ratings[j]);
-                }
-            }
+            foreach (SliderVote vote in Votes)
+                for (int j = 0; j < vote.Ratings.Count; j++)
+                    Options[j].Ratings.Add(vote.Ratings[j]);
         }
 
         #endregion Private Methods

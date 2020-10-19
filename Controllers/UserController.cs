@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Slagkraft.Models.Database;
-using Slagkraft.Services;
-using Microsoft.AspNetCore.Http;
+using Coboost.Models.Database;
+using Coboost.Models.Database.data;
+using Coboost.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Slagkraft.Controllers
+namespace Coboost.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -16,19 +15,19 @@ namespace Slagkraft.Controllers
     {
         #region Private Fields
 
-        private readonly DatabaseContext Context;
+        private readonly DatabaseContext _context;
 
         #endregion Private Fields
 
         #region Public Constructors
 
         /// <summary>
-        /// Instantiates the controller and retrieves an instance of the database context
+        ///     Instantiates the controller and retrieves an instance of the database context
         /// </summary>
         /// <param name="context"></param>
         public UserController(DatabaseContext context)
         {
-            Context = context;
+            _context = context;
         }
 
         #endregion Public Constructors
@@ -36,8 +35,8 @@ namespace Slagkraft.Controllers
         #region Public Methods
 
         /// <summary>
-        /// Attempts to find the user with the specified index and returns it. If no user is found,
-        /// then null is returned
+        ///     Attempts to find the user with the specified index and returns it. If no user is found,
+        ///     then null is returned
         /// </summary>
         /// <param name="email"></param>
         [HttpGet("get-{email}")]
@@ -46,7 +45,7 @@ namespace Slagkraft.Controllers
             if (email == null)
                 return null;
 
-            User User = await Context.Users
+            User user = await _context.Users
                 .Include(u => u.Sessions)
                 .ThenInclude(s => s.Session)
                 .Include(u => u.Folders)
@@ -54,21 +53,21 @@ namespace Slagkraft.Controllers
                 .Where(u => u.Email.Equals(email))
                 .SingleAsync();
 
-            if (User == null)
+            if (user == null)
                 return null;
 
-            User.Password = "REDACTED";
+            user.Password = "REDACTED";
 
-            return User;
+            return user;
         }
 
         /// <summary>
-        /// Returns a List of all users
+        ///     Returns a List of all users
         /// </summary>
-        [HttpGet("getall")]
+        [HttpGet("get-all")]
         public async Task<IEnumerable<User>> GetUsers()
         {
-            List<User> userList = await Context.Users
+            List<User> userList = await _context.Users
                 .Include(u => u.Sessions)
                 .ThenInclude(u => u.Session)
                 .ToListAsync();
@@ -77,35 +76,21 @@ namespace Slagkraft.Controllers
         }
 
         /// <summary>
-        /// Checks if login info matches any Created Accounts
+        ///     Checks if login info matches any Created Accounts
         /// </summary>
         /// <param name="user">The user information</param>
         [HttpPost("login")]
         public async Task Login([FromBody] User user)
         {
-            User foundUser = await Context.Users.FindAsync(user.Email);
+            User foundUser = await _context.Users.FindAsync(user.Email);
             if (foundUser != null)
-            {
-                if (PasswordHasher.Verify(user.Password, foundUser.Password))
-                {
-                    HttpContext.Response.StatusCode = 202;
-                    return;
-                }
-                else
-                {
-                    HttpContext.Response.StatusCode = 406;
-                    return;
-                }
-            }
+                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ? 202 : 406;
             else
-            {
                 HttpContext.Response.StatusCode = 404;
-                return;
-            }
         }
 
         /// <summary>
-        /// Creates a new user, makes sure the email isn't already in use.
+        ///     Creates a new user, makes sure the email isn't already in use.
         /// </summary>
         /// <param name="user">The New Users Information</param>
         /// <returns>Success or failure</returns>
@@ -114,7 +99,7 @@ namespace Slagkraft.Controllers
         {
             if (user == null)
             {
-                //Data not recieved
+                //Data not received
                 HttpContext.Response.StatusCode = 400;
                 return;
             }
@@ -133,7 +118,7 @@ namespace Slagkraft.Controllers
                 return;
             }
 
-            User userExistence = await Context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
+            User userExistence = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence != null)
 
             //if (_context.Users.Find(user.Email) != null)
@@ -145,20 +130,17 @@ namespace Slagkraft.Controllers
 
             user.Password = PasswordHasher.GetHash(user.Password);
 
-            await Context.Users.AddAsync(user);
-            await Context.SaveChangesAsync();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
 
-            string Recipient = user.Email;
-            string Title = "Innonor Registration";
-            string Body = $"Dear {user.FirstName},\n" +
-                $"Your new account is now created an is available for use.\n\n" +
-                $"Regards,\n" +
-                $"Innonor";
+            string recipient = user.Email;
+            const string title = "Coboost Registration!";
+            string body =
+                $"Dear {user.FirstName},\nYour new account is now created an is available for use.\n\nRegards,\nCoboost";
 
-            Email email = new Email(Recipient, Title, Body);
+            Email email = new Email(recipient, title, body);
             await email.Send();
             HttpContext.Response.StatusCode = 202;
-            return;
         }
 
         [HttpPost("start-recovery")]
@@ -166,7 +148,7 @@ namespace Slagkraft.Controllers
         {
             if (user == null)
             {
-                // Data not recieved
+                // Data not received
                 HttpContext.Response.StatusCode = 400;
                 return;
             }
@@ -178,27 +160,26 @@ namespace Slagkraft.Controllers
                 return;
             }
 
-            User userExistence = await Context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
+            User userExistence = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence == null)
             {
                 HttpContext.Response.StatusCode = 404;
                 return;
             }
 
-            string Recipient = user.Email;
-            string Title = "Coboost Account Recovery";
+            string recipient = user.Email;
+            const string title = "Coboost Account Recovery";
 
-            int code = 239210;
+            const int code = 239210;
 
-            string Body = $"Dear {userExistence.FirstName},\n" + 
-                $"You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" +
-                $"Code: {code}\n\n" +
-                $"Regards\nTeam Coboost";
-            
-            Email email = new Email(Recipient, Title, Body);
+            string body = $"Dear {userExistence.FirstName},\n" +
+                          "You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" +
+                          $"Code: {code}\n\n" +
+                          "Regards\nTeam Coboost";
+
+            Email email = new Email(recipient, title, body);
             await email.Send();
             HttpContext.Response.StatusCode = 202;
-            return;
         }
 
         #endregion Public Methods

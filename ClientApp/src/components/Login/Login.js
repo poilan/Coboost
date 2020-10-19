@@ -1,9 +1,9 @@
-﻿import React, { Component } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from 'react-bootstrap';
+﻿import React, { Component } from "react";
+import Styled from "styled-components";
+import Axios from "axios";
+import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from "react-bootstrap";
 
-const LoginContainer = styled.div`
+const LoginContainer = Styled.div`
     display: flex;
     position: absolute;
     width: 100%;
@@ -11,7 +11,7 @@ const LoginContainer = styled.div`
     justify-content: center;
 `;
 
-const LoginCard = styled(Card)`
+const LoginCard = Styled(Card)`
     align-self: center;
     border: 0;
     width: 100%;
@@ -21,7 +21,7 @@ const LoginCard = styled(Card)`
     background-color: rgb(255 255 255);
 `;
 
-const CardButton = styled(Button)`
+const CardButton = Styled(Button)`
     position: relative;
     width: 100%;
     left: 50%;
@@ -30,7 +30,7 @@ const CardButton = styled(Button)`
     margin-top: 8%;
 `;
 
-const ForgotButton = styled(Button)`
+const ForgotButton = Styled(Button)`
     position: relative;
     margin-top: -24%;
     left: 65%;
@@ -40,37 +40,37 @@ const ForgotButton = styled(Button)`
     font-size: 80%;
 `;
 
-const FormInput = styled(FormControl)`
+const FormInput = Styled(FormControl)`
 
 `;
 
-const InfoText = styled.h2`
+const InfoText = Styled.h2`
     position: relative;
     left: 50%;
     top: 15%;
     transform: translateX(-50%);
 `;
 
-export class Login extends Component {
+export class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tab: 'login',
+            tab: "login",
             login: {
-                email: '',
-                password: '',
-                validated: false,
+                email: "",
+                password: "",
+                validated: false
             },
 
             register: {
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                repeatPassword: '',
-                validated: false,
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                repeatPassword: "",
+                validated: false
             }
-        }
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.submitLogin = this.submitLogin.bind(this);
@@ -80,16 +80,16 @@ export class Login extends Component {
     }
 
     handleChange(e) {
-        const tab = this.state.tab;
-        const name = e.target.name;
-        const value = e.target.value;
+        const Tab = this.state.tab;
+        const Name = e.target.name;
+        const Value = e.target.value;
 
-        const data = this.state[tab];
-        data[name] = value;
-        data.validated = false;
+        const Data = this.state[Tab];
+        Data[Name] = Value;
+        Data.validated = false;
 
         this.setState({
-            [tab]: data,
+            [Tab]: Data
         });
     }
 
@@ -101,21 +101,52 @@ export class Login extends Component {
 
     loginTab() {
         return (
+            <Form autoComplete="on"
+                onSubmit={this.submitLogin}
+                validated={this.state.login.validated}>
 
-            <Form autoComplete="on" validated={this.state.login.validated} onSubmit={this.submitLogin}>
                 <FormGroup controlId="formBasicEmail">
-                    <Form.Label>Username or Email</Form.Label>
-                    <FormInput name="email" onChange={this.handleChange} placeholder="myemail@address.com" type="email" required />
-                </FormGroup>
-                <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <FormInput autoComplete="off" name="password" onChange={this.handleChange} placeholder="Enter your password" type="password" minLength="8" required />
-                </Form.Group>
-                <CardButton type="submit">Login</CardButton>
-                <Form.Check style={{ margin: '5%' }} type="checkbox" label="Remember Me" />
-                <ForgotButton onClick={this.forgotPassword}>Forgot password?</ForgotButton>
-            </Form>
 
+                    <Form.Label>
+                        Username or Email
+                    </Form.Label>
+
+                    <FormInput name="email"
+                        onChange={this.handleChange}
+                        placeholder="myemail@address.com"
+                        required
+                        type="email" />
+
+                </FormGroup>
+
+                <Form.Group controlId="formBasicPassword">
+
+                    <Form.Label>
+                        Password
+                    </Form.Label>
+
+                    <FormInput autoComplete="off"
+                        minLength="8"
+                        name="password"
+                        onChange={this.handleChange}
+                        placeholder="Enter your password"
+                        required
+                        type="password" />
+
+                </Form.Group>
+
+                <CardButton type="submit">
+                    Login
+                </CardButton>
+
+                <Form.Check label="Remember Me"
+                    style={{ margin: "5%" }}
+                    type="checkbox" />
+
+                <ForgotButton onClick={this.forgotPassword}>
+                    Forgot password?
+                </ForgotButton>
+            </Form>
         );
     }
 
@@ -126,68 +157,109 @@ export class Login extends Component {
             event.stopPropagation();
         }
 
-        const data = {
+        const Data = {
             Email: this.state.login.email,
-            Password: this.state.login.password,
-        }
+            Password: this.state.login.password
+        };
 
-        await axios.post(`user/login`, data
-        ).then(res => {
+        await Axios.post(`user/login`, Data).then(res => {
             if (res.status === 202) {
 
                 //Login Success
-                localStorage.setItem("user", data.Email);
-                this.props.history.go(-1);
-            } else if (res.status === 406) {
+                localStorage.setItem("user", Data.Email);
+                this.props.history.push("/");
+            }
+            else if (res.status === 406) {
 
                 //Wrong password
-            } else {
-
-                //Wrong email / user not found
             }
         });
     }
 
     registerTab() {
         return (
-            <>
-                <Form autoComplete="on" noValidate validated={this.state.register.validated} onSubmit={this.submitRegistration}>
+            <React.Fragment>
+                <Form autoComplete="on"
+                    noValidate
+                    onSubmit={this.submitRegistration}
+                    validated={this.state.register.validated}>
+
                     <Form.Group>
+
                         <InputGroup>
-                            <Form.Control name="firstName" onChange={this.handleChange} placeholder="First name..." />
+
+                            <Form.Control name="email"
+                                onChange={this.handleChange}
+                                placeholder="Email.." />
+
                         </InputGroup>
+
                     </Form.Group>
+
                     <Form.Group>
+
                         <InputGroup>
-                            <Form.Control name="lastName" onChange={this.handleChange} placeholder="Last name..." />
+
+                            <Form.Control name="firstName"
+                                onChange={this.handleChange}
+                                placeholder="First name..." />
+
                         </InputGroup>
+
                     </Form.Group>
+
                     <Form.Group>
+
                         <InputGroup>
-                            <Form.Control name="email" onChange={this.handleChange} placeholder="Email.." />
+
+                            <Form.Control name="lastName"
+                                onChange={this.handleChange}
+                                placeholder="Last name..." />
+
                         </InputGroup>
+
                     </Form.Group>
+
                     <Form.Group>
+
                         <InputGroup>
-                            <Form.Control name="password" type="password" onChange={this.handleChange} placeholder="Password..." />
+
+                            <Form.Control name="password"
+                                onChange={this.handleChange}
+                                placeholder="Password..."
+                                type="password" />
+
                         </InputGroup>
+
                     </Form.Group>
+
                     <Form.Group>
+
                         <InputGroup>
-                            <Form.Control name="repeatPassword" type="password" onChange={this.handleChange} placeholder="Repeat password..." />
+
+                            <Form.Control name="repeatPassword"
+                                onChange={this.handleChange}
+                                placeholder="Repeat password..."
+                                type="password" />
+
                         </InputGroup>
+
                     </Form.Group>
-                    <CardButton type="submit">Register</CardButton>
+
+                    <CardButton type="submit">
+                        Register
+                    </CardButton>
                 </Form>
-            </>
+
+            </React.Fragment>
         );
     }
 
     async submitRegistration(event) {
         event.preventDefault();
-        const data = this.state.register;
+        const Data = this.state.register;
 
-        await axios.post(`user/register`, data).then(res => {
+        await Axios.post(`user/register`, Data).then(res => {
             if (res.status === 202) {
 
                 //Registration Succeeded
@@ -204,46 +276,78 @@ export class Login extends Component {
             }
             else if (res.status === 400) {
 
-                //Data wasn't recieved by server
+                //Data wasn't received by server
             }
         });
     }
 
     selectTab(key) {
         this.setState({
-            tab: key,
+            tab: key
         });
     }
 
     render() {
         return (
-
             <LoginContainer>
-                <InfoText>Sign in or Register to your account</InfoText>
+
+                <InfoText>
+                    Sign in or Register to your account
+                </InfoText>
+
                 <LoginCard>
-                    <TabContainer defaultActiveKey="login" onSelect={this.selectTab}>
+
+                    <TabContainer defaultActiveKey="login"
+                        onSelect={this.selectTab}>
+
                         <Nav.Link>
+
                             <Nav variant="tabs">
+
                                 <Nav.Item>
-                                    <Nav.Link style={{ border: '0' }} eventKey="login">Login</Nav.Link>
+
+                                    <Nav.Link eventKey="login"
+                                        style={{ border: "0" }}>
+
+                                        Login
+                                    </Nav.Link>
+
                                 </Nav.Item>
+
                                 <Nav.Item>
-                                    <Nav.Link style={{ border: '0' }} eventKey="register">Register</Nav.Link>
+
+                                    <Nav.Link eventKey="register"
+                                        style={{ border: "0" }}>
+
+                                        Register
+                                    </Nav.Link>
+
                                 </Nav.Item>
+
                             </Nav>
+
                         </Nav.Link>
+
                         <Card.Body>
+
                             <Tab.Content>
+
                                 <Tab.Pane eventKey="login">
                                     {this.loginTab()}
                                 </Tab.Pane>
+
                                 <Tab.Pane eventKey="register">
                                     {this.registerTab()}
                                 </Tab.Pane>
+
                             </Tab.Content>
+
                         </Card.Body>
+
                     </TabContainer>
+
                 </LoginCard>
+
             </LoginContainer>
         );
     }

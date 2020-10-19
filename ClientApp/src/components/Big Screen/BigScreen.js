@@ -1,7 +1,7 @@
-﻿import React, { Component } from 'react';
-import axios from 'axios';
-import { Button, Nav, Col, Row } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import Axios from "axios";
+import { Button, Nav, Col, Row } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
 import { Ico_Loading, Ico_Group152, IconLogo } from "../Classes/Icons";
 import { Column } from "../Administrator/Tabs/Components/Column";
@@ -9,11 +9,10 @@ import { Group } from "../Administrator/Tabs/Components/Group";
 import { Input } from "../Administrator/Tabs/Components/Input";
 import { ResultBackground, ResultItem, ResultSlider } from "../Administrator/Tabs/Components/Results";
 import { Facilitator } from "./Facilitator";
+import { SSE } from "../Core/SSE";
+import { Typography, Box } from "@material-ui/core";
 
-import SSE from "../Core/SSE";
-import { Typography, Box } from '@material-ui/core';
-
-const MainContainer = styled(Col)`
+const MainContainer = Styled(Col)`
     display: table;
     height: 100%;
     width: 100%;
@@ -23,7 +22,7 @@ const MainContainer = styled(Col)`
     padding: 0px;
 `;
 
-const Banner = styled(Col)`
+const Banner = Styled(Col)`
     position: fixed;
     background: transparent;
     min-height: 100px;
@@ -35,17 +34,7 @@ const Banner = styled(Col)`
     font-Size: 1.5rem;
 `;
 
-const BannerText = styled.h1`
-    font-family: CircularStd;
-    font-Size: 1.5rem;
-    /*color: #4C7AD3;*/
-    color: #575b75;
-    padding: 25px 5px;
-    position: absolute;
-
-`;
-
-const ContentContainer = styled(Col)`
+const ContentContainer = Styled(Col)`
     position: absolute;
     width: 100%;
     height: 80%;
@@ -56,7 +45,7 @@ const ContentContainer = styled(Col)`
     overflow-y: auto;
 
     display: table-cell;
-    veritical-align: middle;
+    vertical-align: middle;
     text-align: center;
 
     scrollbar-width: thin;
@@ -64,7 +53,7 @@ const ContentContainer = styled(Col)`
     font-Size: 1.5rem;
 `;
 
-const Title = styled.h1`
+const Title = Styled.h1`
     font-family: CircularStd;
     font-weight: 400;
     b {
@@ -80,28 +69,7 @@ const Title = styled.h1`
     font-Size: 1.5rem;
 `;
 
-const IconLoader = styled(Ico_Loading)`
-    display: block;
-    margin: 0 auto;
-    margin-top: 20px;
-    height: 128px;
-
-    @keyframes rotation {
-        0% {
-            transform: rotate(0deg), scale(1)
-        }
-        50% {
-            transform: rotate(-180deg) scale(0.5);
-        }
-        100% {
-            transform: rotate(-360deg) scale(1);
-        }
-    }
-
-    animation: rotation 1.5s infinite linear;
-`;
-
-const Code = styled.h1`
+const EventCode = Styled.h1`
     font-family: CircularStd;
     text-align: center;
     color: #4C7AD3;
@@ -110,7 +78,7 @@ const Code = styled.h1`
     font-weight: 600;
 `;
 
-const WelcomeContainer = styled.div`
+const WelcomeContainer = Styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -119,13 +87,21 @@ const WelcomeContainer = styled.div`
     position: absolute;
     font-Size: 1.5rem;
     margin: 0 auto;
-    padding: ${props => props.text ? "1rem" : "0 1rem"};
-    column-count: ${props => props.text ? "auto" : "initial"};
-    column-width: ${props => props.text ? "320px" : "initial"};
-    column-gap: ${props => props.text ? "1rem" : "initial"};
+    padding: ${props => props.text
+        ? "1rem"
+        : "0 1rem"};
+    column-count: ${props => props.text
+        ? "auto"
+        : "initial"};
+    column-width: ${props => props.text
+        ? "320px"
+        : "initial"};
+    column-gap: ${props => props.text
+        ? "1rem"
+        : "initial"};
 `;
 
-const BottomBanner = styled(Col)`
+const BottomBanner = Styled(Col)`
     position: fixed;
     background: transparent;
     border-top: 1px solid black;
@@ -137,7 +113,7 @@ const BottomBanner = styled(Col)`
     font-Size: 1.5rem;
 `;
 
-const BottomBannerText = styled.h1`
+const BottomBannerText = Styled.h1`
     font-family: CircularStd;
     font-Size: 1.5rem;
     color: #575b75;
@@ -152,11 +128,6 @@ const BottomBannerText = styled.h1`
         /*color: #4C7AD3;*/
         color: black;
     }
-`;
-
-const Logo = styled(IconLogo)`
-    padding: 20px;
-    height: 100%;
 `;
 
 export class BigScreen extends Component {
@@ -182,29 +153,21 @@ export class BigScreen extends Component {
     }
 
     async componentDidMount() {
-
-        //const email = await localStorage.getItem("user");
-
-        //let code = sessionStorage.getItem("present_code");
-
-        //if (code == null)
-        //    code = sessionStorage.getItem("code");
-
-        let code = await sessionStorage.getItem("code");
+        const Code = await sessionStorage.getItem("code");
 
         this.setState({
-            code: code,
+            code: Code
         });
 
-        axios.get(`presentation/info-${code}`).then(res => {
-            const title = res.data.title;
+        Axios.get(`presentation/info-${Code}`).then(res => {
+            const Title = res.data.title;
 
             this.beginSSE = this.beginSSE.bind(this);
-            var dataSource = new SSE(`presentation/${code}/data`);
+            var DataSource = new SSE(`presentation/${Code}/data`);
 
             this.setState({
-                title: title,
-                sse: dataSource,
+                title: Title,
+                sse: DataSource
             });
 
             this.beginSSE();
@@ -216,286 +179,488 @@ export class BigScreen extends Component {
     async AutoResultToggle() {
         await setTimeout(() => {
             this.setState({
-                resultsAsPercentage: !this.state.resultsAsPercentage,
+                resultsAsPercentage: !this.state.resultsAsPercentage
             });
             this.AutoResultToggle();
-        }, 6660);
+        },
+            6660);
     }
 
     beginSSE() {
-        var state = this.state;
-        var sse = state.sse;
+        const State = this.state;
+        var Server = State.sse;
 
-        sse.startEventSource((e) => {
-            sse.addListener("Question", (e) => {
+        Server.startEventSource(() => {
+            Server.addListener("Question", (e) => {
                 try {
-                    var questionData = JSON.parse(e.data);
+                    const QuestionData = JSON.parse(e.data);
 
                     this.setState({
-                        activeQuestion: questionData.Index,
-                        task: questionData,
-                    })
-                } catch (e) {
-                    sse.log("Failed to parse server event: Question");
-                }
-            });
-
-            sse.addListener("Groups", (e) => {
-                try {
-                    let groups = JSON.parse(e.data);
-                    let task = this.state.task;
-                    task.Groups = groups;
-                    this.setState({
-                        task: task
+                        activeQuestion: QuestionData.Index,
+                        task: QuestionData
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event: Group");
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Question");
                 }
             });
 
-            sse.addListener("Options", (e) => {
+            Server.addListener("Groups", (e) => {
                 try {
-                    let options = JSON.parse(e.data);
-                    let task = this.state.task;
-                    task.Options = options;
+                    const Groups = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.Groups = Groups;
                     this.setState({
-                        task: task
+                        task: Task
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event: Options");
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Group");
                 }
             });
 
-            sse.addListener("Votes", (e) => {
+            Server.addListener("Options", (e) => {
                 try {
-                    let votes = JSON.parse(e.data);
-                    let task = this.state.task;
-                    task.Votes = votes;
+                    const Options = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.Options = Options;
                     this.setState({
-                        task: task,
+                        task: Task
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event: Votes");
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Options");
                 }
             });
 
-            sse.addListener("Total", (e) => {
+            Server.addListener("Votes", (e) => {
                 try {
-                    let totalVotes = JSON.parse(e.data);
-                    let task = this.state.task
-                    task.TotalVotes = totalVotes;
+                    const Votes = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.Votes = Votes;
                     this.setState({
-                        task: task
+                        task: Task
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event: Total");
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Votes");
                 }
             });
 
-            sse.addListener("ShowResults", (e) => {
+            Server.addListener("Total", (e) => {
                 try {
-                    let showReults = JSON.parse(e.data);
-                    let task = this.state.task
-                    task.ShowResults = showReults;
+                    const TotalVotes = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.TotalVotes = TotalVotes;
                     this.setState({
-                        task: task
+                        task: Task
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event: Total");
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Total");
                 }
             });
-        })
+
+            Server.addListener("Results", (e) => {
+                try {
+                    const Result = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.ShowResults = Result;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Total");
+                }
+            });
+
+            Server.addListener("Status", (e) => {
+                try {
+                    const Result = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.InProgress = Result;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Total");
+                }
+            });
+        });
     }
 
     facilitatorToggleResults() {
-        const oldState = this.state.showResults;
-        var newState = !oldState;
+        const OldState = this.state.showResults;
+        const NewState = !OldState;
 
         this.setState({
-            showResults: newState
+            showResults: NewState
         });
     }
 
     renderWaiting() {
-        const state = this.state;
-        const code = state.code;
-        return (<>
-            <ContentContainer>
-                <WelcomeContainer>
-                    <Title>Join in by going to<br /><b>innonor.no</b> with the code:</Title>
-                    <Code>#{code}</Code>
-                </WelcomeContainer>
-                {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
-            </ContentContainer>
-            <BottomBanner>
-                <BottomBannerText>Waiting on participants...</BottomBannerText>
-            </BottomBanner>
-        </>);
+        const State = this.state;
+        const Code = State.code;
+        return (
+            <React.Fragment>
+                <ContentContainer>
+                    <WelcomeContainer>
+                        <Title>
+                            Join in by going to
+                            <br />
+                            <b>innonor.no</b>
+                            with the code:
+                        </Title>
+
+                        <EventCode>#{Code}</EventCode>
+                    </WelcomeContainer>
+                    {!this.props.admin &&
+                        <Facilitator active={State.activeQuestion}
+                            allTasks
+                            code={Code}
+                            fullscreen
+                            hide={true}
+                            onResultToggle={this.facilitatorToggleResults}
+                            showingResult={State.showResults}
+                            style={{
+                                left: "0",
+                                bottom: "15px",
+                                position: "fixed",
+                                height: "100px",
+                                width: "60%"
+                            }}
+                            toggle={true} />
+                    }
+                </ContentContainer>
+                <BottomBanner>
+                    <BottomBannerText> Waiting on participants...</BottomBannerText>
+                </BottomBanner>
+            </React.Fragment>
+        );
     }
 
     renderWelcome() {
-        const state = this.state;
-        const code = state.code;
-        const title = state.title;
-        return (<>
-            <ContentContainer>
-                <Title><b>{title}</b></Title>
-                <WelcomeContainer>
-                </WelcomeContainer>
-                {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "100px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
-            </ContentContainer>
-            <BottomBanner>
-                <BottomBannerText>#{code}</BottomBannerText>
-                <BottomBannerText>Coboost</BottomBannerText>
-            </BottomBanner>
-        </>);
+        const State = this.state;
+        const Code = State.code;
+        const Title = State.title;
+        return (
+            <React.Fragment>
+                <ContentContainer>
+                    <Title>
+                        <b>{Title}</b>
+                    </Title>
+                    <WelcomeContainer>
+                    </WelcomeContainer>
+                    {!this.props.admin &&
+                        <Facilitator active={State.activeQuestion}
+                            allTasks
+                            code={Code}
+                            fullscreen
+                            hide={true}
+                            onResultToggle={this.facilitatorToggleResults}
+                            showingResult={State.showResults}
+                            style={{
+                                left: "0",
+                                bottom: "100px",
+                                position: "fixed",
+                                height: "100px",
+                                width: "60%"
+                            }}
+                            toggle={true} />
+                    }
+                </ContentContainer>
+                <BottomBanner>
+                    <BottomBannerText>#{Code}</BottomBannerText>
+                    <BottomBannerText>Coboost</BottomBannerText>
+                </BottomBanner>
+            </React.Fragment>);
     }
 
     viewResult() {
-        const state = this.state;
-        const question = state.task;
+        const State = this.state;
+        const Question = State.task;
 
-        if (question.ShowResults === true) {
-            if (question.Type === 0) {
+        if (Question.ShowResults === true) {
+            if (Question.Type === 0) {
                 return this.renderOpenTextResult();
 
                 //return <p>Open Text</p>;
             }
-            else if (question.Type === 1) {
+            else if (Question.Type === 1) {
 
                 //return <p>Multiple Choice</p>;
                 return this.renderMultipleChoiceResult();
             }
-            else if (question.Type === 2) {
+            else if (Question.Type === 2) {
                 return this.renderPoints();
             }
-            else if (question.Type === 3) {
+            else if (Question.Type === 3) {
                 return this.renderSlider();
             }
         }
-        else
-            return this.renderHidden();
+        return this.renderHidden();
     }
 
     renderQuestion() {
-        const state = this.state;
-        const code = state.code;
+        const State = this.state;
+        const Code = State.code;
         return (
-            <>
+            <React.Fragment>
                 <ContentContainer>
-                    <WelcomeContainer text={this.state.task.Type == 0}>
+                    <WelcomeContainer text={this.state.task.Type === 0}>
                         {this.viewResult()}
                     </WelcomeContainer>
-                    {!this.props.admin && <Facilitator allTasks fullscreen toggle={true} hide={true} style={{ left: "0px", bottom: "15px", position: "fixed", height: "100px", width: "60%" }} onResultToggle={this.facilitatorToggleResults} showingResult={state.showResults} active={state.activeQuestion} code={code} />}
+                    {!this.props.admin &&
+                        <Facilitator active={State.activeQuestion}
+                            allTasks
+                            code={Code}
+                            fullscreen
+                            hide={true}
+                            onResultToggle={this.facilitatorToggleResults}
+                            showingResult={State.showResults}
+                            style={{
+                                left: "0",
+                                bottom: "15px",
+                                position: "fixed",
+                                height: "100px",
+                                width: "60%"
+                            }}
+                            toggle={true} />
+                    }
                 </ContentContainer>
-                {/*<BottomBanner>
+
+                { /*<BottomBanner>
                     <BottomBannerText>Coboost</BottomBannerText>
                     <BottomBannerText>#{code}</BottomBannerText>
-                </BottomBanner>*/}
-            </>);
+                </BottomBanner>*/
+                }
+
+            </React.Fragment>);
     }
 
     renderOpenTextResult() {
-        const results = this.state.task.Groups;
+        const Results = this.state.task.Groups;
         return (
-            <>
-                {results[0].Members.length > 0 && !results[0].Collapsed && <Column key="C0" width={1} empty>
-                    <Group key={0} title="Unorganized" size={1} showcase group={0}>
-                        {results[0].Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
-                    </Group>
-                </Column>}
-                {results.slice(1).map(group =>
-                    <>
-                        {group.Members.length > 0 && !group.Collapsed && <Column key={"C" + group.Index} column={group.Column} width={1} empty>
-                            <Group key={group.Index} title={group.Title} size={1} color={group.Color} showcase group={group.Index}>
-                                {group.Members.map(member => <Input key={member.Index} title={member.Title} description={member.Description} isMerged={0} size={1} showcase />)}
-                            </Group>
-                        </Column>}
-                    </>)}
-            </>
+            <React.Fragment>
+
+                {Results[0].Members.length > 0 &&
+                    !Results[0].Collapsed &&
+                    <Column empty
+                        key="C0"
+                        width={1}>
+
+                        <Group group={0}
+                            id={0}
+                            key={0}
+                            showcase
+                            size={1}
+                            title="Unorganized">
+
+                            {Results[0].Members.map(member =>
+                                <Input
+                                    description={member.Description}
+                                    isMerged={0}
+                                    key={member.Index}
+                                    showcase
+                                    size={1}
+                                    title={member.Title} />
+                            )}
+                        </Group>
+                    </Column>
+                }
+                {Results.slice(1).map(group =>
+                    <React.Fragment>
+
+                        {group.Members.length > 0 &&
+                            !group.Collapsed &&
+                            <Column column={group.Column}
+                                empty
+                                key={`C${group.Index}`}
+                                width={1}>
+
+                                <Group color={group.Color}
+                                    group={group.Index}
+                                    id={group.Index}
+                                    key={group.Index}
+                                    showcase
+                                    size={1}
+                                    title={group.Title}>
+
+                                    {group.Members.map(member =>
+                                        <Input
+                                            description={member.Description}
+                                            isMerged={0}
+                                            key={member.Index}
+                                            showcase
+                                            size={1}
+                                            title={member.Title} />
+                                    )}
+                                </Group>
+                            </Column>
+                        }
+                    </React.Fragment>
+                )}
+            </React.Fragment>
         );
     }
 
     renderMultipleChoiceResult() {
-        const task = this.state.task;
+        const Task = this.state.task;
 
         return (
-            <>
+            <React.Fragment>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
-                {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} color={option.Color} title={option.Title} description={option.Description} vote points={option.Votes.length} showPercentage={this.state.resultsAsPercentage} percentage={((option.Votes.length / task.TotalVotes) * 100)} height="85%" total={task.Options.length} showcase />
+
+                {Task.Options.map(option =>
+                    <ResultItem color={option.Color}
+                        description={option.Description}
+                        height="85%"
+                        id={option.Index}
+                        index={option.Index}
+                        key={option.Index}
+                        percentage={((option.Votes.length / Task.TotalVotes) * 100)}
+                        points={option.Votes.length}
+                        showcase
+                        showPercentage={this.state.resultsAsPercentage}
+                        title={option.Title}
+                        total={Task.Options.length}
+                        vote />
                 )}
-            </>
+            </React.Fragment>
         );
     }
 
     renderPoints() {
-        const task = this.state.task;
-        const total = task.Votes.length * task.Amount;
+        const Task = this.state.task;
+        const Total = Task.Votes.length * Task.Amount;
 
         return (
-            <>
+            <React.Fragment>
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
-                {task.Options.map(option =>
-                    <ResultItem key={option.Index} id={option.Index} index={option.Index} color={option.Color} title={option.Title} description={option.Description} vote points={option.Points} showPercentage={this.state.resultsAsPercentage} percentage={((option.Points / total) * 100)} height="85%" total={task.Options.length} showcase />
+
+                {Task.Options.map(option =>
+                    <ResultItem color={option.Color}
+                        description={option.Description}
+                        height="85%"
+                        id={option.Index}
+                        index={option.Index}
+                        key={option.Index}
+                        percentage={((option.Points / Total) * 100)}
+                        points={option.Points}
+                        showcase
+                        showPercentage={this.state.resultsAsPercentage}
+                        title={option.Title}
+                        total={Task.Options.length}
+                        vote />
                 )}
-            </>
+            </React.Fragment>
         );
     }
 
     renderSlider() {
-        const task = this.state.task;
+        const Task = this.state.task;
 
         return (
-            <>
-                {task.Options.map(option =>
-                    <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} color={option.Color} vote
-                        average={option.Average} min={task.Min} max={task.Max} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
+            <React.Fragment>
+                {Task.Options.map(option =>
+                    <ResultSlider average={option.Average}
+                        color={option.Color}
+                        description={option.Description}
+                        id={option.Index}
+                        index={option.Index}
+                        max={Task.Max}
+                        maxDescription={Task.MaxDescription}
+                        min={Task.Min}
+                        minDescription={Task.MinDescription}
                         showcase
-                    />
+                        title={option.Title}
+                        vote />
                 )}
-            </>
+            </React.Fragment>
         );
     }
 
     renderHidden() {
         return (
-            <>
+            <React.Fragment>
                 <Box style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-                    <Typography display="block" variant="h2" align="center">Keep working on your task!</Typography>
-                    <Typography display="block" variant="h2" align="center">Results will soon be shown</Typography>
+
+                    <Typography align="center"
+                        display="block"
+                        variant="h2">
+                        Keep working on your task!
+                    </Typography>
+
+                    <Typography align="center"
+                        display="block"
+                        variant="h2">
+                        Results will soon be shown
+                    </Typography>
                 </Box>
-            </>
+            </React.Fragment>
         );
     }
 
     handleRender() {
-        const title = this.state.title;
-        const task = this.state.task;
+        const Title = this.state.title;
+        const Task = this.state.task;
 
-        if (title === null) {
-            return this.renderWaiting()
-        } else {
-            if (task !== null && task.Index !== -1) {
+        if (Title === null) {
+            return this.renderWaiting();
+        }
+        else {
+            if (Task && Task.Index !== -1) {
                 return this.renderQuestion();
-            } else {
-                return this.renderWelcome()
+            }
+            else {
+                return this.renderWelcome();
             }
         }
     }
 
     render() {
         return (
-            <>
+            <React.Fragment>
                 <MainContainer>
                     <Banner>
-                        <BottomBannerText>#{this.state.code}</BottomBannerText>
-                        <BottomBannerText>Coboost</BottomBannerText>
-                        {this.state.task !== null && <Title><b>{this.state.task.Title}</b></Title>}
+
+                        <BottomBannerText>
+                            #{this.state.code}
+                        </BottomBannerText>
+
+                        <BottomBannerText>
+                            Coboost
+                        </BottomBannerText>
+
+                        {this.state.task &&
+                            <Title>
+                                <b>{this.state.task.Title}</b>
+                            </Title>
+                        }
                     </Banner>
                     {this.handleRender()}
+
+                    {this.state.task &&
+                        <div style={{
+                            position: "absolute",
+                            height: "50px",
+                            lineHeight: "50px",
+                            textAlign: "center",
+                            width: "150px",
+                            border: "1px solid black",
+                            borderRadius: "15px",
+                            right: "10px",
+                            bottom: "10px"
+                        }}>
+                            {this.state.task.InProgress
+                                ? "Open Task"
+                                : "Closed Task"}
+                        </div>
+                    }
                 </MainContainer>
-            </>
+            </React.Fragment>
         );
     }
 }

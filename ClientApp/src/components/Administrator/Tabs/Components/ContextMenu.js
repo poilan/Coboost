@@ -1,10 +1,9 @@
-﻿import React, { Component } from 'react';
-import axios from 'axios';
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
 
-const MenuContainer = styled.div`
+const MenuContainer = Styled.div`
     border: solid 1px #ccc;
     border-radius: 10px;
     display: inline-block;
@@ -20,8 +19,11 @@ const MenuContainer = styled.div`
     z-index: 11;
 `;
 
-const ContextItem = styled.div`
-    border-bottom: ${props => props.last ? "" : "solid 1px #999"};
+const ContextItem = Styled.div`
+    border-bottom: ${props => props.last
+        ? ""
+        : "solid 1px #999"
+    };
     padding: 5px 25px;
 `;
 
@@ -36,25 +38,34 @@ export class ContextMenu extends Component {
             this.props.items[index].callback();
         }
         else {
-            console.log(`No callback for the ${index + 1}. menu item!`)
+            console.log(`No callback for the ${index + 1}. menu item!`);
         }
     }
 
     returnMenu(items) {
         return (
-            <MenuContainer id="customcontext" top={this.props.y - 4} left={this.props.x - 4} ref={this.contextRef}>
+            <MenuContainer id="customcontext"
+                left={this.props.x - 4}
+                ref={this.contextRef}
+                top={this.props.y - 4}>
                 {items.map((item, index, arr) =>
-                    <ContextItem key={index} index={index} last={arr.length - 1 == index} onClick={() => this.click(index)}>{item.label}</ContextItem>
+                    <ContextItem key={index} index={index}
+                        last={arr.length - 1 === index}
+                        onClick={() => this.click(index)}>
+                        {item.label}
+                    </ContextItem>
                 )}
             </MenuContainer>
-        )
+        );
     }
 
     render() {
         return (
-            <div id='cmenu'>
-                {this.props.visible ? this.returnMenu(this.props.items) : null}
+            <div id="cmenu">
+                {this.props.visible
+                    ? this.returnMenu(this.props.items)
+                    : null}
             </div>
-        )
+        );
     }
 }

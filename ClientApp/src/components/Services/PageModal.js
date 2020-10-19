@@ -1,9 +1,9 @@
 ﻿import React from "react";
-import styled from "styled-components";
+import Styled from "styled-components";
 import { Modal } from "react-bootstrap";
-import 'circular-std';
+import "circular-std";
 
-const ModalPage = styled(Modal)`
+const ModalPage = Styled(Modal)`
     border-radius: 20px;
     font-family: CircularStd;
 
@@ -21,29 +21,32 @@ export class PageModal extends React.Component {
             showing: true,
 
             title: props.title || "",
-            body: props.body || "",
+            body: props.body || ""
         };
 
         this.onClosed = this.onClosed.bind(this);
     }
 
     onClosed() {
-        if (this.props.onClose !== undefined)
+        if (this.props.onClose !== undefined) {
             this.props.onClose();
+        }
 
         this.setState({
-            showing: false,
-        })
+            showing: false
+        });
     }
 
     render() {
-        const state = this.state;
+        const State = this.state;
         return (
-            <ModalPage show={state.showing} centered onHide={this.onClosed}>
+            <ModalPage centered
+                onHide={this.onClosed}
+                show={State.showing}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{state.title}</Modal.Title>
+                    <Modal.Title>{State.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{state.body}</Modal.Body>
+                <Modal.Body>{State.body}</Modal.Body>
             </ModalPage>
         );
     }

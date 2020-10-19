@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import 'circular-std';
+import React, { Component } from "react";
+import Styled from "styled-components";
+import "circular-std";
 
-const DropStyle = styled.div`
+const DropStyle = Styled.div`
     position: relative;
     display: inline-block;
 
     margin: 0px 5px;
 `;
 
-const DropButton = styled.button`
-    background: #ffffff;
+const DropButton = Styled.button`
+    background: #fff;
     border: none;
     border-radius: 10px;
     color: #100E0E;
@@ -38,17 +38,21 @@ const DropButton = styled.button`
     }
 `;
 
-const DropItem = styled.button`
+const DropItem = Styled.button`
     display: block;
     padding: 12px 16px;
-    
+
     width: 100%;
     background-color: transparent;
     border: none;
 
-    color: ${props => props.disabled ? "rgba(0, 0, 0, 0.3)" : "black"} !important;
+    color: ${props => props.disabled
+        ? "rgba(0, 0, 0, 0.3)"
+        : "black"} !important;
 
-    user-select: ${props => props.disabled ? "none" : "all"};
+    user-select: ${props => props.disabled
+        ? "none"
+        : "all"};
 
     :hover {
         text-decoration: none;
@@ -60,12 +64,14 @@ const DropItem = styled.button`
     }
 `;
 
-const DropdownContent = styled.div`
+const DropdownContent = Styled.div`
     position: absolute;
     z-index: 1;
     right: 0px;
 
-    display: ${props => props.hide ? "none" : "block"};
+    display: ${props => props.hide
+        ? "none"
+        : "block"};
     overflow: hidden;
 
     margin-top: 5px;
@@ -76,38 +82,45 @@ const DropdownContent = styled.div`
     border-radius: 10px;
 `;
 
-export class BannerButton extends Component {
+export class BannerButton extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        return(
-            <>
-                <DropButton style={this.props.style} disabled={this.props.disabled} onClick={this.props.onClick}>{this.props.children}</DropButton>
-            </>
+        return (
+            <React.Fragment>
+                <DropButton disabled={this.props.disabled}
+                    onClick={this.props.onClick}
+                    style={this.props.style}>
+                    {this.props.children}
+                </DropButton>
+            </React.Fragment>
         );
     }
 }
 
-export class BannerLink extends Component {
+export class BannerLink extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        return(
-            <>
-                <DropItem disabled={this.props.disabled} onClick={this.props.onClick}>{this.props.children}</DropItem>
-            </>
+        return (
+            <React.Fragment>
+                <DropItem disabled={this.props.disabled}
+                    onClick={this.props.onClick}>
+                    {this.props.children}
+                </DropItem>
+            </React.Fragment>
         );
     }
 }
 
-export default class BannerDropdown extends Component {
+export class BannerDropdown extends React.Component {
     constructor(props) {
         super(props);
-    
+
         this.state = {
             hidden: true
         };
@@ -129,15 +142,18 @@ export default class BannerDropdown extends Component {
     }
 
     render() {
-        return(
-            <>
+        return (
+            <React.Fragment>
                 <DropStyle style={this.props.style}>
-                    <DropButton onClick={() => this.onClick()}>{this.props.title}</DropButton>
-                    <DropdownContent hide={this.state.hidden} onMouseLeave={() => this.onFocusLoss()}>
+                    <DropButton onClick={() => this.onClick()}>
+                        {this.props.title}
+                    </DropButton>
+                    <DropdownContent hide={this.state.hidden}
+                        onMouseLeave={() => this.onFocusLoss()}>
                         {this.props.children}
                     </DropdownContent>
                 </DropStyle>
-            </>
+            </React.Fragment>
         );
     }
 }

@@ -1,28 +1,42 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { Home } from './components/Landing/Home';
-import { Login } from './components/Login/Login';
-import { Recovery } from './components/Login/Recovery';
-import { Dashboard } from './components/Dashboard/Dashboard';
-import { Mobile } from './components/Mobile/Mobile';
-import { BigScreen } from './components/Big Screen/BigScreen';
-import './custom.css'
-import { Administrator } from './components/Administrator/Administrator';
+import React from "react";
+import { Route } from "react-router-dom";
+import { Administrator } from "./components/Administrator/Administrator";
+import { BigScreen } from "./components/Big Screen/BigScreen";
+import { Dashboard } from "./components/Dashboard/Dashboard";
+import { Home } from "./components/Landing/Home";
+import { Login } from "./components/Login/Login";
+import { Recovery } from "./components/Login/Recovery";
+import { Mobile } from "./components/Mobile/Mobile";
+import "./custom.css";
 
-export default class App extends Component {
+export default class App extends React.Component {
     static displayName = App.name;
 
     render() {
         return (
-            <>
-                <Route exact path='/' component={Home} />
-                <Route exact path='/login' component={Login} />
-                <Route exact path='/recover' component={Recovery} />
-                <Route exact path='/dashboard' component={Dashboard} />
-                <Route exact path='/mobile' component={Mobile} />
-                <Route exact path='/screen' component={BigScreen} />
-                <Route exact path='/administrator' component={Administrator} />
-            </>
+            <React.Fragment>
+                <Route component={Home}
+                    exact
+                    path="/" />
+                <Route component={Login}
+                    exact
+                    path="/login" />
+                <Route component={Recovery}
+                    exact
+                    path="/recover" />
+                <Route component={Dashboard}
+                    exact
+                    path="/dashboard" />
+                <Route component={Mobile}
+                    exact
+                    path="/mobile" />
+                <Route component={BigScreen}
+                    exact
+                    path="/screen" />
+                <Route component={Administrator}
+                    exact
+                    path="/administrator" />
+            </React.Fragment>
         );
     }
 }

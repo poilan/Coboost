@@ -1,44 +1,45 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using Microsoft.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Slagkraft.Services
+namespace Coboost.Services.StreamContent
 {
     /// <summary>
-    /// Class that allows us to send data in HttpBody before the request is complete
+    ///     Class that allows us to send data in HttpBody before the request is complete
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class StreamContent : IActionResult
     {
-        //private readonly string ContentType;
-
         #region Private Fields
 
-        private readonly Action<Stream, CancellationToken> OnStreamAvailable;
+        private readonly Action<Stream, CancellationToken> _onStreamAvailable;
 
-        private CancellationToken CancelToken;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private CancellationToken _cancelToken;
 
         #endregion Private Fields
 
         #region Public Constructors
 
         /// <summary>
-        /// Use this as a Return method to be able to push data using StreamWriter.Flush()
+        ///     Use this as a Return method to be able to push data using StreamWriter.Flush()
         /// </summary>
-        /// <param name="onStreamAvailable">The Method Containing the Logic you want performed.<para>This method will require the Parameters: {"Stream", "CancelationToken", "int"}</para>These parameters are: What you are writing into, Token that knows if the client disconnected, the eventcode for the session you are reading from</param>
-        /// <param name="contentType">The content type that will be written in the header of the response</param>
-        /// <param name="required">The int you need for the Stream method</param>
+        /// <param name="onStreamAvailable">
+        ///     The Method Containing the Logic you want performed.
+        ///     <para>This method will require the Parameters: {"Stream", "CancellationToken", "int"}</para>
+        ///     These parameters are: What you are writing into, Token that knows if the client disconnected, the event code for
+        ///     the session you are reading from
+        /// </param>
+        /// <param name="cancelToken">How we know the user disconnected</param>
         public StreamContent(Action<Stream, CancellationToken> onStreamAvailable, CancellationToken cancelToken)
         {
-            OnStreamAvailable = onStreamAvailable;
+            _onStreamAvailable = onStreamAvailable;
 
             //ContentType = contentType;
-            CancelToken = cancelToken;
+            _cancelToken = cancelToken;
         }
 
         #endregion Public Constructors
@@ -47,9 +48,9 @@ namespace Slagkraft.Services
 
         public Task ExecuteResultAsync(ActionContext context)
         {
-            var stream = context.HttpContext.Response.Body;
+            Stream stream = context.HttpContext.Response.Body;
 
-            OnStreamAvailable(stream, CancelToken);
+            _onStreamAvailable(stream, _cancelToken);
             return Task.CompletedTask;
         }
 

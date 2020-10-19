@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Slagkraft.Models.Admin;
-using Slagkraft.Models.Admin.Questions;
-using Slagkraft.Models.Database;
+﻿using System.Threading;
+using Coboost.Models.Admin;
+using Coboost.Models.Admin.Tasks;
+using Coboost.Models.Admin.Tasks.Input.Standard;
+using Coboost.Models.Admin.Tasks.Input.Standard.data;
+using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice;
+using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice.data;
+using Coboost.Models.Admin.Tasks.Votes.Points;
+using Coboost.Models.Admin.Tasks.Votes.Points.data;
+using Coboost.Models.Admin.Tasks.Votes.Slider;
+using Coboost.Models.Admin.Tasks.Votes.Slider.data;
+using Coboost.Models.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace Slagkraft.Controllers
+namespace Coboost.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -18,7 +22,8 @@ namespace Slagkraft.Controllers
     {
         #region Private Fields
 
-        private readonly DatabaseContext Context;
+        // ReSharper disable once NotAccessedField.Local
+        private readonly DatabaseContext _context;
 
         #endregion Private Fields
 
@@ -26,100 +31,65 @@ namespace Slagkraft.Controllers
 
         public ClientController(DatabaseContext context)
         {
-            Context = context;
+            _context = context;
         }
 
         #endregion Public Constructors
 
         #region Public Methods
 
-        [HttpPost("{code}/add-multiplechoice")]
-        public void AddMultipleChoice(int code, [FromBody] MultipleChoice_Input input)
+        [HttpPost("{code}/add-vote-multi")]
+        public void AddMultipleChoice(int code, [FromBody] MultipleChoiceVote vote)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(input));
-            }
-            else
-            {
-                //Session not found
-            }
-        }
-
-        [HttpPost("{code}/add-opentext")]
-        public void AddOpenText(int code, [FromBody] OpenText_Input input)
-        {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
-                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(input));
-            }
-            else
-            {
-                //Session not found
-            }
-        }
-
-        [HttpPost("{code}/add-points")]
-        public void AddPoints(int code, [FromBody] Points_Vote vote)
-        {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
                 ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(vote));
-            }
-            else
-            {
-                //Session not found
-            }
         }
 
-        [HttpPost("{code}/add-slider")]
-        public void AddSlider(int code, [FromBody] Rate_Vote vote)
+        [HttpPost("{code}/add-text-open")]
+        public void AddOpenText(int code, [FromBody] OpenTextInput input)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-            {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(input));
+        }
+
+        [HttpPost("{code}/add-vote-points")]
+        public void AddPoints(int code, [FromBody] PointsVote vote)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
                 ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(vote));
-            }
-            else
-            {
-                //Session not found
-            }
+        }
+
+        [HttpPost("{code}/add-vote-slider")]
+        public void AddSlider(int code, [FromBody] SliderVote vote)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+                ThreadPool.QueueUserWorkItem(o => admin.AddClientInput(vote));
         }
 
         [HttpGet("{code}")]
         public bool CheckSession(int code)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out _))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance _);
         }
 
         [HttpGet("{code}/question")]
         public async void GetQuestion(int code)
         {
-            if (Context.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                Response.Headers.Add("connection", "keep-alive");
-                Response.Headers.Add("cach-control", "no-cache");
-                Response.Headers.Add("content-type", "text/event-stream");
+                Response.ContentType = "text/event-stream";
                 BaseTask question = null;
 
                 while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
                 {
                     if (admin.Active < admin.Tasks.Count)
-                    {
                         question = admin.Tasks[admin.Active].Type switch
                         {
                             BaseTask.TaskType.MultipleChoice => admin.Tasks[admin.Active] as MultipleChoice,
                             BaseTask.TaskType.Points => admin.Tasks[admin.Active] as Points,
-                            BaseTask.TaskType.Rate => admin.Tasks[admin.Active] as Rate,
-                            _ => admin.Tasks[admin.Active] as OpenText,
+                            BaseTask.TaskType.Slider => admin.Tasks[admin.Active] as Slider,
+                            var _ => admin.Tasks[admin.Active] as OpenText
                         };
-                    }
 
                     if (question != null)
                     {
@@ -132,12 +102,12 @@ namespace Slagkraft.Controllers
                     admin.Client.Reset();
                     admin.Client.WaitOne(30000);
                 }
+
                 Response.Body.Close();
             }
             else
             {
                 HttpContext.Response.StatusCode = 402;
-                return;
             }
         }
 

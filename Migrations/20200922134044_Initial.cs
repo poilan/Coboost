@@ -1,37 +1,61 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Coboost.Migrations
 {
+    [UsedImplicitly]
     public partial class Initial : Migration
     {
+        #region Protected Methods
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                "SessionFolders");
+
+            migrationBuilder.DropTable(
+                "UserSessions");
+
+            migrationBuilder.DropTable(
+                "Folders");
+
+            migrationBuilder.DropTable(
+                "Sessions");
+
+            migrationBuilder.DropTable(
+                "Users");
+
+            migrationBuilder.DropSequence(
+                "SessionOrder_seq",
+                "dbo");
+        }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "dbo");
+                "dbo");
 
             migrationBuilder.CreateSequence<int>(
-                name: "SessionOrder_seq",
-                schema: "dbo",
-                startValue: 100000L);
+                "SessionOrder_seq",
+                "dbo",
+                100000L);
 
             migrationBuilder.CreateTable(
-                name: "Folders",
-                columns: table => new
+                "Folders",
+                table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Folders", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Folders", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Sessions",
-                columns: table => new
+                "Sessions",
+                table => new
                 {
-                    Identity = table.Column<int>(nullable: false, defaultValueSql: "NEXT VALUE FOR dbo.SessionOrder_seq"),
+                    Identity = table.Column<int>(nullable: false,
+                        defaultValueSql: "NEXT VALUE FOR dbo.SessionOrder_seq"),
                     Email = table.Column<string>(nullable: true),
                     LastOpen = table.Column<string>(nullable: true),
                     Questions = table.Column<string>(nullable: true),
@@ -39,28 +63,22 @@ namespace Coboost.Migrations
                     Slides = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessions", x => x.Identity);
-                });
+                constraints: table => { table.PrimaryKey("PK_Sessions", x => x.Identity); });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
+                "Users",
+                table => new
                 {
                     Email = table.Column<string>(nullable: false),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Email);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.Email); });
 
             migrationBuilder.CreateTable(
-                name: "SessionFolders",
-                columns: table => new
+                "SessionFolders",
+                table => new
                 {
                     FolderId = table.Column<int>(nullable: false),
                     SessionId = table.Column<int>(nullable: false),
@@ -70,28 +88,28 @@ namespace Coboost.Migrations
                 {
                     table.PrimaryKey("PK_SessionFolders", x => new { x.FolderId, x.SessionId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_SessionFolders_Folders_FolderId",
-                        column: x => x.FolderId,
-                        principalTable: "Folders",
-                        principalColumn: "Id",
+                        "FK_SessionFolders_Folders_FolderId",
+                        x => x.FolderId,
+                        "Folders",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SessionFolders_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "Sessions",
-                        principalColumn: "Identity",
+                        "FK_SessionFolders_Sessions_SessionId",
+                        x => x.SessionId,
+                        "Sessions",
+                        "Identity",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SessionFolders_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Email",
+                        "FK_SessionFolders_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Email",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserSessions",
-                columns: table => new
+                "UserSessions",
+                table => new
                 {
                     UserId = table.Column<string>(nullable: false),
                     SessionId = table.Column<int>(nullable: false)
@@ -100,55 +118,35 @@ namespace Coboost.Migrations
                 {
                     table.PrimaryKey("PK_UserSessions", x => new { x.UserId, x.SessionId });
                     table.ForeignKey(
-                        name: "FK_UserSessions_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "Sessions",
-                        principalColumn: "Identity",
+                        "FK_UserSessions_Sessions_SessionId",
+                        x => x.SessionId,
+                        "Sessions",
+                        "Identity",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Email",
+                        "FK_UserSessions_Users_UserId",
+                        x => x.UserId,
+                        "Users",
+                        "Email",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionFolders_SessionId",
-                table: "SessionFolders",
-                column: "SessionId");
+                "IX_SessionFolders_SessionId",
+                "SessionFolders",
+                "SessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionFolders_UserId",
-                table: "SessionFolders",
-                column: "UserId");
+                "IX_SessionFolders_UserId",
+                "SessionFolders",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_SessionId",
-                table: "UserSessions",
-                column: "SessionId");
+                "IX_UserSessions_SessionId",
+                "UserSessions",
+                "SessionId");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "SessionFolders");
-
-            migrationBuilder.DropTable(
-                name: "UserSessions");
-
-            migrationBuilder.DropTable(
-                name: "Folders");
-
-            migrationBuilder.DropTable(
-                name: "Sessions");
-
-            migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropSequence(
-                name: "SessionOrder_seq",
-                schema: "dbo");
-        }
+        #endregion Protected Methods
     }
 }

@@ -1,11 +1,11 @@
-﻿import React, { Component } from 'react';
-import axios from 'axios';
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import Axios from "axios";
+import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
-import { Box, Typography, TextField, FormControlLabel, Switch } from '@material-ui/core';
+import { Box, Typography, TextField, FormControlLabel, Switch } from "@material-ui/core";
 
-const ModalPage = styled(Modal)`
+const ModalPage = Styled(Modal)`
     border-radius: 20px;
     font-family: CircularStd;
 
@@ -15,7 +15,7 @@ const ModalPage = styled(Modal)`
     }
 `;
 
-const CancelButton = styled(Nav.Link)`
+const CancelButton = Styled(Nav.Link)`
     color: #100e0e;
     background: #fff;
     position: relative;
@@ -29,7 +29,7 @@ const CancelButton = styled(Nav.Link)`
     width: 200px;
 `;
 
-const CreateButton = styled.input`
+const CreateButton = Styled.input`
     color: #fff;
     background: #4C7AD3;
     position: relative;
@@ -41,71 +41,6 @@ const CreateButton = styled.input`
     font-weight: 450;
     text-align: center;
     width: 200px;
-`;
-
-const FieldText = styled.h2`
-    opacity: 50%;
-    font-family: CircularStd;
-    font-size: 1rem;
-`;
-
-const OptionContainer = styled.div`
-    display: inline-block;
-    padding: 0.3em;
-    width: 50%;
-    height: 1.5em;
-    text-align: left;
-
-`;
-
-const Option = styled(Form.Control)`
-    font-family: CircularStd;
-    font-size: 1rem;
-    font-weight: 700;
-    width: 100%;
-    padding: .2em .5em .17em .26em;
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
-    border-radius: .5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #fff;
-
-    &:hover {
-        border-color: #888;
-    }
-
-    &:focus {
-        border-color: #aaa;
-        box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
-        box-shadow: 0 0 0 3px -moz-mac-focusring;
-        outline: none;
-    }
-`;
-
-const AddOption = styled.div`
-    display: ${props => props.possible ? "inline-block" : "none"};
-    opacity: 50%;
-    width: 100%;
-    font-family: CircularStd;
-    font-size: 1rem;
-    font-weight: 700;
-    padding: .2em .5em .17em .26em;
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
-    border-radius: .5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #fff;
-
-    &:hover {
-        opacity: 75%;
-        cursor:pointer;
-    }
 `;
 
 export class CreateTaskModal extends Component {
@@ -123,487 +58,682 @@ export class CreateTaskModal extends Component {
             options: [],
             showing: true,
             success: false,
-            extra: false,
-        }
+            extra: false
+        };
     }
 
     componentDidMount() {
-        if (this.props.type != 0 && this.props.options !== undefined)
+        if (this.props.type !== 0 && this.props.options !== undefined) {
             this.setState({ options: this.props.options() });
-        else
+        }
+        else {
             this.setState({ description: this.props.title });
+        }
     }
 
     TextContent() {
-        const createOpenText = (event) => {
+        const CreateOpenText = (event) => {
             event.preventDefault();
-            const code = sessionStorage.getItem('code');
-            var data = {
+            const Code = sessionStorage.getItem("code");
+            var Data = {
                 Title: this.state.description,
-                ShowResults: true,
-            }
+                ShowResults: true
+            };
 
-            axios.post(`admin/${code}/questions-create-opentext`, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => {
-                if (res.status === 201) {
-                    this.setState({
-                        success: true,
-                        description: '',
-                        type: '',
-                    });
-                    this.onClose();
-                }
-            });
-        }
+            Axios.post(`admin/${Code}/create-text-open`, Data,
+                {
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then(res => {
+                    if (res.status === 201) {
+                        this.setState({
+                            success: true,
+                            description: "",
+                            type: ""
+                        });
+                        this.onClose();
+                    }
+                });
+        };
 
-        const handleDescription = (event) => {
+        const HandleDescription = (event) => {
             event.preventDefault();
-            var description = this.state.description;
-            description = event.target.value;
+            var Description = event.target.value;
             this.setState({
-                description: description,
+                description: Description
             });
-        }
-
-        const handleTitle = (event) => {
-            event.preventDefault();
-            var title = this.state.title;
-            title = event.target.value;
-            this.setState({
-                title: title,
-            });
-        }
+        };
 
         return (
-            <Form onSubmit={createOpenText.bind(this)}>
-                {false &&
-                    <Box component="fieldset" mb={1} pt={1} px={3} borderColor="transparent">
-                        <TextField type="text" value={this.state.title} id="Task Title" maxLength="30" onChange={handleTitle} onFocus={(e) => { e.target.placeholder = "" }} onBlur={(e) => e.target.placeholder = "Write a title..."} placeholder="Write a title..." />
-                    </Box>
-                }
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField type="text" id="TextTitle" label="Task Text" onChange={handleDescription} value={this.state.description} fullWidth />
+            <Form onSubmit={CreateOpenText.bind(this)}>
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <TextField fullWidth
+                        id="TextTitle"
+                        label="Task Text"
+                        onChange={HandleDescription}
+                        type="text"
+                        value={this.state.description} />
                 </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit" value="Add new Task" />
+                <CreateButton type="submit"
+                    value="Add new Task" />
             </Form>
         );
     }
 
     MultipleChoiceContent() {
-        const handleTitle = (event) => {
+        const HandleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.description;
-            title = event.target.value;
+            var Title = event.target.value;
             this.setState({
-                description: title,
+                description: Title
             });
-        }
+        };
 
-        const handleMax = (event) => {
+        const HandleMax = (event) => {
             event.preventDefault();
-            var max = this.state.max;
-            max = event.target.value;
+            var Max = event.target.value;
             this.setState({
-                max: max,
+                max: Max
             });
-        }
+        };
 
-        const handleOption = (event) => {
-            const key = event.target.name;
-            const value = event.target.value;
+        const HandleOption = (event) => {
+            const Key = event.target.name;
+            const Value = event.target.value;
 
-            const options = this.state.options;
-            options[key].Description = value;
+            const Options = this.state.options;
+            Options[Key].Description = Value;
             this.setState({
-                options: options,
+                options: Options
             });
-        }
+        };
 
-        const addOption = () => {
-            var count = this.state.options !== undefined ? this.state.options.length : 0;
-            var user = localStorage.getItem("user");
+        const AddOption = () => {
+            var Count = this.state.options !== undefined
+                ? this.state.options.length
+                : 0;
+            var User = localStorage.getItem("user");
 
-            var option = {
-                UserID: user,
-                Index: count,
+            var Option = {
+                UserID: User,
+                Index: Count,
                 Description: "",
                 votes: [],
-                archive: [],
-            }
+                archive: []
+            };
 
-            var options = this.state.options;
-            count > 0 ? options.push(option) : options = [option];
+            var Options = this.state.options;
+            Count > 0
+                ? Options.push(Option)
+                : Options = [Option];
             this.setState({
-                options: options,
+                options: Options
             });
-        }
+        };
 
-        const createMultipleChoice = (event) => {
+        const CreateMultipleChoice = (event) => {
             event.preventDefault();
-            let code = sessionStorage.getItem("code");
+            const Code = sessionStorage.getItem("code");
 
-            let data = {
+            const Data = {
                 Title: this.state.description,
                 Options: this.state.options,
                 Max: parseInt(this.state.max),
-                ShowResults: true,
+                ShowResults: true
+            };
+
+            if (!this.state.extra) {
+                Data.Max = 1;
             }
 
-            if (!this.state.extra)
-                data.Max = 1;
-
-            axios.post(`admin/${code}/questions-create-multiplechoice`, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => {
-                if (res.status === 201) {
-                    this.setState({
-                        type: '',
-                        description: '',
-                        options: [],
-                        success: true,
-                    });
-                    this.onClose();
-                }
-            })
-        }
+            Axios.post(`admin/${Code}/create-vote-multi`, Data,
+                {
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then(res => {
+                    if (res.status === 201) {
+                        this.setState({
+                            type: "",
+                            description: "",
+                            options: [],
+                            success: true
+                        });
+                        this.onClose();
+                    }
+                });
+        };
 
         return (
-            <Form onSubmit={createMultipleChoice.bind(this)}>
+            <Form onSubmit={CreateMultipleChoice.bind(this)}>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                        fullWidth
+                        id="TextTitle"
+                        label="Task Text"
+                        onChange={HandleTitle}
+                        value={this.state.description
+                        } />
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <FormControlLabel control={<Switch checked={this.state.extra} onChange={(e) => { e.preventDefault(); this.setState({ extra: !this.state.extra }); }} name="TextSwitch" />}
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <FormControlLabel control={
+                        <Switch checked={this.state.extra}
+                            onChange={(e) => {
+                                e.preventDefault();
+                                this.setState({ extra: !this.state.extra });
+                            }}
+                            name="TextSwitch" />
+                    }
                         label="Allow Multiple Answers" />
-                    {this.state.extra && <TextField id="TextMax" type="number" label="Max Answers" value={this.state.max} onChange={handleMax} />}
+                    {this.state.extra &&
+                        <TextField id="TextMax" type="number" label="Max Answers" value={this.state.max}
+                            onChange={HandleMax}
+                        />
+                    }
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
-                        <Typography component="legend" variant="subtitle2">Options</Typography>
-                        {this.state.options !== undefined && this.state.options.map(option =>
-                            <Box component="fieldset" mb={1} borderColor="transparent">
-                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
-                            </Box>
-                        )}
-                        <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <Box borderColor="transparent"
+                        component="fieldset"
+                        pt={1}
+                        px={1}>
+                        <Typography component="legend"
+                            variant="subtitle2">
+                            Options
+                        </Typography>
+                        {this.state.options !== undefined &&
+                            this.state.options.map(option =>
+                                <Box component="fieldset" mb={1} borderColor="transparent">
+                                    <TextField id={`Option-${option.Index}`} label={`Option ${option.Index + 1}`}
+                                        key={option.Index} name={option.Index}
+                                        value={option.Description} onChange={HandleOption.bind(this)}
+                                        autoFocus={(option.Index + 1) === this.state.options.length}
+                                        fullWidth />
+                                </Box>
+                            )}
+                        <Box borderColor="transparent"
+                            component="fieldset"
+                            mb={1}>
+                            <TextField color="gray"
+                                fullWidth
+                                label="Add option..."
+                                onFocus={AddOption.bind(this)} />
                         </Box>
                     </Box>
                 </Box>
 
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit" value="Submit" />
+                <CreateButton type="submit"
+                    value="Submit" />
             </Form>
         );
     }
 
     PointsContent() {
-        const handleTitle = (event) => {
+        const HandleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.description;
-            title = event.target.value;
+            var Title = event.target.value;
             this.setState({
-                description: title,
+                description: Title
             });
-        }
+        };
 
-        const handleMax = (event) => {
+        const HandleMax = (event) => {
             event.preventDefault();
-            var max = this.state.min;
-            max = event.target.value;
+            var Max = event.target.value;
 
-            if (max > this.state.max)
-                max = this.state.max;
-
-            this.setState({
-                min: max,
-            });
-        }
-
-        const handlePoints = (event) => {
-            event.preventDefault();
-            var points = this.state.max;
-            points = event.target.value;
-            this.setState({
-                max: points,
-            });
-        }
-
-        const handleOption = (event) => {
-            const key = event.target.name;
-            const value = event.target.value;
-
-            const options = this.state.options;
-            options[key].Description = value;
-            this.setState({
-                options: options,
-            });
-        }
-
-        const addOption = () => {
-            var count = this.state.options !== undefined ? this.state.options.length : 0;
-            var user = localStorage.getItem("user");
-
-            var Option = {
-                UserID: user,
-                Index: count,
-                Description: "",
+            if (Max > this.state.max) {
+                Max = this.state.max;
             }
 
-            var Options = this.state.options;
-            count > 0 ? Options.push(Option) : Options = [Option];
             this.setState({
-                options: Options,
+                min: Max
             });
-        }
+        };
 
-        const createPoints = (event) => {
+        const HandlePoints = (event) => {
             event.preventDefault();
-            let code = sessionStorage.getItem("code");
+            var Points = event.target.value;
+            this.setState({
+                max: Points
+            });
+        };
 
-            let data = {
+        const HandleOption = (event) => {
+            const Key = event.target.name;
+            const Value = event.target.value;
+
+            const Options = this.state.options;
+            Options[Key].Description = Value;
+            this.setState({
+                options: Options
+            });
+        };
+
+        const AddOption = () => {
+            var Count = this.state.options !== undefined
+                ? this.state.options.length
+                : 0;
+            var User = localStorage.getItem("user");
+
+            var Option = {
+                UserID: User,
+                Index: Count,
+                Description: ""
+            };
+
+            var Options = this.state.options;
+            Count > 0
+                ? Options.push(Option)
+                : Options = [Option];
+            this.setState({
+                options: Options
+            });
+        };
+
+        const CreatePoints = (event) => {
+            event.preventDefault();
+            const Code = sessionStorage.getItem("code");
+
+            const Data = {
                 Title: this.state.description,
                 Options: this.state.options,
                 Amount: parseInt(this.state.max),
                 Max: parseInt(this.state.max),
-                ShowResults: true,
-            }
+                ShowResults: true
+            };
 
-            axios.post(`admin/${code}/questions-create-points`, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => {
-                if (res.status === 201) {
-                    this.setState({
-                        type: '',
-                        description: '',
-                        options: [],
-                        success: true,
-                    });
-                    this.onClose();
-                }
-            })
-        }
+            Axios.post(`admin/${Code}/questions-create-points`,
+                Data,
+                {
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then(res => {
+                    if (res.status === 201) {
+                        this.setState({
+                            type: "",
+                            description: "",
+                            options: [],
+                            success: true
+                        });
+                        this.onClose();
+                    }
+                });
+        };
 
-        let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
         return (
-            <Form onSubmit={createPoints.bind(this)}>
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
+            <Form onSubmit={CreatePoints.bind(this)}>
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                        fullWidth
+                        id="TextTitle"
+                        label="Task Text"
+                        onChange={HandleTitle}
+                        value={this.state.description} />
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <Box display="inline" px={1} borderColor="transparent">
-                        <TextField id="points" name="points" type="number" label="Total Points" ref="points" onChange={handlePoints.bind(this)} value={this.state.max} />
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <Box borderColor="transparent"
+                        display="inline"
+                        px={1}>
+                        <TextField id="points"
+                            label="Total Points"
+                            name="points"
+                            onChange={HandlePoints.bind(this)}
+                            ref="points"
+                            type="number"
+                            value={this.state.max} />
                     </Box>
-                    <Box display="inline" px={0} borderColor="transparent">
-                        <TextField id="max" name="max" type="number" label="Max per option" ref="max" onChange={handleMax.bind(this)} value={this.state.min} />
+                    <Box borderColor="transparent"
+                        display="inline"
+                        px={0}>
+                        <TextField id="max"
+                            label="Max per option"
+                            name="max"
+                            onChange={HandleMax.bind(this)}
+                            ref="max"
+                            type="number"
+                            value={this.state.min} />
                     </Box>
                 </Box>
 
-                <Box component="fieldset" mb={3} pt={1} px={3} borderColor="transparent">
-                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
-                        <Typography component="legend" variant="subtitle2">Options</Typography>
-                        {this.state.options !== undefined && this.state.options.map(option =>
-                            <Box component="fieldset" mb={1} borderColor="transparent">
-                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
-                            </Box>
-                        )}
-                        <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3}>
+                    <Box borderColor="transparent"
+                        component="fieldset"
+                        pt={1}
+                        px={1}>
+                        <Typography component="legend"
+                            variant="subtitle2">
+                            Options
+                        </Typography>
+                        {this.state.options !== undefined &&
+                            this.state.options.map(option =>
+                                <Box component="fieldset" mb={1} borderColor="transparent">
+                                    <TextField id={`Option-${option.Index}`}
+                                        label={`Option ${option.Index + 1}`}
+                                        key={option.Index} name={option.Index}
+                                        value={option.Description}
+                                        onChange={HandleOption.bind(this)}
+                                        autoFocus={(option.Index + 1) === this.state.options.length}
+                                        fullWidth />
+                                </Box>
+                            )}
+                        <Box borderColor="transparent"
+                            component="fieldset"
+                            mb={1}>
+                            <TextField color="gray"
+                                fullWidth
+                                label="Add option..."
+                                onFocus={AddOption.bind(this)} />
                         </Box>
                     </Box>
                 </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit" value="Submit" />
+                <CreateButton type="submit"
+                    value="Submit" />
             </Form>
         );
     }
 
     SliderContent() {
-        const handleTitle = (event) => {
+        const HandleTitle = (event) => {
             event.preventDefault();
-            var title = this.state.description;
-            title = event.target.value;
+            var Title = event.target.value;
             this.setState({
-                description: title,
+                description: Title
             });
-        }
+        };
 
-        const handleMax = (event) => {
+        const HandleMax = (event) => {
             event.preventDefault();
-            var max = this.state.max;
-            max = event.target.value;
+            var Max = event.target.value;
             this.setState({
-                max: max,
+                max: Max
             });
-        }
+        };
 
-        const handleMaxDescription = (event) => {
+        const HandleMaxDescription = (event) => {
             event.preventDefault();
-            var description = this.state.maxDescription;
-            description = event.target.value;
+            var Description = event.target.value;
             this.setState({
-                maxDescription: description,
+                maxDescription: Description
             });
-        }
+        };
 
-        const handleMin = (event) => {
+        const HandleMin = (event) => {
             event.preventDefault();
-            var min = this.state.min;
-            min = event.target.value;
+            var Min = event.target.value;
             this.setState({
-                min: min,
+                min: Min
             });
-        }
+        };
 
-        const handleMinDescription = (event) => {
+        const HandleMinDescription = (event) => {
             event.preventDefault();
-            var minDescription = this.state.minDescription;
-            minDescription = event.target.value;
+            var MinDescription = event.target.value;
             this.setState({
-                minDescription: minDescription,
+                minDescription: MinDescription
             });
-        }
+        };
 
-        const handleOption = (event) => {
-            const key = event.target.name;
-            const value = event.target.value;
+        const HandleOption = (event) => {
+            const Key = event.target.name;
+            const Value = event.target.value;
 
-            const options = this.state.options;
-            options[key].Description = value;
+            const Options = this.state.options;
+            Options[Key].Description = Value;
             this.setState({
-                options: options,
+                options: Options
             });
-        }
+        };
 
-        const addOption = () => {
-            var count = this.state.options !== undefined ? this.state.options.length : 0;
-            var user = localStorage.getItem("user");
+        const AddOption = () => {
+            var Count = this.state.options !== undefined
+                ? this.state.options.length
+                : 0;
+            var User = localStorage.getItem("user");
 
-            var option = {
-                UserID: user,
-                Index: count,
-                Description: "",
-            }
+            var Option = {
+                UserID: User,
+                Index: Count,
+                Description: ""
+            };
 
-            var options = this.state.options;
-            count > 0 ? options.push(option) : options = [option];
+            var Options = this.state.options;
+            Count > 0
+                ? Options.push(Option)
+                : Options = [Option];
             this.setState({
-                options: options,
+                options: Options
             });
-        }
+        };
 
-        const createSlider = (event) => {
+        const CreateSlider = (event) => {
             event.preventDefault();
-            let code = sessionStorage.getItem("code");
+            const Code = sessionStorage.getItem("code");
 
-            let data = {
+            const Data = {
                 Title: this.state.description,
                 Options: this.state.options,
                 Min: parseInt(this.state.min),
                 MinDescription: this.state.minDescription,
                 Max: parseInt(this.state.max),
                 MaxDescription: this.state.maxDescription,
-                ShowResults: true,
-            }
+                ShowResults: true
+            };
 
-            axios.post(`admin/${code}/questions-create-slider`, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(res => {
-                if (res.status === 201) {
-                    this.setState({
-                        type: '',
-                        description: '',
-                        options: [],
-                        success: true,
-                    });
-                    this.onClose();
-                }
-            })
-        }
-
-        let canAdd = (this.state.options == undefined || this.state.options !== undefined && this.state.options.length < 15);
+            Axios.post(`admin/${Code}/questions-create-slider`, Data,
+                {
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then(res => {
+                    if (res.status === 201) {
+                        this.setState({
+                            type: "",
+                            description: "",
+                            options: [],
+                            success: true
+                        });
+                        this.onClose();
+                    }
+                });
+        };
         return (
-            <Form onSubmit={createSlider.bind(this)}>
-                <Box component="fieldset" mb={2} pt={1} px={3} borderColor="transparent">
-                    <TextField id="TextTitle" label="Task Text" onChange={handleTitle} value={this.state.description} fullWidth autoFocus={this.state.description == undefined || this.state.description.length < 1} />
+            <Form onSubmit={CreateSlider.bind(this)}>
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={2}
+                    pt={1}
+                    px={3}>
+                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                        fullWidth
+                        id="TextTitle"
+                        label="Task Text"
+                        onChange={HandleTitle}
+                        value={this.state.description} />
                 </Box>
 
-                <Box component="fieldset" borderColor="transparent">
+                <Box borderColor="transparent"
+                    component="fieldset">
 
-                    <Box display="inline" width="100%" component="fieldset" px={3} pt={1} mb={3} borderColor="transparent">
-                        <Typography variant="subtitle2" component="legend">Minimum</Typography>
+                    <Box borderColor="transparent"
+                        component="fieldset"
+                        display="inline"
+                        mb={3}
+                        pt={1}
+                        px={3}
+                        width="100%">
+                        <Typography component="legend"
+                            variant="subtitle2">
+                            Minimum
+                        </Typography>
 
-                        <TextField id="min-desc" name="min-desc" type="text" label="Description" onChange={handleMinDescription.bind(this)} value={this.state.minDescription} />
-                        <TextField id="min" name="min" type="number" label="Value" ref="min" onChange={handleMin.bind(this)} value={this.state.min} />
+                        <TextField id="min-desc"
+                            label="Description"
+                            name="min-desc"
+                            onChange={HandleMinDescription.bind(this)}
+                            type="text"
+                            value={this.state.minDescription} />
+                        <TextField id="min"
+                            label="Value"
+                            name="min"
+                            onChange={HandleMin.bind(this)}
+                            ref="min"
+                            type="number"
+                            value={this.state.min} />
                     </Box>
 
-                    <Box display="inline" width="100%" component="fieldset" px={3} pt={1} mb={3} borderColor="transparent">
-                        <Typography variant="subtitle2" component="legend">Maximum</Typography>
+                    <Box borderColor="transparent"
+                        component="fieldset"
+                        display="inline"
+                        mb={3}
+                        pt={1}
+                        px={3}
+                        width="100%">
+                        <Typography component="legend"
+                            variant="subtitle2">
+                            Maximum
+                        </Typography>
 
-                        <TextField id="max-desc" name="max-desc" type="text" label="Description" onChange={handleMaxDescription.bind(this)} value={this.state.maxDescription} />
-                        <TextField id="max" name="max" type="number" label="Value" ref="max" onChange={handleMax.bind(this)} value={this.state.max} />
+                        <TextField id="max-desc"
+                            label="Description"
+                            name="max-desc"
+                            onChange={HandleMaxDescription.bind(this)}
+                            type="text"
+                            value={this.state.maxDescription} />
+                        <TextField id="max"
+                            label="Value"
+                            name="max"
+                            onChange={HandleMax.bind(this)}
+                            ref="max"
+                            type="number"
+                            value={this.state.max} />
                     </Box>
 
                 </Box>
 
-                <Box component="fieldset" mb={2} pt={1} px={3} borderColor="transparent">
-                    <Box component="fieldset" pt={1} px={1} borderColor="transparent">
-                        <Typography component="legend" variant="subtitle2">Options</Typography>
-                        {this.state.options !== undefined && this.state.options.map(option =>
-                            <Box component="fieldset" mb={1} borderColor="transparent">
-                                <TextField id={"Option-" + option.Index} label={"Option " + (option.Index + 1)} key={option.Index} name={option.Index} value={option.Description} onChange={handleOption.bind(this)} autoFocus={(option.Index + 1) == this.state.options.length} fullWidth />
-                            </Box>
-                        )}
-                        <Box component="fieldset" mb={1} borderColor="transparent">
-                            <TextField onFocus={addOption.bind(this)} label="Add option..." color="gray" fullWidth />
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={2}
+                    pt={1}
+                    px={3}>
+                    <Box borderColor="transparent"
+                        component="fieldset"
+                        pt={1}
+                        px={1}>
+                        <Typography component="legend"
+                            variant="subtitle2">
+                            Options
+                        </Typography>
+                        {this.state.options !== undefined &&
+                            this.state.options.map(option =>
+                                <Box component="fieldset" mb={1} borderColor="transparent">
+                                    <TextField id={`Option-${option.Index}`}
+                                        label={`Option ${option.Index + 1}`}
+                                        key={option.Index} name={option.Index}
+                                        value={option.Description}
+                                        onChange={HandleOption.bind(this)}
+                                        autoFocus={(option.Index + 1) === this.state.options.length}
+                                        fullWidth />
+                                </Box>
+                            )}
+                        <Box borderColor="transparent"
+                            component="fieldset"
+                            mb={1}>
+                            <TextField color="gray"
+                                fullWidth
+                                label="Add option..."
+                                onFocus={AddOption.bind(this)} />
                         </Box>
                     </Box>
                 </Box>
                 <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit" value="Submit" />
+                <CreateButton type="submit"
+                    value="Submit" />
             </Form>
         );
     }
 
     onClose() {
-        if (this.props.onClose !== undefined)
+        if (this.props.onClose !== undefined) {
             this.props.onClose(this.state.success);
+        }
         this.setState({
-            type: '',
-            title: '',
-            description: '',
+            type: "",
+            title: "",
+            description: "",
             options: [],
             showing: false,
             success: false,
             max: 5,
             maxDescription: "Very important",
             min: 1,
-            minDescription: "Not important",
+            minDescription: "Not important"
         });
     }
 
     render() {
         return (
-            <ModalPage show={this.state.showing} centered onHide={this.onClose.bind(this)}>
+            <ModalPage centered
+                onHide={this.onClose.bind(this)}
+                show={this.state.showing}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{this.props.type == 0 ? "Input: Open Text" : this.props.type == 1 ? "Vote: Multiple Choice" : this.props.type == 2 ? "Vote: Points" : "Vote: Slider"}</Modal.Title>
+                    <Modal.Title>
+                        {this.props.type === 0
+                            ? "Input: Open Text"
+                            : this.props.type === 1
+                                ? "Vote: Multiple Choice"
+                                : this.props.type === 2
+                                    ? "Vote: Points"
+                                    : "Vote: Slider"
+                        }
+                    </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{this.props.type == 0 ? this.TextContent() : this.props.type == 1 ? this.MultipleChoiceContent() : this.props.type == 2 ? this.PointsContent() : this.SliderContent()}</Modal.Body>
+                <Modal.Body>
+                    {this.props.type === 0
+                        ? this.TextContent()
+                        : this.props.type === 1
+                            ? this.MultipleChoiceContent()
+                            : this.props.type === 2
+                                ? this.PointsContent()
+                                : this.SliderContent()
+                    }
+                </Modal.Body>
             </ModalPage>
-        )
+        );
     }
 }

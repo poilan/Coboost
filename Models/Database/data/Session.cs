@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Slagkraft.Models.Database
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+// ReSharper disable UnusedMember.Global
+
+namespace Coboost.Models.Database.data
 {
     /// <summary>
-    /// Database Class to store sesssions in
+    ///     Database Class to store sessions in
     /// </summary>
     public class Session
     {
         #region Public Properties
 
-        [Key]
-        public int Identity { get; set; }
-
         public string Email { get; set; }
+
+        public IEnumerable<UserFolder> Folders { get; set; }
+
+        [Key] public int Identity { get; set; }
 
         public string LastOpen { get; set; }
 
@@ -29,10 +30,8 @@ namespace Slagkraft.Models.Database
 
         public string Title { get; set; }
 
-        #endregion Public Properties
-
-        //public User User { get; set; }
         public IEnumerable<UserSession> Users { get; set; }
-        public IEnumerable<UserFolder> Folders { get; set; }
+
+        #endregion Public Properties
     }
 }

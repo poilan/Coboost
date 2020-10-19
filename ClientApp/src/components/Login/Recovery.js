@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from 'react-bootstrap';
+import React, { Component } from "react";
+import Styled from "styled-components";
+import Axios from "axios";
+import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from "react-bootstrap";
 
-const LoginContainer = styled.div`
+const LoginContainer = Styled.div`
     display: flex;
     position: absolute;
     width: 100%;
@@ -11,7 +11,7 @@ const LoginContainer = styled.div`
     justify-content: center;
 `;
 
-const LoginCard = styled(Card)`
+const LoginCard = Styled(Card)`
     align-self: center;
     border: 0;
     width: 100%;
@@ -21,7 +21,7 @@ const LoginCard = styled(Card)`
     background-color: rgb(255 255 255);
 `;
 
-const CardButton = styled(Button)`
+const CardButton = Styled(Button)`
     position: relative;
     width: 100%;
     left: 50%;
@@ -30,71 +30,67 @@ const CardButton = styled(Button)`
     margin-top: 8%;
 `;
 
-const ForgotButton = styled(Button)`
-    position: relative;
-    margin-top: -24%;
-    left: 65%;
-    border: 0;
-    color: rgb(63 120 250);
-    background-color: rgb(255 255 255);
-    font-size: 80%;
-`;
-
-const FormInput = styled(FormControl)`
+const FormInput = Styled(FormControl)`
 
 `;
 
-const InfoText = styled.h2`
+const InfoText = Styled.h2`
     position: relative;
     left: 50%;
     top: 15%;
     transform: translateX(-50%);
 `;
 
-export class Recovery extends Component {
+export class Recovery extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tab: 'login',
+            tab: "login",
 
             recover: {
-                email: '',
+                email: ""
             }
-        }
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.submitLogin = this.submitLogin.bind(this);
     }
 
     handleChange(e) {
-        const tab = this.state.tab;
-        const name = e.target.name;
-        const value = e.target.value;
+        const Tab = this.state.tab;
+        const Name = e.target.name;
+        const Value = e.target.value;
 
-        const data = this.state[tab];
-        data[name] = value;
-        data.validated = false;
+        const Data = this.state[Tab];
+        Data[Name] = Value;
+        Data.validated = false;
 
         this.setState({
-            [tab]: data,
+            [Tab]: Data
         });
     }
 
     forgotPassword() {
+
         // TODO: forgotPassword
     }
 
     loginTab() {
         return (
-
-            <Form autoComplete="on" validated={this.state.login.validated} onSubmit={this.submitLogin}>
+            <Form autoComplete="on"
+                onSubmit={this.submitLogin}
+                validated={this.state.login.validated}>
                 <FormGroup controlId="formBasicEmail">
                     <Form.Label>Username or Email</Form.Label>
-                    <FormInput name="email" onChange={this.handleChange} placeholder="myemail@address.com" type="email" required />
+                    <FormInput name="email"
+                        onChange={this.handleChange
+                        }
+                        placeholder="myemail@address.com"
+                        required
+                        type="email" />
                 </FormGroup>
                 <CardButton type="submit">Start Recovery</CardButton>
             </Form>
-
         );
     }
 
@@ -113,12 +109,15 @@ export class Recovery extends Component {
         await axios.post(`user/login`, data
         ).then(res => {
             if (res.status === 202) {
+
                 //Login Success
                 localStorage.setItem("user", data.Email);
                 this.props.history.go(-1);
             } else if (res.status === 406) {
+
                 //Wrong password
             } else {
+
                 //Wrong email / user not found
             }
         });*/
@@ -126,39 +125,43 @@ export class Recovery extends Component {
 
     async submitRegistration(event) {
         event.preventDefault();
-        const data = this.state.recover;
+        const Data = this.state.recover;
 
-        await axios.post(`user/register`, data).then(res => {
+        await Axios.post(`user/register`, Data).then(res => {
             if (res.status === 202) {
+
                 //Registration Succeeded
                 //Redirect to log in?
             }
             else if (res.status === 406) {
+
                 //User didn't write in a correct email address
                 //or password was too short (needs to be 8 or more characters)
             }
             else if (res.status === 409) {
+
                 //That email is already in use
             }
             else if (res.status === 400) {
-                //Data wasn't recieved by server
+
+                //Data wasn't received by server
             }
         });
     }
 
     selectTab(key) {
         this.setState({
-            tab: key,
+            tab: key
         });
     }
 
     render() {
         return (
-
             <LoginContainer>
                 <InfoText>Account Recovery</InfoText>
                 <LoginCard>
-                    <TabContainer defaultActiveKey="login" onSelect={this.selectTab}>
+                    <TabContainer defaultActiveKey="login"
+                        onSelect={this.selectTab}>
                         <Nav.Link>
                             <Nav variant="tabs">
                             </Nav>

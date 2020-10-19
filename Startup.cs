@@ -1,50 +1,34 @@
+using Coboost.Models.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
-using Slagkraft.Models.Database;
-
-namespace Slagkraft
+namespace Coboost
 {
     public class Startup
     {
+        #region Public Properties
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        public IConfiguration Configuration { get; }
+
+        #endregion Public Properties
+
+        #region Public Constructors
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        #endregion Public Constructors
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-
-            /* Setup MySQL
-            var dbDetails = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));*/
-            // Setup Microsoft SQL Db
-            string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
-            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
-
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(o =>
-                {
-                    o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                });
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-        }
+        #region Public Methods
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -56,6 +40,7 @@ namespace Slagkraft
             else
             {
                 app.UseExceptionHandler("/Error");
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -69,19 +54,36 @@ namespace Slagkraft
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    "default",
+                    "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
+                if (env.IsDevelopment()) spa.UseReactDevelopmentServer("start");
             });
         }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            /* Setup MySQL
+            var dbDetails = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));*/
+
+            // Setup Microsoft SQL Db
+            string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
+            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(o => { o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; });
+
+            // In production, the React files will be served from this directory
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
+        }
+
+        #endregion Public Methods
     }
 }

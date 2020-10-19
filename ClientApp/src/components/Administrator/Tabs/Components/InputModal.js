@@ -1,11 +1,11 @@
-﻿import React, { Component, createRef } from 'react';
-import axios from 'axios';
-import { Modal, Nav, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component, createRef } from "react";
+import Axios from "axios";
+import { Modal, Nav, Form } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
-import { TextField, Box } from '@material-ui/core';
+import { TextField, Box } from "@material-ui/core";
 
-const ModalPage = styled(Modal)`
+const ModalPage = Styled(Modal)`
     border-radius: 20px;
     font-family: CircularStd;
 
@@ -15,20 +15,26 @@ const ModalPage = styled(Modal)`
     }
 `;
 
-const ContentInput = styled(TextField)`
+const ContentInput = Styled(TextField)`
     display: block;
-    max-height: ${props => props.isTitle ? "2rem" : "8rem"};
+    max-height: ${props => props.isTitle
+        ? "2rem"
+        : "8rem"};
     min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: ${props => props.isTitle ? "center" : "left"};
+    text-align: ${props => props.isTitle
+        ? "center"
+        : "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
+    border-bottom: 1px solid ${props => props.isTitle
+        ? "#4C7AD3"
+        : "#cfcfcf"};
     resize: none;
 `;
 
-const CancelButton = styled(Nav.Link)`
+const CancelButton = Styled(Nav.Link)`
     color: #100e0e;
     background: #fff;
     position: relative;
@@ -42,7 +48,7 @@ const CancelButton = styled(Nav.Link)`
     width: 200px;
 `;
 
-const CreateButton = styled.input`
+const CreateButton = Styled.input`
     color: #fff;
     background: #4C7AD3;
     position: relative;
@@ -62,77 +68,78 @@ export class InputModal extends Component {
         this.state = {
             description: "",
             title: "",
-            showing: true,
-        }
+            showing: true
+        };
 
         this.Title = createRef();
         this.Description = createRef();
         this.Submit = createRef();
     }
 
-    componentDidMount() {
-    }
+    componentDidMount() { }
 
     SendInput = (e) => {
         e.preventDefault();
-        const title = this.state.title;
-        const description = this.state.description;
-        const user = localStorage.getItem("user");
-        const code = sessionStorage.getItem("code");
+        const Title = this.state.title;
+        const Description = this.state.description;
+        const User = localStorage.getItem("user");
+        const Code = sessionStorage.getItem("code");
 
-        let data = {
-            Description: description,
-            UserID: user,
+        const Data = {
+            Description: Description,
+            UserID: User
+        };
+
+        if (Description.length > 30) {
+            Data.Title = Title;
         }
 
-        if (description.length > 30)
-            data.Title = title;
-
-        axios.post(`client/${code}/add-opentext`, data);
+        Axios.post(`client/${Code}/add-text-open`, Data);
         this.OnClose();
     }
 
     HandleTitle = (event) => {
         event.preventDefault();
-        var title = this.state.title;
-        title = event.target.value;
+        var Title = event.target.value;
         this.setState({
-            title: title,
+            title: Title
         });
     }
 
     HandleDescription = (event) => {
         event.preventDefault();
-        var description = this.state.description;
-        description = event.target.value;
+        var Description = event.target.value;
         this.setState({
-            description: description,
+            description: Description
         });
     }
 
-    OnTitleFocus = (e) => {
-        if (this.state.title.trim() == "") {
-            var title = this.state.description.substring(0, 30);
+    OnTitleFocus = () => {
+        if (this.state.title.trim() === "") {
+            const Title = this.state.description.substring(0, 30);
             this.setState({
-                title: title,
+                title: Title
             });
         }
     }
 
     HandleInvalid = () => {
-        const description = this.state.description;
+        const Description = this.state.description;
 
-        if (description.length < 3) {
-            if (this.Description.current)
+        if (Description.length < 3) {
+            if (this.Description.current) {
                 this.Description.current.focus();
+            }
 
             return;
-        } else if (description.length > 30) {
-            let title = this.state.title;
+        }
+        else if (Description.length > 30) {
+            const Title = this.state.title;
 
-            if (title.length < 3) {
-                if (this.Title.current)
+            if (Title.length < 3) {
+                if (this.Title.current) {
                     this.Title.current.focus();
+                }
 
                 return;
             }
@@ -140,7 +147,7 @@ export class InputModal extends Component {
     }
 
     HandleEnter = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === "Enter") {
             e.preventDefault();
             e.stopPropagation();
             if (this.Submit.current) {
@@ -150,47 +157,80 @@ export class InputModal extends Component {
     }
 
     OnClose = () => {
-        if (this.props.onClose !== undefined)
+        if (this.props.onClose !== undefined) {
             this.props.onClose();
+        }
         this.setState({
             title: "",
             description: "",
-            showing: false,
+            showing: false
         });
     }
 
     Content = () => {
         return (
-            <Form autoComplete="off" onSubmit={this.SendInput} onInvalid={this.HandleInvalid}>
-                <Box p={1} m={1} mb={2}>
-                    <ContentInput inputRef={this.Title} disabled={this.state.description == undefined || this.state.description.length <= 30} fullWidth
-                        label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.state.description == undefined || this.state.description.length <= 30} margin="normal"
-                        inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }} onFocus={this.OnTitleFocus}
-                        value={this.state.title} onChange={this.HandleTitle} onKeyDown={this.HandleEnter.bind(this)}
-                    />
-                </Box>
-                <Box p={1} m={1} mb={2}>
-                    <ContentInput inputRef={this.Description} name="description" variant="outlined" multiline margin="normal" rowsMax={5} fullWidth
-                        label="Input" required helperText={`${250 - this.state.description.length}${this.state.description.length > 30 ? "" : ` | ${30 - this.state.description.length}`}`}
-                        inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
-                        value={this.state.description} onChange={this.HandleDescription}
+            <Form autoComplete="off"
+                onInvalid={this.HandleInvalid}
+                onSubmit={this.SendInput}>
+                <Box m={1}
+                    mb={2}
+                    p={1}>
+                    <ContentInput disabled={this.state.description == undefined ||
+                        this.state.description.length <= 30}
+                        fullWidth
+                        helperText={`${30 - this.state.title.length}`}
+                        hidden={this.state.description == undefined || this.state.description.length <= 30}
+                        inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
+                        inputRef={this.Title}
+                        isTitle
+                        label="Title"
+                        margin="normal"
+                        onChange={this.HandleTitle}
+                        onFocus={this.OnTitleFocus}
                         onKeyDown={this.HandleEnter.bind(this)}
-                    />
+                        required
+                        value={this.state.title}
+                        variant="outlined" />
+                </Box>
+                <Box m={1}
+                    mb={2}
+                    p={1}>
+                    <ContentInput fullWidth
+                        helperText={`${250 - this.state.description.length}
+                                    ${this.state.description.length > 30
+                                ? ""
+                                : ` | ${30 - this.state.description.length}`}`}
+                        inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                        inputRef={this.Description}
+                        label="Input"
+                        margin="normal"
+                        multiline
+                        name="description"
+                        onChange={this.HandleDescription}
+                        onKeyDown={this.HandleEnter.bind(this)}
+                        required
+                        rowsMax={5}
+                        value={this.state.description}
+                        variant="outlined" />
                 </Box>
                 <CancelButton onClick={this.OnClose}>Cancel</CancelButton>
-                <CreateButton ref={this.Submit} type="submit" value="Submit" />
+                <CreateButton ref={this.Submit}
+                    type="submit"
+                    value="Submit" />
             </Form >
         );
     };
 
     render() {
         return (
-            <ModalPage show={this.state.showing} centered onHide={this.OnClose}>
+            <ModalPage centered
+                onHide={this.OnClose}
+                show={this.state.showing}>
                 <Modal.Header closeButton>
                     <Modal.Title>Write Input</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{this.Content()}</Modal.Body>
             </ModalPage>
-        )
+        );
     }
 }

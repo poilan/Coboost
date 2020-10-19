@@ -1,17 +1,20 @@
-﻿using Slagkraft.Models.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using JetBrains.Annotations;
 
-namespace Slagkraft.Models.Database
+namespace Coboost.Models.Database.data
 {
     public class UserSession
     {
-        public string UserId { get; set; }
-        public User User { get; set; }
+        #region Public Properties
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public Session Session { get; set; }
 
         public int SessionId { get; set; }
-        public Session Session { get; set; }
+
+        [UsedImplicitly] public User User { get; set; }
+
+        public string UserId { get; set; }
+
+        #endregion Public Properties
     }
 }

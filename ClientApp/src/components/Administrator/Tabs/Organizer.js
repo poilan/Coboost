@@ -1,35 +1,31 @@
-﻿import React, { Component, useRef, createRef } from 'react';
-import axios from 'axios';
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component, useRef, createRef } from "react";
+import Axios from "axios";
+import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
-import { PageModal } from '../../Services/PageModal';
-import { Input, InputDetails } from './Components/Input';
-import { Group } from './Components/Group';
-import { Column } from './Components/Column';
-import { ResultBackground, ResultItem, ResultSlider } from './Components/Results';
-import { CreateTaskModal } from './Components/CreateModal';
-import { ContextMenu } from './Components/ContextMenu';
-import { Tooltip, Collapse, IconButton, Menu, MenuItem } from '@material-ui/core';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import Box from '@material-ui/core/Box';
-import { InputModal } from './Components/InputModal';
-import CreateIcon from '@material-ui/icons/Create';
-import AllInclusiveIcon from '@material-ui/icons/AllInclusive';
-import AllOutIcon from '@material-ui/icons/AllOut';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import CallMergeIcon from '@material-ui/icons/CallMerge';
-import ArchiveIcon from '@material-ui/icons/Archive';
+import { PageModal } from "../../Services/PageModal";
+import { Input, InputDetails } from "./Components/Input";
+import { Group } from "./Components/Group";
+import { Column } from "./Components/Column";
+import { ResultBackground, ResultItem, ResultSlider } from "./Components/Results";
+import { CreateTaskModal } from "./Components/CreateModal";
+import { ContextMenu } from "./Components/ContextMenu";
+import { Tooltip, Collapse, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { InputModal } from "./Components/InputModal";
+import CreateIcon from "@material-ui/icons/Create";
+import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
+import AllOutIcon from "@material-ui/icons/AllOut";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import CallMergeIcon from "@material-ui/icons/CallMerge";
+import ArchiveIcon from "@material-ui/icons/Archive";
 
-const MainContainer = styled.div`
+const MainContainer = Styled.div`
     width: 100%;
     height: 100%;
     position: absolute;
     overflow: hidden;
     overflow-x: auto;
     white-space: nowrap;
-    padding: 50px;
     padding-bottom: 0;
     background: #E4E4E4;
     top: 0;
@@ -39,7 +35,7 @@ const MainContainer = styled.div`
     scrollbar-color: #575b75 #fff;
 `;
 
-const ButtonToolbar = styled.div`
+const ButtonToolbar = Styled.div`
     display: flex;
     flex-direction: row;
     z-index: 10;
@@ -50,7 +46,8 @@ const ButtonToolbar = styled.div`
     bottom: 0;
     transform: translateX(-50%);
 
-    ${props => props.disabled ? ""
+    ${props => props.disabled
+        ? ""
         : `&&& {
             &:hover {
                 filter: brightness(150%);
@@ -63,54 +60,16 @@ const ButtonToolbar = styled.div`
     }
 `;
 
-const Tools = styled.div`
+const Tools = Styled.div`
     display: flex;
     flex-direction: row;
     z-index: 10;
-    position: fixed;
+    position: absolute;
     height: 50px;
-    left: ${props => props.showControls ? "calc(25% + 50px)" : "50px"};
     min-width: 300px;
-    top: max(50px, 5%);
 `;
 
-const TitleBreadCrumb = styled.h2`
-    font-family: CircularStd;
-    font-weight: 500;
-    font-size: 1.25rem;
-    margin: 1% 0;
-    height: 35px;
-    position: fixed;
-    text-align: center;
-    z-index: 11;
-    top: max(7.5%, 105px);
-    left: 2.5vw;
-
-    &:hover {
-        cursor: pointer;
-        opacity: 75%;
-    }
-`;
-
-const ItemTask = styled.div`
-    width: 100%;
-    background: #fff;
-    padding: 25px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    position: relative;
-    font-family: CircularStd;
-    font-weight: 420;
-    border: 1px solid black;
-    opacity: 85%;
-
-    &:hover {
-        cursor:pointer;
-        opacity: 100%;
-    }
-`;
-
-const AnswerButton = styled(Nav.Link)`
+const AnswerButton = Styled(Nav.Link)`
     color: #fff;
     background: #575b75;
     font-family: CircularStd;
@@ -118,8 +77,9 @@ const AnswerButton = styled(Nav.Link)`
     font-size: 1rem;
     padding: 0 1rem;
     text-align: center;
-    border: 1px solid #fff;
+    border: 2px solid #fff;
     border-right: 0;
+    min-width: 150px;
     flex: 1 1 auto;
     height: 100%;
     line-height: 25px;
@@ -134,9 +94,14 @@ const AnswerButton = styled(Nav.Link)`
         color: #fff;
         filter: brightness(75%);
     }
+
+    &:disabled {
+        color: #fff;
+        border-width: 1px
+    }
 `;
 
-const SendToMC = styled(Nav.Link)`
+const SendToMC = Styled(Nav.Link)`
     color: #fff;
     background: #575b75;
     font-family: CircularStd;
@@ -156,14 +121,10 @@ const SendToMC = styled(Nav.Link)`
     }
 `;
 
-const SendToT = styled(SendToMC)`
+const MergeButton = Styled(AnswerButton)`
 `;
 
-const MergeButton = styled(AnswerButton)`
-    right: calc(7% + 500px);
-`;
-
-const CancelButton = styled(Nav.Link)`
+const CancelButton = Styled(Nav.Link)`
     color: #100e0e;
     background: #fff;
     position: relative;
@@ -177,7 +138,7 @@ const CancelButton = styled(Nav.Link)`
     width: 200px;
 `;
 
-const CreateButton = styled.input`
+const CreateButton = Styled.input`
     color: #fff;
     background: #4C7AD3;
     position: relative;
@@ -191,27 +152,32 @@ const CreateButton = styled.input`
     width: 200px;
 `;
 
-const NewOptionNumber = styled.h2`
+const NewOptionNumber = Styled.h2`
     opacity: 50%;
     font-family: CircularStd;
     font-size: 1rem;
 `;
 
-const ContentInput = styled.textarea`
-    display: block;
-    width: calc(100% - 60px);
-    max-height: ${props => props.isTitle ? "1.4rem" : "8.4rem"};
-    min-height: 1.4rem;
-    font-family: CircularStd;
-    font-size: 1rem;
-    text-align: ${props => props.isTitle ? "center" : "left"};
-    color: black;
+const ContentHeader = Styled(Card.Header)`
+    width: 100%;
+    background: #fff;
+    height: 50px;
+    left:0;
+    top: 0;
+    position: absolute;
+    margin: 0;
+    padding: 0;
     border: 0;
-    padding: 0.2rem 0.1rem;
-    border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
-    margin: 0 30px;
-    margin-top: ${props => props.isTitle ? "30px" : "0"};
-    resize: none;
+`;
+
+const ContentBody = Styled(Card.Body)`
+    border: 0;
+    background: #E4E4E4;
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    height: calc(100% - 50px);
+    padding: 50px;
 `;
 
 export class Organizer extends Component {
@@ -224,107 +190,117 @@ export class Organizer extends Component {
             previous: -1,
 
             modal: {
-                string: '',
-                key: '',
+                string: "",
+                key: "",
                 answer: false,
                 rename: false,
-                description: '',
+                description: "",
                 create: false,
                 remove: false,
-                type: 1,
+                type: 1
             },
             anchor: null,
 
             details: {
                 open: false,
-                answer: null,
+                answer: null
             },
 
             menu: {
                 x: 0,
                 y: 0,
-                visible: false,
+                visible: false
             },
             resultsAsPercentage: false
-        }
+        };
 
-        //Contains all the modals
+        //Contains all the modal's
         this.modal = {
             answer: {
                 open: () => {
                     this.setState({
                         modal: {
-                            answer: true,
+                            answer: true
                         }
-                    })
+                    });
                 },
 
                 close: () => {
                     this.setState({
                         modal: {
-                            string: '',
-                            answer: false,
+                            string: "",
+                            answer: false
                         }
-                    })
-                },
+                    });
+                }
             },
 
             rename: {
                 open: (event) => {
-                    const key = event.target.id.split("-");
-                    let title = '';
+                    const Key = event.target.id.split("-");
+                    let Title;
 
-                    if (key.indexOf("title") !== -1) {
-                        title = this.props.tasks[this.props.active].Groups[key[0]].Title;
-                    } else {
-                        title = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]].Title;
+                    if (Key.indexOf("title") !== -1) {
+                        Title = this.props.tasks[this.props.active].Groups[Key[0]].Title;
+                    }
+                    else {
+                        Title = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]].Title;
                     }
 
                     this.setState({
                         modal: {
                             rename: true,
-                            key: key,
-                            string: title,
+                            key: Key,
+                            string: Title
                         }
                     });
                 },
 
                 content: () => {
-                    const rename = (e) => {
+                    const Rename = (e) => {
                         e.preventDefault();
-                        const code = sessionStorage.getItem("code");
-                        const key = this.state.modal.key;
-                        const title = {
-                            Title: this.state.modal.string,
+                        const Code = sessionStorage.getItem("code");
+                        const Key = this.state.modal.key;
+                        const Title = {
+                            Title: this.state.modal.string
+                        };
+                        if (Key.indexOf("title") !== -1) {
+                            Axios.post(`admin/${Code}/question-rename-group-${Key[0]}`, Title);
                         }
-                        if (key.indexOf("title") !== -1) {
-                            axios.post(`admin/${code}/question-rename-group-${key[0]}`, title);
-                        } else {
-                            axios.post(`admin/${code}/question-rename-member-${key[0]}-${key[1]}`, title);
+                        else {
+                            Axios.post(`admin/${Code}/question-rename-member-${Key[0]}-${Key[1]}`, Title);
                         }
 
                         this.modal.rename.close();
-                    }
+                    };
 
-                    const handleTitle = (event) => {
+                    const HandleTitle = (event) => {
                         event.preventDefault();
-                        var modal = this.state.modal;
-                        modal.string = this.refs.title.value;
+                        var Modal = this.state.modal;
+                        Modal.string = this.refs.title.value;
                         this.setState({
-                            modal: modal,
+                            modal: Modal
                         });
-                    }
+                    };
 
                     return (
-                        <Form autoComplete="off" onSubmit={rename.bind(this)}>
+                        <Form autoComplete="off"
+                            onSubmit={Rename.bind(this)}>
                             <NewOptionNumber>Title</NewOptionNumber>
                             <Form.Group controlId="validateTitle">
                                 <InputGroup>
-                                    <Form.Control name="title" ref="title" defaultValue={this.state.modal.string} onChange={handleTitle.bind(this)} placeholder="Input Title.." required />
+                                    <Form.Control defaultValue={this.state.modal.string
+                                    }
+                                        name="title"
+                                        onChange={HandleTitle.bind(this)}
+                                        placeholder="Input Title.."
+                                        ref="title"
+                                        required />
                                 </InputGroup>
                             </Form.Group>
                             <CancelButton onClick={this.modal.rename.close}>Cancel</CancelButton>
-                            <CreateButton type="submit" value="Submit" />
+                            <CreateButton type="submit"
+                                value="Submit" />
                         </Form>
                     );
                 },
@@ -333,12 +309,12 @@ export class Organizer extends Component {
                     this.setState({
                         modal: {
                             rename: false,
-                            key: '',
-                            string: '',
+                            key: "",
+                            string: ""
                         }
                     });
                     this.modal.details.close();
-                },
+                }
             },
 
             create: {
@@ -346,9 +322,9 @@ export class Organizer extends Component {
                     this.setState({
                         modal: {
                             create: true,
-                            type: type,
+                            type: type
                         },
-                        anchor: null,
+                        anchor: null
                     });
                 },
 
@@ -356,592 +332,832 @@ export class Organizer extends Component {
                     this.setState({
                         modal: {
                             create: false,
-                            type: 1,
+                            type: 1
                         },
-                        selected: [],
+                        selected: []
                     });
 
-                    if (success == true) {
-                        this.props.changeTab('task');
+                    if (success === true) {
                         this.props.update(true);
                     }
-                },
+                }
             },
 
             details: {
                 open: (id) => {
                     console.log(id);
-                    let key = id.split("-");
-                    console.log(key);
-                    let answer = this.props.tasks[this.props.active].Groups[key[0]].Members[key[1]];
-                    answer.group = key[0];
+                    const Key = id.split("-");
+                    console.log(Key);
+                    const Answer = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]];
+                    Answer.group = Key[0];
                     this.setState({
                         details: {
-                            answer: answer,
-                            open: true,
+                            answer: Answer,
+                            open: true
                         }
-                    })
+                    });
                 },
 
                 close: () => {
                     this.setState({
                         details: {
                             answer: null,
-                            open: false,
+                            open: false
                         }
-                    })
+                    });
                 }
             }
-        }
+        };
     }
 
     async componentDidMount() {
-        document.addEventListener('contextmenu', (event) => {
-            event.preventDefault();
-            const clickX = event.clientX;
-            const clickY = event.clientY;
-            this.setState({
-                menu: {
-                    x: clickX,
-                    y: clickY,
-                    visible: true,
-                }
-            })
-        });
-
-        document.addEventListener('click', () => {
-            this.setState({
-                menu: {
-                    x: 0,
-                    y: 0,
-                    visible: false,
-                }
-            })
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (!this.state.modal.create && !this.state.modal.answer &&
-                !this.state.modal.rename && !this.state.modal.answer &&
-                !this.state.modal.rename && !this.state.details.open &&
-                (event.key == "R" || event.key == "r")) {
+        document.addEventListener("contextmenu",
+            (event) => {
+                event.preventDefault();
+                const ClickX = event.clientX;
+                const ClickY = event.clientY;
                 this.setState({
-                    selected: [],
-                    anchor: null,
-                })
-            }
-        });
+                    menu: {
+                        x: ClickX,
+                        y: ClickY,
+                        visible: true
+                    }
+                });
+            });
+
+        document.addEventListener("click",
+            () => {
+                this.setState({
+                    menu: {
+                        x: 0,
+                        y: 0,
+                        visible: false
+                    }
+                });
+            });
+
+        document.addEventListener("keydown",
+            (event) => {
+                if (!this.state.modal.create &&
+                    !this.state.modal.answer &&
+                    !this.state.modal.rename &&
+                    !this.state.modal.answer &&
+                    !this.state.modal.rename &&
+                    !this.state.details.open &&
+                    (event.key === "R" || event.key === "r")) {
+                    this.setState({
+                        selected: [],
+                        anchor: null
+                    });
+                }
+            });
         this.AutoResultToggle();
     }
 
     async AutoResultToggle() {
         await setTimeout(() => {
             this.setState({
-                resultsAsPercentage: !this.state.resultsAsPercentage,
+                resultsAsPercentage: !this.state.resultsAsPercentage
             });
             this.AutoResultToggle();
-        }, 6660);
+        },
+            6660);
     }
 
-    componentWillUnmount() {
-    }
+    componentWillUnmount() { }
 
     clickTask = (event) => {
         this.setState({
-            overview: false,
+            overview: false
         });
         this.loadTask(event);
     }
 
     loadTask = (event) => {
-        let key = event.target.id;
-        let code = sessionStorage.getItem("code");
+        const Key = event.target.id;
 
         this.setState({
             overview: false,
-            selected: [],
+            selected: []
         });
-        this.props.SSE(key);
+        this.props.SSE(Key);
     }
 
     toOverview = () => {
         this.setState({
             overview: true,
-            selected: [],
+            selected: []
         });
     }
 
     render() {
-        const text = (task) => {
-            const shrink = (key) => {
-                let Columns = this.props.columns;
+        const Text = (task) => {
+            const Shrink = (key) => {
+                const Columns = this.props.columns;
 
                 if (Columns[key] !== undefined) {
-                    Columns[key].width !== undefined ? Columns[key].width -= 1 : Columns[key].width = 1;
+                    Columns[key].width !== undefined
+                        ? Columns[key].width -= 1
+                        : Columns[key].width = 1;
                 }
 
                 this.setState({
-                    columns: Columns,
+                    columns: Columns
                 });
-            }
+            };
 
-            const grow = (key) => {
-                let Columns = this.props.columns;
+            const Grow = (key) => {
+                const Columns = this.props.columns;
 
                 if (Columns[key] !== undefined) {
-                    Columns[key].width !== undefined ? Columns[key].width += 1 : Columns[key].width = 1;
+                    Columns[key].width !== undefined
+                        ? Columns[key].width += 1
+                        : Columns[key].width = 1;
                 }
 
                 this.setState({
-                    columns: Columns,
+                    columns: Columns
                 });
-            }
+            };
 
-            const createGroup = () => {
-                const code = sessionStorage.getItem("code");
-                axios.post(`admin/${code}/question-create-group-C${this.props.columns.length - 1}`);
-            }
+            const CreateGroup = () => {
+                const Code = sessionStorage.getItem("code");
+                Axios.post(`admin/${Code}/question-create-group-C${this.props.columns.length - 1}`);
+            };
 
-            const select = (id) => {
-                const key = id;
-                if (this.state.selected.indexOf(key) == -1) {
-                    let selected = this.state.selected;
-                    selected !== undefined ? selected.push(key) : selected = [key];
+            const Select = (id) => {
+                const Key = id;
+                if (this.state.selected.indexOf(Key) === -1) {
+                    let Selected = this.state.selected;
+
+                    Selected
+                        ? Selected.push(Key)
+                        : Selected = [Key];
                     this.setState({
-                        selected: selected,
+                        selected: Selected
                     });
                 }
                 else {
-                    var selected = this.state.selected;
-                    var index = selected.indexOf(key);
-                    selected.splice(index, 1);
+                    const Selected = this.state.selected;
+                    const Index = Selected.indexOf(Key);
+                    Selected.splice(Index, 1);
                     this.setState({
-                        selected: selected,
-                    })
+                        selected: Selected
+                    });
                 }
-            }
+            };
 
-            const groupSelect = (id) => {
-                let countSelected = 0; //This counts every input in the group that was selected, deselects all only if all were already selected.
+            const GroupSelect = (id) => {
+                let CountSelected = 0; //This counts every input in the group that was selected, deselects all only if all were already selected.
                 task.Groups[id].Members.forEach((member) => {
-                    let key = `${id}-${member.Index}`;
+                    const Key = `${id}-${member.Index}`;
 
-                    if (this.state.selected.indexOf(key) == -1) {
-                        select(key);
+                    if (this.state.selected.indexOf(Key) === -1) {
+                        Select(Key);
                     }
                     else {
-                        countSelected += 1;
+                        CountSelected += 1;
                     }
                 });
 
-                if (task.Groups[id].Members.length == countSelected) {
+                if (task.Groups[id].Members.length === CountSelected) {
                     task.Groups[id].Members.forEach((member) => {
-                        let key = `${id}-${member.Index}`;
-                        select(key);
+                        const Key = `${id}-${member.Index}`;
+                        Select(Key);
                     });
                 }
-            }
+            };
 
-            const getOptions = () => {
-                let options = [];
-                let selected = getSelected();
-                for (var i = 0; i < selected.length; i++) {
-                    var key = selected[i];
-                    var answer = task.Groups[key[0]].Members[key[1]];
-                    var data = {
-                        UserID: answer.UserID,
-                        Index: options.length,
-                        Description: answer.Description,
-                        Title: answer.Title,
-                    }
-                    options.push(data);
-                }
-                return options;
-            }
-
-            const getSelected = () => {
-                let selected = [];
-                let keys = [];
-                for (let i = 0; i < this.state.selected.length; i++) {
-                    let key = this.state.selected[i].split("-");
-                    var answer = task.Groups[key[0]].Members[key[1]];
-                    if (answer !== undefined) {
-                        selected.push(this.state.selected[i]);
-                        keys.push(key);
+            const GetSelected = () => {
+                const Selected = [];
+                const Keys = [];
+                for (let I = 0; I < this.state.selected.length; I++) {
+                    const Key = this.state.selected[I].split("-");
+                    const Answer = task.Groups[Key[0]].Members[Key[1]];
+                    if (Answer !== undefined) {
+                        Selected.push(this.state.selected[I]);
+                        Keys.push(Key);
                     }
                 }
 
-                this.setState({ selected: selected });
+                this.setState({ selected: Selected });
 
-                const compare = (a, b) => {
-                    let group = b[0] - a[0];
+                const Compare = (a, b) => {
+                    const Group = b[0] - a[0];
 
-                    if (group == 0)
+                    if (Group === 0) {
                         return b[1] - a[1];
-                    else
-                        return group;
+                    }
+                    else {
+                        return Group;
+                    }
+                };
+                return Keys.sort(Compare);
+            };
+
+            const GetOptions = () => {
+                const Options = [];
+                const Selected = GetSelected();
+                for (let I = 0; I < Selected.length; I++) {
+                    const Key = Selected[I];
+                    const Answer = task.Groups[Key[0]].Members[Key[1]];
+                    const Data = {
+                        UserID: Answer.UserID,
+                        Index: Options.length,
+                        Description: Answer.Description,
+                        Title: Answer.Title
+                    };
+                    Options.push(Data);
                 }
-                return keys.sort(compare);
-            }
+                return Options;
+            };
 
-            const merge = async () => {
-                if (this.state.selected == undefined || this.state.selected.length <= 1)
+            const Merge = async () => {
+                if (!this.state.selected || this.state.selected.length <= 1) {
                     return;
+                }
 
-                const code = sessionStorage.getItem("code");
-                const selected = getSelected();
+                const Code = sessionStorage.getItem("code");
+                const Selected = GetSelected();
 
-                const master = selected[selected.length - 1];
+                const Master = Selected[Selected.length - 1];
 
                 //let change = [];
 
-                for (var i = 0; i < (selected.length - 1); i++) {
-                    var subject = selected[i];
+                for (let I = 0; I < (Selected.length - 1); I++) {
+                    const Subject = Selected[I];
 
-                    await setTimeout(axios.post(`admin/${code}/question-merge${master[0]}-${master[1]}with${subject[0]}-${subject[1]}`), 500);
+                    await setTimeout(Axios.post(
+                        `admin/${Code}/question-merge${Master[0]}-${Master[1]}with${Subject[0]}-${Subject[1]}`),
+                        500);
                 }
 
                 this.setState({
-                    selected: [],
-                })
-            }
+                    selected: []
+                });
+            };
 
-            const archive = {
+            const Archive = {
                 members: async () => {
-                    const code = sessionStorage.getItem('code');
+                    const Code = sessionStorage.getItem("code");
 
-                    const selected = getSelected();
+                    const Selected = GetSelected();
 
                     //let change = []
 
-                    for (let i = 0; i < selected.length; i++) {
-                        let subject = selected[i];
+                    for (let I = 0; I < Selected.length; I++) {
+                        const Subject = Selected[I];
 
-                        await setTimeout(axios.post(`admin/${code}/question-archive-member-${subject[0]}-${subject[1]}`), 500);
+                        await setTimeout(
+                            Axios.post(`admin/${Code}/question-archive-member-${Subject[0]}-${Subject[1]}`),
+                            500);
                     }
 
                     this.setState({
-                        selected: [],
+                        selected: []
                     });
                 }
-            }
+            };
 
-            const duplicate = async () => {
-                const code = sessionStorage.getItem("code");
-                const options = getOptions();
+            const Duplicate = async () => {
+                const Code = sessionStorage.getItem("code");
+                const Options = GetOptions();
 
-                options.forEach(async option => {
-                    await setTimeout(axios.post(`client/${code}/add-opentext`, option), 500);
+                Options.forEach(async option => {
+                    await setTimeout(Axios.post(`client/${Code}/add-text-open`, option), 500);
                 });
 
                 this.setState({
-                    selected: [],
+                    selected: []
                 });
-            }
+            };
 
-            const menu = [
+            const Meny = [
                 { "label": "Write input", "callback": this.modal.answer.open },
-                { "label": "Duplicate selected input", "callback": duplicate },
-                { "label": "Merge selected inputs", "callback": merge },
+                { "label": "Duplicate selected input", "callback": Duplicate },
+                { "label": "Merge selected inputs", "callback": Merge },
                 { "label": "Create vote from selected inputs", "callback": this.modal.create.open },
-                { "label": "Remove selected inputs", "callback": archive.members },
+                { "label": "Remove selected inputs", "callback": Archive.members }
             ];
 
             return (
                 <MainContainer>
-                    <ButtonToolbar disabled={this.state.selected.length < 1}>
-                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
-                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
-                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                    <ContentHeader>
+                        <Tools showControls={this.props.showControls}>
+                            <AnswerButton draggable="false"
+                                onClick={this.modal.answer.open
+                                }>
+                                <CreateIcon className="icon" />
+                                <br />Write input
+                            </AnswerButton>
+                            <MergeButton disabled
+                                draggable="false">
+                                <AllInclusiveIcon className="icon" />
+                                <br />Select All
+                            </MergeButton>
+                            <AnswerButton draggable="false"
+                                onClick={() => this.setState({ selected: [] })
+                                }>
+                                <AllOutIcon className="icon" />
+                                <br />Deselect All
+                            </AnswerButton>
+                            <MergeButton draggable="false"
+                                onClick={Merge}>
+                                <CallMergeIcon className="icon" />
+                                <br />Merge
+                            </MergeButton>
+                            <AnswerButton draggable="false"
+                                onClick={Duplicate}>
+                                <FileCopyIcon className="icon" />
+                                <br />Duplicate
+                            </AnswerButton>
+                            <MergeButton draggable="false"
+                                onClick={Archive.members}>
+                                <ArchiveIcon className="icon" />
+                                <br />Archive
+                            </MergeButton>
+                        </Tools>
+                    </ContentHeader>
+                    <ContentBody>
+                        <ButtonToolbar disabled={this.state.selected.length < 1}>
+                            <SendToMC disabled={this.state.selected.length < 1}
+                                draggable="false"
+                                onClick={(e) => this.setState({ anchor: e.currentTarget })}>
+                                Send selected to new task
+                            </SendToMC>
+                            <div style={{
+                                position: "absolute",
+                                left: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
+                            <div style={{
+                                position: "absolute",
+                                right: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(-45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
 
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
-                        >
-                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
-                        </Menu>
-                    </ButtonToolbar>
+                            <Menu anchorEl={this.state.anchor}
+                                anchorOrigin={{ vertical: "center", horizontal: "center" }}
+                                id="CreateMenu"
+                                onClose={() => this.setState({ anchor: null })}
+                                open={
+                                    Boolean(this.state.anchor)}
+                                transformOrigin={
+                                    { vertical: "bottom", horizontal: "center" }}>
+                                {this.state.selected.length < 2 &&
+                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                            </Menu>
+                        </ButtonToolbar>
 
-                    <Tools showControls={this.props.showControls}>
-                        <AnswerButton draggable="false" onClick={this.modal.answer.open}><CreateIcon className="icon" /><br />Write input</AnswerButton>
-                        <MergeButton draggable="false" disabled><AllInclusiveIcon className="icon" /><br />Select All</MergeButton>
-                        <AnswerButton draggable="false" onClick={() => this.setState({ selected: [] })}><AllOutIcon className="icon" /><br />Deselect All</AnswerButton>
-                        <MergeButton draggable="false" onClick={merge}><CallMergeIcon className="icon" /><br />Merge</MergeButton>
-                        <AnswerButton draggable="false" onClick={duplicate}><FileCopyIcon className="icon" /><br />Duplicate</AnswerButton>
-                        <MergeButton draggable="false" onClick={archive.members}><ArchiveIcon className="icon" /><br />Archive</MergeButton>
-                    </Tools>
+                        {this.props.columns !== undefined &&
+                            this.props.columns.map(column =>
+                                <Column column={column.index} width={column.width}
+                                    last={column.index + 1 === this.props.columns.length}
+                                    grow={() => Grow(column.index)}
+                                    shrink={() => Shrink(column.index)}>
 
-                    {this.props.columns !== undefined && this.props.columns.map(column =>
+                                    {task.Groups !== undefined &&
+                                        task.Groups.map(group => {
+                                            if (column.index === group.Column) {
+                                                return (
+                                                    <Group id={group.Index} key={group.Index} onClick={GroupSelect}
+                                                        group={group.Index} column={group.Column}
+                                                        title={group.Title} size={column.width}
+                                                        double={this.modal.rename.open}
+                                                        color={group.Color} collapsed={group.Collapsed}>
 
-                        <Column column={column.index} width={column.width} last={column.index + 1 == this.props.columns.length}
-                            grow={() => grow(column.index)}
-                            shrink={() => shrink(column.index)}>
+                                                        {group.Members !== undefined &&
+                                                            group.Members.map(member =>
+                                                                <Input id={group.Index + "-" + member.Index} key={member.Index}
+                                                                    member={member.Index} group={group.Index}
+                                                                    column={group.Column} title={member.Title} size={column.width}
+                                                                    double={this.modal.details.open} description={member.Description}
+                                                                    checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
+                                                                    onClick={Select}
+                                                                    isMerged={member.Children != undefined
+                                                                        ? member.Children.length
+                                                                        : 0}
+                                                                />
+                                                            )}
+                                                    </Group>
+                                                );
+                                            }
+                                            else {
+                                                return null;
+                                            }
+                                        }
+                                        )}
 
-                            {task.Groups !== undefined &&
-                                task.Groups.map(group => {
-                                    if (column.index === group.Column) {
-                                        return (
-                                            <Group id={group.Index} key={group.Index} onClick={groupSelect}
-                                                group={group.Index} column={group.Column} title={group.Title} size={column.width}
-                                                double={this.modal.rename.open} color={group.Color} collapsed={group.Collapsed}>
-                                                {group.Members !== undefined &&
-                                                    group.Members.map(member =>
-
-                                                        <Input id={group.Index + "-" + member.Index} key={member.Index}
-                                                            member={member.Index} group={group.Index} column={group.Column} title={member.Title} size={column.width}
-                                                            double={this.modal.details.open} description={member.Description}
-                                                            checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
-                                                            onClick={select} isMerged={member.Children != undefined ? member.Children.length : 0}
-                                                        />
-
-                                                    )}
-                                            </Group>
-                                        );
+                                    {column.index + 1 === this.props.columns.length &&
+                                        <Group id="new" color="#575b75"
+                                            group="new" column={column.index} title="CREATE NEW GROUP" size={column.width}
+                                            onClick={CreateGroup.bind(this)}
+                                        />
                                     }
-                                }
-                                )}
-
-                            {column.index + 1 == this.props.columns.length &&
-                                <Group id="new" color="#575b75"
-                                    group="new" column={column.index} title="CREATE NEW GROUP" size={column.width}
-                                    onClick={createGroup.bind(this)}
-                                />
-                            }
-                        </Column>
-                    )
-                    }
-                    <ContextMenu x={this.state.menu.x} y={this.state.menu.y} visible={this.state.menu.visible} items={menu} />
-                    {this.state.modal.answer && <InputModal title="Write Input" onClose={this.modal.answer.close.bind(this)} />}
-                    {this.state.modal.rename && <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Groups[this.state.selected[0].split("-")[0]].Members[this.state.selected[0].split("-")[1]].Title} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
-                    {this.state.details.open && <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
+                                </Column>
+                            )
+                        }
+                        <ContextMenu items={Meny}
+                            visible={this.state.menu.visible}
+                            x={this.state.menu.x}
+                            y={this.state.menu.y} />
+                        {this.state.modal.answer &&
+                            <InputModal title="Write Input" onClose={this.modal.answer.close.bind(this)} />}
+                        {this.state.modal.rename &&
+                            <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
+                        {this.state.modal.create &&
+                            <CreateTaskModal type={this.state.modal.type}
+                                title={task.Groups[this.state.selected[0].split("-")[0]].Members[this.state.selected[0].split("-")[1]].Title}
+                                options={GetOptions} onClose={this.modal.create.close.bind(this)} />}
+                        {this.state.details.open &&
+                            <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
+                    </ContentBody>
                 </MainContainer >
             );
-        }
+        };
 
-        const multipleChoice = (task) => {
-            const select = (key) => {
-                if (this.state.selected.indexOf(key) == -1) {
-                    let selected = this.state.selected;
-                    selected.push(key);
+        const MultipleChoice = (task) => {
+            const Select = (key) => {
+                if (this.state.selected.indexOf(key) === -1) {
+                    const Selected = this.state.selected;
+                    Selected.push(key);
                     this.setState({
-                        selected: selected,
+                        selected: Selected
                     });
                 }
                 else {
-                    var selected = this.state.selected;
-                    var index = selected.indexOf(key);
-                    selected.splice(index, 1);
+                    const Selected = this.state.selected;
+                    const Index = Selected.indexOf(key);
+                    Selected.splice(Index, 1);
                     this.setState({
-                        selected: selected,
-                    })
+                        selected: Selected
+                    });
                 }
-            }
+            };
 
-            const getOptions = () => {
-                let options = [];
-                let selected = this.state.selected;
-                for (var i = 0; i < selected.length; i++) {
-                    var key = selected[i];
-                    var answer = task.Options[key];
-                    var data = {
-                        UserID: answer.UserID,
-                        Index: options.length,
-                        Description: answer.Description,
-                        Title: answer.Title,
-                    }
-                    options.push(data);
+            const GetOptions = () => {
+                const Options = [];
+                const Selected = this.state.selected;
+
+                for (let I = 0; I < Selected.length; I++) {
+                    const Key = Selected[I];
+                    const Answer = task.Options[Key];
+
+                    const Data = {
+                        UserID: Answer.UserID,
+                        Index: Options.length,
+                        Description: Answer.Description,
+                        Title: Answer.Title
+                    };
+
+                    Options.push(Data);
                 }
-                return options;
-            }
+
+                return Options;
+            };
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
+                    <ContentHeader>
+                    </ContentHeader>
+                    <ContentBody>
+                        {this.state.modal.create &&
+                            <CreateTaskModal type={this.state.modal.type} title={
+                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
+                                    this.modal.create.close.bind(this)} />}
 
-                    <ButtonToolbar disabled={this.state.selected.length < 1}>
-                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
-                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
-                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <ButtonToolbar disabled={this.state.selected.length < 1}>
+                            <SendToMC disabled={this.state.selected.length < 1}
+                                draggable="false"
+                                onClick={(e) =>
+                                    this.setState({ anchor: e.currentTarget })}>
+                                Send selected to new task
+                            </SendToMC>
+                            <div style={{
+                                position: "absolute",
+                                left: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
+                            <div style={{
+                                position: "absolute",
+                                right: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(-45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
 
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
-                        >
-                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
-                        </Menu>
-                    </ButtonToolbar>
-                    <ResultBackground style={{ width: "95%", height: "80%" }} />
-                    {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title} color={option.Color} description={option.Description}
-                            vote height="80%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
-                            percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length} showPercentage={this.state.resultsAsPercentage}
-                        />
-                    )}
+                            <Menu anchorEl={this.state.anchor}
+                                anchorOrigin={{ vertical: "center", horizontal: "center" }}
+                                id="CreateMenu"
+                                onClose={() => this.setState({ anchor: null })}
+                                open={
+                                    Boolean(this.state.anchor)}
+                                transformOrigin={
+                                    { vertical: "bottom", horizontal: "center" }}>
+                                {this.state.selected.length < 2 &&
+                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                            </Menu>
+                        </ButtonToolbar>
+                        <ResultBackground style={{ width: "95%", height: "80%" }} />
+                        {task.Options !== undefined &&
+                            task.Options.map(option =>
+                                <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title
+                                } color={option.Color} description={option.Description}
+                                    vote height="80%" total={task.Options.length}
+                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={Select}
+                                    percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length
+                                    } showPercentage={this.state.resultsAsPercentage}
+                                />
+                            )}
+                    </ContentBody>
                 </MainContainer>
             );
-        }
+        };
 
-        const points = (task) => {
-            const select = (key) => {
-                if (this.state.selected.indexOf(key) == -1) {
-                    let selected = this.state.selected;
-                    selected.push(key);
+        const Points = (task) => {
+            const Select = (key) => {
+                if (this.state.selected.indexOf(key) === -1) {
+                    const Selected = this.state.selected;
+                    Selected.push(key);
                     this.setState({
-                        selected: selected,
+                        selected: Selected
                     });
                 }
                 else {
-                    var selected = this.state.selected;
-                    var index = selected.indexOf(key);
-                    selected.splice(index, 1);
+                    const Selected = this.state.selected;
+                    const Index = Selected.indexOf(key);
+                    Selected.splice(Index, 1);
                     this.setState({
-                        selected: selected,
-                    })
+                        selected: Selected
+                    });
                 }
-            }
+            };
 
-            const getOptions = () => {
-                let options = [];
-                let selected = this.state.selected;
-                for (var i = 0; i < selected.length; i++) {
-                    var key = selected[i];
-                    var answer = task.Options[key];
-                    var data = {
-                        UserID: answer.UserID,
-                        Index: options.length,
-                        Description: answer.Description,
-                        Title: answer.Title,
-                    }
-                    options.push(data);
+            const GetOptions = () => {
+                const Options = [];
+                const Selected = this.state.selected;
+                for (let I = 0; I < Selected.length; I++) {
+                    const Key = Selected[I];
+                    const Answer = task.Options[Key];
+                    const Data = {
+                        UserID: Answer.UserID,
+                        Index: Options.length,
+                        Description: Answer.Description,
+                        Title: Answer.Title
+                    };
+                    Options.push(Data);
                 }
-                return options;
-            }
+                return Options;
+            };
 
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
+                    <ContentHeader>
+                    </ContentHeader>
+                    <ContentBody>
+                        {this.state.modal.create &&
+                            <CreateTaskModal type={this.state.modal.type} title={
+                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
+                                    this.modal.create.close.bind(this)} />}
 
-                    <ButtonToolbar disabled={this.state.selected.length < 1}>
-                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
-                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
-                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                        <ButtonToolbar disabled={this.state.selected.length < 1}>
+                            <SendToMC disabled={this.state.selected.length < 1}
+                                draggable="false"
+                                onClick={(e) =>
+                                    this.setState({ anchor: e.currentTarget })}>
+                                Send selected to new task
+                            </SendToMC>
+                            <div style={{
+                                position: "absolute",
+                                left: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
+                            <div style={{
+                                position: "absolute",
+                                right: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(-45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
 
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
-                        >
-                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
-                        </Menu>
-                    </ButtonToolbar>
-                    <ResultBackground style={{ width: "95%", height: "80%" }} />
-                    {task.Options !== undefined && task.Options.map(option =>
-                        <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title} color={option.Color} description={option.Description}
-                            vote height="80%" total={task.Options.length}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={select}
-                            percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={option.Points} showPercentage={this.state.resultsAsPercentage}
-                        />
-                    )}
+                            <Menu anchorEl={this.state.anchor}
+                                anchorOrigin={{ vertical: "center", horizontal: "center" }}
+                                id="CreateMenu"
+                                onClose={() => this.setState({ anchor: null })}
+                                open={
+                                    Boolean(this.state.anchor)}
+                                transformOrigin={
+                                    { vertical: "bottom", horizontal: "center" }}>
+                                {this.state.selected.length < 2 &&
+                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                            </Menu>
+                        </ButtonToolbar>
+                        <ResultBackground style={{ width: "95%", height: "80%" }} />
+                        {task.Options !== undefined &&
+                            task.Options.map(option =>
+                                <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title
+                                } color={option.Color} description={option.Description}
+                                    vote height="80%" total={task.Options.length}
+                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={Select}
+                                    percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={
+                                        option.Points} showPercentage={this.state.resultsAsPercentage}
+                                />
+                            )}
+                    </ContentBody>
                 </MainContainer>
             );
-        }
+        };
 
-        const slider = (task) => {
-            const select = (key) => {
-                if (this.state.selected.indexOf(key) == -1) {
-                    let selected = this.state.selected;
-                    selected.push(key);
+        const Slider = (task) => {
+            const Select = (key) => {
+                if (this.state.selected.indexOf(key) === -1) {
+                    const Selected = this.state.selected;
+                    Selected.push(key);
                     this.setState({
-                        selected: selected,
+                        selected: Selected
                     });
                 }
                 else {
-                    var selected = this.state.selected;
-                    var index = selected.indexOf(key);
-                    selected.splice(index, 1);
+                    const Selected = this.state.selected;
+                    const Index = Selected.indexOf(key);
+                    Selected.splice(Index, 1);
                     this.setState({
-                        selected: selected,
-                    })
+                        selected: Selected
+                    });
                 }
-            }
+            };
 
-            const getOptions = () => {
-                let options = [];
-                let selected = this.state.selected;
-                for (var i = 0; i < selected.length; i++) {
-                    var key = selected[i];
-                    var answer = task.Options[key];
-                    var data = {
-                        UserID: answer.UserID,
-                        Index: options.length,
-                        Description: answer.Description,
-                        Title: answer.Title,
-                    }
-                    options.push(data);
+            const GetOptions = () => {
+                const Options = [];
+                const Selected = this.state.selected;
+                for (let I = 0; I < Selected.length; I++) {
+                    const Key = Selected[I];
+                    const Answer = task.Options[Key];
+                    const Data = {
+                        UserID: Answer.UserID,
+                        Index: Options.length,
+                        Description: Answer.Description,
+                        Title: Answer.Title
+                    };
+                    Options.push(Data);
                 }
-                return options;
-            }
+                return Options;
+            };
             return (
                 <MainContainer>
-                    {this.state.modal.create && <CreateTaskModal type={this.state.modal.type} title={task.Options[parseInt(this.state.selected[0])].Description} options={getOptions} onClose={this.modal.create.close.bind(this)} />}
-                    <ButtonToolbar disabled={this.state.selected.length < 1}>
-                        <SendToMC draggable="false" disabled={this.state.selected.length < 1} onClick={(e) => this.setState({ anchor: e.currentTarget })}>Send selected to new task</SendToMC>
-                        <div style={{ position: "absolute", left: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
-                        <div style={{ position: "absolute", right: "-64px", bottom: "-79px", height: "150px", width: "75px", transform: "rotate(-45deg)", backgroundColor: "#575b75", border: "1px solid #fff", zIndex: "-1" }} />
+                    <ContentHeader>
+                    </ContentHeader>
+                    <ContentBody>
+                        {this.state.modal.create &&
+                            <CreateTaskModal type={this.state.modal.type} title={
+                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
+                                    this.modal.create.close.bind(this)} />}
+                        <ButtonToolbar disabled={this.state.selected.length < 1}>
+                            <SendToMC disabled={this.state.selected.length < 1}
+                                draggable="false"
+                                onClick={(e) =>
+                                    this.setState({ anchor: e.currentTarget })}>
+                                Send selected to new task
+                            </SendToMC>
+                            <div style={{
+                                position: "absolute",
+                                left: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
+                            <div style={{
+                                position: "absolute",
+                                right: "-64px",
+                                bottom: "-79px",
+                                height: "150px",
+                                width: "75px",
+                                transform: "rotate(-45deg)",
+                                backgroundColor: "#575b75",
+                                border: "1px solid #fff",
+                                zIndex: "-1"
+                            }} />
 
-                        <Menu anchorOrigin={{ vertical: "center", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }} id="CreateMenu" anchorEl={this.state.anchor} open={Boolean(this.state.anchor)} onClose={() => this.setState({ anchor: null })}
-                        >
-                            {this.state.selected.length < 2 && <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                            {this.state.selected.length > 1 && <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
-                        </Menu>
-                    </ButtonToolbar>
-                    {task.Options !== undefined && task.Options.map(option =>
-                        <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={option.Description} vote
-                            average={option.Average} min={task.Min} max={task.Max} color={option.Color}
-                            checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                            onClick={select} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
-                        />
-                    )}
+                            <Menu anchorEl={this.state.anchor}
+                                anchorOrigin={{ vertical: "center", horizontal: "center" }}
+                                id="CreateMenu"
+                                onClose={() => this.setState({ anchor: null })}
+                                open={Boolean(this.state.anchor)}
+                                transformOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                                {this.state.selected.length < 2 &&
+                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                                {this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                            </Menu>
+                        </ButtonToolbar>
+                        {task.Options !== undefined &&
+                            task.Options.map(option =>
+                                <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={
+                                    option.Description} vote
+                                    average={option.Average} min={task.Min} max={task.Max} color={option.Color}
+                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+                                    onClick={Select} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
+                                />
+                            )}
+                    </ContentBody>
                 </MainContainer>
             );
-        }
+        };
 
-        if (!this.state.overview && this.props.tasks[this.props.active] != undefined) {
-            let task = this.props.tasks[this.props.active];
-            if (this.props.active != this.state.previous) {
+        if (!this.state.overview && this.props.tasks[this.props.active]) {
+            const Task = this.props.tasks[this.props.active];
+            if (this.props.active !== this.state.previous) {
                 this.setState({
                     selected: [],
-                    previous: this.props.active,
+                    previous: this.props.active
                 });
             }
 
-            if (task.Type == 0) {
-                return text(task);
-            } else if (task.Type == 1) {
-                return multipleChoice(task);
+            if (Task.Type === 0) {
+                return Text(Task);
             }
-            else if (task.Type == 2) {
-                return points(task);
+            else if (Task.Type === 1) {
+                return MultipleChoice(Task);
+            }
+            else if (Task.Type === 2) {
+                return Points(Task);
             }
             else {
-                return slider(task);
+                return Slider(Task);
             }
-        } else {
-            if (this.props.tasks.length > 0)
+        }
+        else {
+            if (this.state.overview) {
                 this.setState({ overview: false });
+            }
 
             return (
                 <MainContainer>
-                    {this.props.tasks.map(task =>
-                        <ItemTask id={task.Index} onClick={this.clickTask}>{task.Index + 1}. {task.Title}</ItemTask>
-                    )}
+                    <ContentHeader>
+                    </ContentHeader>
+                    <ContentBody>
+                        Hey
+                    </ContentBody>
                 </MainContainer>
-            )
+            );
         }
     }
 }

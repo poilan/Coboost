@@ -1,16 +1,22 @@
-﻿import React from 'react'
-import styled from 'styled-components';
-import axios from 'axios';
-import { BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill } from "react-icons/bs";
+﻿import React from "react"
+import Styled from "styled-components";
+import Axios from "axios";
+import {
+    BsFullscreen, BsFullscreenExit, BsFillCaretRightFill, BsStopwatch, BsCollectionFill, BsCollection, BsLock, BsInfoCircle, BsEye, BsEyeSlash, BsArrowLeft, BsArrowRight, BsCaretRightFill
+} from "react-icons/bs";
 import { Ico_Text, Ico_MultipleChoice, Ico_Points, Ico_Slider } from "../Classes/Icons";
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 
-const FacilitatorContainer = styled.div`
+// ReSharper disable UnknownCssClass.Global
+
+const FacilitatorContainer = Styled.div`
     display: flex;
     flex-direction: row;
 
-    opacity: ${props => props.hide ? "0%" : "100%"};
+    opacity: ${props => props.hide
+        ? "0%"
+        : "100%"};
     /*outline: 0;
     box-shadow: 0;
     border: solid rgb(106, 114, 137);
@@ -21,15 +27,21 @@ const FacilitatorContainer = styled.div`
     }
 `;
 
-const FacilitatorButton = styled.button`
+const FacilitatorButton = Styled.button`
     color: rgb(249, 251, 247);
-    background-color: ${props => props.isBigScreen ? "#575b75" : "rgb(66, 67, 85)"};
+    background-color: ${props => props.isBigScreen
+        ? "#575b75"
+        : "rgb(66, 67, 85)"};
     height: 100%;
-    border: ${props => props.isBigScreen ? "solid rgb(106, 114, 137)" : "none"};
+    border: ${props => props.isBigScreen
+        ? "solid rgb(106, 114, 137)"
+        : "none"};
     border-width: 2px 1px;
     outline: none;
     box-shadow: none;
-    border-top: ${props => props.isBigScreen ? "none" : "1px solid white"};
+    border-top: ${props => props.isBigScreen
+        ? "none"
+        : "1px solid white"};
 
     flex: 1 1 auto;
 
@@ -39,7 +51,9 @@ const FacilitatorButton = styled.button`
     }
 
     :not(:last-child) {
-        border-right: ${props => props.isBigScreen ? "none" : "1px solid white"};
+        border-right: ${props => props.isBigScreen
+        ? "none"
+        : "1px solid white"};
     }
 
     :focus {
@@ -52,16 +66,22 @@ const FacilitatorButton = styled.button`
     }
 
     :last-child {
-        border-top-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
-        border-bottom-right-radius: ${props => props.isBigScreen ? "10px" : "0px"};
+        border-top-right-radius: ${props => props.isBigScreen
+        ? "10px"
+        : "0px"};
+        border-bottom-right-radius: ${props => props.isBigScreen
+        ? "10px"
+        : "0px"};
     }
 
     &:hover {
-        background-color: ${props => props.isBigScreen ? "rgb(73, 77, 87)" : "rgb(76, 77, 95)"};
+        background-color: ${props => props.isBigScreen
+        ? "rgb(73, 77, 87)"
+        : "rgb(76, 77, 95)"};
     }
 `;
 
-const TextIcon = styled(Ico_Text)`
+const TextIcon = Styled(Ico_Text)`
     width: 32px;
     height: 32px;
 
@@ -71,7 +91,7 @@ const TextIcon = styled(Ico_Text)`
     }
 `;
 
-const MultipleIcon = styled(Ico_MultipleChoice)`
+const MultipleIcon = Styled(Ico_MultipleChoice)`
     width: 32px;
     height: 32px;
 
@@ -81,7 +101,7 @@ const MultipleIcon = styled(Ico_MultipleChoice)`
     }
 `;
 
-const PointsIcon = styled(Ico_Points)`
+const PointsIcon = Styled(Ico_Points)`
     width: 32px;
     height: 32px;
 
@@ -91,7 +111,7 @@ const PointsIcon = styled(Ico_Points)`
     }
 `;
 
-const SliderIcon = styled(Ico_Slider)`
+const SliderIcon = Styled(Ico_Slider)`
     width: 32px;
     height: 32px;
 
@@ -101,28 +121,30 @@ const SliderIcon = styled(Ico_Slider)`
     }
 `;
 
-const IconText = styled(TextIcon)`
+const IconText = Styled(TextIcon)`
     position: relative;
     top: 14px;
 `;
 
-const IconMP = styled(MultipleIcon)`
+const IconMP = Styled(MultipleIcon)`
     position: relative;
     top: 14px;
 `;
 
-const IconPoints = styled(PointsIcon)`
+const IconPoints = Styled(PointsIcon)`
     position: relative;
     top: 14px;
 `;
 
-const IconSlider = styled(SliderIcon)`
+const IconSlider = Styled(SliderIcon)`
     position: relative;
     top: 14px;
 `;
 
-const SlideContainer = styled.div`
-    display: ${props => props.show ? "flex" : "none"};
+const SlideContainer = Styled.div`
+    display: ${props => props.show
+        ? "flex"
+        : "none"};
     flex-direction: row;
 
     position: fixed;
@@ -130,11 +152,15 @@ const SlideContainer = styled.div`
     left: 5px;
 `;
 
-const Slide = styled.div`
+const Slide = Styled.div`
     height: 64px;
     width: 128px;
-    background: ${props => props.isActive ? "#F4F4F4" : "white"};
-    border: 2px solid ${props => props.isActive ? "#4C7ADC" : "#575b75"};
+    background: ${props => props.isActive
+        ? "#F4F4F4"
+        : "white"};
+    border: 2px solid ${props => props.isActive
+        ? "#4C7ADC"
+        : "#575b75"};
     border-radius: 4px;
 
     flex: 1 1 auto;
@@ -144,7 +170,7 @@ const Slide = styled.div`
     }
 `;
 
-const SlideText = styled.a`
+const SlideText = Styled.a`
     position: relative;
     top: -5px;
     right: 70px;
@@ -162,8 +188,8 @@ export class Facilitator extends React.Component {
             showTasks: false,
 
             code: props.code,
-            questions: [],
-        }
+            questions: []
+        };
 
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
 
@@ -178,21 +204,21 @@ export class Facilitator extends React.Component {
 
     async openTasks() {
         await this.getActiveQuestion(() => {
-            const showing = this.state.showTasks;
-            var newState = !showing;
+            const Showing = this.state.showTasks;
+            var NewState = !Showing;
 
             this.setState({
-                showTasks: newState,
+                showTasks: NewState
             });
-        })
+        });
     }
 
     handleExit() {
-        console.log("Handlig exit");
+        console.log("Handling exit");
     }
 
     handleMinimize() {
-        console.log("Handling minizime property");
+        console.log("Handling minimize property");
     }
 
     startCountdown() {
@@ -206,29 +232,29 @@ export class Facilitator extends React.Component {
     hideResults() {
 
         //this.props.onResultToggle();
-        const code = sessionStorage.getItem('code');
+        const Code = sessionStorage.getItem("code");
+        const Active = -1;
 
-        axios.post(`admin/${code}/question-showresults-toggle`).then(res => {
+        Axios.post(`admin/${Code}/question-results-toggle${Active}`).then(() => {
             this.getActiveQuestion(() => {
                 console.log("Results Toggled!");
-            })
+            });
         });
     }
 
     componentDidMount() {
         this.getActiveQuestion(() => {
             console.log("Mounted and got question count");
-        })
+        });
     }
 
     async getActiveQuestion(callback) {
-        const state = this.state;
-        const code = sessionStorage.getItem('code');
+        const Code = sessionStorage.getItem("code");
 
-        await axios.get(`admin/${code}/questions-all`).then(res => {
+        await Axios.get(`admin/${Code}/questions-all`).then(res => {
             if (res.status === 202) {
                 this.setState({
-                    questions: res.data,
+                    questions: res.data
                 });
                 callback();
             }
@@ -236,12 +262,10 @@ export class Facilitator extends React.Component {
     }
 
     async setActiveQuestion(index) {
-        const state = this.state;
-        const code = sessionStorage.getItem('code');
+        const Code = sessionStorage.getItem("code");
 
-        await axios.post(`admin/${code}/active-${index}`).then((res) => {
-            if (res.status === 200) {
-            }
+        await Axios.post(`admin/${Code}/active-${index}`).then((res) => {
+            if (res.status === 200) { }
         });
     }
 
@@ -250,14 +274,12 @@ export class Facilitator extends React.Component {
             this.props.back();
         }
         else {
-            const state = this.state;
-            const questions = state.questions;
-            const active = this.props.active;
+            const Active = this.props.active;
 
             await this.getActiveQuestion(() => {
-                if (active > 0) {
-                    const index = active - 1;
-                    this.setActiveQuestion(index);
+                if (Active > 0) {
+                    const Index = Active - 1;
+                    this.setActiveQuestion(Index);
                 }
             });
         }
@@ -268,63 +290,65 @@ export class Facilitator extends React.Component {
             this.props.next();
         }
         else {
-            const state = this.state;
-            const questions = state.questions;
-            const active = this.props.active;
+            const Questions = this.state.questions;
+            const Active = this.props.active;
 
             await this.getActiveQuestion(() => {
-                if (active < questions.length) {
-                    const index = active + 1;
-                    this.setActiveQuestion(index);
+                if (Active < Questions.length) {
+                    const Index = Active + 1;
+                    this.setActiveQuestion(Index);
                 }
             });
         }
     }
 
     toggleTask = () => {
-        const code = sessionStorage.getItem('code');
-        if (this.state.questions[this.props.active].InProgress) {
-            axios.post(`admin/${code}/task-close`).then(res => {
-                this.getActiveQuestion(() => {
-                    console.log("Results Toggled!");
-                })
+        const Code = sessionStorage.getItem("code");
+        const Active = -1;
+
+        Axios.post(`admin/${Code}/task-toggle${Active}`).then(() => {
+            this.getActiveQuestion(() => {
+                console.log("Results Toggled!");
             });
-        }
-        else {
-            axios.post(`admin/${code}/task-open`).then(res => {
-                this.getActiveQuestion(() => {
-                    console.log("Results Toggled!");
-                })
-            });
-        }
+        });
     }
 
     toggleFullscreen() {
-        var document = window.document;
-        var element = document.documentElement;
+        const Document = window.document;
+        const Element = Document.documentElement;
 
-        var request = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullScreen || element.msRequestFullscreen;
-        var cancel = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        const Request = Element.requestFullscreen ||
+            Element.mozRequestFullScreen ||
+            Element.webkitRequestFullScreen ||
+            Element.msRequestFullscreen;
+        const Cancel = Document.exitFullscreen ||
+            Document.mozCancelFullScreen ||
+            Document.webkitExitFullscreen ||
+            Document.msExitFullscreen;
 
-        var fullscreen = this.state.fullscreen;
+        let Fullscreen = this.state.fullscreen;
 
-        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            request.call(element);
-            fullscreen = !fullscreen;
-        } else {
-            cancel.call(document);
-            fullscreen = !fullscreen;
+        if (!Document.fullscreenElement &&
+            !Document.mozFullScreenElement &&
+            !Document.webkitFullscreenElement &&
+            !Document.msFullscreenElement) {
+            Request.call(Element);
+            Fullscreen = !Fullscreen;
+        }
+        else {
+            Cancel.call(Document);
+            Fullscreen = !Fullscreen;
         }
 
         this.setState({
-            fullscreen: fullscreen,
+            fullscreen: Fullscreen
         });
     }
 
     onSlideClick(target) {
-        const index = target.id;
+        const Index = target.id;
 
-        this.setActiveQuestion(index);
+        this.setActiveQuestion(Index);
     }
 
     /* Hide/Show Logic */
@@ -337,107 +361,154 @@ export class Facilitator extends React.Component {
     render() {
         if (this.props.toggle && this.state.hidden) {
             return (
-                <>
-                    <FacilitatorContainer style={{ left: "0px", bottom: this.props.style.bottom, position: "fixed", height: "100px", width: "25px", opacity: "15%" }}>
-                        <FacilitatorButton isBigScreen={this.props.toggle} style={{ borderTopRightRadius: "5px", borderBottomRightRadius: "5px" }} onMouseEnter={() => this.onHover(true)} onMouseLeave={() => this.onHover(false)}>
+                <React.Fragment>
+                    <FacilitatorContainer style={{
+                        left: "0",
+                        bottom: this.props.style.bottom,
+                        position: "fixed",
+                        height: "100px",
+                        width: "25px",
+                        opacity: "15"
+                    }}>
+                        <FacilitatorButton isBigScreen={this.props.toggle}
+                            onMouseEnter={() => this.onHover(true)}
+                            onMouseLeave={() => this.onHover(false)}
+                            style={{
+                                borderTopRightRadius: "5px",
+                                borderBottomRightRadius: "5px"
+                            }}>
                             <BsCaretRightFill />
                         </FacilitatorButton>
                     </FacilitatorContainer>
-                </>
-            )
+                </React.Fragment>
+            );
         }
         return (
-            <>
-                <FacilitatorContainer onMouseLeave={() => this.onHover(false)} hide={this.props.toggle ? this.state.hidden : this.props.hide} style={this.props.style}>
-                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowBackward}>
-                        <BsArrowLeft class="icon" /><br />
+            <React.Fragment>
+                <FacilitatorContainer hide={this.props.toggle
+                    ? this.state.hidden
+                    : this.props.hide}
+                    onMouseLeave={() => this.onHover(false)}
+                    style={this.props.style}>
+
+                    <FacilitatorButton isBigScreen={this.props.toggle}
+                        onClick={this.arrowBackward}>
+                        <BsArrowLeft class="icon" />
+                        <br />
                         Previous Task
                     </FacilitatorButton>
 
-                    <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.arrowForward}>
-                        <BsArrowRight class="icon" /><br />
+                    <FacilitatorButton isBigScreen={this.props.toggle}
+                        onClick={this.arrowForward}>
+                        <BsArrowRight class="icon" />
+                        <br />
                         Next Task
                     </FacilitatorButton>
 
                     {this.props.allTasks &&
-                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.openTasks}>
-                            {this.state.showTasks ?
-                                <>
+                        <FacilitatorButton isBigScreen={this.props.toggle}
+                            onClick={this.openTasks}>
+                            {this.state.showTasks
+                                ? <React.Fragment>
                                     <BsCollectionFill class="icon" />
-                                </>
-                                :
-                                <>
+                                </React.Fragment>
+                                : <React.Fragment>
                                     <BsCollection class="icon" />
-                                </>}
+                                </React.Fragment>}
                             <br />
                             All tasks
                     </FacilitatorButton>
                     }
 
-                    {/*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.handleMinimize}>
+                    { /*<FacilitatorButton isBigScreen={this.props.toggle} onClick={this.handleMinimize}>
                         <BsInfoCircle class="icon" /><br />
                         Information
-                    </FacilitatorButton>*/}
+                    </FacilitatorButton>*/
+                    }
 
-                    {this.state.questions[this.props.active] != undefined &&
-                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.hideResults}>
-                            {this.state.questions[this.props.active].ShowResults ?
-                                <>
-                                    <BsEye class="icon" /><br />
+                    {this.state.questions[this.props.active] &&
+                        <FacilitatorButton isBigScreen={this.props.toggle}
+                            onClick={this.hideResults}>
+                            {this.state.questions[this.props.active].ShowResults
+                                ? <React.Fragment>
+                                    <BsEye class="icon" />
+                                    <br />
                                     Results Shown
-                                </>
-                                :
-                                <>
-                                    <BsEyeSlash class="icon" /><br />
+                                </React.Fragment>
+                                : <React.Fragment>
+                                    <BsEyeSlash class="icon" />
+                                    <br />
                                     Results Hidden
-                                </>
+                                </React.Fragment>
                             }
                         </FacilitatorButton>
                     }
 
-                    {this.state.questions[this.props.active] != undefined &&
-                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleTask}>
-                            {this.state.questions[this.props.active].InProgress ?
-                                <>
-                                    <LockOpenIcon className="icon" /><br />
+                    {this.state.questions[this.props.active] &&
+                        <FacilitatorButton isBigScreen={this.props.toggle}
+                            onClick={this.toggleTask}>
+                            {this.state.questions[this.props.active].InProgress
+                                ? <React.Fragment>
+                                    <LockOpenIcon className="icon" />
+                                    <br />
                                     Task Open
-                                </>
-                                :
-                                <>
-                                    <LockIcon className="icon" /><br />
+                                </React.Fragment>
+                                : <React.Fragment>
+                                    <LockIcon className="icon" />
+                                    <br />
                                     Task Closed
-                                </>
+                                </React.Fragment>
                             }
                         </FacilitatorButton>
                     }
-                    {/*
+
+                    { /*
                     <FacilitatorButton onClick={this.startCountdown}>
                         <BsStopwatch class="icon" /><br/>
                         Countdown
-                    </FacilitatorButton>*/}
+                    </FacilitatorButton>*/
+                    }
 
                     {this.props.fullscreen &&
-                        <FacilitatorButton isBigScreen={this.props.toggle} onClick={this.toggleFullscreen}>
-                            {this.state.fullscreen ? <>
-                                <BsFullscreenExit class="icon" /><br />
+                        <FacilitatorButton isBigScreen={this.props.toggle}
+                            onClick={this.toggleFullscreen}>
+                            {this.state.fullscreen
+                                ? <React.Fragment>
+                                    <BsFullscreenExit class="icon" />
+                                    <br />
                             Exit Fullscreen
-                        </> : <>
-                                    <BsFullscreen class="icon" /><br />
+                        </React.Fragment>
+                                : <React.Fragment>
+                                    <BsFullscreen class="icon" />
+                                    <br />
                             Enter Fullscreen
-                        </>}
+                        </React.Fragment>
+                            }
                         </FacilitatorButton>
                     }
                 </FacilitatorContainer>
                 <SlideContainer show={this.state.showTasks}>
-                    {this.state.questions.map(question => <Slide id={question.Index} isActive={question.Index === this.props.active} onClick={(e) => this.onSlideClick(e.target)}>
-                        {question.Type === 0 && <IconText id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        {question.Type === 1 && <IconMP id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        {question.Type === 2 && <IconPoints id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        {question.Type === 3 && <IconSlider id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />}
-                        <SlideText>{question.Index + 1}</SlideText>
-                    </Slide>)}
+                    {this.state.questions.map(question =>
+                        <Slide id={question.Index}
+                            isActive={question.Index === this.props.active}
+                            onClick={(e) => this.onSlideClick(e.target)}>
+                            {question.Type === 0 &&
+                                <IconText id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />
+                            }
+                            {question.Type === 1 &&
+                                <IconMP id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />
+                            }
+                            {question.Type === 2 &&
+                                <IconPoints id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />
+                            }
+                            {question.Type === 3 &&
+                                <IconSlider id={question.Index} onClick={(e) => this.onSlideClick(e.target)} />
+                            }
+                            <SlideText>{question.Index + 1}</SlideText>
+                        </Slide>
+                    )}
                 </SlideContainer>
-            </>
+            </React.Fragment>
         );
     }
 }

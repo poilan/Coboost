@@ -1,44 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Coboost.Models.Admin.Tasks.Votes.Points.data;
 
-namespace Slagkraft.Models.Admin.Questions
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+namespace Coboost.Models.Admin.Tasks.Votes.Points
 {
     public class Points : BaseTask
     {
         #region Public Properties
 
         /// <summary>
-        /// The amount of points to spread
+        ///     The amount of points to spread
         /// </summary>
         public int Amount { get; set; }
 
         /// <summary>
-        /// All the deleted options
+        ///     All the deleted options
         /// </summary>
-        public List<Points_Option> Archive { get; set; }
+        public List<PointsOption> Archive { get; set; }
 
         /// <summary>
-        /// The maximum points you can assign to a single option
+        ///     The maximum points you can assign to a single option
         /// </summary>
         public int Max { get; set; }
 
         /// <summary>
-        /// The options you can vote for
+        ///     The options you can vote for
         /// </summary>
-        public List<Points_Option> Options { get; set; }
+        public List<PointsOption> Options { get; set; }
 
         /// <summary>
-        /// The votes we have recieved
+        ///     The votes we have received
         /// </summary>
-        public List<Points_Vote> Votes { get; set; }
+        public List<PointsVote> Votes { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-        public void AddClientVote(Points_Vote vote)
+        public void AddClientVote(PointsVote vote)
         {
             lock (ThreadLock)
             {
@@ -46,14 +47,15 @@ namespace Slagkraft.Models.Admin.Questions
                 Votes.Add(vote);
                 RecountVotes();
             }
+
             EventStream();
         }
 
         /// <summary>
-        /// Changes the Color of a option
+        ///     Changes the Color of a option
         /// </summary>
         /// <param name="option">List Index of the Option</param>
-        /// <param name="color">Color in Hex format eg. '#AABBCC'</param>
+        /// <param name="color">Color in Hex format EG. '#AABBCC'</param>
         public void ColorOption(int option, string color)
         {
             lock (ThreadLock)
@@ -61,11 +63,9 @@ namespace Slagkraft.Models.Admin.Questions
                 if (option >= Options.Count || option < 0 || color == null)
                     return;
 
-                if (color.Length == 7 && color.StartsWith("#"))
-                {
-                    Options[option].Color = color;
-                }
+                if (color.Length == 7 && color.StartsWith("#")) Options[option].Color = color;
             }
+
             EventStream();
         }
 
@@ -75,18 +75,11 @@ namespace Slagkraft.Models.Admin.Questions
 
         private void RecountVotes()
         {
-            for (int i = 0; i < Options.Count; i++)
-            {
-                Options[i].Points = 0;
-            }
+            foreach (PointsOption option in Options) option.Points = 0;
 
-            for (int i = 0; i < Votes.Count; i++)
-            {
-                for (int j = 0; j < Votes[i].Points.Count; j++)
-                {
-                    Options[j].Points += Votes[i].Points[j];
-                }
-            }
+            foreach (PointsVote vote in Votes)
+                for (int j = 0; j < vote.Points.Count; j++)
+                    Options[j].Points += vote.Points[j];
         }
 
         #endregion Private Methods

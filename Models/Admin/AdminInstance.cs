@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Slagkraft.Models.Admin.Questions;
-using Newtonsoft.Json;
 using System.Threading;
+using Coboost.Models.Admin.Tasks;
+using Coboost.Models.Admin.Tasks.Input.Standard;
+using Coboost.Models.Admin.Tasks.Input.Standard.data;
+using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice;
+using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice.data;
+using Coboost.Models.Admin.Tasks.Votes.Points;
+using Coboost.Models.Admin.Tasks.Votes.Points.data;
+using Coboost.Models.Admin.Tasks.Votes.Slider;
+using Coboost.Models.Admin.Tasks.Votes.Slider.data;
+using Newtonsoft.Json;
 
-namespace Slagkraft.Models.Admin
+namespace Coboost.Models.Admin
 {
     public class AdminInstance
     {
@@ -18,7 +25,7 @@ namespace Slagkraft.Models.Admin
 
         #region Private Fields
 
-        private int active;
+        private int _active;
 
         #endregion Private Fields
 
@@ -26,37 +33,26 @@ namespace Slagkraft.Models.Admin
 
         public int Active
         {
-            get
-            {
-                if (active < Tasks.Count)
-                {
-                    return active;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            get => _active < Tasks.Count ? _active : 0;
             set
             {
-                if (Tasks == null || value >= Tasks.Count || value < 0 || Tasks[value].Type == BaseTask.TaskType.Planned)
+                if (Tasks == null || value >= Tasks.Count || value < 0 ||
+                    Tasks[value].Type == BaseTask.TaskType.Planned)
                     return;
 
-                int i = active;
-                active = value;
+                int i = _active;
+                _active = value;
                 ClientSet();
-                if (Tasks.Count > i)
-                {
-                    Tasks[i].Reset.Set();
-                }
+                if (Tasks.Count > i) Tasks[i].Reset.Set();
             }
         }
 
         public int EventCode { get; set; }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Owner { get; set; }
 
-        public List<BaseTask> Tasks { get; set; }
+        public List<BaseTask> Tasks { get; private set; }
 
         #endregion Public Properties
 
@@ -74,63 +70,50 @@ namespace Slagkraft.Models.Admin
 
         public void AddClientInput(object clientInput)
         {
-            if (clientInput is OpenText_Input Open)
+            switch (clientInput)
             {
-                if (Tasks[Active] is OpenText Text)
-                {
-                    Text.AddUserInput(Open);
+                case OpenTextInput open when Tasks[Active] is OpenText text:
+                    text.AddUserInput(open);
                     return;
-                }
-            }
 
-            if (clientInput is MultipleChoice_Input Multi)
-            {
-                if (Tasks[Active] is MultipleChoice Choice)
-                {
-                    Choice.AddUserVote(Multi);
+                case MultipleChoiceVote multi when Tasks[Active] is MultipleChoice choice:
+                    choice.AddUserVote(multi);
                     return;
-                }
-            }
 
-            if (clientInput is Points_Vote point)
-            {
-                if (Tasks[Active] is Points points)
-                {
+                case PointsVote point when Tasks[Active] is Points points:
                     points.AddClientVote(point);
                     return;
-                }
-            }
 
-            if (clientInput is Rate_Vote slide)
-            {
-                if (Tasks[Active] is Rate slider)
-                {
-                    slider.AddClientVote(slide);
-                    return;
-                }
+                case SliderVote slide:
+                    {
+                        if (Tasks[Active] is Slider slider)
+                            slider.AddClientVote(slide);
+                        break;
+                    }
             }
         }
 
         public void AddMultipleChoice(MultipleChoice question)
         {
             question.Index = Tasks.Count;
-            question.Archive = new List<MultipleChoice_Option>();
+            question.Archive = new List<MultipleChoiceOption>();
             question.Type = BaseTask.TaskType.MultipleChoice;
             question.ShowResults = true;
-            foreach (MultipleChoice_Option option in question.Options)
+            foreach (MultipleChoiceOption option in question.Options)
             {
-                option.Votes = new List<MultipleChoice_Input>();
-                option.Archive = new List<MultipleChoice_Input>();
+                option.Votes = new List<MultipleChoiceVote>();
+                option.Archive = new List<MultipleChoiceVote>();
             }
+
             Tasks.Add(question);
         }
 
         public void AddOpenText(OpenText question)
         {
             question.Index = Tasks.Count;
-            question.Groups = new List<OpenText_Group>();
+            question.Groups = new List<OpenTextGroup>();
             question.AddGroup("Unorganized", 0);
-            question.Archive = new List<OpenText_Input>();
+            question.Archive = new List<OpenTextInput>();
             question.Type = BaseTask.TaskType.OpenText;
             question.ShowResults = true;
             Tasks.Add(question);
@@ -141,52 +124,31 @@ namespace Slagkraft.Models.Admin
             task.Index = Tasks.Count;
             task.Type = BaseTask.TaskType.Points;
             task.ShowResults = true;
-            task.Votes = new List<Points_Vote>();
-            task.Archive = new List<Points_Option>();
-            foreach (Points_Option option in task.Options)
-            {
-                option.Points = 0;
-            }
+            task.Votes = new List<PointsVote>();
+            task.Archive = new List<PointsOption>();
+            foreach (PointsOption option in task.Options) option.Points = 0;
+
             Tasks.Add(task);
         }
 
-        public void AddRate(Rate task)
+        public void AddRate(Slider task)
         {
             task.Index = Tasks.Count;
-            task.Type = BaseTask.TaskType.Rate;
+            task.Type = BaseTask.TaskType.Slider;
             task.ShowResults = true;
-            task.Votes = new List<Rate_Vote>();
-            task.Archive = new List<Rate_Option>();
-            foreach (Rate_Option option in task.Options)
-            {
-                option.Ratings = new List<int>();
-            }
+            task.Votes = new List<SliderVote>();
+            task.Archive = new List<SliderOption>();
+            foreach (SliderOption option in task.Options) option.Ratings = new List<int>();
+
             Tasks.Add(task);
         }
 
         public void DeleteTask(int index)
         {
-            if (index < Tasks.Count)
-            {
-                Tasks[index].Reset.Set();
-                Tasks.RemoveAt(index);
-                UpdateIndexes();
-            }
-        }
-
-        public BaseTask GetActiveQuestion()
-        {
-            switch (Tasks[Active].Type)
-            {
-                case BaseTask.TaskType.OpenText:
-                    return Tasks[Active] as OpenText;
-
-                case BaseTask.TaskType.MultipleChoice:
-                    return Tasks[Active] as MultipleChoice;
-
-                default:
-                    return null;
-            }
+            if (index >= Tasks.Count) return;
+            Tasks[index].Reset.Set();
+            Tasks.RemoveAt(index);
+            UpdateIndexes();
         }
 
         public void LoadSession(string questionJson)
@@ -198,81 +160,83 @@ namespace Slagkraft.Models.Admin
             List<BaseTask> questions = JsonConvert.DeserializeObject<List<BaseTask>>(questionJson, settings);
             Tasks = questions;
 
+            if (Tasks == null) return;
             foreach (BaseTask task in Tasks)
             {
                 task.Reset = new ManualResetEvent(false);
                 task.ShowResults = true;
                 task.InProgress = false;
 
-                if (task is OpenText open)
-                {
-                    foreach (OpenText_Group group in open.Groups)
-                    {
-                        if (group.Collapsed != true)
-                            group.Collapsed = false;
-                    }
-                }
+                if (!(task is OpenText open)) continue;
+                foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
+                    group.Collapsed = false;
             }
         }
 
         public void MoveQuestion(int current, int target)
         {
-            if (current < Tasks.Count && target < Tasks.Count && current != target)
+            if (current >= Tasks.Count || target >= Tasks.Count || current == target) return;
+            switch (Tasks[current])
             {
-                if (Tasks[current] is OpenText)
-                {
-                    OpenText open = Tasks[current] as OpenText;
-                    Tasks.RemoveAt(current);
-                    Tasks.Insert(target, open);
-                }
-                else if (Tasks[current] is MultipleChoice)
-                {
-                    MultipleChoice choice = Tasks[current] as MultipleChoice;
-                    Tasks.RemoveAt(current);
-                    Tasks.Insert(target, choice);
-                }
-                else if (Tasks[current] is Points)
-                {
-                    Points choice = Tasks[current] as Points;
-                    Tasks.RemoveAt(current);
-                    Tasks.Insert(target, choice);
-                }
-                else if (Tasks[current] is Rate)
-                {
-                    Rate choice = Tasks[current] as Rate;
-                    Tasks.RemoveAt(current);
-                    Tasks.Insert(target, choice);
-                }
-                UpdateIndexes();
+                case OpenText _:
+                    {
+                        OpenText open = Tasks[current] as OpenText;
+                        Tasks.RemoveAt(current);
+                        Tasks.Insert(target, open);
+                        break;
+                    }
+                case MultipleChoice _:
+                    {
+                        MultipleChoice choice = Tasks[current] as MultipleChoice;
+                        Tasks.RemoveAt(current);
+                        Tasks.Insert(target, choice);
+                        break;
+                    }
+                case Points _:
+                    {
+                        Points choice = Tasks[current] as Points;
+                        Tasks.RemoveAt(current);
+                        Tasks.Insert(target, choice);
+                        break;
+                    }
+                case Slider _:
+                    {
+                        Slider choice = Tasks[current] as Slider;
+                        Tasks.RemoveAt(current);
+                        Tasks.Insert(target, choice);
+                        break;
+                    }
+            }
 
-                if (active == current)
+            UpdateIndexes();
+
+            if (_active == current)
+            {
+                _active = target;
+                Tasks[target].Reset.Set();
+            }
+            else if (_active == target)
+            {
+                if (target > current)
                 {
-                    active = target;
-                    Tasks[target].Reset.Set();
+                    _active -= 1;
+                    Tasks[_active].Reset.Set();
                 }
-                else if (active == target)
+                else if (target < current)
                 {
-                    if (target > current)
-                    {
-                        active -= 1;
-                        Tasks[active].Reset.Set();
-                    }
-                    else if (target < current)
-                    {
-                        active += 1;
-                        Tasks[active].Reset.Set();
-                    }
+                    _active += 1;
+                    Tasks[_active].Reset.Set();
                 }
-                else if (active < target && active > current)
-                {
-                    active -= 1;
-                    Tasks[active].Reset.Set();
-                }
-                else if (active > target && active < current)
-                {
-                    active += 1;
-                    Tasks[active].Reset.Set();
-                }
+            }
+            else if (_active < target && _active > current)
+            {
+                _active -= 1;
+                Tasks[_active].Reset.Set();
+            }
+            else if (_active > target && _active < current)
+            {
+                _active += 1;
+                Tasks[_active].Reset.Set();
             }
         }
 
@@ -292,18 +256,10 @@ namespace Slagkraft.Models.Admin
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error encounterd while saving session: {0}", e);
+                Console.WriteLine("Error while saving session: {0}", e);
 
                 return null;
             }
-        }
-
-        public void Start(int index)
-        {
-        }
-
-        public void Stop()
-        {
         }
 
         #endregion Public Methods
@@ -312,8 +268,7 @@ namespace Slagkraft.Models.Admin
 
         private void ClientSet()
         {
-            if (Client == null)
-                Client = new ManualResetEvent(false);
+            Client ??= new ManualResetEvent(false);
             Client.Set();
         }
 

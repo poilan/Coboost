@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Slagkraft.Models.Admin.Questions
+﻿namespace Coboost.Models.Admin.Tasks.Planned
 {
     public class Planned : BaseTask
     {

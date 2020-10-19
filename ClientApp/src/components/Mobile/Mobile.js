@@ -1,20 +1,20 @@
-﻿import React, { Component, useRef, createRef } from 'react';
+﻿import React, { Component, useRef, createRef } from "react";
 import { Redirect } from "react-router-dom";
-import axios from 'axios';
-import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+import Axios from "axios";
+import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form } from
+    "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
 import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
-import SSE from "../Core/SSE";
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Slider from '@material-ui/core/Slider';
-import Rating from '@material-ui/lab/Rating';
+import { SSE } from "../Core/SSE";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Slider from "@material-ui/core/Slider";
+import Rating from "@material-ui/lab/Rating";
+import { BannerLink } from "../Classes/Dropdown";
+import { TextField } from "@material-ui/core";
 
-import BannerDropdown, { BannerLink } from '../Classes/Dropdown';
-import { TextField } from '@material-ui/core';
-
-const MainContainer = styled(Col)`
+const MainContainer = Styled(Col)`
     display: table;
     height: 100%;
     width: 100%;
@@ -25,75 +25,7 @@ const MainContainer = styled(Col)`
     overflow: hidden;
 `;
 
-const Banner = styled(Col)`
-    position: absolute;
-    display: none;
-    /*background: #4C7AD3;*/
-    background: #575b75;
-    height: 50px;
-    bottom: 0;
-    left: 0;
-    z-index: 11;
-`;
-
-const BannerText = styled.h1`
-    font-family: CircularStd;
-    font-Size: 1rem;
-    color: #fff;
-    text-align: center;
-    line-height: 50px;
-    left: 10px;
-    position: absolute;
-`;
-
-const BannerButton = styled(DropdownButton)`
-    background: #fff;
-    border-radius: 100px;
-    color: #100E0E;
-
-    font-family: CircularStd;
-    font-weight: 450;
-    text-align: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    top: 25%;
-    position: relative;
-    float: right;
-
-    margin: 0px 5px;
-
-    button {
-        background: none;
-        border: none;
-
-        font-family: CircularStd;
-        font-weight: 450;
-
-        color: #100E0E;
-    };
-
-    button:hover {
-        background: none;
-        border: none;
-
-        color: #4C7AD3;
-    };
-
-    &.show {
-        button {
-            outline: none;
-            background: none !important;
-            border: none;
-            color: #4C7AD3 !important;
-        };
-    }
-
-    button:active {
-        color: red;
-    }
-`;
-
-const Header = styled(Col)`
+const Header = Styled(Col)`
     background: #fff;
     position: absolute;
     height: 50px;
@@ -106,24 +38,28 @@ const Header = styled(Col)`
     z-index: 10;
 `;
 
-const HeaderText = styled.h1`
+const HeaderText = Styled.h1`
     text-align: center;
     font-family: CircularStd;
     font-weight: 525;
     line-height: 50px;
     font-size: 1.5rem;
-    border-bottom: 4px ${props => props.active === props.id ? "solid" : "hidden"} #575b75;
+    border-bottom: 4px ${props => props.active === props.id
+        ? "solid"
+        : "hidden"} #575b75;
     cursor: pointer;
     box-sizing: border-box;
     &:hover {
-        border-bottom: 4px solid ${props => props.active === props.id ? "#575b75" : "#4f4f4f"};
+        border-bottom: 4px solid ${props => props.active === props.id
+        ? "#575b75"
+        : "#4f4f4f"};
     }
 
     flex: 1 1 auto;
     margin-bottom: 0px;
 `;
 
-const ContentContainer = styled(Col)`
+const ContentContainer = Styled(Col)`
     background: #fff;
     box-shadow: 0px 0px 10px 0px #cfcfcf;
     position: absolute;
@@ -136,17 +72,7 @@ const ContentContainer = styled(Col)`
     overflow-x: hidden;
 `;
 
-const Content = styled.div`
-    background: #fff;
-    width: 70%;
-    margin-top: 20px;
-    margin-left: 15%;
-    border-radius: 10px;
-    height: 75px;
-    position: relative;
-`;
-
-const ContentTitle = styled.h3`
+const ContentTitle = Styled.h3`
     font-size: 1rem;
     font-family: CircularStd;
     font-weight: 500;
@@ -156,23 +82,31 @@ const ContentTitle = styled.h3`
     padding: 10px 30px;
     padding-bottom: 0;
 
-    color: ${props => props.blue ? "#4C7AD3" : "black"};
+    color: ${props => props.blue
+        ? "#4C7AD3"
+        : "black"};
 `;
 
-const ContentBody = styled.p`
+const ContentBody = Styled.p`
     font-family: CircularStd;
-    font-size: ${props => props.boxed ? "0.8rem" : "1rem"};
+    font-size: ${props => props.boxed
+        ? "0.8rem"
+        : "1rem"};
     text-align: center;
 
     position: relative;
     padding: 30px;
 
-    background: ${props => props.boxed ? "#4C7ADC" : "transparent"};
-    color: ${props => props.boxed ? "white" : "black"};
+    background: ${props => props.boxed
+        ? "#4C7ADC"
+        : "transparent"};
+    color: ${props => props.boxed
+        ? "white"
+        : "black"};
     border-radius: 10px;
 `;
 
-const ContentQuestion = styled.p`
+const ContentQuestion = Styled.p`
     font-family: CircularStd;
     text-align: center;
     color: #100E0E;
@@ -183,20 +117,26 @@ const ContentQuestion = styled.p`
     height: 30px;
 `;
 
-const ContentInput = styled(TextField)`
+const ContentInput = Styled(TextField)`
     display: block;
-    max-height: ${props => props.isTitle ? "2rem" : "8rem"};
+    max-height: ${props => props.isTitle
+        ? "2rem"
+        : "8rem"};
     min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: ${props => props.isTitle ? "center" : "left"};
+    text-align: ${props => props.isTitle
+        ? "center"
+        : "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid ${props => props.isTitle ? "#4C7AD3" : "#cfcfcf"};
+    border-bottom: 1px solid ${props => props.isTitle
+        ? "#4C7AD3"
+        : "#cfcfcf"};
     resize: none;
 `;
 
-const ContentButton = styled(Button)`
+const ContentButton = Styled(Button)`
     background: #575b75;
     color: #fff;
 
@@ -221,7 +161,7 @@ const ContentButton = styled(Button)`
     }
 `;
 
-const ContentFooter = styled.p`
+const ContentFooter = Styled.p`
     font-family: CircularStd;
     text-align: center;
 
@@ -229,7 +169,7 @@ const ContentFooter = styled.p`
     top: 40px;
 `;
 
-const IconLoader = styled(Ico_Loading)`
+const IconLoader = Styled(Ico_Loading)`
     display: block;
     margin: 0 auto;
     height: 128px;
@@ -249,7 +189,7 @@ const IconLoader = styled(Ico_Loading)`
     animation: rotation 2.5s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
 `;
 
-const IconDone = styled(Ico_Group152)`
+const IconDone = Styled(Ico_Group152)`
     display: block;
     margin: 5px auto;
     margin-bottom: 32px;
@@ -267,12 +207,12 @@ const IconDone = styled(Ico_Group152)`
     animation: rotation 5s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
 `;
 
-const MultipleChoiceGroup = styled(ToggleButtonGroup)`
+const MultipleChoiceGroup = Styled(ToggleButtonGroup)`
     display: block;
     padding: 20px;
 `;
 
-const TickStem = styled.div`
+const TickStem = Styled.div`
     position: relative;
     width: 2px;
     height: 12px;
@@ -283,7 +223,7 @@ const TickStem = styled.div`
     transform: rotate(45deg);
 `;
 
-const TickKick = styled.div`
+const TickKick = Styled.div`
     position: relative;
     width: 6px;
     height: 2px;
@@ -293,7 +233,7 @@ const TickKick = styled.div`
     transform: rotate(45deg)
 `;
 
-const Tick = styled.div`
+const Tick = Styled.div`
     width: 24px;
     height: 24px;
 
@@ -308,7 +248,7 @@ const Tick = styled.div`
     display: inline-block;
 `;
 
-const MultipleChoiceButton = styled(ToggleButton)`
+const MultipleChoiceButton = Styled(ToggleButton)`
     background-color: transparent !important;
     border-radius: 10px !important;
     border-color: black !important;
@@ -352,7 +292,7 @@ const MultipleChoiceButton = styled(ToggleButton)`
     };
 `;
 
-export class Mobile extends Component {
+export class Mobile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -366,8 +306,8 @@ export class Mobile extends Component {
 
             loggedIn: false,
             sessionState: 0, // 0: Not started, 1: Answering, 2: Finished
-            sse: null,
-        }
+            SSE: null
+        };
 
         //this.eventSource = undefined;
         this.headerClick = this.headerClick.bind(this);
@@ -377,138 +317,116 @@ export class Mobile extends Component {
         this.inputsEdit = this.inputsEdit.bind(this);
         this.logout = this.logout.bind(this);
 
-        //DOM Refrences
+        //DOM References
         this.TextTitle = createRef();
         this.TextDescription = createRef();
         this.TextForm = createRef();
     }
 
     componentWillMount() {
-        if (localStorage.getItem("user") !== null)
+        if (localStorage.getItem("user") !== null) {
             this.setState({
                 loggedIn: true
             });
+        }
 
-        const code = sessionStorage.getItem("code");
+        const Code = sessionStorage.getItem("code");
 
-        axios.get(`admin/${code}/questions-all`).then(res => {
+        Axios.get(`admin/${Code}/questions-all`).then(res => {
             if (res.status === 202) {
-                var data = res.data;
-
-                //var inputs = [];
-                //data.forEach((q) => {
-                //    var task = {
-                //        Type: q.type,
-                //        Title: q.title,
-                //        Index: q.index,
-                //        Options: q.options,
-                //    };
-
-                //    inputs[q.index] = task;
-                //});
+                const Data = res.data;
 
                 this.setState({
-                    inputs: data,
+                    inputs: Data
                 });
 
                 this.parseAnswers();
             }
         });
 
-        var sse = new SSE(`client/${code}/question`);
+        var EventSource = new SSE(`client/${Code}/question`);
 
         this.setState({
-            sse: sse,
-        })
+            SSE: EventSource
+        });
 
-        sse.startEventSource((e) => {
-            sse.addListener("question", (e) => {
+        EventSource.startEventSource(() => {
+            EventSource.addListener("question", (e) => {
                 try {
-                    var data = JSON.parse(e.data); // Question data
+                    const Data = JSON.parse(e.data); // Question data
 
-                    var index = parseInt(data.Index);
+                    const Index = parseInt(Data.Index);
 
-                    //if (data.Type === 1) { // Multiple Choice
-                    //    var choices = [];
-
-                    //    data.Options.forEach(choice => {
-                    //        choices.push(choice.Title);
-                    //    });
-
-                    //    data.choices = choices;
-                    //}
-
-                    if (data.Type === 2) {
-                    }
-                    else if (data.Type === 3) {
-                    }
-
-                    var inputs = this.state.inputs;
-                    inputs[index] = data;
+                    const Inputs = this.state.inputs;
+                    Inputs[Index] = Data;
 
                     this.setState({
-                        inputs: inputs,
+                        inputs: Inputs
                     });
 
                     this.parseAnswers();
 
                     this.setState({
-                        currentInput: index,
+                        currentInput: Index,
                         sessionState: 1
                     });
-                } catch (e) {
-                    sse.log("Failed to parse server event");
+                }
+                catch (Event) {
+                    EventSource.log(`Failed to parse server event${Event}`);
                 }
             });
         });
     }
 
     componentWillUnmount() {
-        if (this.eventSource)
+        if (this.eventSource) {
             this.eventSource.close();
+        }
     }
 
     parseAnswers() {
-        var answers = [];
+        var Answers = [];
 
-        const questions = this.getTasks();
-        questions.forEach((question, index) => {
-            var answer = {
+        const Questions = this.getTasks();
+        Questions.forEach((question, index) => {
+            var Answer = {
                 index: index,
-                value: question.Type === 0 ? "" : []
+                value: question.Type === 0
+                    ? ""
+                    : []
             };
 
             if (question.Options !== undefined) {
                 if (question.Type === 2) {
-                    let values = [];
+                    const Values = [];
 
-                    for (let i = 0; i < question.Options.length; i++) {
-                        values.push(0);
+                    for (let I = 0; I < question.Options.length; I++) {
+                        Values.push(0);
                     }
-                    answer.value = values;
+                    Answer.value = Values;
                     question.Spent = 0;
                 }
                 else if (question.Type === 3) {
-                    let values = [];
+                    const Values = [];
 
-                    for (let i = 0; i < question.Options.length; i++) {
-                        values.push(question.Min);
+                    for (let I = 0; I < question.Options.length; I++) {
+                        Values.push(question.Min);
                     }
 
-                    answer.value = values;
+                    Answer.value = Values;
                 }
             }
 
-            if (answers[index] !== undefined) {
-                answers[index] = answer;
+            if (Answers[index] !== undefined) {
+                Answers[index] = Answer;
             }
             else {
-                answers.push(answer);
+                Answers.push(Answer);
             }
         });
 
         this.setState({
-            answers: answers
+            answers: Answers
         });
     }
 
@@ -521,14 +439,15 @@ export class Mobile extends Component {
     }
 
     getTaskAnswers() {
-        const index = this.getTaskIndex();
-        const type = this.getTaskType();
-        const answerData = this.state.answers[index];
+        const Index = this.getTaskIndex();
+        const Type = this.getTaskType();
+        const AnswerData = this.state.answers[Index];
 
-        if (answerData !== undefined) {
-            return answerData.value
-        } else {
-            switch (type) {
+        if (AnswerData) {
+            return AnswerData.value;
+        }
+        else {
+            switch (Type) {
                 case 0:
                     return "";
                 default:
@@ -538,24 +457,24 @@ export class Mobile extends Component {
     }
 
     setTaskAnswers(answer) {
-        const state = this.state;
-        const index = this.getTaskIndex();
-        const answers = state.answers;
-        answers[index].value = answer;
+        const State = this.state;
+        const Index = this.getTaskIndex();
+        const Answers = State.answers;
+        Answers[Index].value = answer;
 
         this.setState({
-            answers: answers
-        })
+            answers: Answers
+        });
     }
 
     getCurrentTask() {
-        const inputs = this.getTasks()
-        return inputs[this.getTaskIndex()];
+        const Inputs = this.getTasks();
+        return Inputs[this.getTaskIndex()];
     }
 
     getLastTask() {
-        const inputs = this.getTasks();
-        return inputs[this.state.lastInput];
+        const Inputs = this.getTasks();
+        return Inputs[this.state.lastInput];
     }
 
     getTaskType() {
@@ -575,10 +494,10 @@ export class Mobile extends Component {
     }
 
     headerClick(target) {
-        const id = target.id;
+        const Id = target.id;
 
         this.setState({
-            activeHeader: id,
+            activeHeader: Id
         });
     }
 
@@ -594,245 +513,305 @@ export class Mobile extends Component {
     }
 
     finishedRender() {
-        const lastInput = this.getLastTask();
-        const lastType = lastInput.Type;
+        const LastInput = this.getLastTask();
+        const LastType = LastInput.Type;
 
-        var word = "Open Text";
+        let Word;
 
-        switch (lastType) {
+        switch (LastType) {
             case 0:
-                word = "Input";
+                Word = "Input";
                 break;
             default:
-                word = "Vote";
+                Word = "Vote";
                 break;
         }
 
         return (
             <ContentContainer>
-                <ContentTitle blue>{word} sent!</ContentTitle>
+                <ContentTitle blue>{Word} sent!</ContentTitle>
                 <IconDone />
-                <ContentBody boxed>You may send another {word}! or you can take it easy while waiting for the next task.</ContentBody>
-                <ContentButton onClick={this.inputsEdit}>New {word}</ContentButton>
+                <ContentBody boxed>You may send another {Word}! or you can take it easy while waiting for the next task.</ContentBody>
+                <ContentButton onClick={this.inputsEdit}>New {Word}</ContentButton>
+            </ContentContainer>
+        );
+    }
+
+    closedRender() {
+        return (
+            <ContentContainer>
+                <ContentTitle blue>
+                    Task Closed
+                </ContentTitle>
+
+                <IconDone />
+
+                <ContentBody boxed>
+                    This task appears to be closed, please remain patient.
+                </ContentBody>
+
+                <ContentButton>Nothing at all</ContentButton>
             </ContentContainer>
         );
     }
 
     questionChange(e) {
-        const target = e.target;
-        const value = target.value;
-        target.style.height = "inherit";
-        target.style.height = `${target.scrollHeight + 1}px`;
+        const Target = e.target;
+        const Value = Target.value;
+        Target.style.height = "inherit";
+        Target.style.height = `${Target.scrollHeight + 1}px`;
 
-        this.setTaskAnswers(value);
+        this.setTaskAnswers(Value);
     }
 
     questionRender() {
-        const titleChange = (e) => {
-            const target = e.target;
-            const value = target.value;
+        const TitleChange = (e) => {
+            const Target = e.target;
+            const Value = Target.value;
 
             this.setState({
-                title: value,
+                title: Value
             });
-        }
-        const handleInvalid = () => {
-            const description = this.getTaskAnswers();
+        };
+        const HandleInvalid = () => {
+            const Description = this.getTaskAnswers();
 
-            if (description.length < 3) {
-                if (this.TextDescription.current)
+            if (Description.length < 3) {
+                if (this.TextDescription.current) {
                     this.TextDescription.current.focus();
+                }
 
                 return;
-            } else if (description.length > 30) {
-                let title = this.state.title;
+            }
+            else if (Description.length > 30) {
+                const Title = this.state.title;
 
-                if (title.length < 3) {
-                    if (this.TextTitle.current)
+                if (Title.length < 3) {
+                    if (this.TextTitle.current) {
                         this.TextTitle.current.focus();
+                    }
 
                     return;
                 }
             }
-        }
+        };
 
-        const handleEnter = (e) => {
-            if (e.key === 'Enter') {
+        const HandleEnter = (e) => {
+            if (e.key === "Enter") {
                 e.preventDefault();
                 e.stopPropagation();
                 if (this.TextForm.current) {
                     this.TextForm.current.click();
                 }
             }
-        }
+        };
 
-        const onTitleFocus = (e) => {
-            if (this.state.title.trim() == "") {
+        const OnTitleFocus = () => {
+            if (this.state.title.trim() === "") {
                 this.setState({
                     title: this.getTaskAnswers().substring(0, 29)
                 });
             }
-        }
+        };
 
         return (
             <ContentContainer>
-                <Form autoComplete="off" onSubmit={this.inputsClick} onInvalid={handleInvalid}>
+                <Form autoComplete="off"
+                    onInvalid={HandleInvalid}
+                    onSubmit={this.inputsClick}>
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
-                    <Box p={1} m={1} mb={2}>
-                        <ContentInput inputRef={this.TextTitle} disabled={this.getTaskAnswers().length <= 30} fullWidth
-                            label="Title" isTitle required helperText={`${30 - this.state.title.length}`} variant="outlined" hidden={this.getTaskAnswers().length <= 30} margin="normal"
-                            inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }} onFocus={(e) => onTitleFocus(e)}
-                            value={this.state.title} onChange={titleChange} onKeyDown={handleEnter.bind(this)}
-                        />
+                    <Box m={1}
+                        mb={2}
+                        p={1}>
+                        <ContentInput disabled={this.getTaskAnswers().length <= 30}
+                            fullWidth
+                            helperText={`${30 - this.state.title.length}`}
+                            hidden={this.getTaskAnswers().length <= 30}
+                            inputProps={{
+                                minlength: 3,
+                                maxlength: 30,
+                                autocomplete: "off"
+                            }}
+                            inputRef={this.TextTitle}
+                            isTitle
+                            label="Title"
+                            margin="normal"
+                            onChange={TitleChange}
+                            onFocus={(e) => OnTitleFocus(e)}
+                            onKeyDown={HandleEnter.bind(this)}
+                            required
+                            value={this.state.title}
+                            variant="outlined" />
                     </Box>
 
-                    <Box p={1} m={1} mb={2}>
-                        <ContentInput inputRef={this.TextDescription} name="description" variant="outlined" multiline margin="normal" rowsMax={5} fullWidth
-                            label="Description" required helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30 ? "" : ` | ${30 - this.getTaskAnswers().length}`}`}
+                    <Box m={1}
+                        mb={2}
+                        p={1}>
+                        <ContentInput fullWidth
+                            helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30
+                                ? ""
+                                : ` | ${30 - this.getTaskAnswers().length}`}`}
                             inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
-                            value={this.getTaskAnswers()} onChange={(e) => this.questionChange(e)}
-                            onKeyDown={handleEnter.bind(this)}
-                        />
+                            inputRef={this.TextDescription}
+                            label="Description"
+                            margin="normal"
+                            multiline
+                            name="description"
+                            onChange={(e) => this.questionChange(e)}
+                            onKeyDown={HandleEnter.bind(this)}
+                            required
+                            rowsMax={5}
+                            value={this.getTaskAnswers()}
+                            variant="outlined" />
                     </Box>
 
-                    <ContentButton ref={this.TextForm} type="submit" value="Submit">{this.getTaskAnswers().length < 3 ? "Write an input to send!" : (this.getTaskAnswers().length > 30 && this.state.title < 3) ? "Write a title before sending!" : "Send Input!"}</ContentButton>
+                    <ContentButton ref={this.TextForm}
+                        type="submit"
+                        value="Submit">
+                        {this.getTaskAnswers().length < 3
+                            ? "Write an input to send!"
+                            : (this.getTaskAnswers().length > 30 && this.state.title < 3)
+                                ? "Write a title before sending!"
+                                : "Send Input!"}
+                    </ContentButton>
                 </Form>
             </ContentContainer>
         );
     }
 
     choicePick(picked) {
-        const index = this.getTaskIndex();
-        const options = this.getTaskOptions();
-        const max = this.getOptionMax();
+        const Index = this.getTaskIndex();
+        const Max = this.getOptionMax();
 
-        if (picked.length >= this.getTaskAnswers().length && picked.length > max) {
+        if (picked.length >= this.getTaskAnswers().length && picked.length > Max) {
             return;
         }
 
-        var chosen = [];
+        var Chosen = [];
 
         picked.forEach(pick => {
-            var pickData = pick.split("-");
-            var choiceIndex = parseInt(pickData[0]);
+            var PickData = pick.split("-");
+            var ChoiceIndex = parseInt(PickData[0]);
 
-            if (choiceIndex === index) {
-                chosen.push(pick);
+            if (ChoiceIndex === Index) {
+                Chosen.push(pick);
 
-                if (chosen.length >= max) {
-                    this.setTaskAnswers(chosen);
+                if (Chosen.length >= Max) {
+                    this.setTaskAnswers(Chosen);
                     return;
                 }
             }
-        })
+        });
 
-        this.setTaskAnswers(chosen);
+        this.setTaskAnswers(Chosen);
     }
 
     pointsChange(index, value) {
-        const answers = this.getTaskAnswers();
-        let spent = 0;
-        let tasks = this.getTasks();
-        const change = value - answers[index];
+        const Answers = this.getTaskAnswers();
+        let Spent = 0;
+        const Tasks = this.getTasks();
+        const Change = value - Answers[index];
 
-        if (tasks[this.getTaskIndex()].Amount < tasks[this.getTaskIndex()].Spent + change) {
-            let maximum = tasks[this.getTaskIndex()].Amount - tasks[this.getTaskIndex()].Spent;
+        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change) {
+            const Maximum = Tasks[this.getTaskIndex()].Amount - Tasks[this.getTaskIndex()].Spent;
 
-            if (maximum < 1)
+            if (Maximum < 1) {
                 return;
-            else
-                value = maximum;
-        }
-        for (let i = 0; i < this.getTaskOptions().length; i++) {
-            if (answers[i] == undefined)
-                answers[i] = 0;
-
-            if (index == i) {
-                answers[i] = value;
             }
-
-            if (answers[i] > 0) {
-                spent += answers[i];
+            else {
+                value = Maximum;
             }
         }
+        for (let I = 0; I < this.getTaskOptions().length; I++) {
+            if (Answers[I] == undefined) {
+                Answers[I] = 0;
+            }
 
-        tasks[this.getTaskIndex()].Spent = spent;
+            if (index === I) {
+                Answers[I] = value;
+            }
+
+            if (Answers[I] > 0) {
+                Spent += Answers[I];
+            }
+        }
+
+        Tasks[this.getTaskIndex()].Spent = Spent;
         this.setState({
-            inputs: tasks
+            inputs: Tasks
         });
-        this.setTaskAnswers(answers);
+        this.setTaskAnswers(Answers);
     }
 
     sliderChange(index, value) {
-        const answers = this.getTaskAnswers();
-        answers[index] = value;
-        this.setTaskAnswers(answers);
+        const Answers = this.getTaskAnswers();
+        Answers[index] = value;
+        this.setTaskAnswers(Answers);
     }
 
     inputsClick(e) {
         e.preventDefault();
-        const state = this.state;
-        const questions = this.getTasks().length;
-        const current = this.getTaskIndex();
+        const State = this.state;
+        const Current = this.getTaskIndex();
 
-        const type = this.getTaskType();
-        const answer = this.getTaskAnswers();
+        const Type = this.getTaskType();
+        const Answer = this.getTaskAnswers();
 
         // Send the input
-        const code = sessionStorage.getItem("code");
-        var user = "anonymous";
-        if (state.loggedIn) {
-            user = localStorage.getItem("user");
+        const Code = sessionStorage.getItem("code");
+        let User = "anonymous";
+        if (State.loggedIn) {
+            User = localStorage.getItem("user");
         }
 
-        var data = {
-            UserID: user,
-        }
+        var Data = {
+            UserID: User
+        };
 
         // Send
-        if (type === 0) { // Open Text
-            data.Description = answer.trim();
+        if (Type === 0) {// Open Text
+            Data.Description = Answer.trim();
 
-            if (data.Description.length > 30) {
-                data.Title = this.state.title.trim();
+            if (Data.Description.length > 30) {
+                Data.Title = this.state.title.trim();
             }
 
-            axios.post(`client/${code}/add-opentext`, data);
+            Axios.post(`client/${Code}/add-text-open`, Data);
         }
-        else if (type === 1) { // Multiple Choice
-            answer.forEach(option => {
-                var optionData = option.split("-");
-                var index = parseInt(optionData[1]);
-                data.Option = index;
+        else if (Type === 1) {// Multiple Choice
+            Answer.forEach(option => {
+                var OptionData = option.split("-");
+                var Index = parseInt(OptionData[1]);
+                Data.Option = Index;
 
-                axios.post(`client/${code}/add-multiplechoice`, data);
+                Axios.post(`client/${Code}/add-vote-multi`, Data);
             });
         }
-        else if (type === 2) { // Points
-            data.Points = answer;
-            axios.post(`client/${code}/add-points`, data);
+        else if (Type === 2) {// Points
+            Data.Points = Answer;
+            Axios.post(`client/${Code}/add-vote-points`, Data);
         }
-        else if (type === 3) { // Slider
-            data.Ratings = answer;
-            axios.post(`client/${code}/add-slider`, data);
+        else if (Type === 3) {// Slider
+            Data.Ratings = Answer;
+            Axios.post(`client/${Code}/add-vote-slider`, Data);
         }
 
         this.parseAnswers();
 
         this.setState({
-            lastInput: current,
+            lastInput: Current,
             sessionState: 2,
-            title: "",
-        })
+            title: ""
+        });
     }
 
     inputsEdit() {
-        const lastInput = this.state.lastInput;
+        const LastInput = this.state.lastInput;
         this.setState({
-            currentInput: lastInput,
-            sessionState: 1,
-        })
+            currentInput: LastInput,
+            sessionState: 1
+        });
     }
 
     logout() {
@@ -844,16 +823,32 @@ export class Mobile extends Component {
     choiceRender() {
         return (
             <ContentContainer>
-                <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-                <MultipleChoiceGroup onChange={this.choicePick} toggle type="checkbox" name={`group-${this.getTaskIndex()}`} vertical value={this.getTaskAnswers()}>
+
+                <ContentQuestion>
+                    {this.getTaskTitle()}
+                </ContentQuestion>
+
+                <MultipleChoiceGroup name={`group-${this.getTaskIndex()}`}
+                    onChange={this.choicePick}
+                    toggle
+                    type="checkbox"
+                    value={this.getTaskAnswers()}
+                    vertical>
+
                     {this.getTaskOptions().map((choice) =>
-                        <MultipleChoiceButton key={choice.Index} value={`${this.getTaskIndex()}-${choice.Index}`} name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`} size="lg">
+                        <MultipleChoiceButton key={choice.Index}
+                            name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
+                            size="lg"
+                            value={`${this.getTaskIndex()}-${choice.Index}`}>
+
                             <Tick>
                                 <TickStem />
                                 <TickKick />
                             </Tick>
+
                             {choice.Title}
-                        </MultipleChoiceButton>)}
+                        </MultipleChoiceButton>
+                    )}
                 </MultipleChoiceGroup>
 
                 <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
@@ -862,51 +857,69 @@ export class Mobile extends Component {
     }
 
     pointsRender() {
-        let task = this.getCurrentTask();
-        let answers = this.state.answers[this.getTaskIndex()];
+        const Task = this.getCurrentTask();
+        const Answers = this.state.answers[this.getTaskIndex()];
         return (
             <ContentContainer>
-                <ContentQuestion>{task.Title}</ContentQuestion>
-                <Box component="fieldset" mb={3} pt={2} px={2} borderColor="transparent">
-                    { //<Typography component="legend">{task.Spent == undefined ? task.Amount : task.Amount - task.Spent} left to assign!</Typography>
-                    }
-                    {task.Options.map((point) =>
-                        <Box key={point.Index} component="fieldset" mb={3} pt={1} px={1} borderColor="transparent">
+                <ContentQuestion>{Task.Title}</ContentQuestion>
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={2}
+                    px={2}>
+                    {Task.Options.map((point) =>
+                        <Box borderColor="transparent" component="fieldset" key={point.Index} mb={3} pt={1} px={1}>
                             <Typography component="legend">{point.Title}</Typography>
-                            <Rating name={point.Title} value={answers !== undefined ? answers.value[point.Index] : 0} max={task.Max} onChange={(e, value) => this.pointsChange(point.Index, value)} />
+                            <Rating max={Task.Max} name={point.Title} onChange={(e, value) =>
+                                this.pointsChange(point.Index, value)} value={Answers !== undefined
+                                    ? Answers.value[point.Index]
+                                    : 0
+                                } />
                         </Box>
                     )}
                 </Box>
-                <ContentButton disabled={task.Spent != task.Amount} onClick={this.inputsClick}>{task.Spent != task.Amount ? (task.Amount - task.Spent) + " points left!" : "Send Vote"}</ContentButton>
+                <ContentButton disabled={Task.Spent !== Task.Amount}
+                    onClick={this.inputsClick}>
+                    {Task.Spent !== Task.Amount
+                        ? (Task.Amount - Task.Spent) + " points left!"
+                        : "Send Vote"}
+                </ContentButton>
             </ContentContainer>
         );
     }
 
     sliderRender() {
-        let task = this.getCurrentTask();
-        let answers = this.state.answers[this.getTaskIndex()];
-        let marks = [
+        const Task = this.getCurrentTask();
+        const Answers = this.state.answers[this.getTaskIndex()];
+        const Marks = [
             {
-                value: task.Min,
-                label: `${task.Min}`,
+                value: Task.Min,
+                label: `${Task.Min}`
             },
             {
-                value: task.Max,
-                label: `${task.Max}`,
-            },
-        ]
+                value: Task.Max,
+                label: `${Task.Max}`
+            }
+        ];
 
         return (
             <ContentContainer>
-                <ContentQuestion>{task.Title}</ContentQuestion>
-                <Box component="fieldset" mb={2} pt={1} px={2} borderColor="transparent">
-                    {task.Options.map((slider) =>
-                        <Box key={slider.Index} component="fieldset" mb={4} pt={2} px={1} borderColor="transparent">
+                <ContentQuestion>{Task.Title}</ContentQuestion>
+                <Box borderColor="transparent"
+                    component="fieldset"
+                    mb={2}
+                    pt={1}
+                    px={2}>
+                    {Task.Options.map((slider) =>
+                        <Box borderColor="transparent" component="fieldset" key={slider.Index} mb={4} pt={2} px={1}>
                             <Typography component="legend">{slider.Title}</Typography>
-                            <Slider name={slider.Title} value={answers !== undefined ? answers.value[slider.Index] : task.Min}
-                                step={1} marks={marks} min={task.Min} max={task.Max}
-                                aria-labledby="discrete-slider" valueLabelDisplay="on"
-                                onChange={(e, value) => this.sliderChange(slider.Index, value)} />
+                            <Slider aria-labledby="discrete-slider" marks={Marks}
+                                max={Task.Max} min={Task.Min} name={slider.Title}
+                                onChange={(e, value) => this.sliderChange(slider.Index, value)}
+                                step={1} value={Answers !== undefined
+                                    ? Answers.value[slider.Index]
+                                    : Task.Min}
+                                valueLabelDisplay="on" />
                         </Box>
                     )}
                 </Box>
@@ -916,95 +929,103 @@ export class Mobile extends Component {
     }
 
     processScreens() {
-        const state = this.state.sessionState;
+        const State = this.state.sessionState;
 
-        switch (state) {
+        switch (State) {
             case 0: // Start Screen
                 return this.welcomeRender();
             case 1: // Answer Screen
                 if (this.getCurrentTask() !== undefined) {
-                    const type = this.getTaskType();
-                    const answer = this.getTaskAnswers();
-
-                    if (answer !== 0) {
-                        if (type === 0)
-                            return this.questionRender()
-                        else if (type === 1)
-                            return this.choiceRender()
-                        else if (type === 2)
-                            return this.pointsRender()
-                        else if (type === 3)
-                            return this.sliderRender()
+                    if (!this.getCurrentTask().InProgress) {
+                        return this.closedRender();
                     }
-                } else {
-                    if (this.getTaskIndex() > 0)
-                        return this.finishedRender()
-                    else
-                        return this.welcomeRender()
+
+                    const Type = this.getTaskType();
+                    const Answer = this.getTaskAnswers();
+
+                    if (Answer !== 0) {
+                        if (Type === 0) {
+                            return this.questionRender();
+                        }
+                        else if (Type === 1) {
+                            return this.choiceRender();
+                        }
+                        else if (Type === 2) {
+                            return this.pointsRender();
+                        }
+                        else if (Type === 3) {
+                            return this.sliderRender();
+                        }
+                    }
+                }
+                else {
+                    if (this.getTaskIndex() > 0) {
+                        return this.finishedRender();
+                    }
+                    else {
+                        return this.welcomeRender();
+                    }
                 }
 
-            case 2: // Wait for more questions
+            default: // Wait for more questions
                 return this.finishedRender();
         }
     }
 
     renderPage() {
-        const tab = this.state.activeHeader;
+        const Tab = this.state.activeHeader;
 
-        // eslint-disable-next-line default-case
-        switch (tab) {
-            case "inputs":
+        switch (Tab) {
+            default:
                 return this.processScreens();
         }
     }
 
     tabTitle(type) {
-        var title = null;
-        let task = this.getCurrentTask();
+        let Title;
+        const Task = this.getCurrentTask();
 
         switch (type) {
             case 0:
-                title = "Open Text";
+                Title = "Open Text";
                 break;
             case 1:
-                title = "Pick your " + this.getOptionMax() > 1 ? this.getOptionMax() + " favorites!" : "favorite!";
+                Title = `Pick your ${this.getOptionMax() > 1
+                    ? this.getOptionMax() + " favorites!"
+                    : "favorite!"}`;
                 break;
             case 2:
-                title = "Give Points: " + (task.Spent == undefined ? task.Amount : task.Amount - task.Spent) + " points left!";
+                Title = `Give Points: ${Task.Spent == undefined
+                    ? Task.Amount
+                    : Task.Amount - Task.Spent} points left!`;
                 break;
             case 3:
-                title = "Slider";
+                Title = "Slider";
                 break;
             default:
-                title = "Waiting";
+                Title = "Waiting";
                 break;
         }
 
-        return title;
+        return Title;
     }
 
     render() {
         return (
-            <>
+            <React.Fragment>
                 <MainContainer>
-                    {
-                        //<Banner>
-                        //    <BannerText>Pin: #{sessionStorage.getItem("code")}</BannerText>
-
-                        //        //this.state.loggedIn && <BannerDropdown title="User" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
-                        //        //    <BannerLink onClick={this.logout}>Test</BannerLink>
-                        //        //</BannerDropdown>
-
-                        //    </Banner>
-                    }
                     <Header>
-                        <HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='inputs'>{this.getCurrentTask() !== undefined ? this.tabTitle(this.getTaskType()) : "Waiting"}</HeaderText>
-                        {//<HeaderText active={this.state.activeHeader} onClick={(e) => this.headerClick(e.target)} id='archive'>Archive</HeaderText>
-                        }
+                        <HeaderText active={this.state.activeHeader}
+                            id="inputs"
+                            onClick={(e) => this.headerClick(e.target)}>
+                            {this.getCurrentTask() !== undefined
+                                ? this.tabTitle(this.getTaskType())
+                                : "Waiting"}
+                        </HeaderText>
                     </Header>
                     {this.renderPage()}
                 </MainContainer>
-            </>
+            </React.Fragment>
         );
     }
 }

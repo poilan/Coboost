@@ -1,18 +1,15 @@
-﻿using Slagkraft.Models.Admin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Coboost.Models.Admin;
 
-namespace Slagkraft.Models.Database
+namespace Coboost.Models.Database.data
 {
     public class ActiveSessions
     {
         #region Private Fields
 
-        private static readonly object padlock = new object();
+        private static readonly object Padlock = new object();
 
-        private static ActiveSessions instance = null;
+        private static ActiveSessions _instance;
 
         #endregion Private Fields
 
@@ -22,16 +19,17 @@ namespace Slagkraft.Models.Database
         {
             get
             {
-                lock (padlock)
+                lock (Padlock)
                 {
-                    if (instance == null)
-                        instance = new ActiveSessions();
+                    _instance ??= new ActiveSessions();
                 }
-                return instance;
+
+                return _instance;
             }
         }
 
-        public Dictionary<int, AdminInstance> Sessions { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        public Dictionary<int, AdminInstance> Sessions { get; }
 
         #endregion Public Properties
 
@@ -40,8 +38,6 @@ namespace Slagkraft.Models.Database
         private ActiveSessions()
         {
             Sessions = new Dictionary<int, AdminInstance>();
-            AdminInstance instance = new AdminInstance { Owner = "erlend.marcus@gmail.com", EventCode = 123123 };
-            Sessions.Add(instance.EventCode, instance);
         }
 
         #endregion Private Constructors

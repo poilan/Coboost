@@ -1,16 +1,15 @@
-﻿import React, { Component } from 'react';
-import axios from 'axios';
-import { PageModal } from '../Services/PageModal';
-import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import Axios from "axios";
+import { PageModal } from "../Services/PageModal";
+import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from "react-bootstrap";
+import Styled from "styled-components";
 import "circular-std";
-import { Ico_Box } from '../Classes/Icons';
-import { Breadcrumbs, Link } from '@material-ui/core';
+import { Ico_Box } from "../Classes/Icons";
+import { Breadcrumbs, Link } from "@material-ui/core";
+import { BsJustify } from "react-icons/bs";
+import { BannerDropdown, BannerButton, BannerLink } from "../Classes/Dropdown";
 
-import { BsJustify } from 'react-icons/bs';
-import BannerDropdown, { BannerButton, BannerLink } from '../Classes/Dropdown';
-
-const MainContainer = styled(Col)`
+const MainContainer = Styled(Col)`
     display: table;
     height: 100%;
     width: 100%;
@@ -19,7 +18,7 @@ const MainContainer = styled(Col)`
     padding: 0px;
 `;
 
-const Banner = styled(Col)`
+const Banner = Styled(Col)`
     position: sticky;
     background: #575b75;
     height: 75px;
@@ -29,76 +28,7 @@ const Banner = styled(Col)`
     padding-right: 15%;
 `;
 
-const BannerText = styled.h1`
-    font-family: CircularStd;
-    font-Size: 1.25rem;
-    color: #fff;
-    padding: 25px 5px;
-    position: absolute;
-`;
-
-/*const BannerButton = styled(Nav.Link)`
-    background: #fff;
-    font-family: CircularStd;
-    border-radius: 100px;
-    color: #100E0E;
-    font-weight: 450;
-    text-align: center;
-    position: relative;
-    top: 25%;
-    float: right;
-
-    padding: 6px 20px;
-`;*/
-
-const BannerDropButton = styled(DropdownButton)`
-    background: #fff;
-    border-radius: 100px;
-    color: #100E0E;
-
-    font-family: CircularStd;
-    font-weight: 450;
-    text-align: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    top: 25%;
-    position: relative;
-    float: right;
-
-    margin: 0px 5px;
-
-    button {
-        background: none;
-        border: none;
-
-        font-family: CircularStd;
-        font-weight: 450;
-
-        color: #100E0E;
-    };
-
-    button:hover {
-        background: none;
-        border: none;
-
-        color: #4C7AD3;
-    };
-
-    &.show {
-        button {
-            outline: none;
-            background: none !important;
-            border: none;
-            color: #4C7AD3 !important;
-        };
-    }
-
-    button:active {
-        color: red;
-    }
-`;
-
-const Header = styled(Col)`
+const Header = Styled(Col)`
     background: #fff;
     position: sticky;
     height: 50px;
@@ -111,7 +41,7 @@ const Header = styled(Col)`
     z-index: 10;
 `;
 
-const HeaderText = styled.h1`
+const HeaderText = Styled.h1`
     font-family: CircularStd;
     font-weight: 425;
     text-align: center;
@@ -126,7 +56,7 @@ const HeaderText = styled.h1`
     margin-bottom: 0px;
 `;
 
-const ProjectContainer = styled(Col)`
+const ProjectContainer = Styled(Col)`
     position: absolute;
     background: #E4E4E4;
     min-height: calc(100vh - 130px);
@@ -134,7 +64,7 @@ const ProjectContainer = styled(Col)`
     top: 130px;
 `;
 
-const ProjectText = styled.h1`
+const ProjectText = Styled.h1`
     position: absolute;
     width: 95%;
     text-align: center;
@@ -144,14 +74,14 @@ const ProjectText = styled.h1`
     font-weight: 400;
 `;
 
-const ProjectButton = styled(BannerButton)`
+const ProjectButton = Styled(BannerButton)`
     color: #fff;
     background: #4C7AD3;
     top: 40%;
     left: 45%;
 `;
 
-const CategoryContainer = styled(Col)`
+const CategoryContainer = Styled(Col)`
     position: absolute;
     background: #E4E4E4;
     top: 125px;
@@ -159,7 +89,7 @@ const CategoryContainer = styled(Col)`
     left: 0:
 `;
 
-const Category = styled.div`
+const Category = Styled.div`
     background: #fff;
     width: 70%;
     margin-top: 20px;
@@ -174,7 +104,7 @@ const Category = styled.div`
     }
 `;
 
-const CategoryTitle = styled.h3`
+const CategoryTitle = Styled.h3`
     font-size: 1rem;
     position: relative;
     padding: 30px 0;
@@ -189,36 +119,22 @@ const CategoryTitle = styled.h3`
     max-width: 25%;
 `;
 
-const CategoryIdentity = styled(CategoryTitle)`
+const CategoryIdentity = Styled(CategoryTitle)`
     color: #A4A4A4;
 `;
 
-const CategoryTime = styled(CategoryIdentity)`
+const CategoryTime = Styled(CategoryIdentity)`
     float: right;
     text-align: right;
 `;
 
-const CategorySettings = styled(CategoryTitle)`
-    float: right;
-    text-align: right;
-    margin-right: 3%;
-`;
-
-const ProjectModal = styled.div`
-    position: fixed;
-    z-index: 1;
-    height: 100vh;
-    width: 100vw;
-    background-color: rgba(0, 0, 0, 0.5);
-`;
-
-const ProjectModalContent = styled.div`
+const ProjectModalContent = Styled.div`
     background-color: #fff;
     padding: 30px;
     border-radius: 10px;
 `;
 
-const PopupText = styled.h3`
+const PopupText = Styled.h3`
     font-family: CircularStd;
     font-size: 1rem;
     padding: 10px;
@@ -226,7 +142,7 @@ const PopupText = styled.h3`
     opacity: 50%;
 `;
 
-const CancelButton = styled(Nav.Link)`
+const CancelButton = Styled(Nav.Link)`
     color: #100e0e;
     background: #fff;
     position: relative;
@@ -240,7 +156,7 @@ const CancelButton = styled(Nav.Link)`
     width: 200px;
 `;
 
-const CreateButton = styled.input`
+const CreateButton = Styled.input`
     color: #fff;
     background: #4C7AD3;
     position: relative;
@@ -254,7 +170,7 @@ const CreateButton = styled.input`
     width: 200px;
 `;
 
-const ModalText = styled.h1`
+const ModalText = Styled.h1`
     font-family: CircularStd;
     font-weight: 600;
     font-size: 1rem;
@@ -265,7 +181,7 @@ const ModalText = styled.h1`
     transform: translateX(-50%);
 `;
 
-const RemoveButton = styled(Ico_Box)`
+const RemoveButton = Styled(Ico_Box)`
     float: right;
     position: relative;
     padding: 30px 0;
@@ -279,7 +195,7 @@ const RemoveButton = styled(Ico_Box)`
     max-width: 25%;
 `;
 
-const BreadCrumb = styled(Breadcrumbs)`
+const BreadCrumb = Styled(Breadcrumbs)`
      &&& {
         font-family: CircularStd;
         font-Size: 1.25rem;
@@ -290,25 +206,27 @@ const BreadCrumb = styled(Breadcrumbs)`
     }
 `;
 
-const BreadText = styled(Link)`
-    color: ${props => props.active ? "#4C7AD3" : "#fff"};
+const BreadText = Styled(Link)`
+    color: ${props => props.active
+        ? "#4C7AD3"
+        : "#fff"};
     font-size: 1.25rem;
 `;
 
-export class Dashboard extends Component {
+export class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             sessions: [],
             showNewSessionModal: false,
             showNewTemplateModal: false,
-            title: '',
+            title: "",
 
             modal: {
                 delete: false,
-                code: 0,
+                code: 0
             }
-        }
+        };
         this.createProject = this.createProject.bind(this);
         this.newProject = this.newProject.bind(this);
         this.newTemplate = this.newTemplate.bind(this);
@@ -329,24 +247,29 @@ export class Dashboard extends Component {
                 this.setState({
                     modal: {
                         delete: true,
-                        code: identity,
+                        code: identity
                     }
                 });
             },
 
             content: () => {
-                const deleteSession = (e) => {
+                const DeleteSession = (e) => {
                     e.preventDefault();
 
-                    axios.post(`admin/${this.state.modal.code}/delete`).then(setTimeout(this.getSessions(), 500));
+                    Axios.post(`admin/${this.state.modal.code}/delete`).then(setTimeout(this.getSessions(), 500));
                     this.modal.delete.close();
-                }
+                };
 
                 return (
-                    <Form autoComplete="off" onSubmit={(e) => deleteSession(e)}>
-                        <ModalText>Are you sure you want to delete this session? <br /> This action can not be undone</ModalText>
+                    <Form autoComplete="off"
+                        onSubmit={(e) => DeleteSession(e)}>
+                        <ModalText>
+                            Are you sure you want to delete this session?
+                            <br /> This action can not be undone
+                        </ModalText>
                         <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
-                        <CreateButton type="submit" value="Delete Session" />
+                        <CreateButton type="submit"
+                            value="Delete Session" />
                     </Form>
                 );
             },
@@ -355,7 +278,7 @@ export class Dashboard extends Component {
                 this.setState({
                     modal: {
                         delete: false,
-                        code: 0,
+                        code: 0
                     }
                 });
             }
@@ -363,30 +286,30 @@ export class Dashboard extends Component {
     }
 
     async getSessions() {
-        const compare = (A, B) => {
-            const a = new Date(Date.parse(A.lastOpen));
-            const b = new Date(Date.parse(B.lastOpen));
+        const Compare = (a, b) => {
+            const A = new Date(Date.parse(a.lastOpen));
+            const B = new Date(Date.parse(b.lastOpen));
 
-            return b.getTime() - a.getTime();
-        }
+            return B.getTime() - A.getTime();
+        };
 
-        let email = localStorage.getItem("user");
-        await axios.get(`admin/sessions-${email}`).then((response) => {
-            let data = response.data.sort(compare);
+        const Email = localStorage.getItem("user");
+        await Axios.get(`admin/sessions-${Email}`).then((response) => {
+            const Data = response.data.sort(Compare);
 
-            this.setState({ sessions: data });
+            this.setState({ sessions: Data });
         });
     }
 
     newProject() {
         this.setState({
-            showNewSessionModal: true,
+            showNewSessionModal: true
         });
     }
 
     newTemplate() {
         this.setState({
-            showNewTemplateModal: true,
+            showNewTemplateModal: true
         });
     }
 
@@ -394,15 +317,15 @@ export class Dashboard extends Component {
         event.preventDefault();
         this.closeModal();
 
-        let data = {
+        const Data = {
             Title: this.state.title,
-            Email: localStorage.getItem('user'),
-            Slides: '{}',
-            Settings: '{}',
-            Questions: '{}',
-        }
+            Email: localStorage.getItem("user"),
+            Slides: "{}",
+            Settings: "{}",
+            Questions: "{}"
+        };
 
-        axios.post(`admin/create`, data).then(res => {
+        Axios.post(`admin/create`, Data).then(res => {
             if (res.status === 202) {
 
                 //Created Session
@@ -414,57 +337,73 @@ export class Dashboard extends Component {
             }
         });
 
-        this.setState({ title: '' });
+        this.setState({ title: "" });
     }
 
     handleChange(e) {
-        const name = e.target.name;
-        const value = e.target.value;
+        const Name = e.target.name;
+        const Value = e.target.value;
 
         this.setState({
-            [name]: value,
+            [Name]: Value
         });
     }
 
     sessionClick(e) {
-        axios.post(`admin/load-${e.id}`).then(res => {
+        Axios.post(`admin/load-${e.id}`).then(res => {
             if (res.status === 200) {
 
                 //Session already active?
                 sessionStorage.setItem("code", e.id);
-                sessionStorage.setItem("title", e.getAttribute('name'));
-                this.props.history.push('/administrator');
+                sessionStorage.setItem("title", e.getAttribute("name"));
+                this.props.history.push("/administrator");
             }
             else if (res.status === 201) {
 
                 //Session Created!
                 sessionStorage.setItem("code", e.id);
-                sessionStorage.setItem("title", e.getAttribute('name'));
-                this.props.history.push('/administrator');
+                sessionStorage.setItem("title", e.getAttribute("name"));
+                this.props.history.push("/administrator");
             }
             else if (res.status === 404) {
 
                 //Session not found
             }
-            else {
-
-                //Unknown error
-            }
-        })
+        });
     }
 
     sessionRender() {
         if (this.state.sessions && this.state.sessions.length) {
             return (
                 this.state.sessions.map(session =>
-                    <Category id={session.identity} name={session.title} key={session.identity} index={session.identity} onClick={((e) => this.sessionClick(e.target))}>
-                        <CategoryTitle id={session.identity} name={session.title} key={session.identity} index={session.identity}>{session.title}</CategoryTitle>
-                        <CategoryIdentity id={session.identity} name={session.title} key={session.identity} index={session.identity}>#{session.identity}</CategoryIdentity>
+                    <Category id={session.identity}
+                        index={session.identity}
+                        key={session.identity}
+                        name={session.title}
+                        onClick={((e) => this.sessionClick(e.target))}>
+                        <CategoryTitle id={session.identity}
+                            index={session.identity}
+                            key={session.identity}
+                            name={session.title}>
+                            {session.title}
+                        </CategoryTitle>
+                        <CategoryIdentity id={session.identity}
+                            index={session.identity}
+                            key={session.identity}
+                            name={session.title}>
+                            #{session.identity}
+                        </CategoryIdentity>
                         <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)} />
-                        <CategoryTime id={session.identity} name={session.title} key={session.identity} index={session.identity}>{this.displayDate(session.lastOpen)}</CategoryTime>
+                        <CategoryTime id={session.identity}
+                            index={session.identity}
+                            key={session.identity}
+                            name={session.title}>
+                            {this.displayDate(session.lastOpen)}
+                        </CategoryTime>
                     </Category>)
             );
-        } else {
+        }
+        else {
             return (
                 <ProjectContainer>
                     <ProjectText>We didn't find any projects here, create your first now!</ProjectText>
@@ -475,54 +414,56 @@ export class Dashboard extends Component {
     }
 
     displayDate(dateTime) {
-        var date = new Date(Date.parse(dateTime));
-        var month = '';
-        switch (date.getMonth() + 1) {
+
+        // ReSharper disable once UsageOfPossiblyUnassignedValue
+        const Time = new Date(Date.parse(dateTime));
+        let Month = "";
+        switch (Time.getMonth() + 1) {
             case 1:
-                month = 'January';
+                Month = "January";
                 break;
             case 2:
-                month = 'Febuary';
+                Month = "February";
                 break;
             case 3:
-                month = 'March';
+                Month = "March";
                 break;
             case 4:
-                month = 'April';
+                Month = "April";
                 break;
             case 5:
-                month = 'May';
+                Month = "May";
                 break;
             case 6:
-                month = 'June';
+                Month = "June";
                 break;
             case 7:
-                month = 'July';
+                Month = "July";
                 break;
             case 8:
-                month = 'August';
+                Month = "August";
                 break;
             case 9:
-                month = 'September';
+                Month = "September";
                 break;
             case 10:
-                month = 'October';
+                Month = "October";
                 break;
             case 11:
-                month = 'November';
+                Month = "November";
                 break;
             case 12:
-                month = 'December'
+                Month = "December";
                 break;
         }
 
-        return `${date.getUTCDate()}. ${month} ${date.getFullYear()}`;
+        return `${Time.getUTCDate()}. ${Month} ${Time.getFullYear()}`;
     }
 
     closeModal() {
         this.setState({
             showNewSessionModal: false,
-            showNewTemplateModal: false,
+            showNewTemplateModal: false
         });
     }
 
@@ -535,15 +476,21 @@ export class Dashboard extends Component {
     modalContent() {
         return (
             <ProjectModalContent>
-                <Form autoComplete="off" onSubmit={(e) => this.createProject(e)}>
+                <Form autoComplete="off"
+                    onSubmit={(e) => this.createProject(e)}>
                     <PopupText>Title</PopupText>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control autoComplete="off" name="title" onChange={this.handleChange} placeholder="Session title..." required />
+                            <Form.Control autoComplete="off"
+                                name="title"
+                                onChange={this.handleChange}
+                                placeholder="Session title..."
+                                required />
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
-                    <CreateButton type="submit" value="Create Session" />
+                    <CreateButton type="submit"
+                        value="Create Session" />
                 </Form>
             </ProjectModalContent>
         );
@@ -552,11 +499,16 @@ export class Dashboard extends Component {
     modalTemplateContent() {
         return (
             <ProjectModalContent>
-                <Form autoComplete="off" onSubmit={(e) => this.createProject(e)}>
+                <Form autoComplete="off"
+                    onSubmit={(e) => this.createProject(e)}>
                     <PopupText>Title</PopupText>
                     <Form.Group controlId="validateTitle">
                         <InputGroup>
-                            <Form.Control autoComplete="off" name="title" onChange={this.handleChange} placeholder="Session title..." required />
+                            <Form.Control autoComplete="off"
+                                name="title"
+                                onChange={this.handleChange}
+                                placeholder="Session title..."
+                                required />
                         </InputGroup>
                     </Form.Group>
 
@@ -572,7 +524,8 @@ export class Dashboard extends Component {
                         </InputGroup>
                     </Form.Group>
                     <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
-                    <CreateButton type="submit" value="Create Template" />
+                    <CreateButton type="submit"
+                        value="Create Template" />
                 </Form>
             </ProjectModalContent>
         );
@@ -580,36 +533,71 @@ export class Dashboard extends Component {
 
     render() {
         return (
-            <>
+            <React.Fragment>
                 <MainContainer>
                     <Banner>
-                        <BreadCrumb aria-label="Breadcrumb" separator="&#187;">
-                            <BreadText color="initial" href="/">Coboost</BreadText>
-                            <BreadText color="initial" href="/dashboard">Sessions</BreadText>
+                        <BreadCrumb aria-label="Breadcrumb"
+                            separator="&#187;">
+                            <BreadText color="initial"
+                                href="/">
+                                Coboost
+                            </BreadText>
+                            <BreadText color="initial"
+                                href="/dashboard">
+                                Sessions
+                            </BreadText>
                         </BreadCrumb>
 
-                        <BannerDropdown title={<BsJustify />} style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                        <BannerDropdown style={{
+                            float: "right",
+                            position: "relative",
+                            top: "50%",
+                            transform: "translateY(-50%)"
+                        }}
+                            title={<BsJustify />}>
                             <BannerLink onClick={this.logout}>Logout</BannerLink>
                         </BannerDropdown>
 
-                        <BannerDropdown title="New Session" style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
+                        <BannerDropdown style={{
+                            float: "right",
+                            position: "relative",
+                            top: "50%",
+                            transform: "translateY(-50%)"
+                        }}
+                            title="New Session">
                             <BannerLink onClick={this.newProject}>Create Empty Session</BannerLink>
-                            <BannerLink disabled onClick={this.newTemplate}>Use Session Template</BannerLink>
+                            <BannerLink disabled
+                                onClick={this.newTemplate}>
+                                Use Session Template
+                            </BannerLink>
                         </BannerDropdown>
 
-                        {/*<BannerButton style={{ float: "right", position: "relative", top: "50%", transform: "translateY(-50%)" }} onClick={this.newProject}>New Session</BannerButton>*/}
                     </Banner>
                     <Header>
-                        <HeaderText>Overview</HeaderText>
+                        <HeaderText>
+                            Overview
+                        </HeaderText>
                     </Header>
                     <CategoryContainer>
                         {this.sessionRender()}
                     </CategoryContainer>
                 </MainContainer>
-                {this.state.showNewSessionModal && <PageModal title="New Session" body={this.modalContent()} onClose={this.closeModal} />}
-                {this.state.showNewTemplateModal && <PageModal title="New Template" body={this.modalTemplateContent()} onClose={this.closeModal} />}
-                {this.state.modal.delete && <PageModal title="Confirm Delete" body={this.modal.delete.content()} onClose={this.modal.delete.close.bind(this)} />}
-            </>
+                {this.state.showNewSessionModal &&
+                    <PageModal body={this.modalContent()}
+                        onClose={this.closeModal}
+                        title="New Session" />
+                }
+                {this.state.showNewTemplateModal &&
+                    <PageModal body={this.modalTemplateContent()}
+                        onClose={this.closeModal}
+                        title="New Template" />
+                }
+                {this.state.modal.delete &&
+                    <PageModal body={this.modal.delete.content()}
+                        onClose={this.modal.delete.close.bind(this)}
+                        title="Confirm Delete" />
+                }
+            </React.Fragment>
         );
     }
 }

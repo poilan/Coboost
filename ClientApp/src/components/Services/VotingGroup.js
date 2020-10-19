@@ -1,14 +1,14 @@
-﻿import React, { Component } from 'react';
-import { ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import Styled from "styled-components";
 import "../Administrator/Tabs/node_modules/circular-std";
 
-const MultipleChoiceGroup = styled(ToggleButtonGroup)`
+const MultipleChoiceGroup = Styled(ToggleButtonGroup)`
     display: block;
     padding: 20px;
 `;
 
-const TickStem = styled.div`
+const TickStem = Styled.div`
     position: relative;
     width: 2px;
     height: 12px;
@@ -19,7 +19,7 @@ const TickStem = styled.div`
     transform: rotate(45deg);
 `;
 
-const TickKick = styled.div`
+const TickKick = Styled.div`
     position: relative;
     width: 6px;
     height: 2px;
@@ -29,7 +29,7 @@ const TickKick = styled.div`
     transform: rotate(45deg)
 `;
 
-const Tick = styled.div`
+const Tick = Styled.div`
     width: 24px;
     height: 24px;
 
@@ -44,7 +44,7 @@ const Tick = styled.div`
     display: inline-block;
 `;
 
-export const MultipleChoiceButton = styled(ToggleButton)`
+export const MultipleChoiceButton = Styled(ToggleButton)`
     background-color: transparent !important;
     border-radius: 10px;
     border-color: black !important;
@@ -86,16 +86,22 @@ export const MultipleChoiceButton = styled(ToggleButton)`
 
 export class MultipleChoiceOption extends Component {
     render() {
-        return (<>
-            <MultipleChoiceGroup toggle name="multipleChoice" vertical>
-                <MultipleChoiceButton name="test" size="lg" type="radio">
-                    <Tick>
-                        <TickStem />
-                        <TickKick />
-                    </Tick>
-                    Hello
-                </MultipleChoiceButton>
-            </MultipleChoiceGroup>
-        </>);
+        return (
+            <React.Fragment>
+                <MultipleChoiceGroup name="multipleChoice"
+                    toggle
+                    vertical>
+                    <MultipleChoiceButton name="test"
+                        size="lg"
+                        type="radio">
+                        <Tick>
+                            <TickStem />
+                            <TickKick />
+                        </Tick>
+                        Hello
+                    </MultipleChoiceButton>
+                </MultipleChoiceGroup>
+            </React.Fragment>
+        );
     }
 }

@@ -1,15 +1,14 @@
-﻿import React, { Component } from 'react';
-import styled from 'styled-components';
+﻿import React, { Component } from "react";
+import Styled from "styled-components";
 import "circular-std";
-import axios from 'axios';
-import { Input } from './Input';
-import Box from '@material-ui/core/Box';
-import Slider from '@material-ui/core/Slider';
-import { Collapse, IconButton, Menu, MenuItem } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import { ColorPicker } from './ColorPicker';
+import Axios from "axios";
+import { Input } from "./Input";
+import Box from "@material-ui/core/Box";
+import Slider from "@material-ui/core/Slider";
+import { Collapse, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { ColorPicker } from "./ColorPicker";
 
-const BackgroundContainer = styled.div`
+const BackgroundContainer = Styled.div`
     background: #fff;
     position: absolute;
 `;
@@ -17,21 +16,31 @@ const BackgroundContainer = styled.div`
 export function ResultBackground(props) {
     return (
         <BackgroundContainer {...props}>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}> </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
+            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            </div>
         </BackgroundContainer>
     );
 }
 
-const ItemContainer = styled.div`
+const ItemContainer = Styled.div`
     display: inline-block;
     height: 100%;
     width: ${props => 100 / props.total}%;
@@ -39,13 +48,13 @@ const ItemContainer = styled.div`
     position: absolute;
 `;
 
-const PercentageContainer = styled.div`
+const PercentageContainer = Styled.div`
     height: ${props => props.height};
     position: relative;
 
 `;
 
-const Percentage = styled.div`
+const Percentage = Styled.div`
     height: ${props => props.percentage}%;
     width: 50%;
     margin-left: -25%;
@@ -54,7 +63,7 @@ const Percentage = styled.div`
     overflow: hidden;
     font-size: 1rem;
     text-align: center;
-    font-size: calc(${props => props.percentage}px + 10px);
+    font-size: 3rem;
     font-weight: 600;
     position: absolute;
     bottom: 0;
@@ -63,97 +72,140 @@ const Percentage = styled.div`
     box-shadow: 1px 0 1px 0 rgba(0, 0, 0, .04);
 
     &:hover {
-           filter: saturate(150%) drop-shadow(6px -3px 3px black);
-           cursor: ${props => props.group == "new" ? "pointer" : "default"};
+           filter: saturate(125%) drop-shadow(6px -3px 3px black);
+           cursor: ${props => props.group === "new"
+        ? "pointer"
+        : "default"};
         }
 `;
 
 export class ResultItem extends Component {
     state = {
         menuAnchor: null,
-        colorAnchor: null,
+        colorAnchor: null
     }
+
     validateHexColor = /^#([0-9A-Fa-f]{3}){1,2}$/;
 
-    colorChange = (ColorEvent) => {
-        if (!this.validateHexColor.test(ColorEvent.hex))
+    colorChange = (colorEvent) => {
+        if (!this.validateHexColor.test(colorEvent.hex)) {
             return;
+        }
 
         this.setState({
             colorAnchor: null
         });
-        const code = sessionStorage.getItem("code");
+        const Code = sessionStorage.getItem("code");
 
-        let color = ColorEvent.hex;
+        const Color = colorEvent.hex;
 
-        axios.post(`admin/${code}/option${this.props.index}-recolor`, JSON.stringify(color), { headers: { 'Content-Type': 'application/json', } });
+        Axios.post(`admin/${Code}/option${this.props.index}-recolor`,
+            JSON.stringify(Color),
+            { headers: { 'Content-Type': "application/json" } });
     }
 
     colorOpen = () => {
-        const anchor = this.state.menuAnchor;
+        const Anchor = this.state.menuAnchor;
         this.setState({
             menuAnchor: null,
-            colorAnchor: anchor
+            colorAnchor: Anchor
         });
     }
 
     render() {
         return (
-            <ItemContainer total={this.props.total} index={this.props.index}>
-                <PercentageContainer height={`${this.props.height}`} >
-                    <Percentage color={this.props.color} percentage={this.props.percentage} onClick={(e) => this.setState({ menuAnchor: e.currentTarget })}>{this.props.showPercentage ? (this.props.percentage > 0 && Math.round(this.props.percentage) + "%") : this.props.points != 0 ? this.props.points : ""}</Percentage>
+            <ItemContainer index={this.props.index}
+                total={this.props.total}>
+                <PercentageContainer height={`${this.props.height}`}>
+                    <Percentage color={this.props.color}
+                        onClick={(e) =>
+                            this.setState({ menuAnchor: e.currentTarget })}
+                        percentage={this.props.percentage}>
+                        {this.props.showPercentage
+                            ? (this.props.percentage > 0 && Math.round(this.props.percentage) + "%")
+                            : this.props.points !== 0
+                                ? this.props.points
+                                : ""}
+                    </Percentage>
                 </PercentageContainer>
-                <Input vote size="1" showcase={this.props.showcase}
-                    id={this.props.id} index={this.props.index} title={this.props.title} description={this.props.description}
-                    checked={this.props.checked} onClick={this.props.onClick}
-                />
+                <Input checked={this.props.checked}
+                    description={this.props.description}
+                    id={this.props.id}
+                    index={this.props.index}
+                    onClick={this.props.onClick}
+                    showcase={this.props.showcase}
+                    size="1"
+                    title={this.props.title}
+                    vote />
 
-                <Menu
-                    anchorEl={this.state.menuAnchor}
-                    open={Boolean(this.state.menuAnchor)} onClose={() => this.setState({ menuAnchor: null })}
+                <Menu anchorEl={this.state.menuAnchor}
                     anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
+                        vertical: "bottom",
+                        horizontal: "center"
                     }}
+                    onClose={() => this.setState({ menuAnchor: null })}
+                    open={Boolean(this.state.menuAnchor)}
                     transformOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                >
+                        vertical: "bottom",
+                        horizontal: "center"
+                    }}>
                     <MenuItem onClick={this.colorOpen}>
                         Change Color
                     </MenuItem>
                 </Menu>
-                <ColorPicker color={this.props.color} anchorEl={this.state.colorAnchor} transformOrigin={{ vertical: 'bottom', horizontal: 'center' }} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onChangeComplete={this.colorChange} onClose={() => this.setState({ colorAnchor: null })} />
+                <ColorPicker anchorEl={this.state.colorAnchor}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    color={this.props.color}
+                    onChangeComplete={this.colorChange}
+                    onClose={() => this.setState({ colorAnchor: null })}
+                    transformOrigin={{ vertical: "bottom", horizontal: "center" }} />
             </ItemContainer>
         );
     }
 }
 
 export function ResultSlider(props) {
-    let marks = [
+    const Marks = [
         {
             value: props.min,
-            label: `${props.minDescription == (undefined || null) ? props.min : props.minDescription}`,
+            label: `${props.minDescription
+                ? props.min
+                : props.minDescription}`
         },
         {
             value: props.max,
-            label: `${props.maxDescription == (undefined || null) ? props.max : props.maxDescription}`,
-        },
-    ]
+            label: `${props.maxDescription
+                ? props.max
+                : props.maxDescription}`
+        }];
     return (
-        <Box key={props.index} component="fieldset" mb={1} pt={0} px={1} borderColor="grey.500" border={0}>
-            <Input vote size="1"
-                id={props.id} index={props.index} title={props.title} description={props.description}
-                checked={props.checked}
-                onClick={props.onClick} showcase={props.showcase}
-            />
-            <Box component="fieldset" px={2} borderColor="transparent">
-                <Slider name={props.title} value={props.average}
-                    marks={marks} min={props.min} max={props.max} color={props.color}
-                    aria-labledby="discrete-slider" valueLabelDisplay="on"
-
-                />
+        <Box border={0}
+            borderColor="grey.500"
+            component="fieldset"
+            key={props.index}
+            mb={1}
+            pt={0}
+            px={1}>
+            <Input checked={props.checked}
+                description={props.description}
+                id={props.id}
+                index={props.index}
+                onClick={props.onClick}
+                showcase={props.showcase}
+                size="1"
+                title={props.title}
+                vote />
+            <Box borderColor="transparent"
+                component="fieldset"
+                px={2}>
+                <Slider aria-labledby="discrete-slider"
+                    color={props.color}
+                    marks={Marks}
+                    max={props.max}
+                    min={props.min}
+                    name={props.title}
+                    value={props.average}
+                    valueLabelDisplay="on" />
             </Box>
         </Box>
     );

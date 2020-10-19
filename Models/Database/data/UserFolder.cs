@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Slagkraft.Models.Database
+namespace Coboost.Models.Database.data
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class UserFolder
     {
-        public int FolderId { get; set; }
+        #region Public Properties
+
         public SessionFolder Folder { get; set; }
 
-        public int SessionId { get; set; }
+        public int FolderId { get; set; }
+
         public Session Session { get; set; }
 
-        public string UserId { get; set; }
+        public int SessionId { get; set; }
+
+        // ReSharper disable once UnusedMember.Global
         public User User { get; set; }
+
+        public string UserId { get; set; }
+
+        #endregion Public Properties
     }
 }
