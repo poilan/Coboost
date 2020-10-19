@@ -206,7 +206,7 @@ export class Administrator extends React.Component {
 
             const Code = sessionStorage.getItem("code");
             this.setState({
-                active: target
+                active: parseInt(target)
             });
             Axios.post(`admin/${Code}/active-${target}`);
 
