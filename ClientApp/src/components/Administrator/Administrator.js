@@ -661,7 +661,7 @@ export class Administrator extends React.Component {
                                 update={this.update.bind(this)}>
                                 {this.state.tasks != undefined &&
                                     this.state.tasks.map(task =>
-                                        <Task active={this.state.active === parseInt(task.Index)}
+                                        <Task active={this.state.active === task.Index}
                                             id={task.Index}
                                             key={task.Index}
                                             onClick={(e) => this.SSE.start(e.target.id)}
