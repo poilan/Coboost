@@ -48,7 +48,7 @@ const LeftInput = Styled.input`
     border-radius: 1rem;
     height: 100%;
     border: 0;
-    outline: 0;
+    outline: none;
 `;
 
 const LeftText = Styled.h2`
@@ -191,7 +191,7 @@ export class Home extends React.Component {
         this.onWindowSizeChange = this.onWindowSizeChange.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (localStorage.getItem("user") !== null) {
             this.setState({
                 loggedIn: true

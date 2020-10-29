@@ -6,59 +6,59 @@ import { Modal } from "react-bootstrap";
 import { Button, Popper, Box, Typography, Paper, Hidden } from "@material-ui/core";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
+
 const Container = Styled.div`
-        display: ${props => props.vote
-        ? "block"
-        : "inline-block"};
-        width: calc((${props => props.size <= 2
-        ? (props.size === 2
-            ? "(100% - 20px) / 2"
-            : "100% - 20px")
-        : (props.size === 4
-            ? "(100% - 20px) / 4"
-            : "(100% - 20px) / 3")}) - 2%);
         font-family: CircularStd;
         font-size: 1rem;
-        line-height: ${props => props.vote
-        ? "1.25rem"
-        : "2rem"};
+        background: #fff;
         font-weight: 600;
-        margin: ${props => props.vote
-        ? "0.5"
-        : "1"}%;
+        position: relative;
         box-sizing: border-box;
         padding: 10px;
+        white-space: normal;
+        display: ${props => props.vote
+                            ? "block"
+                            : "inline-block"};
+        width: calc((${props => props.size <= 2
+                                ? (props.size === 2
+                                       ? "(100% - 20px) / 2"
+                                       : "100% - 20px")
+                                : (props.size === 4
+                                       ? "(100% - 20px) / 4"
+                                       : "(100% - 20px) / 3")}) - 2%);
+        line-height: ${props => props.vote
+                                ? "1.25rem"
+                                : "2rem"};
+        margin: ${props => props.vote
+                           ? "0.5"
+                           : "1"}%;
         border-radius: ${props => props.vote
-        ? "0"
-        : "0.8rem"};
+                                  ? "0"
+                                  : "0.8rem"};
         box-shadow: ${props => props.vote
-        ? ""
-        : "0 1px 0 1px rgba(0, 0, 0, .08)"};
-        background: #fff;
+                               ? ""
+                               : "0 1px 0 1px rgba(0, 0, 0, .08)"};
         border-top: ${props => props.vote
-        ? "2px solid #cfcfcf"
-        : ""};
+                               ? "2px solid #cfcfcf"
+                               : ""};
         box-shadow: ${props => props.checked
-        ? "0 0 0 5px #4075ff"
-        : ""};
-        position: relative;
+                               ? "0 0 0 5px #4075ff"
+                               : ""};
         overflow: ${props => props.vote
-        ? "visible"
-        : "hidden"};
-        white-space: ${props => props.vote
-        ? "normal"
-        : "nowrap"};
+                             ? "visible"
+                             : "hidden"};
 
         &:hover {
             filter: brightness(80%) drop-shadow(6px 6px 3px black);
             cursor: ${props => props.showcase
-        ? "default"
-        : "grab"};
+                               ? "default"
+                               : "grab"};
         }
+
         &:active {
             cursor: ${props => props.showcase
-        ? "default"
-        : "grabbing"};
+                               ? "default"
+                               : "grabbing"};
         }
 `;
 
@@ -113,6 +113,7 @@ export class Input extends Component {
         poppingAnchor: null
     }
 
+
     dragStart = e => {
         e.stopPropagation();
         if (this.props.showcase) {
@@ -124,6 +125,7 @@ export class Input extends Component {
         };
         e.dataTransfer.setData("drag", JSON.stringify(Data));
     }
+
 
     handleClicks = e => {
         e.stopPropagation();
@@ -151,6 +153,7 @@ export class Input extends Component {
         }
     }
 
+
     hover = {
         enter: (e) => {
             if (this.props.title === this.props.description) {
@@ -172,12 +175,18 @@ export class Input extends Component {
         }
     }
 
+
     render() {
         return (
             <React.Fragment>
-                {!this.props.showcase &&
+                {
+                    !this.props.showcase &&
                     this.props.member % this.props.size === 0 &&
-                    <RowNumber id={this.props.id}>{(this.props.member / this.props.size) + 1}</RowNumber>}
+                    <RowNumber id={this.props.id}>
+                        {(this.props.member / this.props.size) + 1}
+                    </RowNumber>
+                }
+
                 <Container checked={this.props.checked}
                     column={this.props.column}
                     draggable={!this.props.showcase}
@@ -191,17 +200,30 @@ export class Input extends Component {
                     showcase={this.props.showcase}
                     size={this.props.size}
                     vote={this.props.vote}>
-                    {this.props.title}
 
-                    {this.props.isMerged != undefined &&
-                        !this.props.showcase &&
-                        this.props.isMerged !== 0 &&
+                    {!this.props.showcase || this.props.title === this.props.description
+                        ? this.props.title
+                        : <Box component="fieldset">
+
+                            <Typography component="legend" style={{fontSize: "1rem", fontWeight: "600"}}>
+                                {this.props.title}
+                            </Typography>
+
+                              <Typography variant="body2" >
+                                  {this.props.description}
+                              </Typography>
+                        </Box>
+                    }
+
+                    {
+                        this.props.isMerged != undefined && !this.props.showcase && this.props.isMerged !== 0 &&
                         <React.Fragment>
                             <MergedNumber>{this.props.isMerged}</MergedNumber>
                             <MergeStack />
                         </React.Fragment>
                     }
-                    {this.props.title !== this.props.description &&
+                    {
+                        !this.props.showcase && this.props.title !== this.props.description &&
                         <React.Fragment>
                             <MoreText />
                             <PopoverDetails anchorEl={this.state.poppingAnchor}
@@ -308,6 +330,7 @@ export class InputDetails extends React.Component {
         showing: true
     }
 
+
     content() {
         const Kids = this.props.answer.Children;
 
@@ -320,7 +343,9 @@ export class InputDetails extends React.Component {
                     Separate All
                 </Separate>
                 {Kids && //If this is merged input add button to show them.
-                    <ShowChildren value={this.state.showChildren ? "Hide Merged Inputs" : "Show Merged Inputs"}
+                    <ShowChildren value={this.state.showChildren
+                        ? "Hide Merged Inputs"
+                        : "Show Merged Inputs"}
                         onClick={() => this.setState({ showChildren: !this.state.showChildren })} />
                 }
 
@@ -338,6 +363,7 @@ export class InputDetails extends React.Component {
         );
     }
 
+
     Separate(group, member) {
         if (this.props.answer.Children != undefined) {
             const Code = sessionStorage.getItem("code");
@@ -346,6 +372,7 @@ export class InputDetails extends React.Component {
             this.close();
         }
     }
+
 
     details(answer) {
         const Title = answer.Title;
@@ -363,9 +390,11 @@ export class InputDetails extends React.Component {
                     }>
                     {Title}
                 </Titles>
+
                 <Users>
                     {User}
                 </Users>
+
                 {Title !== Description &&
                     <Descriptions>
                         {Description}
@@ -374,6 +403,7 @@ export class InputDetails extends React.Component {
             </React.Fragment>
         );
     }
+
 
     close() {
         this.setState({
@@ -387,19 +417,23 @@ export class InputDetails extends React.Component {
         }
     }
 
+
     render() {
         return this.props.answer
             ? <ModalPage centered
                 onHide={this.close.bind(this)}
                 show={this.state.showing}>
+
                 <Modal.Header closeButton>
                     <Modal.Title>
                         Input Details
-                             </Modal.Title>
+                    </Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
                     {this.content()}
                 </Modal.Body>
+
             </ModalPage>
             : null;
     }
@@ -410,8 +444,10 @@ class PopoverDetails extends Component {
         lock: false //If true the popover will not disappear when you stop hovering
     }
 
+
     // ReSharper disable once ThisInGlobalContext
     open = Boolean(this.props.anchorEl);
+
 
     handleClick = (e) => {
         e.stopPropagation();
@@ -424,6 +460,7 @@ class PopoverDetails extends Component {
             : "UNLOCKED");
     }
 
+
     render() {
         return (
             <Popper anchorEl={this.props.anchorEl}
@@ -432,8 +469,11 @@ class PopoverDetails extends Component {
                 open={Boolean(this.props.anchorEl)}
                 placement="bottom"
                 style={{ pointerEvents: "none" }}>
+
                 <Paper elevation={3}>
+
                     <Box p={0}>
+
                         <Box component="fieldset"
                             m={1}
                             maxWidth={500}
@@ -441,11 +481,16 @@ class PopoverDetails extends Component {
                             p={1}
                             textOverflow="ellipsis"
                             width={350}>
+
                             <Typography component="legend"
                                 variant="h6">
+
                                 {this.props.title}
                             </Typography>
-                            <Typography variant="body1">{this.props.description}</Typography>
+
+                            <Typography variant="body1">
+                                {this.props.description}
+                            </Typography>
                         </Box>
                     </Box>
                 </Paper>

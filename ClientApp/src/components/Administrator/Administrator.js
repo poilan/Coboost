@@ -105,7 +105,8 @@ export class Administrator extends React.Component {
             modal: {
                 create: false,
                 type: 0
-            }
+            },
+            popup: false
         };
 
         this.present = this.present.bind(this);
@@ -118,22 +119,42 @@ export class Administrator extends React.Component {
         const PresentManager = new Presentation(Code);
 
         document.addEventListener("keypress", (e) => {
-            if (e.key === "|") {
-                this.setState({
-                    showList: !this.state.showList
-                });
+            if (!this.state.popup)
+            {
+                if (e.key === "|")
+                {
+                    this.setState({
+                        showList: !this.state.showList
+                    });
+                }
+                else if (e.key === " ")
+                {
+                    document.activeElement.blur();
+                    if (this.state.tab === "task")
+                    {
+                        this.selectTab("organize");
+                    }
+                    else
+                    {
+                        this.selectTab("task");
+                    }
+                }
             }
         });
 
         document.addEventListener("keydown", (e) => {
-            if (this.state.modal.create) {
+            if (this.state.popup) {
                 return;
             }
 
-            if (e.keyCode === 37 || e.keyCode === 38) {
+            if (e.keyCode === 37 || e.keyCode === 38)
+            {
+                e.preventDefault();
                 this.controls.back();
             }
-            else if (e.keyCode === 39 || e.keyCode === 40) {
+            else if (e.keyCode === 39 || e.keyCode === 40)
+            {
+                e.preventDefault();
                 this.controls.next();
             }
         });
@@ -315,7 +336,7 @@ export class Administrator extends React.Component {
                     });
                 }
                 catch (e) {
-                    console.log("Failed to parse server event: Votes");
+                    console.log("Failed to parse server event: Amount");
                     console.log(e);
                 }
             });
@@ -331,7 +352,23 @@ export class Administrator extends React.Component {
                     });
                 }
                 catch (e) {
-                    console.log("Failed to parse server event: Votes");
+                    console.log("Failed to parse server event: Status");
+                    console.log(e);
+                }
+            });
+
+            // ReSharper disable once Html.EventNotResolved
+            this.SSE.source.addEventListener("Countdown", (e) => {
+                try {
+                    const Countdown = JSON.parse(e.data);
+                    const TaskList = this.state.tasks;
+                    TaskList[target].Countdown = Countdown;
+                    this.setState({
+                        tasks: TaskList
+                    });
+                }
+                catch (e) {
+                    console.log("Failed to parse server event: Countdown");
                     console.log(e);
                 }
             });
@@ -347,7 +384,7 @@ export class Administrator extends React.Component {
                     });
                 }
                 catch (e) {
-                    console.log("Failed to parse server event: Votes");
+                    console.log("Failed to parse server event: Results");
                     console.log(e);
                 }
             });
@@ -372,7 +409,6 @@ export class Administrator extends React.Component {
             this.SSE.source.addEventListener("error", (e) => {
                 if (e.readyState === window.EventSource.CLOSED) {
                     console.log("SSE: connection closed");
-                    this.SSE.start(this.state.active);
                 }
                 else {
                     console.log(e);
@@ -427,6 +463,18 @@ export class Administrator extends React.Component {
         }
     }
 
+    shortcuts = {
+        open: () => {
+            this.setState({
+                popup: true
+            });
+        },
+        close: () => {
+            this.setState({
+                popup: false
+            });
+        }
+    }
     create = {
         close: (success) => {
             this.setState({
@@ -435,6 +483,8 @@ export class Administrator extends React.Component {
                     type: null
                 }
             });
+
+            this.shortcuts.close();
 
             if (success === true) {
                 this.update();
@@ -449,6 +499,7 @@ export class Administrator extends React.Component {
                 },
                 anchor: null
             });
+            this.shortcuts.open();
         },
 
         multipleChoice: () => {
@@ -459,6 +510,7 @@ export class Administrator extends React.Component {
                 },
                 anchor: null
             });
+            this.shortcuts.open();
         },
 
         points: () => {
@@ -469,6 +521,7 @@ export class Administrator extends React.Component {
                 },
                 anchor: null
             });
+            this.shortcuts.open();
         },
 
         slider: () => {
@@ -479,6 +532,7 @@ export class Administrator extends React.Component {
                 },
                 anchor: null
             });
+            this.shortcuts.open();
         },
 
         menu: (event) => {
@@ -566,7 +620,7 @@ export class Administrator extends React.Component {
                                 : this.selectTab("task");
                         }}
                             style={{
-                                width: "50px",
+                                width: "30px",
                                 right: "0",
                                 bottom: "0",
                                 position: "absolute",
@@ -579,7 +633,7 @@ export class Administrator extends React.Component {
                                 fontWeight: "600",
                                 lineHeight: "2rem",
                                 textAlign: "center",
-                                border: "2px solid #414458",
+                                border: "1px solid #414458",
                                 zIndex: "10"
                             }}>
                             {this.state.tab === "task"
@@ -608,8 +662,8 @@ export class Administrator extends React.Component {
 
                         <div style={{
                             width: this.state.showList
-                                ? "calc(max(15%, 400px) + 50px)"
-                                : "50px",
+                                ? "calc(max(15%, 300px) + 30px)"
+                                : "30px",
                             left: "0",
                             position: "absolute",
                             height: "100%"
@@ -676,7 +730,7 @@ export class Administrator extends React.Component {
                                 this.setState({ showList: !this.state.showList });
                             }}
                                 style={{
-                                    width: "50px",
+                                    width: "30px",
                                     right: "0",
                                     position: "absolute",
                                     height: "100%",
@@ -712,10 +766,10 @@ export class Administrator extends React.Component {
 
                         <div style={{
                             width: this.state.showList
-                                ? "calc(min(85%, calc(100% - 400px)) - 100px)"
+                                ? "calc(min(85%, calc(100% - 300px)) - 60px)"
                                 : "calc(100% - 100px)",
                             left: this.state.showList
-                                ? "calc(max(15%, 400px) + 50px)"
+                                ? "calc(max(15%, 300px) + 30px)"
                                 : "50px",
                             position: "absolute",
                             height: "100%"
@@ -737,7 +791,8 @@ export class Administrator extends React.Component {
                                             : this.state.showControls}
                                         SSE={this.SSE.start}
                                         tasks={this.state.tasks}
-                                        update={this.update.bind(this)} />
+                                        update={this.update.bind(this)}
+                                        popOpen={this.shortcuts.open} popClosed={this.shortcuts.close} />
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>

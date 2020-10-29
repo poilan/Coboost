@@ -134,6 +134,7 @@ const ContentInput = Styled(TextField)`
         ? "#4C7AD3"
         : "#cfcfcf"};
     resize: none;
+    outline: none;
 `;
 
 const ContentButton = Styled(Button)`
@@ -144,7 +145,7 @@ const ContentButton = Styled(Button)`
     font-weight: 450;
     text-align: center;
     border: 4px solid #4C7AD3;
-    outline: 0;
+    outline: none;
     border-radius: 0;
 
     display: block;
@@ -364,12 +365,15 @@ export class Mobile extends React.Component {
                         inputs: Inputs
                     });
 
-                    this.parseAnswers();
+                    if (Index !== this.state.currentInput)
+                    {
+                        this.parseAnswers();
 
-                    this.setState({
-                        currentInput: Index,
-                        sessionState: 1
-                    });
+                        this.setState({
+                            currentInput: Index,
+                            sessionState: 1
+                        });
+                    }
                 }
                 catch (Event) {
                     EventSource.log(`Failed to parse server event${Event}`);
@@ -607,9 +611,17 @@ export class Mobile extends React.Component {
         };
 
         const OnTitleFocus = () => {
-            if (this.state.title.trim() === "") {
+            if (this.state.title.trim() === "")
+            {
+                let Title = this.getTaskAnswers().substring(0, 30);
+                const Index = Title.lastIndexOf(" ");
+
+                if (Index !== -1)
+                {
+                    Title = Title.substring(0, Index);
+                }
                 this.setState({
-                    title: this.getTaskAnswers().substring(0, 29)
+                    title: Title
                 });
             }
         };
@@ -641,7 +653,7 @@ export class Mobile extends React.Component {
                             onFocus={(e) => OnTitleFocus(e)}
                             onKeyDown={HandleEnter.bind(this)}
                             required
-                            value={this.state.title}
+                            value={this.state.title.trim() === "" ? this.getTaskAnswers().substring(0,30) : this.state.title}
                             variant="outlined" />
                     </Box>
 
@@ -1005,6 +1017,11 @@ export class Mobile extends React.Component {
             default:
                 Title = "Waiting";
                 break;
+        }
+
+        if (Task.Countdown > 0)
+        {
+            Title += `  |  Timer: ${Task.Countdown} seconds`;
         }
 
         return Title;

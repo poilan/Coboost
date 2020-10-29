@@ -84,7 +84,7 @@ namespace Coboost.Controllers
         {
             User foundUser = await _context.Users.FindAsync(user.Email);
             if (foundUser != null)
-                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ? 202 : 406;
+                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ? 202 : 401;
             else
                 HttpContext.Response.StatusCode = 404;
         }
@@ -120,8 +120,6 @@ namespace Coboost.Controllers
 
             User userExistence = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence != null)
-
-            //if (_context.Users.Find(user.Email) != null)
             {
                 //Email address is already in use
                 HttpContext.Response.StatusCode = 409;
@@ -140,7 +138,7 @@ namespace Coboost.Controllers
 
             Email email = new Email(recipient, title, body);
             await email.Send();
-            HttpContext.Response.StatusCode = 202;
+            HttpContext.Response.StatusCode = 201;
         }
 
         [HttpPost("start-recovery")]

@@ -80,7 +80,7 @@ namespace Coboost.Controllers
                 Response.ContentType = "text/event-stream";
                 BaseTask question = null;
 
-                while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
+                while (!HttpContext.RequestAborted.IsCancellationRequested)
                 {
                     if (admin.Active < admin.Tasks.Count)
                         question = admin.Tasks[admin.Active].Type switch
@@ -100,7 +100,7 @@ namespace Coboost.Controllers
                     }
 
                     admin.Client.Reset();
-                    admin.Client.WaitOne(30000);
+                    admin.Client.WaitOne(10000);
                 }
 
                 Response.Body.Close();

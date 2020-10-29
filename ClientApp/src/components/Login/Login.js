@@ -3,6 +3,7 @@ import Styled from "styled-components";
 import Axios from "axios";
 import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from "react-bootstrap";
 
+
 const LoginContainer = Styled.div`
     display: flex;
     position: absolute;
@@ -79,6 +80,7 @@ export class Login extends React.Component {
         this.forgotPassword = this.forgotPassword.bind(this);
     }
 
+
     handleChange(e) {
         const Tab = this.state.tab;
         const Name = e.target.name;
@@ -93,11 +95,12 @@ export class Login extends React.Component {
         });
     }
 
-    forgotPassword() {
 
+    forgotPassword() {
         // TODO: forgotPassword
         this.props.history.push("/recover");
     }
+
 
     loginTab() {
         return (
@@ -108,7 +111,7 @@ export class Login extends React.Component {
                 <FormGroup controlId="formBasicEmail">
 
                     <Form.Label>
-                        Username or Email
+                        Email
                     </Form.Label>
 
                     <FormInput name="email"
@@ -150,6 +153,7 @@ export class Login extends React.Component {
         );
     }
 
+
     async submitLogin(event) {
         event.preventDefault();
 
@@ -164,128 +168,122 @@ export class Login extends React.Component {
 
         await Axios.post(`user/login`, Data).then(res => {
             if (res.status === 202) {
-
                 //Login Success
                 localStorage.setItem("user", Data.Email);
                 this.props.history.push("/");
+                return true;
             }
-            else if (res.status === 406) {
-
-                //Wrong password
-            }
+            return false;
+        }, () => {
+            alert("Wrong user-name or password");
+            //Wrong password or user-name
+            return false;
         });
     }
+
 
     registerTab() {
         return (
             <React.Fragment>
                 <Form autoComplete="on"
-                    noValidate
                     onSubmit={this.submitRegistration}
                     validated={this.state.register.validated}>
 
                     <Form.Group>
-
                         <InputGroup>
-
                             <Form.Control name="email"
                                 onChange={this.handleChange}
-                                placeholder="Email.." />
-
+                                placeholder="Email.."
+                                type="email"
+                                required />
                         </InputGroup>
-
                     </Form.Group>
 
                     <Form.Group>
-
                         <InputGroup>
-
                             <Form.Control name="firstName"
                                 onChange={this.handleChange}
-                                placeholder="First name..." />
-
+                                placeholder="First name..."
+                                required/>
                         </InputGroup>
-
                     </Form.Group>
 
                     <Form.Group>
-
                         <InputGroup>
-
                             <Form.Control name="lastName"
                                 onChange={this.handleChange}
-                                placeholder="Last name..." />
-
+                                placeholder="Last name..."
+                                required/>
                         </InputGroup>
-
                     </Form.Group>
 
                     <Form.Group>
-
                         <InputGroup>
-
                             <Form.Control name="password"
                                 onChange={this.handleChange}
                                 placeholder="Password..."
+                                required
                                 type="password" />
-
                         </InputGroup>
-
                     </Form.Group>
 
                     <Form.Group>
-
                         <InputGroup>
-
                             <Form.Control name="repeatPassword"
                                 onChange={this.handleChange}
                                 placeholder="Repeat password..."
+                                required
                                 type="password" />
-
                         </InputGroup>
-
                     </Form.Group>
 
                     <CardButton type="submit">
                         Register
                     </CardButton>
-                </Form>
 
+                </Form>
             </React.Fragment>
         );
     }
+
 
     async submitRegistration(event) {
         event.preventDefault();
         const Data = this.state.register;
 
         await Axios.post(`user/register`, Data).then(res => {
-            if (res.status === 202) {
-
+            if (res.status === 201) {
                 //Registration Succeeded
                 //Redirect to log in?
+                alert("Account Created! Please log in");
+                this.selectTab("login");
+                return true;
             }
-            else if (res.status === 406) {
+            return false;
+        }, error => {
+            if (error.response.status === 406) {
+                alert("Please verify your email address, and make sure your password is 8 or more characters");
 
                 //User didn't write in a correct email address
                 //or password was too short (needs to be 8 or more characters)
             }
-            else if (res.status === 409) {
+            else if (error.response.status === 409) {
+                alert("That email is already linked to an account!");
 
                 //That email is already in use
             }
-            else if (res.status === 400) {
 
-                //Data wasn't received by server
-            }
+            return false;
         });
     }
+
 
     selectTab(key) {
         this.setState({
             tab: key
         });
     }
+
 
     render() {
         return (

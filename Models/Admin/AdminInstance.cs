@@ -17,17 +17,27 @@ namespace Coboost.Models.Admin
 {
     public class AdminInstance
     {
+        #region Private Fields
+
+        private int _active;
+
+        #endregion Private Fields
+
         #region Public Fields
 
         public ManualResetEvent Client = new ManualResetEvent(false);
 
         #endregion Public Fields
 
-        #region Private Fields
+        #region Public Constructors
 
-        private int _active;
+        public AdminInstance()
+        {
+            Active = 0;
+            Tasks = new List<BaseTask>();
+        }
 
-        #endregion Private Fields
+        #endregion Public Constructors
 
         #region Public Properties
 
@@ -52,19 +62,9 @@ namespace Coboost.Models.Admin
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Owner { get; set; }
 
-        public List<BaseTask> Tasks { get; private set; }
+        public List<BaseTask> Tasks { get; set; }
 
         #endregion Public Properties
-
-        #region Public Constructors
-
-        public AdminInstance()
-        {
-            Active = 0;
-            Tasks = new List<BaseTask>();
-        }
-
-        #endregion Public Constructors
 
         #region Public Methods
 
@@ -85,11 +85,41 @@ namespace Coboost.Models.Admin
                     return;
 
                 case SliderVote slide:
-                    {
-                        if (Tasks[Active] is Slider slider)
-                            slider.AddClientVote(slide);
-                        break;
-                    }
+                {
+                    if (Tasks[Active] is Slider slider)
+                        slider.AddClientVote(slide);
+                    break;
+                }
+            }
+        }
+
+        public void StartCountdown()
+        {
+            BaseTask task = Tasks[Active];
+
+            if (task.Countdown != 0)
+                return;
+            try
+            {
+                task.Countdown = task.Timer;
+
+                if (!task.InProgress)
+                    task.InProgress = true;
+
+                while (task.InProgress && task.Countdown > 0)
+                {
+                    task.EventStream();
+                    ClientSet();
+                    Thread.Sleep(999);
+                    task.Countdown -= 1;
+                }
+            }
+            finally
+            {
+                task.Countdown = 0;
+                task.InProgress = false;
+                task.EventStream();
+                ClientSet();
             }
         }
 
@@ -99,6 +129,9 @@ namespace Coboost.Models.Admin
             question.Archive = new List<MultipleChoiceOption>();
             question.Type = BaseTask.TaskType.MultipleChoice;
             question.ShowResults = true;
+            question.Timer = 180;
+            question.Countdown = 0;
+            question.InProgress = false;
             foreach (MultipleChoiceOption option in question.Options)
             {
                 option.Votes = new List<MultipleChoiceVote>();
@@ -116,6 +149,9 @@ namespace Coboost.Models.Admin
             question.Archive = new List<OpenTextInput>();
             question.Type = BaseTask.TaskType.OpenText;
             question.ShowResults = true;
+            question.Timer = 180;
+            question.Countdown = 0;
+            question.InProgress = true;
             Tasks.Add(question);
         }
 
@@ -126,6 +162,9 @@ namespace Coboost.Models.Admin
             task.ShowResults = true;
             task.Votes = new List<PointsVote>();
             task.Archive = new List<PointsOption>();
+            task.Timer = 180;
+            task.Countdown = 0;
+            task.InProgress = true;
             foreach (PointsOption option in task.Options) option.Points = 0;
 
             Tasks.Add(task);
@@ -138,6 +177,9 @@ namespace Coboost.Models.Admin
             task.ShowResults = true;
             task.Votes = new List<SliderVote>();
             task.Archive = new List<SliderOption>();
+            task.Timer = 180;
+            task.Countdown = 0;
+            task.InProgress = true;
             foreach (SliderOption option in task.Options) option.Ratings = new List<int>();
 
             Tasks.Add(task);
@@ -179,33 +221,33 @@ namespace Coboost.Models.Admin
             switch (Tasks[current])
             {
                 case OpenText _:
-                    {
-                        OpenText open = Tasks[current] as OpenText;
-                        Tasks.RemoveAt(current);
-                        Tasks.Insert(target, open);
-                        break;
-                    }
+                {
+                    OpenText open = Tasks[current] as OpenText;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, open);
+                    break;
+                }
                 case MultipleChoice _:
-                    {
-                        MultipleChoice choice = Tasks[current] as MultipleChoice;
-                        Tasks.RemoveAt(current);
-                        Tasks.Insert(target, choice);
-                        break;
-                    }
+                {
+                    MultipleChoice choice = Tasks[current] as MultipleChoice;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
+                    break;
+                }
                 case Points _:
-                    {
-                        Points choice = Tasks[current] as Points;
-                        Tasks.RemoveAt(current);
-                        Tasks.Insert(target, choice);
-                        break;
-                    }
+                {
+                    Points choice = Tasks[current] as Points;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
+                    break;
+                }
                 case Slider _:
-                    {
-                        Slider choice = Tasks[current] as Slider;
-                        Tasks.RemoveAt(current);
-                        Tasks.Insert(target, choice);
-                        break;
-                    }
+                {
+                    Slider choice = Tasks[current] as Slider;
+                    Tasks.RemoveAt(current);
+                    Tasks.Insert(target, choice);
+                    break;
+                }
             }
 
             UpdateIndexes();

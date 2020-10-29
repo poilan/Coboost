@@ -9,6 +9,16 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
     /// </summary>
     public class OpenText : BaseTask
     {
+        #region Public Constructors
+
+        public OpenText()
+        {
+            Archive = new List<OpenTextInput>();
+            Groups = new List<OpenTextGroup>();
+        }
+
+        #endregion Public Constructors
+
         #region Public Structs
 
         /// <summary>
@@ -47,16 +57,6 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
 
         #endregion Public Properties
 
-        #region Public Constructors
-
-        public OpenText()
-        {
-            Archive = new List<OpenTextInput>();
-            Groups = new List<OpenTextGroup>();
-        }
-
-        #endregion Public Constructors
-
         #region Public Methods
 
         /// <summary>
@@ -73,8 +73,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                     Members = new List<OpenTextInput>(),
                     Title = title,
                     Index = Groups.Count,
-                    Column = column,
-                    Color = "#575b75"
+                    Column = column
                 };
                 Groups.Add(group);
             }
@@ -91,6 +90,19 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             lock (ThreadLock)
             {
                 Groups[0].Members.Add(input);
+                UpdateMemberIndexes(0);
+            }
+
+            EventStream();
+        }
+
+        public void Duplicate(OpenTextInput[] inputs)
+        {
+            lock (ThreadLock)
+            {
+                foreach (OpenTextInput input in inputs)
+                    Groups[0].Members.Add(input);
+
                 UpdateMemberIndexes(0);
             }
 

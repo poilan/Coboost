@@ -17,7 +17,7 @@ const FacilitatorContainer = Styled.div`
     opacity: ${props => props.hide
         ? "0%"
         : "100%"};
-    /*outline: 0;
+    /*outline: none;
     box-shadow: 0;
     border: solid rgb(106, 114, 137);
     border-width: 0 1px;*/

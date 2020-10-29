@@ -13,7 +13,7 @@ import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
 const CollectionContainer = Styled.div`
     width: ${props => props.shown
-        ? "calc(100% - 50px)"
+        ? "calc(100% - 30px)"
         : "0%"};
     background: #fff;
     height: 100%;
@@ -320,36 +320,52 @@ export class Task extends Component {
                     onMouseEnter={this.hover.enter}
                     onMouseLeave={this.hover.leave}
                     type={this.props.type}>
+
                     <TaskIndex id={this.props.id}>
                         {this.props.id + 1}
                     </TaskIndex>
+
                     {this.props.type < 2
-                        ? this.props.type === 0
-                            ? <Ico_Text id={this.props.id} style={{
-                                height: "60px",
-                                width: "55px",
-                                marginTop: "10px",
-                                marginRight: "5px"
-                            }} />
-                            : <Ico_MultipleChoice style={{ height: "60px", width: "60px", marginTop: "10px" }} />
-                        : this.props.type === 2
-                            ? <Ico_Points id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
-                            : <Ico_Slider id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
+
+                         ? this.props.type === 0
+
+                           ? <Ico_Text id={this.props.id} style={{
+                               height: "60px",
+                               width: "55px",
+                               marginTop: "10px",
+                               marginRight: "5px"
+                           }} />
+                           : <Ico_MultipleChoice style={{ height: "60px", width: "60px", marginTop: "10px" }} />
+
+                         : this.props.type === 2
+
+                           ? <Ico_Points id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
+                           : <Ico_Slider id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
                     }
+
                     <TitleContainer id={this.props.id}>
+
                         <TaskType id={this.props.id}>
+
                             {this.props.type === 0
+
                                 ? "Text"
                                 : this.props.type === 1
+
                                     ? "Multiple Choice"
                                     : this.props.type === 2
+
                                         ? "Points"
-                                        : "Slider"}
+                                        : "Slider"
+}
                         </TaskType>
+
                         <TaskTitle id={this.props.id}>
                             {this.props.title}
                         </TaskTitle>
+
                     </TitleContainer>
+
                     <TaskLock isBigScreen={this.props.toggle}
                         onClick={this.toggleTask}>
                         {this.props.InProgress

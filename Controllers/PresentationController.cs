@@ -57,7 +57,7 @@ namespace Coboost.Controllers
                 Response.ContentType = "text/event-stream";
                 BaseTask question = null;
 
-                while (!Response.HttpContext.RequestAborted.IsCancellationRequested)
+                while (!HttpContext.RequestAborted.IsCancellationRequested)
                 {
                     if (admin.Tasks.Count > 0 && admin.Active < admin.Tasks.Count &&
                         (question == null || question.Index != admin.Active))
@@ -92,91 +92,98 @@ namespace Coboost.Controllers
                             await Response.WriteAsync(json);
                             await Response.Body.FlushAsync();
                         }
+                        {
+                            int countdown = question.Countdown;
+                            await Response.WriteAsync("event:" + "Countdown\n");
+                            string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                            await Response.WriteAsync(str);
+                            await Response.Body.FlushAsync();
+                        }
                     }
 
                     switch (question)
                     {
                         case OpenText open:
+                        {
+                            OpenTextGroup[] groups = open.Groups.ToArray();
+                            await Response.WriteAsync("event:" + "Groups\n");
+                            string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                            break;
+                        }
+                        case MultipleChoice choice:
+                        {
                             {
-                                OpenTextGroup[] groups = open.Groups.ToArray();
-                                await Response.WriteAsync("event:" + "Groups\n");
-                                string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                                MultipleChoiceOption[] options = choice.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
-                                break;
                             }
-                        case MultipleChoice choice:
                             {
-                                {
-                                    MultipleChoiceOption[] options = choice.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    int total = choice.TotalVotes;
-                                    await Response.WriteAsync("event:" + "Total\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                break;
+                                int total = choice.TotalVotes;
+                                await Response.WriteAsync("event:" + "Total\n");
+                                string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
+                            break;
+                        }
                         case Points point:
+                        {
                             {
-                                {
-                                    PointsOption[] options = point.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    PointsVote[] votes = point.Votes.ToArray();
-                                    await Response.WriteAsync("event:" + "Votes\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    int amount = point.Amount;
-                                    await Response.WriteAsync("event:" + "Amount\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                break;
+                                PointsOption[] options = point.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
+                            {
+                                PointsVote[] votes = point.Votes.ToArray();
+                                await Response.WriteAsync("event:" + "Votes\n");
+                                string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int amount = point.Amount;
+                                await Response.WriteAsync("event:" + "Amount\n");
+                                string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            break;
+                        }
                         case Slider slider:
+                        {
                             {
-                                {
-                                    SliderOption[] options = slider.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    SliderVote[] votes = slider.Votes.ToArray();
-                                    await Response.WriteAsync("event:" + "Votes\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                break;
+                                SliderOption[] options = slider.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
+                            {
+                                SliderVote[] votes = slider.Votes.ToArray();
+                                await Response.WriteAsync("event:" + "Votes\n");
+                                string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            break;
+                        }
                     }
 
                     if (question != null)
                     {
                         question.Reset.Reset();
-                        question.Reset.WaitOne(30000);
+                        question.Reset.WaitOne(10000);
                     }
                     else
                     {
                         admin.Client.Reset();
-                        admin.Client.WaitOne(30000);
+                        admin.Client.WaitOne(10000);
                     }
                 }
 

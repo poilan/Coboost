@@ -118,7 +118,7 @@ const BottomBannerText = Styled.h1`
     font-Size: 1.5rem;
     color: #575b75;
     padding: 0 35px;
-    float: right;
+    float: left;
     top:50%;
     transform: translateY(-50%);
     position: relative;
@@ -160,13 +160,13 @@ export class BigScreen extends Component {
         });
 
         Axios.get(`presentation/info-${Code}`).then(res => {
-            const Title = res.data.title;
+            const Data = `${res.data.title}`;
 
             this.beginSSE = this.beginSSE.bind(this);
             var DataSource = new SSE(`presentation/${Code}/data`);
 
             this.setState({
-                title: Title,
+                title: Data.toString(),
                 sse: DataSource
             });
 
@@ -271,21 +271,35 @@ export class BigScreen extends Component {
                     });
                 }
                 catch (e) {
-                    Server.log("Failed to parse server event: Total");
+                    Server.log("Failed to parse server event: Results");
                 }
             });
 
             Server.addListener("Status", (e) => {
                 try {
-                    const Result = JSON.parse(e.data);
+                    const Status = JSON.parse(e.data);
                     const Task = this.state.task;
-                    Task.InProgress = Result;
+                    Task.InProgress = Status;
                     this.setState({
                         task: Task
                     });
                 }
                 catch (e) {
-                    Server.log("Failed to parse server event: Total");
+                    Server.log("Failed to parse server event: Status");
+                }
+            });
+
+            Server.addListener("Countdown", (e) => {
+                try {
+                    const Countdown = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.Countdown = Countdown;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e) {
+                    Server.log("Failed to parse server event: Countdown");
                 }
             });
         });
@@ -344,12 +358,12 @@ export class BigScreen extends Component {
     renderWelcome() {
         const State = this.state;
         const Code = State.code;
-        const Title = State.title;
+        const Headline = State.title;
         return (
             <React.Fragment>
                 <ContentContainer>
                     <Title>
-                        <b>{Title}</b>
+                        <b>{Headline}</b>
                     </Title>
                     <WelcomeContainer>
                     </WelcomeContainer>
@@ -604,14 +618,14 @@ export class BigScreen extends Component {
     }
 
     handleRender() {
-        const Title = this.state.title;
+        const Headline = this.state.title;
         const Task = this.state.task;
 
-        if (Title === null) {
+        if (Headline === null) {
             return this.renderWaiting();
         }
         else {
-            if (Task && Task.Index !== -1) {
+            if (Task && Task.Index !== undefined && Task.Index !== -1) {
                 return this.renderQuestion();
             }
             else {
@@ -620,18 +634,31 @@ export class BigScreen extends Component {
         }
     }
 
-    render() {
+    render()
+    {
+        let seconds, minutes;
+
+        if (this.state.task && this.state.task.InProgress && this.state.task.Countdown > 0)
+        {
+            seconds = this.state.task.Countdown;
+            minutes = 0;
+            while (seconds >= 60)
+            {
+                minutes += 1;
+                seconds -= 60;
+            }
+        }
         return (
             <React.Fragment>
                 <MainContainer>
                     <Banner>
 
                         <BottomBannerText>
-                            #{this.state.code}
+                            Coboost
                         </BottomBannerText>
 
                         <BottomBannerText>
-                            Coboost
+                            #{this.state.code}
                         </BottomBannerText>
 
                         {this.state.task &&
@@ -648,15 +675,17 @@ export class BigScreen extends Component {
                             height: "50px",
                             lineHeight: "50px",
                             textAlign: "center",
-                            width: "150px",
+                            minWidth: "150px",
                             border: "1px solid black",
                             borderRadius: "15px",
-                            right: "10px",
-                            bottom: "10px"
+                            right: "50px",
+                            top: "25px"
                         }}>
                             {this.state.task.InProgress
-                                ? "Open Task"
-                                : "Closed Task"}
+                                ? this.state.task.Countdown <= 0
+                                  ? "Task Open!"
+                                  : `Time: ${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`
+                                : "Task Closed"}
                         </div>
                     }
                 </MainContainer>

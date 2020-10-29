@@ -29,19 +29,6 @@ namespace Coboost.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        #region Public Structs
-
-        public struct Help
-        {
-            #region Public Properties
-
-            public string Title { get; set; }
-
-            #endregion Public Properties
-        }
-
-        #endregion Public Structs
-
         #region Private Fields
 
         private readonly DatabaseContext _context;
@@ -56,6 +43,19 @@ namespace Coboost.Controllers
         }
 
         #endregion Public Constructors
+
+        #region Public Structs
+
+        public struct Help
+        {
+            #region Public Properties
+
+            public string Title { get; set; }
+
+            #endregion Public Properties
+        }
+
+        #endregion Public Structs
 
         #region Public Methods
 
@@ -93,6 +93,18 @@ namespace Coboost.Controllers
             {
                 HttpContext.Response.StatusCode = 412;
             }
+        }
+
+        [HttpPost("{code}/text-duplicate")]
+        public void Duplicate(int code, [FromBody] OpenTextInput[] inputs)
+        {
+            if (!DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+                return;
+
+            if (!(admin.Tasks[admin.Active] is OpenText task))
+                return;
+
+            ThreadPool.QueueUserWorkItem(o => task.Duplicate(inputs));
         }
 
         [HttpPost("{code}/question-archive-member-{group}-{member}")]
@@ -381,7 +393,7 @@ namespace Coboost.Controllers
                 .SingleOrDefaultAsync();
 
             IEnumerable<Session> sessions = from userSession in user.Sessions
-                                            select userSession.Session;
+                select userSession.Session;
             return sessions.ToList();
         }
 
@@ -617,6 +629,35 @@ namespace Coboost.Controllers
             }
         }
 
+        [HttpPost("{code}/task{index}-timer-{time}")]
+        public void SetTimer(int code, int index, int time)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                BaseTask task = admin.Tasks[index];
+                ThreadPool.QueueUserWorkItem(o => task.Timer = time);
+                HttpContext.Response.StatusCode = 202;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
+        [HttpPost("{code}/start-countdown")]
+        public void StartCountdown(int code)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                ThreadPool.QueueUserWorkItem(o => admin.StartCountdown());
+                HttpContext.Response.StatusCode = 202;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpGet("{code}/stream-question-{index}")]
         public async void StreamQuestion(int code, int index)
         {
@@ -633,190 +674,218 @@ namespace Coboost.Controllers
                 switch (admin.Tasks[index])
                 {
                     case OpenText open:
+                    {
+                        while (!HttpContext.RequestAborted.IsCancellationRequested)
                         {
-                            while (!HttpContext.RequestAborted.IsCancellationRequested)
                             {
-                                {
-                                    OpenTextGroup[] groups = open.Groups.ToArray();
-                                    await Response.WriteAsync("event:" + "Groups\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    OpenTextInput[] archive = open.Archive.ToArray();
-                                    await Response.WriteAsync("event:" + "Archive\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool task = open.InProgress;
-                                    await Response.WriteAsync("event:" + "Status\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool results = open.ShowResults;
-                                    await Response.WriteAsync("event:" + "Results\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                open.Reset.Reset();
-                                open.Reset.WaitOne(30000);
+                                OpenTextGroup[] groups = open.Groups.ToArray();
+                                await Response.WriteAsync("event:" + "Groups\n");
+                                string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
-
-                            break;
+                            {
+                                OpenTextInput[] archive = open.Archive.ToArray();
+                                await Response.WriteAsync("event:" + "Archive\n");
+                                string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool task = open.InProgress;
+                                await Response.WriteAsync("event:" + "Status\n");
+                                string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int countdown = open.Countdown;
+                                await Response.WriteAsync("event:" + "Countdown\n");
+                                string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                                await Response.WriteAsync(str);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool results = open.ShowResults;
+                                await Response.WriteAsync("event:" + "Results\n");
+                                string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            open.Reset.Reset();
+                            open.Reset.WaitOne(10000);
                         }
+
+                        break;
+                    }
                     case MultipleChoice multiple:
+                    {
+                        while (!HttpContext.RequestAborted.IsCancellationRequested)
                         {
-                            while (!HttpContext.RequestAborted.IsCancellationRequested)
                             {
-                                {
-                                    MultipleChoiceOption[] options = multiple.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    int total = multiple.TotalVotes;
-                                    await Response.WriteAsync("event:" + "Total\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    MultipleChoiceOption[] archive = multiple.Archive.ToArray();
-                                    await Response.WriteAsync("event:" + "Archive\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool task = multiple.InProgress;
-                                    await Response.WriteAsync("event:" + "Status\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool results = multiple.ShowResults;
-                                    await Response.WriteAsync("event:" + "Results\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-
-                                multiple.Reset.Reset();
-                                multiple.Reset.WaitOne(30000);
+                                MultipleChoiceOption[] options = multiple.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
-
-                            break;
-                        }
-                    case Points points:
-                        {
                             {
-                                int amount = points.Amount;
-                                await Response.WriteAsync("event:" + "Amount\n");
-                                string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
+                                int total = multiple.TotalVotes;
+                                await Response.WriteAsync("event:" + "Total\n");
+                                string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                MultipleChoiceOption[] archive = multiple.Archive.ToArray();
+                                await Response.WriteAsync("event:" + "Archive\n");
+                                string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool task = multiple.InProgress;
+                                await Response.WriteAsync("event:" + "Status\n");
+                                string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int countdown = multiple.Countdown;
+                                await Response.WriteAsync("event:" + "Countdown\n");
+                                string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                                await Response.WriteAsync(str);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool results = multiple.ShowResults;
+                                await Response.WriteAsync("event:" + "Results\n");
+                                string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
 
-                            while (!HttpContext.RequestAborted.IsCancellationRequested)
-                            {
-                                {
-                                    PointsOption[] options = points.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-
-                                {
-                                    PointsVote[] votes = points.Votes.ToArray();
-                                    await Response.WriteAsync("event:" + "Votes\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-
-                                {
-                                    PointsOption[] archive = points.Archive.ToArray();
-                                    await Response.WriteAsync("event:" + "Archive\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool task = points.InProgress;
-                                    await Response.WriteAsync("event:" + "Status\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool results = points.ShowResults;
-                                    await Response.WriteAsync("event:" + "Results\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                points.Reset.Reset();
-                                points.Reset.WaitOne(30000);
-                            }
-
-                            break;
+                            multiple.Reset.Reset();
+                            multiple.Reset.WaitOne(10000);
                         }
-                    case Slider slide:
+
+                        break;
+                    }
+                    case Points points:
+                    {
                         {
-                            while (!HttpContext.RequestAborted.IsCancellationRequested)
-                            {
-                                {
-                                    SliderOption[] options = slide.Options.ToArray();
-                                    await Response.WriteAsync("event:" + "Options\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    SliderVote[] votes = slide.Votes.ToArray();
-                                    await Response.WriteAsync("event:" + "Votes\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    SliderOption[] archive = slide.Archive.ToArray();
-                                    await Response.WriteAsync("event:" + "Archive\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool task = slide.InProgress;
-                                    await Response.WriteAsync("event:" + "Status\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
-                                {
-                                    bool results = slide.ShowResults;
-                                    await Response.WriteAsync("event:" + "Results\n");
-                                    string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
-                                    await Response.WriteAsync(json);
-                                    await Response.Body.FlushAsync();
-                                }
+                            int amount = points.Amount;
+                            await Response.WriteAsync("event:" + "Amount\n");
+                            string json = $"data: {JsonConvert.SerializeObject(amount)}\n\n";
+                            await Response.WriteAsync(json);
+                            await Response.Body.FlushAsync();
+                        }
 
-                                slide.Reset.Reset();
-                                slide.Reset.WaitOne(30000);
+                        while (!HttpContext.RequestAborted.IsCancellationRequested)
+                        {
+                            {
+                                PointsOption[] options = points.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
                             }
 
-                            break;
+                            {
+                                PointsVote[] votes = points.Votes.ToArray();
+                                await Response.WriteAsync("event:" + "Votes\n");
+                                string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+
+                            {
+                                PointsOption[] archive = points.Archive.ToArray();
+                                await Response.WriteAsync("event:" + "Archive\n");
+                                string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool task = points.InProgress;
+                                await Response.WriteAsync("event:" + "Status\n");
+                                string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int countdown = points.Countdown;
+                                await Response.WriteAsync("event:" + "Countdown\n");
+                                string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                                await Response.WriteAsync(str);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool results = points.ShowResults;
+                                await Response.WriteAsync("event:" + "Results\n");
+                                string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            points.Reset.Reset();
+                            points.Reset.WaitOne(10000);
                         }
+
+                        break;
+                    }
+                    case Slider slide:
+                    {
+                        while (!HttpContext.RequestAborted.IsCancellationRequested)
+                        {
+                            {
+                                SliderOption[] options = slide.Options.ToArray();
+                                await Response.WriteAsync("event:" + "Options\n");
+                                string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                SliderVote[] votes = slide.Votes.ToArray();
+                                await Response.WriteAsync("event:" + "Votes\n");
+                                string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                SliderOption[] archive = slide.Archive.ToArray();
+                                await Response.WriteAsync("event:" + "Archive\n");
+                                string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool task = slide.InProgress;
+                                await Response.WriteAsync("event:" + "Status\n");
+                                string json = $"data: {JsonConvert.SerializeObject(task)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int countdown = slide.Countdown;
+                                await Response.WriteAsync("event:" + "Countdown\n");
+                                string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                                await Response.WriteAsync(str);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                bool results = slide.ShowResults;
+                                await Response.WriteAsync("event:" + "Results\n");
+                                string json = $"data: {JsonConvert.SerializeObject(results)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+
+                            slide.Reset.Reset();
+                            slide.Reset.WaitOne(10000);
+                        }
+
+                        break;
+                    }
                 }
 
                 Response.Body.Close();

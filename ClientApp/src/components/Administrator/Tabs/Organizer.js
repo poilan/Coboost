@@ -1,6 +1,6 @@
 ﻿import React, { Component, useRef, createRef } from "react";
 import Axios from "axios";
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import { Modal, InputGroup, Form, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
 import { PageModal } from "../../Services/PageModal";
@@ -10,7 +10,7 @@ import { Column } from "./Components/Column";
 import { ResultBackground, ResultItem, ResultSlider } from "./Components/Results";
 import { CreateTaskModal } from "./Components/CreateModal";
 import { ContextMenu } from "./Components/ContextMenu";
-import { Tooltip, Collapse, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { Tooltip, Collapse, IconButton, Button, Menu, MenuItem, TextField } from "@material-ui/core";
 import { InputModal } from "./Components/InputModal";
 import CreateIcon from "@material-ui/icons/Create";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
@@ -18,6 +18,7 @@ import AllOutIcon from "@material-ui/icons/AllOut";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CallMergeIcon from "@material-ui/icons/CallMerge";
 import ArchiveIcon from "@material-ui/icons/Archive";
+import { width } from "@material-ui/system";
 
 const MainContainer = Styled.div`
     width: 100%;
@@ -67,6 +68,25 @@ const Tools = Styled.div`
     position: absolute;
     height: 50px;
     min-width: 300px;
+`;
+
+const Countdown = Styled.div`
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    position: absolute;
+    height: 50px;
+    right: 0px;
+    min-width: 275px;
+
+    :first-child {
+        width: 50px;
+        outline: none;
+    }
+
+    :last-child {
+        outline: none !important;
+    }
 `;
 
 const AnswerButton = Styled(Nav.Link)`
@@ -223,6 +243,7 @@ export class Organizer extends Component {
                             answer: true
                         }
                     });
+                    this.props.popOpen();
                 },
 
                 close: () => {
@@ -232,6 +253,7 @@ export class Organizer extends Component {
                             answer: false
                         }
                     });
+                    this.props.popClosed();
                 }
             },
 
@@ -254,6 +276,7 @@ export class Organizer extends Component {
                             string: Title
                         }
                     });
+                    this.props.popOpen();
                 },
 
                 content: () => {
@@ -313,6 +336,7 @@ export class Organizer extends Component {
                             string: ""
                         }
                     });
+                    this.props.popClosed();
                     this.modal.details.close();
                 }
             },
@@ -326,6 +350,7 @@ export class Organizer extends Component {
                         },
                         anchor: null
                     });
+                    this.props.popOpen();
                 },
 
                 close: (success) => {
@@ -340,12 +365,12 @@ export class Organizer extends Component {
                     if (success === true) {
                         this.props.update(true);
                     }
+                    this.props.popClosed();
                 }
             },
 
             details: {
                 open: (id) => {
-                    console.log(id);
                     const Key = id.split("-");
                     console.log(Key);
                     const Answer = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]];
@@ -356,6 +381,7 @@ export class Organizer extends Component {
                             open: true
                         }
                     });
+                    this.props.popOpen();
                 },
 
                 close: () => {
@@ -365,6 +391,7 @@ export class Organizer extends Component {
                             open: false
                         }
                     });
+                    this.props.popClosed();
                 }
             }
         };
@@ -623,9 +650,11 @@ export class Organizer extends Component {
                 const Code = sessionStorage.getItem("code");
                 const Options = GetOptions();
 
-                Options.forEach(async option => {
-                    await setTimeout(Axios.post(`client/${Code}/add-text-open`, option), 500);
-                });
+                //Options.forEach(async option => {
+                //    await setTimeout(Axios.post(`client/${Code}/add-text-open`, option), 500);
+                //});
+
+                Axios.post(`admin/${Code}/text-duplicate`, Options);
 
                 this.setState({
                     selected: []
@@ -677,14 +706,32 @@ export class Organizer extends Component {
                                 <br />Archive
                             </MergeButton>
                         </Tools>
+
+                        <Countdown>
+                            {
+                                task.Countdown <= 0
+                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
+                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                            }
+                            {
+                                task.Countdown <= 0
+                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
+                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                            }
+                        </Countdown>
+
                     </ContentHeader>
+
                     <ContentBody>
+
                         <ButtonToolbar disabled={this.state.selected.length < 1}>
+
                             <SendToMC disabled={this.state.selected.length < 1}
                                 draggable="false"
                                 onClick={(e) => this.setState({ anchor: e.currentTarget })}>
                                 Send selected to new task
                             </SendToMC>
+
                             <div style={{
                                 position: "absolute",
                                 left: "-64px",
@@ -696,6 +743,7 @@ export class Organizer extends Component {
                                 border: "1px solid #fff",
                                 zIndex: "-1"
                             }} />
+
                             <div style={{
                                 position: "absolute",
                                 right: "-64px",
@@ -712,18 +760,24 @@ export class Organizer extends Component {
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
                                 onClose={() => this.setState({ anchor: null })}
-                                open={
-                                    Boolean(this.state.anchor)}
-                                transformOrigin={
-                                    { vertical: "bottom", horizontal: "center" }}>
+                                open={Boolean(this.state.anchor)}
+                                transformOrigin={{ vertical: "bottom", horizontal: "center" }}>
+
                                 {this.state.selected.length < 2 &&
-                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>
+                                }
                             </Menu>
                         </ButtonToolbar>
 
@@ -837,6 +891,18 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     <ContentHeader>
+                        <Countdown>
+                            {
+                                task.Countdown <= 0
+                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
+                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                            }
+                            {
+                                task.Countdown <= 0
+                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
+                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                            }
+                        </Countdown>
                     </ContentHeader>
                     <ContentBody>
                         {this.state.modal.create &&
@@ -947,6 +1013,18 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     <ContentHeader>
+                        <Countdown>
+                            {
+                                task.Countdown <= 0
+                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
+                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                            }
+                            {
+                                task.Countdown <= 0
+                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
+                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                            }
+                        </Countdown>
                     </ContentHeader>
                     <ContentBody>
                         {this.state.modal.create &&
@@ -1056,6 +1134,18 @@ export class Organizer extends Component {
             return (
                 <MainContainer>
                     <ContentHeader>
+                        <Countdown>
+                            {
+                                task.Countdown <= 0
+                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
+                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                            }
+                            {
+                                task.Countdown <= 0
+                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
+                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                            }
+                        </Countdown>
                     </ContentHeader>
                     <ContentBody>
                         {this.state.modal.create &&

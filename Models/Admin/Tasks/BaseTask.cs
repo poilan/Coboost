@@ -31,15 +31,6 @@ namespace Coboost.Models.Admin.Tasks
 
         #endregion Public Enums
 
-        #region Public Fields
-
-        /// <summary>
-        ///     This is used for SSE(Continuous Post Request), so that data is only sent when it is changed.
-        /// </summary>
-        public ManualResetEvent Reset = new ManualResetEvent(false);
-
-        #endregion Public Fields
-
         #region Protected Fields
 
         /// <summary>
@@ -49,6 +40,25 @@ namespace Coboost.Models.Admin.Tasks
         protected readonly object ThreadLock = new object();
 
         #endregion Protected Fields
+
+        #region Public Fields
+
+        /// <summary>
+        ///     This is used for SSE(Continuous Post Request), so that data is only sent when it is changed.
+        /// </summary>
+        public ManualResetEvent Reset = new ManualResetEvent(false);
+
+        #endregion Public Fields
+
+        #region Protected Methods
+
+        public void EventStream()
+        {
+            Reset ??= new ManualResetEvent(false);
+            Reset.Set();
+        }
+
+        #endregion Protected Methods
 
         #region Public Properties
 
@@ -67,6 +77,10 @@ namespace Coboost.Models.Admin.Tasks
         ///     Decides whether the results should be shown or hidden.
         /// </summary>
         public bool ShowResults { get; set; }
+
+        public int Countdown { get; set; }
+
+        public int Timer { get; set; }
 
         /// <summary>
         ///     The question that is asked.
@@ -136,15 +150,5 @@ namespace Coboost.Models.Admin.Tasks
         }
 
         #endregion Public Methods
-
-        #region Protected Methods
-
-        protected void EventStream()
-        {
-            Reset ??= new ManualResetEvent(false);
-            Reset.Set();
-        }
-
-        #endregion Protected Methods
     }
 }
