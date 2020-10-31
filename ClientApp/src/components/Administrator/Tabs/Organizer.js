@@ -632,14 +632,14 @@ export class Organizer extends Component {
 
                     //let change = []
 
-                    for (let I = 0; I < Selected.length; I++) {
-                        const Subject = Selected[I];
+                    //for (let I = 0; I < Selected.length; I++) {
+                    //    const Subject = Selected[I];
 
-                        await setTimeout(
-                            Axios.post(`admin/${Code}/question-archive-member-${Subject[0]}-${Subject[1]}`),
-                            500);
-                    }
-
+                    //    await setTimeout(
+                    //        Axios.post(`admin/${Code}/question-archive-member-${Subject[0]}-${Subject[1]}`),
+                    //        500);
+                    //}
+                    Axios.post(`admin/${Code}/question-archive-members`, Selected);
                     this.setState({
                         selected: []
                     });

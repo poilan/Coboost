@@ -119,9 +119,9 @@ const ContentQuestion = Styled.p`
 
 const ContentInput = Styled(TextField)`
     display: block;
-    max-height: ${props => props.isTitle
-        ? "2rem"
-        : "8rem"};
+    height: ${props => props.isTitle
+        ? "30%"
+        : "70%"};
     min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
@@ -639,7 +639,6 @@ export class Mobile extends React.Component {
                         <ContentInput disabled={this.getTaskAnswers().length <= 30}
                             fullWidth
                             helperText={`${30 - this.state.title.length}`}
-                            hidden={this.getTaskAnswers().length <= 30}
                             inputProps={{
                                 minlength: 3,
                                 maxlength: 30,
@@ -648,18 +647,14 @@ export class Mobile extends React.Component {
                             inputRef={this.TextTitle}
                             isTitle
                             label="Title"
-                            margin="normal"
+                            margin="none"
                             onChange={TitleChange}
                             onFocus={(e) => OnTitleFocus(e)}
                             onKeyDown={HandleEnter.bind(this)}
                             required
-                            value={this.state.title.trim() === "" ? this.getTaskAnswers().substring(0,30) : this.state.title}
+                            value={this.state.title}
                             variant="outlined" />
-                    </Box>
 
-                    <Box m={1}
-                        mb={2}
-                        p={1}>
                         <ContentInput fullWidth
                             helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30
                                 ? ""
@@ -667,7 +662,7 @@ export class Mobile extends React.Component {
                             inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                             inputRef={this.TextDescription}
                             label="Description"
-                            margin="normal"
+                            margin="none"
                             multiline
                             name="description"
                             onChange={(e) => this.questionChange(e)}
@@ -785,7 +780,13 @@ export class Mobile extends React.Component {
         if (Type === 0) {// Open Text
             Data.Description = Answer.trim();
 
+
+
             if (Data.Description.length > 30) {
+                if (this.state.title.trim().length < 3)
+                {
+                    return false;
+                }
                 Data.Title = this.state.title.trim();
             }
 
@@ -816,6 +817,7 @@ export class Mobile extends React.Component {
             sessionState: 2,
             title: ""
         });
+        return true;
     }
 
     inputsEdit() {

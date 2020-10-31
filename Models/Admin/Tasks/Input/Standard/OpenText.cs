@@ -149,6 +149,25 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             EventStream();
         }
 
+        public void ArchiveMembers(Key[] keys)
+        {
+            lock (ThreadLock)
+            {
+                foreach (Key input in keys)
+                {
+                    if (input.Group >= Groups.Count || input.Member >= Groups[input.Group].Members.Count)
+                        continue;
+
+                    ArchiveInput(input);
+                }
+
+                UpdateGroupIndexes();
+                foreach (OpenTextGroup group in Groups) UpdateMemberIndexes(@group.Index);
+            }
+
+            EventStream();
+        }
+
         /// <summary>
         ///     Changes the column the specified group is displayed in
         /// </summary>

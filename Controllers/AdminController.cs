@@ -128,6 +128,23 @@ namespace Coboost.Controllers
             }
         }
 
+        [HttpPost("{code}/question-archive-members")]
+        public void ArchiveMember(int code, [FromBody] OpenText.Key[] keys)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+
+                ThreadPool.QueueUserWorkItem(o => open?.ArchiveMembers(keys));
+                HttpContext.Response.StatusCode = 202;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpPost("{code}/change-group{group}-column{column}")]
         public void ChangeColumn(int code, int group, int column)
         {

@@ -97,7 +97,7 @@ namespace Coboost.Models.Admin
         {
             BaseTask task = Tasks[Active];
 
-            if (task.Countdown != 0)
+            if (task.Countdown > 0)
                 return;
             try
             {
@@ -106,7 +106,7 @@ namespace Coboost.Models.Admin
                 if (!task.InProgress)
                     task.InProgress = true;
 
-                while (task.InProgress && task.Countdown > 0)
+                while (task.InProgress && task.Countdown >= 0)
                 {
                     task.EventStream();
                     ClientSet();
@@ -131,7 +131,7 @@ namespace Coboost.Models.Admin
             question.ShowResults = true;
             question.Timer = 180;
             question.Countdown = 0;
-            question.InProgress = false;
+            question.InProgress = true;
             foreach (MultipleChoiceOption option in question.Options)
             {
                 option.Votes = new List<MultipleChoiceVote>();
@@ -208,6 +208,7 @@ namespace Coboost.Models.Admin
                 task.Reset = new ManualResetEvent(false);
                 task.ShowResults = true;
                 task.InProgress = false;
+                task.Countdown = 0;
 
                 if (!(task is OpenText open)) continue;
                 foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
