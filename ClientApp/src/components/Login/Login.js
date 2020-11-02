@@ -138,13 +138,15 @@ export class Login extends React.Component {
 
                 </Form.Group>
 
+                <Form.Check label="I have read the Terms of Agreement, and agree to be a beta tester."
+                style={{ margin: "5%" }}
+                type="checkbox" required />
+
                 <CardButton type="submit">
                     Login
                 </CardButton>
 
-                <Form.Check label="Remember Me"
-                    style={{ margin: "5%" }}
-                    type="checkbox" />
+
 
                 <ForgotButton onClick={this.forgotPassword}>
                     Forgot password?

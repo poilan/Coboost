@@ -398,8 +398,7 @@ export class Organizer extends Component {
     }
 
     async componentDidMount() {
-        document.addEventListener("contextmenu",
-            (event) => {
+        document.addEventListener("contextmenu", (event) => {
                 event.preventDefault();
                 const ClickX = event.clientX;
                 const ClickY = event.clientY;
@@ -629,17 +628,18 @@ export class Organizer extends Component {
                     const Code = sessionStorage.getItem("code");
 
                     const Selected = GetSelected();
+                    let Keys = [];
 
-                    //let change = []
+                    Selected.forEach(select =>
+                    {
+                        let Key = {
+                            Group: select[0],
+                            Member: select[1]
+                        };
+                        Keys.push(Key);
+                    });
 
-                    //for (let I = 0; I < Selected.length; I++) {
-                    //    const Subject = Selected[I];
-
-                    //    await setTimeout(
-                    //        Axios.post(`admin/${Code}/question-archive-member-${Subject[0]}-${Subject[1]}`),
-                    //        500);
-                    //}
-                    Axios.post(`admin/${Code}/question-archive-members`, Selected);
+                    Axios.post(`admin/${Code}/question-archive-members`, Keys);
                     this.setState({
                         selected: []
                     });

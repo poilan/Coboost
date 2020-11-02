@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Coboost.Models.Admin.Tasks.Input.Standard.data;
 
 namespace Coboost.Models.Admin.Tasks.Input.Standard
@@ -149,7 +150,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             EventStream();
         }
 
-        public void ArchiveMembers(Key[] keys)
+        public void ArchiveMembers(IEnumerable<Key> keys)
         {
             lock (ThreadLock)
             {
@@ -162,7 +163,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 }
 
                 UpdateGroupIndexes();
-                foreach (OpenTextGroup group in Groups) UpdateMemberIndexes(@group.Index);
+                foreach (OpenTextGroup group in Groups) UpdateMemberIndexes(group.Index);
             }
 
             EventStream();
@@ -175,10 +176,28 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
         /// <param name="column">Index of the Column you want it in</param>
         public void ChangeColumn(int group, int column)
         {
+            int prev = Groups[group].Column;
             lock (ThreadLock)
             {
                 if (group < Groups.Count) Groups[group].Column = column;
             }
+
+            if (Groups.Any(check => check.Column == prev))
+            {
+                EventStream();
+                return;
+            }
+
+            RemoveColumn(prev);
+        }
+
+        private void RemoveColumn(int target)
+        {
+            foreach (OpenTextGroup group in Groups.Where(group => group.Column >= target && group.Column > 1))
+                lock (ThreadLock)
+                {
+                    group.Column -= 1;
+                }
 
             EventStream();
         }

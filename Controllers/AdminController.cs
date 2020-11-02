@@ -129,7 +129,7 @@ namespace Coboost.Controllers
         }
 
         [HttpPost("{code}/question-archive-members")]
-        public void ArchiveMember(int code, [FromBody] OpenText.Key[] keys)
+        public void ArchiveMembers(int code, [FromBody] OpenText.Key[] keys)
         {
             if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {

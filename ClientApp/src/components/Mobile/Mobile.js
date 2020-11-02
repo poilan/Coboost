@@ -306,7 +306,7 @@ export class Mobile extends React.Component {
             title: "",
 
             loggedIn: false,
-            sessionState: 0, // 0: Not started, 1: Answering, 2: Finished
+            sessionState: 1, // 0: Not started, 1: Answering, 2: Finished
             SSE: null
         };
 
@@ -613,11 +613,16 @@ export class Mobile extends React.Component {
         const OnTitleFocus = () => {
             if (this.state.title.trim() === "")
             {
-                let Title = this.getTaskAnswers().substring(0, 30);
-                const Index = Title.lastIndexOf(" ");
+                let Title = this.getTaskAnswers().substring(0, 30).trim();
+                let Index = Title.lastIndexOf(" ");
 
                 if (Index !== -1)
                 {
+                    Index = 0;
+                    for (let I = 0; I < 3; I++)
+                    {
+                        Index = Title.indexOf(" ", Index + 1);
+                    }
                     Title = Title.substring(0, Index);
                 }
                 this.setState({
@@ -635,7 +640,7 @@ export class Mobile extends React.Component {
 
                     <Box m={1}
                         mb={2}
-                        p={1}>
+                        p={1} height="100%" width="100%">
                         <ContentInput disabled={this.getTaskAnswers().length <= 30}
                             fullWidth
                             helperText={`${30 - this.state.title.length}`}
@@ -650,7 +655,6 @@ export class Mobile extends React.Component {
                             margin="none"
                             onChange={TitleChange}
                             onFocus={(e) => OnTitleFocus(e)}
-                            onKeyDown={HandleEnter.bind(this)}
                             required
                             value={this.state.title}
                             variant="outlined" />
@@ -659,14 +663,13 @@ export class Mobile extends React.Component {
                             helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30
                                 ? ""
                                 : ` | ${30 - this.getTaskAnswers().length}`}`}
-                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off"}}
                             inputRef={this.TextDescription}
                             label="Description"
                             margin="none"
                             multiline
                             name="description"
                             onChange={(e) => this.questionChange(e)}
-                            onKeyDown={HandleEnter.bind(this)}
                             required
                             rowsMax={5}
                             value={this.getTaskAnswers()}
