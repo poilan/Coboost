@@ -621,8 +621,24 @@ export class Mobile extends React.Component {
                     Index = 0;
                     for (let I = 0; I < 3; I++)
                     {
-                        Index = Title.indexOf(" ", Index + 1);
+                        const Check = Title.indexOf(" ", Index + 1);
+
+                        if (Check === -1)
+                        {
+                            if (Index > 0)
+                                break;
+                            else
+                            {
+                                Index = 30;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Index = Check;
+                        }
                     }
+
                     Title = Title.substring(0, Index);
                 }
                 this.setState({

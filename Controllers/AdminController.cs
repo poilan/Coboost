@@ -186,6 +186,22 @@ namespace Coboost.Controllers
             }
         }
 
+        [HttpPost("{code}/group/change-{group}")]
+        public void ChangeGroup(int code, int group, [FromBody] OpenText.Key[] keys)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open?.SwitchGroup(keys, group));
+                HttpContext.Response.StatusCode = 202;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpPost("{code}/close")]
         public async Task CloseSession(int code)
         {
@@ -430,6 +446,22 @@ namespace Coboost.Controllers
                 {
                     HttpContext.Response.StatusCode = 400;
                 }
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
+        [HttpPost("{code}/group/change-last")]
+        public void LastGroup(int code, [FromBody] OpenText.Key[] keys)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open?.SwitchGroup(keys, open.Groups.Count - 1));
+                HttpContext.Response.StatusCode = 202;
             }
             else
             {

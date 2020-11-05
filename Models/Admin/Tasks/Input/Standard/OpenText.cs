@@ -425,6 +425,51 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             EventStream();
         }
 
+        public void SwitchGroup(IEnumerable<Key> keys, int target)
+        {
+            if (target >= Groups.Count)
+                return;
+
+            foreach (Key key in keys)
+            {
+                if (key.Group == target || key.Group >= Groups.Count || key.Member >= Groups[key.Group].Members.Count)
+                    continue;
+
+                //Grab the Input we want moved
+                OpenTextInput input = Groups[key.Group].Members[key.Member];
+
+                //Update the Index of the Input
+                input.Index = Groups[target].Members.Count;
+
+                lock (ThreadLock)
+                {
+                    //Remove it from its old location
+                    Groups[key.Group].Members.RemoveAt(key.Member);
+
+                    //Add it to the desired group
+                    Groups[target].Members.Add(input);
+                }
+            }
+
+            for (int i = 1; i < Groups.Count; i++)
+                if (Groups[i].Members.Count < 1) //TODO: Keep Previously Empty Groups?
+                {
+                    Groups.RemoveAt(i);
+                    i--;
+                }
+
+            UpdateGroupIndexes();
+
+            foreach (OpenTextGroup group in Groups)
+                lock (ThreadLock)
+                {
+                    UpdateMemberIndexes(group.Index);
+                }
+
+
+            EventStream();
+        }
+
         #endregion Public Methods
 
         #region Private Methods

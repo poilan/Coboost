@@ -669,6 +669,13 @@ export class Organizer extends Component {
                 { "label": "Remove selected inputs", "callback": Archive.members }
             ];
 
+            const Clear = () =>
+            {
+                this.setState({
+                    selected: []
+                });
+            }
+
             return (
                 <MainContainer>
                     <ContentHeader>
@@ -786,7 +793,8 @@ export class Organizer extends Component {
                                 <Column column={column.index} width={column.width}
                                     last={column.index + 1 === this.props.columns.length}
                                     grow={() => Grow(column.index)}
-                                    shrink={() => Shrink(column.index)}>
+                                    shrink={() => Shrink(column.index)}
+                                    selected={GetSelected} clearSelect={Clear}>
 
                                     {task.Groups !== undefined &&
                                         task.Groups.map(group => {
@@ -795,7 +803,7 @@ export class Organizer extends Component {
                                                     <Group id={group.Index} key={group.Index} onClick={GroupSelect}
                                                         group={group.Index} column={group.Column}
                                                         title={group.Title} size={column.width}
-                                                        double={this.modal.rename.open}
+                                                        double={this.modal.rename.open} selected={GetSelected} clearSelect={Clear}
                                                         color={group.Color} collapsed={group.Collapsed}>
 
                                                         {group.Members !== undefined &&
@@ -824,6 +832,7 @@ export class Organizer extends Component {
                                         <Group id="new" color="#575b75"
                                             group="new" column={column.index} title="CREATE NEW GROUP" size={column.width}
                                             onClick={CreateGroup.bind(this)}
+                                            selected={GetSelected} clearSelect={Clear}
                                         />
                                     }
                                 </Column>

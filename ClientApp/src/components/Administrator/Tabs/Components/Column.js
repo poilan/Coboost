@@ -72,10 +72,63 @@ export function Column(props) {
         const Code = sessionStorage.getItem("code");
 
         if (Drag.member !== undefined) {
+            const Key = [Drag.group.toString(), Drag.member.toString()];
+            const Selected = props.selected();
+            let Keys = [];
+
+            if (Selected.find(element => {return element[0] === Key[0] ? element[1] === Key[1] : false}))
+            {
+                Selected.forEach(select =>
+                {
+                    let Subject = {
+                        Group: select[0],
+                        Member: select[1]
+                    }
+
+                    Keys.push(Subject);
+                });
+            }
+            else
+            {
+                let Done = false;
+                Selected.forEach(select =>
+                {
+                    if (!Done && Key[0] >= select[0])
+                    {
+                        if ((Key[0] === select[0] && Key[1] > select[1]) || Key[0] > select[0])
+                        {
+                            let Insert = {
+                                Group: Key[0],
+                                Member: Key[1]
+                            }
+                            Keys.push(Insert);
+                            Done = true;
+                        }
+                    }
+                    let Subject = {
+                        Group: select[0],
+                        Member: select[1]
+                    }
+
+                    Keys.push(Subject);
+                });
+
+                if(!Done)
+                {
+                    let Insert = {
+                        Group: Key[0],
+                        Member: Key[1]
+                    }
+                    Keys.push(Insert);
+                }
+            }
+
             Axios.post(`admin/${Code}/question-create-group-C${props.column}`).then(setTimeout(() => {
-                Axios.post(`admin/${Code}/group${Drag.group}-member${Drag.member}`);
+                    Axios.post(`admin/${Code}/group/change-last`, Keys);
             },
                 200));
+
+            props.clearSelect();
         }
         else if (Drag.column !== props.column) {
             const Key = Drag.group;
