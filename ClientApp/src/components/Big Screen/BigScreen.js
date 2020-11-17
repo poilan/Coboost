@@ -1,16 +1,17 @@
-﻿import React, { Component } from "react";
+﻿import React, {Component} from "react";
 import Axios from "axios";
-import { Button, Nav, Col, Row } from "react-bootstrap";
+import {Button, Nav, Col, Row} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { Ico_Loading, Ico_Group152, IconLogo } from "../Classes/Icons";
-import { Column } from "../Administrator/Tabs/Components/Column";
-import { Group } from "../Administrator/Tabs/Components/Group";
-import { Input } from "../Administrator/Tabs/Components/Input";
-import { ResultBackground, ResultItem, ResultSlider } from "../Administrator/Tabs/Components/Results";
-import { Facilitator } from "./Facilitator";
-import { SSE } from "../Core/SSE";
-import { Typography, Box } from "@material-ui/core";
+import {Ico_Loading, Ico_Group152, IconLogo} from "../Classes/Icons";
+import {Column} from "../Administrator/Tabs/Components/Column";
+import {Group} from "../Administrator/Tabs/Components/Group";
+import {Input} from "../Administrator/Tabs/Components/Input";
+import {ResultBackground, ResultItem, ResultSlider} from "../Administrator/Tabs/Components/Results";
+import {Facilitator} from "./Facilitator";
+import {SSE} from "../Core/SSE";
+import {Typography, Box} from "@material-ui/core";
+
 
 const MainContainer = Styled(Col)`
     display: table;
@@ -87,18 +88,18 @@ const WelcomeContainer = Styled.div`
     position: absolute;
     font-Size: 1.5rem;
     margin: 0 auto;
-    padding: ${props => props.text
-        ? "1rem"
-        : "0 1rem"};
-    column-count: ${props => props.text
-        ? "auto"
-        : "initial"};
-    column-width: ${props => props.text
-        ? "320px"
-        : "initial"};
-    column-gap: ${props => props.text
-        ? "1rem"
-        : "initial"};
+    padding: ${props => props.text ?
+                        "1rem" :
+                        "0 1rem"};
+    column-count: ${props => props.text ?
+                             "auto" :
+                             "initial"};
+    column-width: ${props => props.text ?
+                             "320px" :
+                             "initial"};
+    column-gap: ${props => props.text ?
+                           "1rem" :
+                           "initial"};
 `;
 
 const BottomBanner = Styled(Col)`
@@ -131,7 +132,8 @@ const BottomBannerText = Styled.h1`
 `;
 
 export class BigScreen extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
 
         this.state = {
@@ -152,7 +154,9 @@ export class BigScreen extends Component {
         this.facilitatorToggleResults = this.facilitatorToggleResults.bind(this);
     }
 
-    async componentDidMount() {
+
+    async componentDidMount()
+    {
         const Code = await sessionStorage.getItem("code");
 
         this.setState({
@@ -176,23 +180,28 @@ export class BigScreen extends Component {
         this.AutoResultToggle();
     }
 
-    async AutoResultToggle() {
+
+    async AutoResultToggle()
+    {
         await setTimeout(() => {
-            this.setState({
-                resultsAsPercentage: !this.state.resultsAsPercentage
-            });
-            this.AutoResultToggle();
-        },
+                this.setState({
+                    resultsAsPercentage: !this.state.resultsAsPercentage
+                });
+                this.AutoResultToggle();
+            },
             6660);
     }
 
-    beginSSE() {
+
+    beginSSE()
+    {
         const State = this.state;
         var Server = State.sse;
 
         Server.startEventSource(() => {
             Server.addListener("Question", (e) => {
-                try {
+                try
+                {
                     const QuestionData = JSON.parse(e.data);
 
                     this.setState({
@@ -200,13 +209,15 @@ export class BigScreen extends Component {
                         task: QuestionData
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Question");
                 }
             });
 
             Server.addListener("Groups", (e) => {
-                try {
+                try
+                {
                     const Groups = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.Groups = Groups;
@@ -214,13 +225,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Group");
                 }
             });
 
             Server.addListener("Options", (e) => {
-                try {
+                try
+                {
                     const Options = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.Options = Options;
@@ -228,13 +241,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Options");
                 }
             });
 
             Server.addListener("Votes", (e) => {
-                try {
+                try
+                {
                     const Votes = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.Votes = Votes;
@@ -242,13 +257,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Votes");
                 }
             });
 
             Server.addListener("Total", (e) => {
-                try {
+                try
+                {
                     const TotalVotes = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.TotalVotes = TotalVotes;
@@ -256,13 +273,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Total");
                 }
             });
 
             Server.addListener("Results", (e) => {
-                try {
+                try
+                {
                     const Result = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.ShowResults = Result;
@@ -270,13 +289,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Results");
                 }
             });
 
             Server.addListener("Status", (e) => {
-                try {
+                try
+                {
                     const Status = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.InProgress = Status;
@@ -284,13 +305,15 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Status");
                 }
             });
 
             Server.addListener("Countdown", (e) => {
-                try {
+                try
+                {
                     const Countdown = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.Countdown = Countdown;
@@ -298,14 +321,17 @@ export class BigScreen extends Component {
                         task: Task
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     Server.log("Failed to parse server event: Countdown");
                 }
             });
         });
     }
 
-    facilitatorToggleResults() {
+
+    facilitatorToggleResults()
+    {
         const OldState = this.state.showResults;
         const NewState = !OldState;
 
@@ -314,7 +340,9 @@ export class BigScreen extends Component {
         });
     }
 
-    renderWaiting() {
+
+    renderWaiting()
+    {
         const State = this.state;
         const Code = State.code;
         return (
@@ -331,7 +359,8 @@ export class BigScreen extends Component {
                         <EventCode>#{Code}</EventCode>
                     </WelcomeContainer>
                     {!this.props.admin &&
-                        <Facilitator active={State.activeQuestion}
+                        <Facilitator
+                            active={State.activeQuestion}
                             allTasks
                             code={Code}
                             fullscreen
@@ -355,7 +384,9 @@ export class BigScreen extends Component {
         );
     }
 
-    renderWelcome() {
+
+    renderWelcome()
+    {
         const State = this.state;
         const Code = State.code;
         const Headline = State.title;
@@ -368,7 +399,8 @@ export class BigScreen extends Component {
                     <WelcomeContainer>
                     </WelcomeContainer>
                     {!this.props.admin &&
-                        <Facilitator active={State.activeQuestion}
+                        <Facilitator
+                            active={State.activeQuestion}
                             allTasks
                             code={Code}
                             fullscreen
@@ -392,42 +424,48 @@ export class BigScreen extends Component {
             </React.Fragment>);
     }
 
-    viewResult() {
+
+    viewResult()
+    {
         const State = this.state;
         const Question = State.task;
 
-        if (Question.ShowResults === true) {
-            if (Question.Type === 0) {
+        if (Question.ShowResults === true)
+        {
+            if (Question.Type === 0)
+            {
                 return this.renderOpenTextResult();
 
                 //return <p>Open Text</p>;
             }
-            else if (Question.Type === 1) {
-
+            else if (Question.Type === 1)
+            {
                 //return <p>Multiple Choice</p>;
                 return this.renderMultipleChoiceResult();
             }
-            else if (Question.Type === 2) {
+            else if (Question.Type === 2)
                 return this.renderPoints();
-            }
-            else if (Question.Type === 3) {
+            else if (Question.Type === 3)
                 return this.renderSlider();
-            }
         }
         return this.renderHidden();
     }
 
-    renderQuestion() {
+
+    renderQuestion()
+    {
         const State = this.state;
         const Code = State.code;
         return (
             <React.Fragment>
                 <ContentContainer>
-                    <WelcomeContainer text={this.state.task.Type === 0}>
+                    <WelcomeContainer
+                        text={this.state.task.Type === 0} >
                         {this.viewResult()}
                     </WelcomeContainer>
                     {!this.props.admin &&
-                        <Facilitator active={State.activeQuestion}
+                        <Facilitator
+                            active={State.activeQuestion}
                             allTasks
                             code={Code}
                             fullscreen
@@ -454,23 +492,27 @@ export class BigScreen extends Component {
             </React.Fragment>);
     }
 
-    renderOpenTextResult() {
+
+    renderOpenTextResult()
+    {
         const Results = this.state.task.Groups;
         return (
             <React.Fragment>
 
                 {Results[0].Members.length > 0 &&
                     !Results[0].Collapsed &&
-                    <Column empty
+                    <Column
+                        empty
                         key="C0"
-                        width={1}>
+                        width={1} >
 
-                        <Group group={0}
+                        <Group
+                            group={0}
                             id={0}
                             key={0}
                             showcase
                             size={1}
-                            title="Unorganized">
+                            title="Stack" >
 
                             {Results[0].Members.map(member =>
                                 <Input
@@ -489,18 +531,20 @@ export class BigScreen extends Component {
 
                         {group.Members.length > 0 &&
                             !group.Collapsed &&
-                            <Column column={group.Column}
+                            <Column
+                                column={group.Column}
                                 empty
                                 key={`C${group.Index}`}
-                                width={1}>
+                                width={1} >
 
-                                <Group color={group.Color}
+                                <Group
+                                    color={group.Color}
                                     group={group.Index}
                                     id={group.Index}
                                     key={group.Index}
                                     showcase
                                     size={1}
-                                    title={group.Title}>
+                                    title={group.Title} >
 
                                     {group.Members.map(member =>
                                         <Input
@@ -520,15 +564,19 @@ export class BigScreen extends Component {
         );
     }
 
-    renderMultipleChoiceResult() {
+
+    renderMultipleChoiceResult()
+    {
         const Task = this.state.task;
 
         return (
             <React.Fragment>
-                <ResultBackground style={{ width: "98%", height: "85%" }} />
+                <ResultBackground
+                    style={{ width: "98%", height: "85%" }} />
 
                 {Task.Options.map(option =>
-                    <ResultItem color={option.Color}
+                    <ResultItem
+                        color={option.Color}
                         description={option.Description}
                         height="85%"
                         id={option.Index}
@@ -546,16 +594,20 @@ export class BigScreen extends Component {
         );
     }
 
-    renderPoints() {
+
+    renderPoints()
+    {
         const Task = this.state.task;
         const Total = Task.Votes.length * Task.Amount;
 
         return (
             <React.Fragment>
-                <ResultBackground style={{ width: "98%", height: "85%" }} />
+                <ResultBackground
+                    style={{ width: "98%", height: "85%" }} />
 
                 {Task.Options.map(option =>
-                    <ResultItem color={option.Color}
+                    <ResultItem
+                        color={option.Color}
                         description={option.Description}
                         height="85%"
                         id={option.Index}
@@ -573,13 +625,16 @@ export class BigScreen extends Component {
         );
     }
 
-    renderSlider() {
+
+    renderSlider()
+    {
         const Task = this.state.task;
 
         return (
             <React.Fragment>
                 {Task.Options.map(option =>
-                    <ResultSlider average={option.Average}
+                    <ResultSlider
+                        average={option.Average}
                         color={option.Color}
                         description={option.Description}
                         id={option.Index}
@@ -596,20 +651,25 @@ export class BigScreen extends Component {
         );
     }
 
-    renderHidden() {
+
+    renderHidden()
+    {
         return (
             <React.Fragment>
-                <Box style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                <Box
+                    style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} >
 
-                    <Typography align="center"
+                    <Typography
+                        align="center"
                         display="block"
-                        variant="h2">
+                        variant="h2" >
                         Keep working on your task!
                     </Typography>
 
-                    <Typography align="center"
+                    <Typography
+                        align="center"
                         display="block"
-                        variant="h2">
+                        variant="h2" >
                         Results will soon be shown
                     </Typography>
                 </Box>
@@ -617,28 +677,29 @@ export class BigScreen extends Component {
         );
     }
 
-    handleRender() {
+
+    handleRender()
+    {
         const Headline = this.state.title;
         const Task = this.state.task;
 
-        if (Headline === null) {
+        if (Headline === null)
             return this.renderWaiting();
-        }
-        else {
-            if (Task && Task.Index !== undefined && Task.Index !== -1) {
+        else
+        {
+            if (Task && Task.Index !== undefined && Task.Index !== -1)
                 return this.renderQuestion();
-            }
-            else {
+            else
                 return this.renderWelcome();
-            }
         }
     }
+
 
     render()
     {
         let seconds, minutes;
 
-        if (this.state.task && this.state.task.InProgress && this.state.task.Countdown > 0)
+        if (this.state.task && this.state.task.InProgress && this.state.task.Countdown > -1)
         {
             seconds = this.state.task.Countdown;
             minutes = 0;
@@ -670,22 +731,28 @@ export class BigScreen extends Component {
                     {this.handleRender()}
 
                     {this.state.task &&
-                        <div style={{
-                            position: "absolute",
-                            height: "50px",
-                            lineHeight: "50px",
-                            textAlign: "center",
-                            minWidth: "150px",
-                            border: "1px solid black",
-                            borderRadius: "15px",
-                            right: "50px",
-                            top: "25px"
-                        }}>
-                            {this.state.task.InProgress
-                                ? this.state.task.Countdown <= 0
-                                  ? "Task Open!"
-                                  : `Time: ${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`
-                                : "Task Closed"}
+                        <div
+                            style={{
+                                position: "absolute",
+                                height: "50px",
+                                lineHeight: "50px",
+                                textAlign: "center",
+                                minWidth: "150px",
+                                border: "1px solid black",
+                                borderRadius: "15px",
+                                right: "50px",
+                                top: "25px",
+                                color: this.state.task.Countdown < 11 && this.state.task.Countdown > -1 ?
+                                           "red" :
+                                           "black"
+                            }} >
+                            {this.state.task.InProgress ?
+                                 this.state.task.Countdown < 0 ?
+                                 "Task Open!" :
+                                 `Time: ${minutes}:${seconds < 10 ?
+                                                     `0${seconds}` :
+                                                     seconds}` :
+                                 "Task Closed"}
                         </div>
                     }
                 </MainContainer>

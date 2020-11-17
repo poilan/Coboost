@@ -1,44 +1,57 @@
-﻿import React, { Component } from "react";
+﻿import React, {Component} from "react";
 import Styled from "styled-components";
 import "circular-std";
 import Axios from "axios";
-import { Input } from "./Input";
+import {Input} from "./Input";
 import Box from "@material-ui/core/Box";
 import Slider from "@material-ui/core/Slider";
-import { Collapse, IconButton, Menu, MenuItem } from "@material-ui/core";
-import { ColorPicker } from "./ColorPicker";
+import {Collapse, IconButton, Menu, MenuItem} from "@material-ui/core";
+import {ColorPicker} from "./ColorPicker";
+
 
 const BackgroundContainer = Styled.div`
     background: #fff;
     position: absolute;
 `;
 
+
 export function ResultBackground(props) {
     return (
         <BackgroundContainer {...props}>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
-            <div style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }}>
+            <div
+                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
             </div>
         </BackgroundContainer>
     );
 }
+
 
 const ItemContainer = Styled.div`
     display: inline-block;
@@ -73,9 +86,9 @@ const Percentage = Styled.div`
 
     &:hover {
            filter: saturate(125%) drop-shadow(6px -3px 3px black);
-           cursor: ${props => props.group === "new"
-        ? "pointer"
-        : "default"};
+           cursor: ${props => props.group === "new" ?
+                              "pointer" :
+                              "default"};
         }
 `;
 
@@ -85,12 +98,13 @@ export class ResultItem extends Component {
         colorAnchor: null
     }
 
+
     validateHexColor = /^#([0-9A-Fa-f]{3}){1,2}$/;
 
+
     colorChange = (colorEvent) => {
-        if (!this.validateHexColor.test(colorEvent.hex)) {
+        if (!this.validateHexColor.test(colorEvent.hex))
             return;
-        }
 
         this.setState({
             colorAnchor: null
@@ -104,6 +118,7 @@ export class ResultItem extends Component {
             { headers: { 'Content-Type': "application/json" } });
     }
 
+
     colorOpen = () => {
         const Anchor = this.state.menuAnchor;
         this.setState({
@@ -112,23 +127,29 @@ export class ResultItem extends Component {
         });
     }
 
-    render() {
+
+    render()
+    {
         return (
-            <ItemContainer index={this.props.index}
-                total={this.props.total}>
-                <PercentageContainer height={`${this.props.height}`}>
-                    <Percentage color={this.props.color}
+            <ItemContainer
+                index={this.props.index}
+                total={this.props.total} >
+                <PercentageContainer
+                    height={`${this.props.height}`} >
+                    <Percentage
+                        color={this.props.color}
                         onClick={(e) =>
                             this.setState({ menuAnchor: e.currentTarget })}
-                        percentage={this.props.percentage}>
-                        {this.props.showPercentage
-                            ? (this.props.percentage > 0 && Math.round(this.props.percentage) + "%")
-                            : this.props.points !== 0
-                                ? this.props.points
-                                : ""}
+                        percentage={this.props.percentage} >
+                        {this.props.showPercentage ?
+                             (this.props.percentage > 0 && Math.round(this.props.percentage) + "%") :
+                             this.props.points !== 0 ?
+                             this.props.points :
+                             ""}
                     </Percentage>
                 </PercentageContainer>
-                <Input checked={this.props.checked}
+                <Input
+                    checked={this.props.checked}
                     description={this.props.description}
                     id={this.props.id}
                     index={this.props.index}
@@ -138,7 +159,8 @@ export class ResultItem extends Component {
                     title={this.props.title}
                     vote />
 
-                <Menu anchorEl={this.state.menuAnchor}
+                <Menu
+                    anchorEl={this.state.menuAnchor}
                     anchorOrigin={{
                         vertical: "bottom",
                         horizontal: "center"
@@ -148,12 +170,14 @@ export class ResultItem extends Component {
                     transformOrigin={{
                         vertical: "bottom",
                         horizontal: "center"
-                    }}>
-                    <MenuItem onClick={this.colorOpen}>
+                    }} >
+                    <MenuItem
+                        onClick={this.colorOpen} >
                         Change Color
                     </MenuItem>
                 </Menu>
-                <ColorPicker anchorEl={this.state.colorAnchor}
+                <ColorPicker
+                    anchorEl={this.state.colorAnchor}
                     anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                     color={this.props.color}
                     onChangeComplete={this.colorChange}
@@ -164,29 +188,33 @@ export class ResultItem extends Component {
     }
 }
 
+
 export function ResultSlider(props) {
     const Marks = [
         {
             value: props.min,
-            label: `${props.minDescription
-                ? props.min
-                : props.minDescription}`
+            label: `${props.minDescription ?
+                      props.min :
+                      props.minDescription}`
         },
         {
             value: props.max,
-            label: `${props.maxDescription
-                ? props.max
-                : props.maxDescription}`
-        }];
+            label: `${props.maxDescription ?
+                      props.max :
+                      props.maxDescription}`
+        }
+    ];
     return (
-        <Box border={0}
+        <Box
+            border={0}
             borderColor="grey.500"
             component="fieldset"
             key={props.index}
             mb={1}
             pt={0}
-            px={1}>
-            <Input checked={props.checked}
+            px={1} >
+            <Input
+                checked={props.checked}
                 description={props.description}
                 id={props.id}
                 index={props.index}
@@ -195,10 +223,12 @@ export function ResultSlider(props) {
                 size="1"
                 title={props.title}
                 vote />
-            <Box borderColor="transparent"
+            <Box
+                borderColor="transparent"
                 component="fieldset"
-                px={2}>
-                <Slider aria-labledby="discrete-slider"
+                px={2} >
+                <Slider
+                    aria-labledby="discrete-slider"
                     color={props.color}
                     marks={Marks}
                     max={props.max}

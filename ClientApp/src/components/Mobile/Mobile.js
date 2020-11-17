@@ -1,18 +1,19 @@
-﻿import React, { Component, useRef, createRef } from "react";
-import { Redirect } from "react-router-dom";
+﻿import React, {Component, useRef, createRef} from "react";
+import {Redirect} from "react-router-dom";
 import Axios from "axios";
-import { Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form } from
+import {Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form} from
     "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { Ico_Loading, Ico_Group152 } from "../Classes/Icons";
-import { SSE } from "../Core/SSE";
+import {Ico_Loading, Ico_Group152} from "../Classes/Icons";
+import {SSE} from "../Core/SSE";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import Rating from "@material-ui/lab/Rating";
-import { BannerLink } from "../Classes/Dropdown";
-import { TextField } from "@material-ui/core";
+import {BannerLink} from "../Classes/Dropdown";
+import {TextField} from "@material-ui/core";
+
 
 const MainContainer = Styled(Col)`
     display: table;
@@ -44,15 +45,15 @@ const HeaderText = Styled.h1`
     font-weight: 525;
     line-height: 50px;
     font-size: 1.5rem;
-    border-bottom: 4px ${props => props.active === props.id
-        ? "solid"
-        : "hidden"} #575b75;
+    border-bottom: 4px ${props => props.active === props.id ?
+                                  "solid" :
+                                  "hidden"} #575b75;
     cursor: pointer;
     box-sizing: border-box;
     &:hover {
-        border-bottom: 4px solid ${props => props.active === props.id
-        ? "#575b75"
-        : "#4f4f4f"};
+        border-bottom: 4px solid ${props => props.active === props.id ?
+                                            "#575b75" :
+                                            "#4f4f4f"};
     }
 
     flex: 1 1 auto;
@@ -82,27 +83,27 @@ const ContentTitle = Styled.h3`
     padding: 10px 30px;
     padding-bottom: 0;
 
-    color: ${props => props.blue
-        ? "#4C7AD3"
-        : "black"};
+    color: ${props => props.blue ?
+                      "#4C7AD3" :
+                      "black"};
 `;
 
 const ContentBody = Styled.p`
     font-family: CircularStd;
-    font-size: ${props => props.boxed
-        ? "0.8rem"
-        : "1rem"};
+    font-size: ${props => props.boxed ?
+                          "0.8rem" :
+                          "1rem"};
     text-align: center;
 
     position: relative;
     padding: 30px;
 
-    background: ${props => props.boxed
-        ? "#4C7ADC"
-        : "transparent"};
-    color: ${props => props.boxed
-        ? "white"
-        : "black"};
+    background: ${props => props.boxed ?
+                           "#4C7ADC" :
+                           "transparent"};
+    color: ${props => props.boxed ?
+                      "white" :
+                      "black"};
     border-radius: 10px;
 `;
 
@@ -119,20 +120,20 @@ const ContentQuestion = Styled.p`
 
 const ContentInput = Styled(TextField)`
     display: block;
-    height: ${props => props.isTitle
-        ? "30%"
-        : "70%"};
+    height: ${props => props.isTitle ?
+                       "30%" :
+                       "70%"};
     min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: ${props => props.isTitle
-        ? "center"
-        : "left"};
+    text-align: ${props => props.isTitle ?
+                           "center" :
+                           "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid ${props => props.isTitle
-        ? "#4C7AD3"
-        : "#cfcfcf"};
+    border-bottom: 1px solid ${props => props.isTitle ?
+                                        "#4C7AD3" :
+                                        "#cfcfcf"};
     resize: none;
     outline: none;
 `;
@@ -294,7 +295,8 @@ const MultipleChoiceButton = Styled(ToggleButton)`
 `;
 
 export class Mobile extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             activeHeader: "inputs",
@@ -324,8 +326,11 @@ export class Mobile extends React.Component {
         this.TextForm = createRef();
     }
 
-    componentWillMount() {
-        if (localStorage.getItem("user") !== null) {
+
+    componentWillMount()
+    {
+        if (localStorage.getItem("user") !== null)
+        {
             this.setState({
                 loggedIn: true
             });
@@ -334,7 +339,8 @@ export class Mobile extends React.Component {
         const Code = sessionStorage.getItem("code");
 
         Axios.get(`admin/${Code}/questions-all`).then(res => {
-            if (res.status === 202) {
+            if (res.status === 202)
+            {
                 const Data = res.data;
 
                 this.setState({
@@ -353,13 +359,19 @@ export class Mobile extends React.Component {
 
         EventSource.startEventSource(() => {
             EventSource.addListener("question", (e) => {
-                try {
+                try
+                {
                     const Data = JSON.parse(e.data); // Question data
 
                     const Index = parseInt(Data.Index);
 
                     const Inputs = this.state.inputs;
+                    const Spent = Inputs[Index].Spent;
+
                     Inputs[Index] = Data;
+
+                    if (Index === this.state.currentInput)
+                        Inputs[Index].Spent = Spent;
 
                     this.setState({
                         inputs: Inputs
@@ -375,58 +387,61 @@ export class Mobile extends React.Component {
                         });
                     }
                 }
-                catch (Event) {
+                catch (Event)
+                {
                     EventSource.log(`Failed to parse server event${Event}`);
                 }
             });
         });
     }
 
-    componentWillUnmount() {
-        if (this.eventSource) {
+
+    componentWillUnmount()
+    {
+        if (this.eventSource)
             this.eventSource.close();
-        }
     }
 
-    parseAnswers() {
+
+    parseAnswers()
+    {
         var Answers = [];
 
         const Questions = this.getTasks();
         Questions.forEach((question, index) => {
             var Answer = {
                 index: index,
-                value: question.Type === 0
-                    ? ""
-                    : []
+                value: question.Type === 0 ?
+                           "" :
+                           []
             };
 
-            if (question.Options !== undefined) {
-                if (question.Type === 2) {
+            if (question.Options !== undefined)
+            {
+                if (question.Type === 2)
+                {
                     const Values = [];
 
-                    for (let I = 0; I < question.Options.length; I++) {
+                    for (let I = 0; I < question.Options.length; I++)
                         Values.push(0);
-                    }
                     Answer.value = Values;
                     question.Spent = 0;
                 }
-                else if (question.Type === 3) {
+                else if (question.Type === 3)
+                {
                     const Values = [];
 
-                    for (let I = 0; I < question.Options.length; I++) {
+                    for (let I = 0; I < question.Options.length; I++)
                         Values.push(question.Min);
-                    }
 
                     Answer.value = Values;
                 }
             }
 
-            if (Answers[index] !== undefined) {
+            if (Answers[index] !== undefined)
                 Answers[index] = Answer;
-            }
-            else {
+            else
                 Answers.push(Answer);
-            }
         });
 
         this.setState({
@@ -434,24 +449,31 @@ export class Mobile extends React.Component {
         });
     }
 
-    getTasks() {
+
+    getTasks()
+    {
         return this.state.inputs;
     }
 
-    getTaskIndex() {
+
+    getTaskIndex()
+    {
         return this.state.currentInput;
     }
 
-    getTaskAnswers() {
+
+    getTaskAnswers()
+    {
         const Index = this.getTaskIndex();
         const Type = this.getTaskType();
         const AnswerData = this.state.answers[Index];
 
-        if (AnswerData) {
+        if (AnswerData)
             return AnswerData.value;
-        }
-        else {
-            switch (Type) {
+        else
+        {
+            switch (Type)
+            {
                 case 0:
                     return "";
                 default:
@@ -460,7 +482,9 @@ export class Mobile extends React.Component {
         }
     }
 
-    setTaskAnswers(answer) {
+
+    setTaskAnswers(answer)
+    {
         const State = this.state;
         const Index = this.getTaskIndex();
         const Answers = State.answers;
@@ -471,33 +495,47 @@ export class Mobile extends React.Component {
         });
     }
 
-    getCurrentTask() {
+
+    getCurrentTask()
+    {
         const Inputs = this.getTasks();
         return Inputs[this.getTaskIndex()];
     }
 
-    getLastTask() {
+
+    getLastTask()
+    {
         const Inputs = this.getTasks();
         return Inputs[this.state.lastInput];
     }
 
-    getTaskType() {
+
+    getTaskType()
+    {
         return this.getCurrentTask().Type;
     }
 
-    getTaskTitle() {
+
+    getTaskTitle()
+    {
         return this.getCurrentTask().Title;
     }
 
-    getTaskOptions() {
+
+    getTaskOptions()
+    {
         return this.getCurrentTask().Options;
     }
 
-    getOptionMax() {
+
+    getOptionMax()
+    {
         return this.getCurrentTask().Max;
     }
 
-    headerClick(target) {
+
+    headerClick(target)
+    {
         const Id = target.id;
 
         this.setState({
@@ -505,7 +543,9 @@ export class Mobile extends React.Component {
         });
     }
 
-    welcomeRender() {
+
+    welcomeRender()
+    {
         return (
             <ContentContainer>
                 <ContentTitle>Welcome!</ContentTitle>
@@ -516,13 +556,16 @@ export class Mobile extends React.Component {
         );
     }
 
-    finishedRender() {
+
+    finishedRender()
+    {
         const LastInput = this.getLastTask();
         const LastType = LastInput.Type;
 
         let Word;
 
-        switch (LastType) {
+        switch (LastType)
+        {
             case 0:
                 Word = "Input";
                 break;
@@ -533,24 +576,37 @@ export class Mobile extends React.Component {
 
         return (
             <ContentContainer>
-                <ContentTitle blue>{Word} sent!</ContentTitle>
+                <ContentTitle
+                    blue >
+                    {Word} sent!
+                </ContentTitle>
                 <IconDone />
-                <ContentBody boxed>You may send another {Word}! or you can take it easy while waiting for the next task.</ContentBody>
-                <ContentButton onClick={this.inputsEdit}>New {Word}</ContentButton>
+                <ContentBody
+                    boxed >
+                    You may send another {Word}! or you can take it easy while waiting for the next task.
+                </ContentBody>
+                <ContentButton
+                    onClick={this.inputsEdit} >
+                    New {Word}
+                </ContentButton>
             </ContentContainer>
         );
     }
 
-    closedRender() {
+
+    closedRender()
+    {
         return (
             <ContentContainer>
-                <ContentTitle blue>
+                <ContentTitle
+                    blue >
                     Task Closed
                 </ContentTitle>
 
                 <IconDone />
 
-                <ContentBody boxed>
+                <ContentBody
+                    boxed >
                     This task appears to be closed, please remain patient.
                 </ContentBody>
 
@@ -559,7 +615,9 @@ export class Mobile extends React.Component {
         );
     }
 
-    questionChange(e) {
+
+    questionChange(e)
+    {
         const Target = e.target;
         const Value = Target.value;
         Target.style.height = "inherit";
@@ -568,7 +626,9 @@ export class Mobile extends React.Component {
         this.setTaskAnswers(Value);
     }
 
-    questionRender() {
+
+    questionRender()
+    {
         const TitleChange = (e) => {
             const Target = e.target;
             const Value = Target.value;
@@ -580,20 +640,21 @@ export class Mobile extends React.Component {
         const HandleInvalid = () => {
             const Description = this.getTaskAnswers();
 
-            if (Description.length < 3) {
-                if (this.TextDescription.current) {
+            if (Description.length < 3)
+            {
+                if (this.TextDescription.current)
                     this.TextDescription.current.focus();
-                }
 
                 return;
             }
-            else if (Description.length > 30) {
+            else if (Description.length > 30)
+            {
                 const Title = this.state.title;
 
-                if (Title.length < 3) {
-                    if (this.TextTitle.current) {
+                if (Title.length < 3)
+                {
+                    if (this.TextTitle.current)
                         this.TextTitle.current.focus();
-                    }
 
                     return;
                 }
@@ -601,12 +662,12 @@ export class Mobile extends React.Component {
         };
 
         const HandleEnter = (e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter")
+            {
                 e.preventDefault();
                 e.stopPropagation();
-                if (this.TextForm.current) {
+                if (this.TextForm.current)
                     this.TextForm.current.click();
-                }
             }
         };
 
@@ -634,9 +695,7 @@ export class Mobile extends React.Component {
                             }
                         }
                         else
-                        {
                             Index = Check;
-                        }
                     }
 
                     Title = Title.substring(0, Index);
@@ -649,15 +708,20 @@ export class Mobile extends React.Component {
 
         return (
             <ContentContainer>
-                <Form autoComplete="off"
+                <Form
+                    autoComplete="off"
                     onInvalid={HandleInvalid}
-                    onSubmit={this.inputsClick}>
+                    onSubmit={this.inputsClick} >
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
-                    <Box m={1}
+                    <Box
+                        height="100%"
+                        m={1}
                         mb={2}
-                        p={1} height="100%" width="100%">
-                        <ContentInput disabled={this.getTaskAnswers().length <= 30}
+                        p={1}
+                        width="100%" >
+                        <ContentInput
+                            disabled={this.getTaskAnswers().length <= 30}
                             fullWidth
                             helperText={`${30 - this.state.title.length}`}
                             inputProps={{
@@ -675,11 +739,12 @@ export class Mobile extends React.Component {
                             value={this.state.title}
                             variant="outlined" />
 
-                        <ContentInput fullWidth
-                            helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30
-                                ? ""
-                                : ` | ${30 - this.getTaskAnswers().length}`}`}
-                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off"}}
+                        <ContentInput
+                            fullWidth
+                            helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30 ?
+                                                                                "" :
+                                                                                ` | ${30 - this.getTaskAnswers().length}`}`}
+                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                             inputRef={this.TextDescription}
                             label="Description"
                             margin="none"
@@ -692,27 +757,29 @@ export class Mobile extends React.Component {
                             variant="outlined" />
                     </Box>
 
-                    <ContentButton ref={this.TextForm}
+                    <ContentButton
+                        ref={this.TextForm}
                         type="submit"
-                        value="Submit">
-                        {this.getTaskAnswers().length < 3
-                            ? "Write an input to send!"
-                            : (this.getTaskAnswers().length > 30 && this.state.title < 3)
-                                ? "Write a title before sending!"
-                                : "Send Input!"}
+                        value="Submit" >
+                        {this.getTaskAnswers().length < 3 ?
+                             "Write an input to send!" :
+                             (this.getTaskAnswers().length > 30 && this.state.title < 3) ?
+                             "Write a title before sending!" :
+                             "Send Input!"}
                     </ContentButton>
                 </Form>
             </ContentContainer>
         );
     }
 
-    choicePick(picked) {
+
+    choicePick(picked)
+    {
         const Index = this.getTaskIndex();
         const Max = this.getOptionMax();
 
-        if (picked.length >= this.getTaskAnswers().length && picked.length > Max) {
+        if (picked.length >= this.getTaskAnswers().length && picked.length > Max)
             return;
-        }
 
         var Chosen = [];
 
@@ -720,10 +787,12 @@ export class Mobile extends React.Component {
             var PickData = pick.split("-");
             var ChoiceIndex = parseInt(PickData[0]);
 
-            if (ChoiceIndex === Index) {
+            if (ChoiceIndex === Index)
+            {
                 Chosen.push(pick);
 
-                if (Chosen.length >= Max) {
+                if (Chosen.length >= Max)
+                {
                     this.setTaskAnswers(Chosen);
                     return;
                 }
@@ -733,34 +802,36 @@ export class Mobile extends React.Component {
         this.setTaskAnswers(Chosen);
     }
 
-    pointsChange(index, value) {
+
+    pointsChange(index, value)
+    {
         const Answers = this.getTaskAnswers();
         let Spent = 0;
         const Tasks = this.getTasks();
-        const Change = value - Answers[index];
+        let Value = parseInt(value);
+        const Change = Value - Answers[index];
 
-        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change) {
+        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change)
+        {
             const Maximum = Tasks[this.getTaskIndex()].Amount - Tasks[this.getTaskIndex()].Spent;
 
-            if (Maximum < 1) {
-                return;
-            }
-            else {
-                value = Maximum;
-            }
+            if (Maximum < 1)
+                return false;
+            else
+                Value = Maximum;
         }
-        for (let I = 0; I < this.getTaskOptions().length; I++) {
-            if (Answers[I] == undefined) {
+
+
+        for (let I = 0; I < this.getTaskOptions().length; I++)
+        {
+            if (Answers[I] == undefined)
                 Answers[I] = 0;
-            }
 
-            if (index === I) {
-                Answers[I] = value;
-            }
+            if (index === I)
+                Answers[I] = Value;
 
-            if (Answers[I] > 0) {
+            if (Answers[I] > 0)
                 Spent += Answers[I];
-            }
         }
 
         Tasks[this.getTaskIndex()].Spent = Spent;
@@ -768,15 +839,20 @@ export class Mobile extends React.Component {
             inputs: Tasks
         });
         this.setTaskAnswers(Answers);
+        return true;
     }
 
-    sliderChange(index, value) {
+
+    sliderChange(index, value)
+    {
         const Answers = this.getTaskAnswers();
         Answers[index] = value;
         this.setTaskAnswers(Answers);
     }
 
-    inputsClick(e) {
+
+    inputsClick(e)
+    {
         e.preventDefault();
         const State = this.state;
         const Current = this.getTaskIndex();
@@ -787,31 +863,29 @@ export class Mobile extends React.Component {
         // Send the input
         const Code = sessionStorage.getItem("code");
         let User = "anonymous";
-        if (State.loggedIn) {
+        if (State.loggedIn)
             User = localStorage.getItem("user");
-        }
 
         var Data = {
             UserID: User
         };
 
         // Send
-        if (Type === 0) {// Open Text
+        if (Type === 0)
+        { // Open Text
             Data.Description = Answer.trim();
 
-
-
-            if (Data.Description.length > 30) {
+            if (Data.Description.length > 30)
+            {
                 if (this.state.title.trim().length < 3)
-                {
                     return false;
-                }
                 Data.Title = this.state.title.trim();
             }
 
             Axios.post(`client/${Code}/add-text-open`, Data);
         }
-        else if (Type === 1) {// Multiple Choice
+        else if (Type === 1)
+        { // Multiple Choice
             Answer.forEach(option => {
                 var OptionData = option.split("-");
                 var Index = parseInt(OptionData[1]);
@@ -820,11 +894,13 @@ export class Mobile extends React.Component {
                 Axios.post(`client/${Code}/add-vote-multi`, Data);
             });
         }
-        else if (Type === 2) {// Points
+        else if (Type === 2)
+        { // Points
             Data.Points = Answer;
             Axios.post(`client/${Code}/add-vote-points`, Data);
         }
-        else if (Type === 3) {// Slider
+        else if (Type === 3)
+        { // Slider
             Data.Ratings = Answer;
             Axios.post(`client/${Code}/add-vote-slider`, Data);
         }
@@ -839,7 +915,9 @@ export class Mobile extends React.Component {
         return true;
     }
 
-    inputsEdit() {
+
+    inputsEdit()
+    {
         const LastInput = this.state.lastInput;
         this.setState({
             currentInput: LastInput,
@@ -847,13 +925,17 @@ export class Mobile extends React.Component {
         });
     }
 
-    logout() {
+
+    logout()
+    {
         localStorage.clear();
         sessionStorage.clear();
         this.props.history.push("/");
     }
 
-    choiceRender() {
+
+    choiceRender()
+    {
         return (
             <ContentContainer>
 
@@ -861,18 +943,20 @@ export class Mobile extends React.Component {
                     {this.getTaskTitle()}
                 </ContentQuestion>
 
-                <MultipleChoiceGroup name={`group-${this.getTaskIndex()}`}
+                <MultipleChoiceGroup
+                    name={`group-${this.getTaskIndex()}`}
                     onChange={this.choicePick}
                     toggle
                     type="checkbox"
                     value={this.getTaskAnswers()}
-                    vertical>
+                    vertical >
 
                     {this.getTaskOptions().map((choice) =>
-                        <MultipleChoiceButton key={choice.Index}
+                        <MultipleChoiceButton
+                            key={choice.Index}
                             name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
                             size="lg"
-                            value={`${this.getTaskIndex()}-${choice.Index}`}>
+                            value={`${this.getTaskIndex()}-${choice.Index}`} >
 
                             <Tick>
                                 <TickStem />
@@ -884,44 +968,66 @@ export class Mobile extends React.Component {
                     )}
                 </MultipleChoiceGroup>
 
-                <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
-            </ContentContainer>
-        );
-    }
-
-    pointsRender() {
-        const Task = this.getCurrentTask();
-        const Answers = this.state.answers[this.getTaskIndex()];
-        return (
-            <ContentContainer>
-                <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box borderColor="transparent"
-                    component="fieldset"
-                    mb={3}
-                    pt={2}
-                    px={2}>
-                    {Task.Options.map((point) =>
-                        <Box borderColor="transparent" component="fieldset" key={point.Index} mb={3} pt={1} px={1}>
-                            <Typography component="legend">{point.Title}</Typography>
-                            <Rating max={Task.Max} name={point.Title} onChange={(e, value) =>
-                                this.pointsChange(point.Index, value)} value={Answers !== undefined
-                                    ? Answers.value[point.Index]
-                                    : 0
-                                } />
-                        </Box>
-                    )}
-                </Box>
-                <ContentButton disabled={Task.Spent !== Task.Amount}
-                    onClick={this.inputsClick}>
-                    {Task.Spent !== Task.Amount
-                        ? (Task.Amount - Task.Spent) + " points left!"
-                        : "Send Vote"}
+                <ContentButton
+                    onClick={this.inputsClick} >
+                    Send Vote
                 </ContentButton>
             </ContentContainer>
         );
     }
 
-    sliderRender() {
+
+    pointsRender()
+    {
+        const Task = this.getCurrentTask();
+        const Answers = this.state.answers[this.getTaskIndex()];
+        return (
+            <ContentContainer>
+                <ContentQuestion>{Task.Title}</ContentQuestion>
+                <Box
+                    borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={2}
+                    px={2} >
+                    {Task.Options.map((point) =>
+                        <Box
+                            borderColor="transparent"
+                            component="fieldset"
+                            key={point.Index}
+                            mb={3}
+                            pt={1}
+                            px={1} >
+                            <Typography
+                                component="legend" >
+                                {point.Title}
+                            </Typography>
+                            <Rating
+                                max={Task.Max}
+                                name={point.Title}
+                                onChange={(e, value) =>
+                                    this.pointsChange(point.Index, value)}
+                                value={Answers !== undefined ?
+                                           Answers.value[point.Index] :
+                                           0
+                                } />
+                        </Box>
+                    )}
+                </Box>
+                <ContentButton
+                    disabled={Task.Spent !== Task.Amount}
+                    onClick={this.inputsClick} >
+                    {Task.Spent !== Task.Amount ?
+                         (Task.Amount - Task.Spent) + " points left!" :
+                         "Send Vote"}
+                </ContentButton>
+            </ContentContainer>
+        );
+    }
+
+
+    sliderRender()
+    {
         const Task = this.getCurrentTask();
         const Answers = this.state.answers[this.getTaskIndex()];
         const Marks = [
@@ -938,66 +1044,83 @@ export class Mobile extends React.Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={2}
                     pt={1}
-                    px={2}>
+                    px={2} >
                     {Task.Options.map((slider) =>
-                        <Box borderColor="transparent" component="fieldset" key={slider.Index} mb={4} pt={2} px={1}>
-                            <Typography component="legend">{slider.Title}</Typography>
-                            <Slider aria-labledby="discrete-slider" marks={Marks}
-                                max={Task.Max} min={Task.Min} name={slider.Title}
+                        <Box
+                            borderColor="transparent"
+                            component="fieldset"
+                            key={slider.Index}
+                            mb={4}
+                            pt={2}
+                            px={1} >
+                            <Typography
+                                component="legend" >
+                                {slider.Title}
+                            </Typography>
+                            <Slider
+                                aria-labledby="discrete-slider"
+                                marks={Marks}
+                                max={Task.Max}
+                                min={Task.Min}
+                                name={slider.Title}
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)}
-                                step={1} value={Answers !== undefined
-                                    ? Answers.value[slider.Index]
-                                    : Task.Min}
+                                step={1}
+                                value={Answers !== undefined ?
+                                           Answers.value[slider.Index] :
+                                           Task.Min}
                                 valueLabelDisplay="on" />
                         </Box>
                     )}
                 </Box>
-                <ContentButton onClick={this.inputsClick}>Send Vote</ContentButton>
+                <ContentButton
+                    onClick={this.inputsClick} >
+                    Send Vote
+                </ContentButton>
             </ContentContainer>
         );
     }
 
-    processScreens() {
+
+    processScreens()
+    {
         const State = this.state.sessionState;
 
-        switch (State) {
+        switch (State)
+        {
             case 0: // Start Screen
                 return this.welcomeRender();
             case 1: // Answer Screen
-                if (this.getCurrentTask() !== undefined) {
-                    if (!this.getCurrentTask().InProgress) {
+                if (this.getCurrentTask() !== undefined)
+                {
+                    if (!this.getCurrentTask().InProgress)
                         return this.closedRender();
-                    }
 
                     const Type = this.getTaskType();
                     const Answer = this.getTaskAnswers();
 
-                    if (Answer !== 0) {
-                        if (Type === 0) {
+                    if (Answer !== 0)
+                    {
+                        if (Type === 0)
                             return this.questionRender();
-                        }
-                        else if (Type === 1) {
+                        else if (Type === 1)
                             return this.choiceRender();
-                        }
-                        else if (Type === 2) {
+                        else if (Type === 2)
                             return this.pointsRender();
-                        }
-                        else if (Type === 3) {
+                        else if (Type === 3)
                             return this.sliderRender();
-                        }
                     }
                 }
-                else {
-                    if (this.getTaskIndex() > 0) {
+                else
+                {
+                    if (this.getTaskIndex() > 0)
                         return this.finishedRender();
-                    }
-                    else {
+                    else
                         return this.welcomeRender();
-                    }
                 }
 
             default: // Wait for more questions
@@ -1005,32 +1128,38 @@ export class Mobile extends React.Component {
         }
     }
 
-    renderPage() {
+
+    renderPage()
+    {
         const Tab = this.state.activeHeader;
 
-        switch (Tab) {
+        switch (Tab)
+        {
             default:
                 return this.processScreens();
         }
     }
 
-    tabTitle(type) {
+
+    tabTitle(type)
+    {
         let Title;
         const Task = this.getCurrentTask();
 
-        switch (type) {
+        switch (type)
+        {
             case 0:
                 Title = "Open Text";
                 break;
             case 1:
-                Title = `Pick your ${this.getOptionMax() > 1
-                    ? this.getOptionMax() + " favorites!"
-                    : "favorite!"}`;
+                Title = `Pick your ${this.getOptionMax() > 1 ?
+                                     this.getOptionMax() + " favorites!" :
+                                     "favorite!"}`;
                 break;
             case 2:
-                Title = `Give Points: ${Task.Spent == undefined
-                    ? Task.Amount
-                    : Task.Amount - Task.Spent} points left!`;
+                Title = `Give Points: ${Task.Spent == undefined ?
+                                        Task.Amount :
+                                        Task.Amount - Task.Spent} points left!`;
                 break;
             case 3:
                 Title = "Slider";
@@ -1040,25 +1169,26 @@ export class Mobile extends React.Component {
                 break;
         }
 
-        if (Task.Countdown > 0)
-        {
+        if (Task.Countdown > -1)
             Title += `  |  Timer: ${Task.Countdown} seconds`;
-        }
 
         return Title;
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
                 <MainContainer>
                     <Header>
-                        <HeaderText active={this.state.activeHeader}
+                        <HeaderText
+                            active={this.state.activeHeader}
                             id="inputs"
-                            onClick={(e) => this.headerClick(e.target)}>
-                            {this.getCurrentTask() !== undefined
-                                ? this.tabTitle(this.getTaskType())
-                                : "Waiting"}
+                            onClick={(e) => this.headerClick(e.target)} >
+                            {this.getCurrentTask() !== undefined ?
+                                 this.tabTitle(this.getTaskType()) :
+                                 "Waiting"}
                         </HeaderText>
                     </Header>
                     {this.renderPage()}

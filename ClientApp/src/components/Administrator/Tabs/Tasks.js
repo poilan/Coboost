@@ -1,11 +1,12 @@
-﻿import React, { Component } from "react";
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+﻿import React, {Component} from "react";
+import {Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { Collection, Task } from "./Components/Task";
-import { CreateTaskModal } from "./Components/CreateModal";
-import { ContextMenu } from "./Components/ContextMenu";
-import { BigScreen } from "../../Big Screen/BigScreen";
+import {Collection, Task} from "./Components/Task";
+import {CreateTaskModal} from "./Components/CreateModal";
+import {ContextMenu} from "./Components/ContextMenu";
+import {BigScreen} from "../../Big Screen/BigScreen";
+
 
 const SlideContainer = Styled.div`
     top: 2%;
@@ -32,7 +33,8 @@ const Viewer = Styled(BigScreen)`
 `;
 
 export class Tasks extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             tasks: props.tasks,
@@ -57,10 +59,12 @@ export class Tasks extends Component {
         };
     }
 
-    componentDidMount() {
+
+    componentDidMount()
+    {
         const Self = this;
         document.addEventListener("contextmenu",
-            function () {
+            function() {
                 Self.setState({
                     menu: {
                         x: 0,
@@ -70,6 +74,7 @@ export class Tasks extends Component {
                 });
             });
     }
+
 
     createTask = (event) => {
         const ClickX = event.clientX;
@@ -83,24 +88,29 @@ export class Tasks extends Component {
         });
     }
 
-    taskClick = (event) => {
-        this.loadTask(event);
-    }
+
+    taskClick = (event) => { this.loadTask(event); }
+
 
     loadTask = (event) => {
         const Key = event.target.id;
         this.props.SSE(Key);
     }
 
-    renderActive() {
+
+    renderActive()
+    {
         return (
             <SelectedSlide>
-                <Viewer admin={true} />
+                <Viewer
+                    admin={true} />
             </SelectedSlide>
         );
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
                 <SlideContainer>

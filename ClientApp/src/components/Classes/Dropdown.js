@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import Styled from "styled-components";
 import "circular-std";
+
 
 const DropStyle = Styled.div`
     position: relative;
@@ -46,13 +47,13 @@ const DropItem = Styled.button`
     background-color: transparent;
     border: none;
 
-    color: ${props => props.disabled
-        ? "rgba(0, 0, 0, 0.3)"
-        : "black"} !important;
+    color: ${props => props.disabled ?
+                      "rgba(0, 0, 0, 0.3)" :
+                      "black"} !important;
 
-    user-select: ${props => props.disabled
-        ? "none"
-        : "all"};
+    user-select: ${props => props.disabled ?
+                            "none" :
+                            "all"};
 
     :hover {
         text-decoration: none;
@@ -69,9 +70,9 @@ const DropdownContent = Styled.div`
     z-index: 1;
     right: 0px;
 
-    display: ${props => props.hide
-        ? "none"
-        : "block"};
+    display: ${props => props.hide ?
+                        "none" :
+                        "block"};
     overflow: hidden;
 
     margin-top: 5px;
@@ -83,16 +84,20 @@ const DropdownContent = Styled.div`
 `;
 
 export class BannerButton extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
-                <DropButton disabled={this.props.disabled}
+                <DropButton
+                    disabled={this.props.disabled}
                     onClick={this.props.onClick}
-                    style={this.props.style}>
+                    style={this.props.style} >
                     {this.props.children}
                 </DropButton>
             </React.Fragment>
@@ -101,15 +106,19 @@ export class BannerButton extends React.Component {
 }
 
 export class BannerLink extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
-                <DropItem disabled={this.props.disabled}
-                    onClick={this.props.onClick}>
+                <DropItem
+                    disabled={this.props.disabled}
+                    onClick={this.props.onClick} >
                     {this.props.children}
                 </DropItem>
             </React.Fragment>
@@ -118,7 +127,8 @@ export class BannerLink extends React.Component {
 }
 
 export class BannerDropdown extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
 
         this.state = {
@@ -129,27 +139,36 @@ export class BannerDropdown extends React.Component {
         this.onFocusLoss = this.onFocusLoss.bind(this);
     }
 
-    onClick() {
+
+    onClick()
+    {
         this.setState({
             hidden: !this.state.hidden
         });
     }
 
-    onFocusLoss() {
+
+    onFocusLoss()
+    {
         this.setState({
             hidden: true
         });
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
-                <DropStyle style={this.props.style}>
-                    <DropButton onClick={() => this.onClick()}>
+                <DropStyle
+                    style={this.props.style} >
+                    <DropButton
+                        onClick={() => this.onClick()} >
                         {this.props.title}
                     </DropButton>
-                    <DropdownContent hide={this.state.hidden}
-                        onMouseLeave={() => this.onFocusLoss()}>
+                    <DropdownContent
+                        hide={this.state.hidden}
+                        onMouseLeave={() => this.onFocusLoss()} >
                         {this.props.children}
                     </DropdownContent>
                 </DropStyle>

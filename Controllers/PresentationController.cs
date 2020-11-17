@@ -24,22 +24,12 @@ namespace Coboost.Controllers
     [ApiController]
     public class PresentationController : ControllerBase
     {
-        #region Private Fields
-
         private readonly DatabaseContext _context;
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         public PresentationController(DatabaseContext context)
         {
             _context = context;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         [HttpGet("info-{code}")]
         public async Task<Session> GetSessionInfo(int code)
@@ -59,8 +49,7 @@ namespace Coboost.Controllers
 
                 while (!HttpContext.RequestAborted.IsCancellationRequested)
                 {
-                    if (admin.Tasks.Count > 0 && admin.Active < admin.Tasks.Count &&
-                        (question == null || question.Index != admin.Active))
+                    if (admin.Tasks.Count > 0 && admin.Active < admin.Tasks.Count && (question == null || question.Index != admin.Active))
                     {
                         question = admin.Tasks[admin.Active].Type switch
                         {
@@ -194,7 +183,5 @@ namespace Coboost.Controllers
                 Response.StatusCode = 412;
             }
         }
-
-        #endregion Public Methods
     }
 }

@@ -1,20 +1,21 @@
 ﻿import Axios from "axios";
 import "circular-std";
-import React, { Component } from "react";
-import { Form, Nav } from "react-bootstrap";
+import React, {Component} from "react";
+import {Form, Nav} from "react-bootstrap";
 import Styled from "styled-components";
-import { Ico_Box, Ico_MultipleChoice, Ico_Points, Ico_Slider, Ico_Text } from "../../../Classes/Icons";
-import { PageModal } from "../../../Services/PageModal";
+import {Ico_Box, Ico_MultipleChoice, Ico_Points, Ico_Slider, Ico_Text} from "../../../Classes/Icons";
+import {PageModal} from "../../../Services/PageModal";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import MenuIcon from "@material-ui/icons/Menu";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
+
 const CollectionContainer = Styled.div`
-    width: ${props => props.shown
-        ? "calc(100% - 30px)"
-        : "0%"};
+    width: ${props => props.shown ?
+                      "100%" :
+                      "0%"};
     background: #fff;
     height: 100%;
     top: 0;
@@ -24,9 +25,9 @@ const CollectionContainer = Styled.div`
     display: inline-block;
     position: absolute;
     overflow: hidden;
-    overflow-y: ${props => props.shown
-        ? "auto"
-        : "hidden"};
+    overflow-y: ${props => props.shown ?
+                           "auto" :
+                           "hidden"};
     left: 0;
     scrollbar-width: thin;
     scrollbar-color: #4C7AD3 #fff;
@@ -51,6 +52,7 @@ const CreateTask = Styled.div`
     };
 `;
 
+
 export function Collection(props) {
     const Drop = e => {
         e.preventDefault();
@@ -62,19 +64,22 @@ export function Collection(props) {
         Axios.post(`admin/${Code}/question${Task.index}-move${Target}`).then(props.update(true));
     };
 
-    const DragOver = e => {
-        e.preventDefault();
-    };
+    const DragOver = e => { e.preventDefault(); };
 
     return (
-        <CollectionContainer onDragOver={DragOver}
+        <CollectionContainer
+            onDragOver={DragOver}
             onDrop={Drop}
-            shown={props.shown}>
+            shown={props.shown} >
             {props.children}
-            <CreateTask onClick={props.createTask}>➕ Create new task</CreateTask>
+            <CreateTask
+                onClick={props.createTask} >
+                ➕ Create new task
+            </CreateTask>
         </CollectionContainer>
     );
 }
+
 
 const TaskContainer = Styled.div`
     border-bottom: 2px solid #BABABA;
@@ -87,9 +92,9 @@ const TaskContainer = Styled.div`
     padding: 10px;
     height: 100px;
     overflow: hidden;
-    background: ${props => props.active
-        ? "#d4d4de"
-        : "#fff"};
+    background: ${props => props.active ?
+                           "#d4d4de" :
+                           "#fff"};
 
     &:hover {
         cursor: pointer;
@@ -174,9 +179,9 @@ const TaskLock = Styled.div`
     position: absolute;
     top: 80%;
     transform: translateY(-50%);
-    display: ${props => props.showcase
-        ? "none"
-        : "block"};
+    display: ${props => props.showcase ?
+                        "none" :
+                        "block"};
 
     .icon {
         width: 20px;
@@ -195,9 +200,9 @@ const RemoveButton = Styled(TaskLock)`
     width: 14px;
     top: 15%;
     transform: translateY(-50%);
-    display: ${props => props.showcase
-        ? "none"
-        : "block"};
+    display: ${props => props.showcase ?
+                        "none" :
+                        "block"};
 `;
 
 export class Task extends Component {
@@ -208,6 +213,7 @@ export class Task extends Component {
         hover: false
     }
 
+
     drag = {
         start: (e) => {
             const Data = {
@@ -217,9 +223,7 @@ export class Task extends Component {
             e.dataTransfer.setData("task", JSON.stringify(Data));
         },
 
-        over: (e) => {
-            e.preventDefault();
-        },
+        over: (e) => { e.preventDefault(); },
 
         drop: (e) => {
             e.preventDefault();
@@ -232,6 +236,7 @@ export class Task extends Component {
             Axios.post(`admin/${Code}/question${Task.index}-move${Target}`).then(this.props.update(true));
         }
     }
+
 
     modal = {
         delete: {
@@ -254,14 +259,19 @@ export class Task extends Component {
                 };
 
                 return (
-                    <Form autoComplete="off"
-                        onSubmit={(e) => DeleteTask(e)}>
+                    <Form
+                        autoComplete="off"
+                        onSubmit={(e) => DeleteTask(e)} >
                         <ModalText>
                             Are you sure you want to delete this task?
                             <br /> This action can not be undone
                         </ModalText>
-                        <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
-                        <CreateButton type="submit"
+                        <CancelButton
+                            onClick={() => this.modal.delete.close()} >
+                            Cancel
+                        </CancelButton>
+                        <CreateButton
+                            type="submit"
                             value="Submit" />
                     </Form>
                 );
@@ -277,23 +287,22 @@ export class Task extends Component {
         }
     }
 
+
     toggleTask = (e) => {
         e.stopPropagation();
         const Code = sessionStorage.getItem("code");
 
-        Axios.post(`admin/${Code}/task-toggle${this.props.id}`).then(() => {
-            setTimeout(this.props.update(), 250);
-        });
+        Axios.post(`admin/${Code}/task-toggle${this.props.id}`).then(() => { setTimeout(this.props.update(), 250); });
     }
+
 
     hideResults = (e) => {
         e.stopPropagation();
         const Code = sessionStorage.getItem("code");
 
-        Axios.post(`admin/${Code}/question-results-toggle${this.props.id}`).then(() => {
-            setTimeout(this.props.update(), 250);
-        });
+        Axios.post(`admin/${Code}/question-results-toggle${this.props.id}`).then(() => { setTimeout(this.props.update(), 250); });
     }
+
 
     hover = {
         enter: (e) => {
@@ -306,10 +315,13 @@ export class Task extends Component {
         }
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
-                <TaskContainer active={this.props.active}
+                <TaskContainer
+                    active={this.props.active}
                     draggable
                     id={this.props.id}
                     onClick={this.props.onClick.bind(this)}
@@ -319,89 +331,108 @@ export class Task extends Component {
                     onDrop={this.drag.drop}
                     onMouseEnter={this.hover.enter}
                     onMouseLeave={this.hover.leave}
-                    type={this.props.type}>
+                    type={this.props.type} >
 
-                    <TaskIndex id={this.props.id}>
+                    <TaskIndex
+                        id={this.props.id} >
                         {this.props.id + 1}
                     </TaskIndex>
 
-                    {this.props.type < 2
-
-                         ? this.props.type === 0
-
-                           ? <Ico_Text id={this.props.id} style={{
-                               height: "60px",
-                               width: "55px",
-                               marginTop: "10px",
-                               marginRight: "5px"
-                           }} />
-                           : <Ico_MultipleChoice style={{ height: "60px", width: "60px", marginTop: "10px" }} />
-
-                         : this.props.type === 2
-
-                           ? <Ico_Points id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
-                           : <Ico_Slider id={this.props.id} style={{ height: "60px", width: "60px", marginTop: "10px" }} />
+                    {this.props.type < 2 ?
+                         this.props.type === 0 ?
+                         <Ico_Text
+                             id={this.props.id}
+                             style={{
+                                 height: "60px",
+                                 width: "55px",
+                                 marginTop: "10px",
+                                 marginRight: "5px"
+                             }} /> :
+                         <Ico_MultipleChoice
+                             style={{ height: "60px", width: "60px", marginTop: "10px" }} /> :
+                         this.props.type === 2 ?
+                         <Ico_Points
+                             id={this.props.id}
+                             style={{ height: "60px", width: "60px", marginTop: "10px" }} /> :
+                         <Ico_Slider
+                             id={this.props.id}
+                             style={{ height: "60px", width: "60px", marginTop: "10px" }} />
                     }
 
-                    <TitleContainer id={this.props.id}>
+                    <TitleContainer
+                        id={this.props.id} >
 
-                        <TaskType id={this.props.id}>
+                        <TaskType
+                            id={this.props.id} >
 
-                            {this.props.type === 0
-
-                                ? "Text"
-                                : this.props.type === 1
-
-                                    ? "Multiple Choice"
-                                    : this.props.type === 2
-
-                                        ? "Points"
-                                        : "Slider"
-}
+                            {this.props.type === 0 ?
+                                 "Text" :
+                                 this.props.type === 1 ?
+                                 "Multiple Choice" :
+                                 this.props.type === 2 ?
+                                 "Points" :
+                                 "Slider"
+                            }
                         </TaskType>
 
-                        <TaskTitle id={this.props.id}>
+                        <TaskTitle
+                            id={this.props.id} >
                             {this.props.title}
                         </TaskTitle>
 
                     </TitleContainer>
 
-                    <TaskLock isBigScreen={this.props.toggle}
-                        onClick={this.toggleTask}>
-                        {this.props.InProgress
-                            ? <LockOpenIcon style={{ opacity: "60%", color: "black" }} className="icon" />
-                            : <LockIcon style={{
-                                opacity: this.state.hover
-                                    ? "60%"
-                                    : "0%",
-                                color: "black"
-                            }} className="icon" />
+                    <TaskLock
+                        isBigScreen={this.props.toggle}
+                        onClick={this.toggleTask} >
+                        {this.props.InProgress ?
+                             <LockOpenIcon
+                                 className="icon"
+                                 style={{ opacity: "60%", color: "black" }} /> :
+                             <LockIcon
+                                 className="icon"
+                                 style={{
+                                     opacity: this.state.hover ?
+                                                  "60%" :
+                                                  "0%",
+                                     color: "black"
+                                 }} />
                         }
                     </TaskLock>
 
-                    <ResultsHide isBigScreen={this.props.toggle}
-                        onClick={this.hideResults}>
-                        {this.props.ShowResults
-                            ? <VisibilityIcon style={{
-                                opacity: this.state.hover
-                                    ? "60%"
-                                    : "0%",
-                                color: "black"
-                            }} className="icon" />
-                            : <VisibilityOffIcon style={{ opacity: "60%", color: "black" }} className="icon" />
+                    <ResultsHide
+                        isBigScreen={this.props.toggle}
+                        onClick={this.hideResults} >
+                        {this.props.ShowResults ?
+                             <VisibilityIcon
+                                 className="icon"
+                                 style={{
+                                     opacity: this.state.hover ?
+                                                  "60%" :
+                                                  "0%",
+                                     color: "black"
+                                 }} /> :
+                             <VisibilityOffIcon
+                                 className="icon"
+                                 style={{ opacity: "60%", color: "black" }} />
                         }
                     </ResultsHide>
 
-                    <RemoveButton id={this.props.key}
+                    <RemoveButton
+                        id={this.props.key}
                         onClick={this.modal.delete.open.bind(this)}
-                        style={{ opacity: "60%", color: "black" }}>
-                        <MenuIcon className="icon"
+                        style={{ opacity: "60%", color: "black" }} >
+                        <MenuIcon
+                            className="icon"
                             style={{ opacity: "100%", color: "black" }} />
                     </RemoveButton>
                 </TaskContainer>
 
                 {this.state.modal.delete &&
-                    <PageModal body={this.modal.delete.content()} onClose={this.modal.delete.close.bind(this)} title="Confirm Delete" />}
+                    <PageModal
+                        body={this.modal.delete.content()}
+                        onClose={this.modal.delete.close.bind(this)}
+                        title="Confirm Delete" />}
             </React.Fragment>
         );
     }

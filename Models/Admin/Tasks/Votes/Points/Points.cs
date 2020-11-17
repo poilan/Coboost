@@ -8,36 +8,50 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
 {
     public class Points : BaseTask
     {
-        #region Public Properties
-
         /// <summary>
         ///     The amount of points to spread
         /// </summary>
-        public int Amount { get; set; }
+        public int Amount
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     All the deleted options
         /// </summary>
-        public List<PointsOption> Archive { get; set; }
+        public List<PointsOption> Archive
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The maximum points you can assign to a single option
         /// </summary>
-        public int Max { get; set; }
+        public int Max
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The options you can vote for
         /// </summary>
-        public List<PointsOption> Options { get; set; }
+        public List<PointsOption> Options
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The votes we have received
         /// </summary>
-        public List<PointsVote> Votes { get; set; }
-
-        #endregion Public Properties
-
-        #region Public Methods
+        public List<PointsVote> Votes
+        {
+            get;
+            set;
+        }
 
         public void AddClientVote(PointsVote vote)
         {
@@ -63,25 +77,21 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
                 if (option >= Options.Count || option < 0 || color == null)
                     return;
 
-                if (color.Length == 7 && color.StartsWith("#")) Options[option].Color = color;
+                if (color.Length == 7 && color.StartsWith("#"))
+                    Options[option].Color = color;
             }
 
             EventStream();
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         private void RecountVotes()
         {
-            foreach (PointsOption option in Options) option.Points = 0;
+            foreach (PointsOption option in Options)
+                option.Points = 0;
 
             foreach (PointsVote vote in Votes)
                 for (int j = 0; j < vote.Points.Count; j++)
                     Options[j].Points += vote.Points[j];
         }
-
-        #endregion Private Methods
     }
 }

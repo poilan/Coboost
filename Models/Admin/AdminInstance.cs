@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Coboost.Models.Admin.Tasks;
 using Coboost.Models.Admin.Tasks.Input.Standard;
 using Coboost.Models.Admin.Tasks.Input.Standard.data;
@@ -17,56 +18,52 @@ namespace Coboost.Models.Admin
 {
     public class AdminInstance
     {
-        #region Private Fields
-
         private int _active;
-
-        #endregion Private Fields
-
-        #region Public Fields
-
         public ManualResetEvent Client = new ManualResetEvent(false);
 
-        #endregion Public Fields
+        public int Active
+        {
+            get =>
+                _active < Tasks.Count ?
+                    _active :
+                    0;
+            set
+            {
+                if (Tasks == null || value >= Tasks.Count || value < 0 || Tasks[value].Type == BaseTask.TaskType.Planned)
+                    return;
 
-        #region Public Constructors
+                int i = _active;
+                _active = value;
+                ClientSet();
+                if (Tasks.Count > i)
+                    Tasks[i].Reset.Set();
+            }
+        }
+
+        public int EventCode
+        {
+            get;
+            set;
+        }
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string Owner
+        {
+            get;
+            set;
+        }
+
+        public List<BaseTask> Tasks
+        {
+            get;
+            set;
+        }
 
         public AdminInstance()
         {
             Active = 0;
             Tasks = new List<BaseTask>();
         }
-
-        #endregion Public Constructors
-
-        #region Public Properties
-
-        public int Active
-        {
-            get => _active < Tasks.Count ? _active : 0;
-            set
-            {
-                if (Tasks == null || value >= Tasks.Count || value < 0 ||
-                    Tasks[value].Type == BaseTask.TaskType.Planned)
-                    return;
-
-                int i = _active;
-                _active = value;
-                ClientSet();
-                if (Tasks.Count > i) Tasks[i].Reset.Set();
-            }
-        }
-
-        public int EventCode { get; set; }
-
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string Owner { get; set; }
-
-        public List<BaseTask> Tasks { get; set; }
-
-        #endregion Public Properties
-
-        #region Public Methods
 
         public void AddClientInput(object clientInput)
         {
@@ -93,36 +90,6 @@ namespace Coboost.Models.Admin
             }
         }
 
-        public void StartCountdown()
-        {
-            BaseTask task = Tasks[Active];
-
-            if (task.Countdown > 0)
-                return;
-            try
-            {
-                task.Countdown = task.Timer;
-
-                if (!task.InProgress)
-                    task.InProgress = true;
-
-                while (task.InProgress && task.Countdown >= 0)
-                {
-                    task.EventStream();
-                    ClientSet();
-                    Thread.Sleep(999);
-                    task.Countdown -= 1;
-                }
-            }
-            finally
-            {
-                task.Countdown = 0;
-                task.InProgress = false;
-                task.EventStream();
-                ClientSet();
-            }
-        }
-
         public void AddMultipleChoice(MultipleChoice question)
         {
             question.Index = Tasks.Count;
@@ -130,7 +97,7 @@ namespace Coboost.Models.Admin
             question.Type = BaseTask.TaskType.MultipleChoice;
             question.ShowResults = true;
             question.Timer = 180;
-            question.Countdown = 0;
+            question.Countdown = -1;
             question.InProgress = true;
             foreach (MultipleChoiceOption option in question.Options)
             {
@@ -145,12 +112,12 @@ namespace Coboost.Models.Admin
         {
             question.Index = Tasks.Count;
             question.Groups = new List<OpenTextGroup>();
-            question.AddGroup("Unorganized", 0);
+            question.AddGroup("Stack", 0);
             question.Archive = new List<OpenTextInput>();
             question.Type = BaseTask.TaskType.OpenText;
             question.ShowResults = true;
             question.Timer = 180;
-            question.Countdown = 0;
+            question.Countdown = -1;
             question.InProgress = true;
             Tasks.Add(question);
         }
@@ -163,9 +130,10 @@ namespace Coboost.Models.Admin
             task.Votes = new List<PointsVote>();
             task.Archive = new List<PointsOption>();
             task.Timer = 180;
-            task.Countdown = 0;
+            task.Countdown = -1;
             task.InProgress = true;
-            foreach (PointsOption option in task.Options) option.Points = 0;
+            foreach (PointsOption option in task.Options)
+                option.Points = 0;
 
             Tasks.Add(task);
         }
@@ -178,16 +146,18 @@ namespace Coboost.Models.Admin
             task.Votes = new List<SliderVote>();
             task.Archive = new List<SliderOption>();
             task.Timer = 180;
-            task.Countdown = 0;
+            task.Countdown = -1;
             task.InProgress = true;
-            foreach (SliderOption option in task.Options) option.Ratings = new List<int>();
+            foreach (SliderOption option in task.Options)
+                option.Ratings = new List<int>();
 
             Tasks.Add(task);
         }
 
         public void DeleteTask(int index)
         {
-            if (index >= Tasks.Count) return;
+            if (index >= Tasks.Count)
+                return;
             Tasks[index].Reset.Set();
             Tasks.RemoveAt(index);
             UpdateIndexes();
@@ -202,15 +172,17 @@ namespace Coboost.Models.Admin
             List<BaseTask> questions = JsonConvert.DeserializeObject<List<BaseTask>>(questionJson, settings);
             Tasks = questions;
 
-            if (Tasks == null) return;
+            if (Tasks == null)
+                return;
             foreach (BaseTask task in Tasks)
             {
                 task.Reset = new ManualResetEvent(false);
                 task.ShowResults = true;
                 task.InProgress = false;
-                task.Countdown = 0;
+                task.Countdown = -1;
 
-                if (!(task is OpenText open)) continue;
+                if (!(task is OpenText open))
+                    continue;
                 foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
                     group.Collapsed = false;
             }
@@ -218,7 +190,8 @@ namespace Coboost.Models.Admin
 
         public void MoveQuestion(int current, int target)
         {
-            if (current >= Tasks.Count || target >= Tasks.Count || current == target) return;
+            if (current >= Tasks.Count || target >= Tasks.Count || current == target)
+                return;
             switch (Tasks[current])
             {
                 case OpenText _:
@@ -305,9 +278,37 @@ namespace Coboost.Models.Admin
             }
         }
 
-        #endregion Public Methods
+        public async void StartCountdown()
+        {
+            BaseTask task = Tasks[Active];
 
-        #region Private Methods
+            if (task.Countdown > -1)
+                return;
+            try
+            {
+                task.Countdown = task.Timer;
+
+                if (!task.InProgress)
+                    task.InProgress = true;
+
+                while (task.InProgress && task.Countdown > -1)
+                {
+                    task.EventStream();
+                    ClientSet();
+                    await Task.Delay(1050);
+                    task.Countdown -= 1;
+                }
+
+                task.Countdown = -1;
+                task.InProgress = false;
+                task.EventStream();
+                ClientSet();
+            }
+            catch
+            {
+                Console.WriteLine("StartCountdown() in AdminInstance.cs caught an Exception. EventCode for Session: #{0}", EventCode);
+            }
+        }
 
         private void ClientSet()
         {
@@ -323,7 +324,5 @@ namespace Coboost.Models.Admin
                 Tasks[i].Reset.Set();
             }
         }
-
-        #endregion Private Methods
     }
 }

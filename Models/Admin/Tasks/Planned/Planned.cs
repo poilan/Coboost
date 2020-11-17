@@ -2,10 +2,10 @@
 {
     public class Planned : BaseTask
     {
-        #region Public Properties
-
-        public TaskType PlannedType { get; set; }
-
-        #endregion Public Properties
+        public TaskType PlannedType
+        {
+            get;
+            set;
+        }
     }
 }

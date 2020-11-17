@@ -12,23 +12,16 @@ namespace Coboost
 {
     public class Startup
     {
-        #region Public Properties
-
         // ReSharper disable once MemberCanBePrivate.Global
-        public IConfiguration Configuration { get; }
-
-        #endregion Public Properties
-
-        #region Public Constructors
+        public IConfiguration Configuration
+        {
+            get;
+        }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,16 +46,15 @@ namespace Coboost
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment()) spa.UseReactDevelopmentServer("start");
+                if (env.IsDevelopment())
+                    spa.UseReactDevelopmentServer("start");
             });
         }
 
@@ -77,13 +69,16 @@ namespace Coboost
             string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
 
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(o => { o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; });
+            services.AddControllersWithViews().AddNewtonsoftJson(o =>
+            {
+                o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
         }
-
-        #endregion Public Methods
     }
 }

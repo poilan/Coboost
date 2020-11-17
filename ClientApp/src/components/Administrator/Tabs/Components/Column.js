@@ -3,28 +3,29 @@ import Styled from "styled-components";
 import "circular-std";
 import Axios from "axios";
 
+
 const Container = Styled.div`
     width: ${props => props.width * 320}px;
-    height: ${props => props.showcase
-        ? ""
-        : "95%"};
+    height: ${props => props.showcase ?
+                       "" :
+                       "95%"};
     position: relative;
-    overflow: ${props => props.showcase
-        ? "hidden"
-        : "auto"};
+    overflow: ${props => props.showcase ?
+                         "hidden" :
+                         "auto"};
     padding: 10px;
-    display: ${props => props.empty
-        ? "none"
-        : props.showcase
-            ? "block"
-            : "inline-block"};
+    display: ${props => props.empty ?
+                        "none" :
+                        props.showcase ?
+                        "block" :
+                        "inline-block"};
     white-space: normal;
-    margin-top: ${props => props.showcase
-        ? "0"
-        : "20px"};
-    border-right: ${props => props.showcase
-        ? "0"
-        : "2px solid #C4C4C4"};
+    margin-top: ${props => props.showcase ?
+                           "0" :
+                           "20px"};
+    border-right: ${props => props.showcase ?
+                             "0" :
+                             "2px solid #C4C4C4"};
     scrollbar-width: thin;
     scrollbar-color: #575b75 #fff;
     vertical-align: top;
@@ -34,9 +35,9 @@ const Container = Styled.div`
 const WidthControl = Styled.div`
     width: ${props => props.width * 320}px;
     position: absolute;
-    display: ${props => props.empty
-        ? "none"
-        : "inline-block"};
+    display: ${props => props.empty ?
+                        "none" :
+                        "inline-block"};
     height: 0;
 `;
 
@@ -47,11 +48,11 @@ const Grow = Styled.div`
     font-size: 3.5rem;
     font-family: CircularStd;
     color: #A4A4A4;
-    display ${props => props.id === "new"
-        ? "none"
-        : props.available
-            ? "inline-block"
-            : "none"};
+    display ${props => props.id === "new" ?
+                       "none" :
+                       props.available ?
+                       "inline-block" :
+                       "none"};
     text-align: right;
 
     &:hover {
@@ -65,25 +66,30 @@ const Shrink = Styled(Grow)`
     right: -2px;
 `;
 
+
 export function Column(props) {
     const Drop = e => {
         e.preventDefault();
         const Drag = JSON.parse(e.dataTransfer.getData("drag"));
         const Code = sessionStorage.getItem("code");
 
-        if (Drag.member !== undefined) {
+        if (Drag.member !== undefined)
+        {
             const Key = [Drag.group.toString(), Drag.member.toString()];
             const Selected = props.selected();
-            let Keys = [];
+            const Keys = [];
 
-            if (Selected.find(element => {return element[0] === Key[0] ? element[1] === Key[1] : false}))
+            if (Selected.find(element => {
+                return element[0] === Key[0] ?
+                           element[1] === Key[1] :
+                           false;
+            }))
             {
-                Selected.forEach(select =>
-                {
-                    let Subject = {
+                Selected.forEach(select => {
+                    const Subject = {
                         Group: select[0],
                         Member: select[1]
-                    }
+                    };
 
                     Keys.push(Subject);
                 });
@@ -91,46 +97,44 @@ export function Column(props) {
             else
             {
                 let Done = false;
-                Selected.forEach(select =>
-                {
+                Selected.forEach(select => {
                     if (!Done && Key[0] >= select[0])
                     {
                         if ((Key[0] === select[0] && Key[1] > select[1]) || Key[0] > select[0])
                         {
-                            let Insert = {
+                            const Insert = {
                                 Group: Key[0],
                                 Member: Key[1]
-                            }
+                            };
                             Keys.push(Insert);
                             Done = true;
                         }
                     }
-                    let Subject = {
+                    const Subject = {
                         Group: select[0],
                         Member: select[1]
-                    }
+                    };
 
                     Keys.push(Subject);
                 });
 
-                if(!Done)
+                if (!Done)
                 {
-                    let Insert = {
+                    const Insert = {
                         Group: Key[0],
                         Member: Key[1]
-                    }
+                    };
                     Keys.push(Insert);
                 }
             }
 
-            Axios.post(`admin/${Code}/question-create-group-C${props.column}`).then(setTimeout(() => {
-                    Axios.post(`admin/${Code}/group/change-last`, Keys);
-            },
+            Axios.post(`admin/${Code}/question-create-group-C${props.column}`).then(setTimeout(() => { Axios.post(`admin/${Code}/group/change-last`, Keys); },
                 200));
 
             props.clearSelect();
         }
-        else if (Drag.column !== props.column) {
+        else if (Drag.column !== props.column)
+        {
             const Key = Drag.group;
             const Target = props.column;
 
@@ -139,32 +143,34 @@ export function Column(props) {
     };
 
     const DragOver = e => {
-        if (props.column === 0) {
+        if (props.column === 0)
             e.stopPropagation();
-        }
-        else {
+        else
             e.preventDefault();
-        }
     };
 
     return (
         <React.Fragment>
-            <WidthControl empty={props.empty ||
-                props.last ||
-                (props.column === 0 &&
-                    props.children[0][0] !== undefined &&
-                    props.children[0][0].props.children.length < 1)}
-                width={props.width}>
-                <Shrink available={props.width > 1}
-                    onClick={() => props.shrink(props.column)}>
+            <WidthControl
+                empty={props.empty ||
+                    props.last ||
+                    (props.column === 0 &&
+                        props.children[0][0] !== undefined &&
+                        props.children[0][0].props.children.length < 1)}
+                width={props.width} >
+                <Shrink
+                    available={props.width > 1}
+                    onClick={() => props.shrink(props.column)} >
                     &#129080;
                 </Shrink>
-                <Grow available={props.width < 4}
-                    onClick={() => props.grow(props.column)}>
+                <Grow
+                    available={props.width < 4}
+                    onClick={() => props.grow(props.column)} >
                     &#129082;
                 </Grow>
             </WidthControl>
-            <Container column={props.column}
+            <Container
+                column={props.column}
                 empty={props.column === 0 &&
                     props.children[0][0] &&
                     props.children[0][0].props.children.length < 1}
@@ -172,7 +178,7 @@ export function Column(props) {
                 onDrop={Drop
                 }
                 showcase={props.empty}
-                width={props.width}>
+                width={props.width} >
                 {props.children}
             </Container>
         </React.Fragment>

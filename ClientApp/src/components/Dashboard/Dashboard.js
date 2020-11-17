@@ -1,13 +1,14 @@
-﻿import React, { Component } from "react";
+﻿import React, {Component} from "react";
 import Axios from "axios";
-import { PageModal } from "../Services/PageModal";
-import { Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col } from "react-bootstrap";
+import {PageModal} from "../Services/PageModal";
+import {Modal, InputGroup, Form, Dropdown, DropdownButton, Nav, Col} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { Ico_Box } from "../Classes/Icons";
-import { Breadcrumbs, Link } from "@material-ui/core";
-import { BsJustify } from "react-icons/bs";
-import { BannerDropdown, BannerButton, BannerLink } from "../Classes/Dropdown";
+import {Ico_Box} from "../Classes/Icons";
+import {Breadcrumbs, Link} from "@material-ui/core";
+import {BsJustify} from "react-icons/bs";
+import {BannerDropdown, BannerButton, BannerLink} from "../Classes/Dropdown";
+
 
 const MainContainer = Styled(Col)`
     display: table;
@@ -207,14 +208,15 @@ const BreadCrumb = Styled(Breadcrumbs)`
 `;
 
 const BreadText = Styled(Link)`
-    color: ${props => props.active
-        ? "#4C7AD3"
-        : "#fff"};
+    color: ${props => props.active ?
+                      "#4C7AD3" :
+                      "#fff"};
     font-size: 1.25rem;
 `;
 
 export class Dashboard extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             sessions: [],
@@ -236,9 +238,12 @@ export class Dashboard extends React.Component {
         this.logout = this.logout.bind(this);
     }
 
-    componentDidMount() {
+
+    componentDidMount()
+    {
         this.getSessions();
     }
+
 
     modal = {
         delete: {
@@ -261,14 +266,19 @@ export class Dashboard extends React.Component {
                 };
 
                 return (
-                    <Form autoComplete="off"
-                        onSubmit={(e) => DeleteSession(e)}>
+                    <Form
+                        autoComplete="off"
+                        onSubmit={(e) => DeleteSession(e)} >
                         <ModalText>
                             Are you sure you want to delete this session?
                             <br /> This action can not be undone
                         </ModalText>
-                        <CancelButton onClick={() => this.modal.delete.close()}>Cancel</CancelButton>
-                        <CreateButton type="submit"
+                        <CancelButton
+                            onClick={() => this.modal.delete.close()} >
+                            Cancel
+                        </CancelButton>
+                        <CreateButton
+                            type="submit"
                             value="Delete Session" />
                     </Form>
                 );
@@ -285,7 +295,9 @@ export class Dashboard extends React.Component {
         }
     }
 
-    async getSessions() {
+
+    async getSessions()
+    {
         const Compare = (a, b) => {
             const A = new Date(Date.parse(a.lastOpen));
             const B = new Date(Date.parse(b.lastOpen));
@@ -301,19 +313,25 @@ export class Dashboard extends React.Component {
         });
     }
 
-    newProject() {
+
+    newProject()
+    {
         this.setState({
             showNewSessionModal: true
         });
     }
 
-    newTemplate() {
+
+    newTemplate()
+    {
         this.setState({
             showNewTemplateModal: true
         });
     }
 
-    createProject(event) {
+
+    createProject(event)
+    {
         event.preventDefault();
         this.closeModal();
 
@@ -326,13 +344,13 @@ export class Dashboard extends React.Component {
         };
 
         Axios.post(`admin/create`, Data).then(res => {
-            if (res.status === 202) {
-
+            if (res.status === 202)
+            {
                 //Created Session
                 this.getSessions();
             }
-            else if (res.status === 406) {
-
+            else if (res.status === 406)
+            {
                 //Title can't be empty!
             }
         });
@@ -340,7 +358,9 @@ export class Dashboard extends React.Component {
         this.setState({ title: "" });
     }
 
-    handleChange(e) {
+
+    handleChange(e)
+    {
         const Name = e.target.name;
         const Value = e.target.value;
 
@@ -349,76 +369,92 @@ export class Dashboard extends React.Component {
         });
     }
 
-    sessionClick(e) {
-        Axios.post(`admin/load-${e.id}`).then(res => {
-            if (res.status === 200) {
 
+    sessionClick(e)
+    {
+        Axios.post(`admin/load-${e.id}`).then(res => {
+            if (res.status === 200)
+            {
                 //Session already active?
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute("name"));
                 this.props.history.push("/administrator");
             }
-            else if (res.status === 201) {
-
+            else if (res.status === 201)
+            {
                 //Session Created!
                 sessionStorage.setItem("code", e.id);
                 sessionStorage.setItem("title", e.getAttribute("name"));
                 this.props.history.push("/administrator");
             }
-            else if (res.status === 404) {
-
+            else if (res.status === 404)
+            {
                 //Session not found
             }
         });
     }
 
-    sessionRender() {
-        if (this.state.sessions && this.state.sessions.length) {
+
+    sessionRender()
+    {
+        if (this.state.sessions && this.state.sessions.length)
+        {
             return (
                 this.state.sessions.map(session =>
-                    <Category id={session.identity}
+                    <Category
+                        id={session.identity}
                         index={session.identity}
                         key={session.identity}
                         name={session.title}
-                        onClick={((e) => this.sessionClick(e.target))}>
-                        <CategoryTitle id={session.identity}
+                        onClick={((e) => this.sessionClick(e.target))} >
+                        <CategoryTitle
+                            id={session.identity}
                             index={session.identity}
                             key={session.identity}
-                            name={session.title}>
+                            name={session.title} >
                             {session.title}
                         </CategoryTitle>
-                        <CategoryIdentity id={session.identity}
+                        <CategoryIdentity
+                            id={session.identity}
                             index={session.identity}
                             key={session.identity}
-                            name={session.title}>
+                            name={session.title} >
                             #{session.identity}
                         </CategoryIdentity>
-                        <RemoveButton onClick={(e) => this.modal.delete.open(e, session.identity)} />
-                        <CategoryTime id={session.identity}
+                        <RemoveButton
+                            onClick={(e) => this.modal.delete.open(e, session.identity)} />
+                        <CategoryTime
+                            id={session.identity}
                             index={session.identity}
                             key={session.identity}
-                            name={session.title}>
+                            name={session.title} >
                             {this.displayDate(session.lastOpen)}
                         </CategoryTime>
                     </Category>)
             );
         }
-        else {
+        else
+        {
             return (
                 <ProjectContainer>
                     <ProjectText>We didn't find any projects here, create your first now!</ProjectText>
-                    <ProjectButton onClick={this.newProject}>New Session</ProjectButton>
+                    <ProjectButton
+                        onClick={this.newProject} >
+                        New Session
+                    </ProjectButton>
                 </ProjectContainer>
             );
         }
     }
 
-    displayDate(dateTime) {
 
+    displayDate(dateTime)
+    {
         // ReSharper disable once UsageOfPossiblyUnassignedValue
         const Time = new Date(Date.parse(dateTime));
         let Month = "";
-        switch (Time.getMonth() + 1) {
+        switch (Time.getMonth() + 1)
+        {
             case 1:
                 Month = "January";
                 break;
@@ -460,51 +496,69 @@ export class Dashboard extends React.Component {
         return `${Time.getUTCDate()}. ${Month} ${Time.getFullYear()}`;
     }
 
-    closeModal() {
+
+    closeModal()
+    {
         this.setState({
             showNewSessionModal: false,
             showNewTemplateModal: false
         });
     }
 
-    logout() {
+
+    logout()
+    {
         localStorage.clear();
         sessionStorage.clear();
         this.props.history.push("/");
     }
 
-    modalContent() {
+
+    modalContent()
+    {
         return (
             <ProjectModalContent>
-                <Form autoComplete="off"
-                    onSubmit={(e) => this.createProject(e)}>
+                <Form
+                    autoComplete="off"
+                    onSubmit={(e) => this.createProject(e)} >
                     <PopupText>Title</PopupText>
-                    <Form.Group controlId="validateTitle">
+                    <Form.Group
+                        controlId="validateTitle" >
                         <InputGroup>
-                            <Form.Control autoComplete="off"
+                            <Form.Control
+                                autoComplete="off"
                                 name="title"
                                 onChange={this.handleChange}
                                 placeholder="Session title..."
                                 required />
                         </InputGroup>
                     </Form.Group>
-                    <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
-                    <CreateButton type="submit"
+                    <CancelButton
+                        onClick={() => this.closeModal()} >
+                        Cancel
+                    </CancelButton>
+                    <CreateButton
+                        type="submit"
                         value="Create Session" />
                 </Form>
             </ProjectModalContent>
         );
     }
 
-    modalTemplateContent() {
+
+    modalTemplateContent()
+    {
         return (
             <ProjectModalContent>
-                <Form autoComplete="off"
-                    onSubmit={(e) => this.createProject(e)}>
+                <Form
+                    autoComplete="off"
+                    onSubmit={(e) => this.createProject(e)} >
                     <PopupText>Title</PopupText>
-                    <Form.Group controlId="validateTitle">
+                    <Form.Group
+                        controlId="validateTitle" >
                         <InputGroup>
-                            <Form.Control autoComplete="off"
+                            <Form.Control
+                                autoComplete="off"
                                 name="title"
                                 onChange={this.handleChange}
                                 placeholder="Session title..."
@@ -513,9 +567,11 @@ export class Dashboard extends React.Component {
                     </Form.Group>
 
                     <PopupText>Template</PopupText>
-                    <Form.Group controlId="validateTemplate">
+                    <Form.Group
+                        controlId="validateTemplate" >
                         <InputGroup>
-                            <Form.Control as="select">
+                            <Form.Control
+                                as="select" >
                                 <option>Template A</option>
                                 <option>Template B</option>
                                 <option>Template C</option>
@@ -523,51 +579,69 @@ export class Dashboard extends React.Component {
                             </Form.Control>
                         </InputGroup>
                     </Form.Group>
-                    <CancelButton onClick={() => this.closeModal()}>Cancel</CancelButton>
-                    <CreateButton type="submit"
+                    <CancelButton
+                        onClick={() => this.closeModal()} >
+                        Cancel
+                    </CancelButton>
+                    <CreateButton
+                        type="submit"
                         value="Create Template" />
                 </Form>
             </ProjectModalContent>
         );
     }
 
-    render() {
+
+    render()
+    {
         return (
             <React.Fragment>
                 <MainContainer>
                     <Banner>
-                        <BreadCrumb aria-label="Breadcrumb"
-                            separator="&#187;">
-                            <BreadText color="initial"
-                                href="/">
+                        <BreadCrumb
+                            aria-label="Breadcrumb"
+                            separator="&#187;" >
+                            <BreadText
+                                color="initial"
+                                href="/" >
                                 Coboost
                             </BreadText>
-                            <BreadText color="initial"
-                                href="/dashboard">
+                            <BreadText
+                                color="initial"
+                                href="/dashboard" >
                                 Sessions
                             </BreadText>
                         </BreadCrumb>
 
-                        <BannerDropdown style={{
+                        <BannerDropdown
+                            style={{
                             float: "right",
                             position: "relative",
                             top: "50%",
                             transform: "translateY(-50%)"
                         }}
-                            title={<BsJustify />}>
-                            <BannerLink onClick={this.logout}>Logout</BannerLink>
+                            title={<BsJustify />} >
+                            <BannerLink
+                                onClick={this.logout} >
+                                Logout
+                            </BannerLink>
                         </BannerDropdown>
 
-                        <BannerDropdown style={{
+                        <BannerDropdown
+                            style={{
                             float: "right",
                             position: "relative",
                             top: "50%",
                             transform: "translateY(-50%)"
                         }}
-                            title="New Session">
-                            <BannerLink onClick={this.newProject}>Create Empty Session</BannerLink>
-                            <BannerLink disabled
-                                onClick={this.newTemplate}>
+                            title="New Session" >
+                            <BannerLink
+                                onClick={this.newProject} >
+                                Create Empty Session
+                            </BannerLink>
+                            <BannerLink
+                                disabled
+                                onClick={this.newTemplate} >
                                 Use Session Template
                             </BannerLink>
                         </BannerDropdown>

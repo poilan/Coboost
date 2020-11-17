@@ -12,26 +12,59 @@ namespace Coboost.Models.Database.data
     /// </summary>
     public class Session
     {
-        #region Public Properties
+        public string Email
+        {
+            get;
+            set;
+        }
 
-        public string Email { get; set; }
+        public IEnumerable<UserFolder> Folders
+        {
+            get;
+            set;
+        }
 
-        public IEnumerable<UserFolder> Folders { get; set; }
+        [Key]
+        public int Identity
+        {
+            get;
+            set;
+        }
 
-        [Key] public int Identity { get; set; }
+        public string LastOpen
+        {
+            get;
+            set;
+        }
 
-        public string LastOpen { get; set; }
+        public string Questions
+        {
+            get;
+            set;
+        }
 
-        public string Questions { get; set; }
+        public string Settings
+        {
+            get;
+            set;
+        }
 
-        public string Settings { get; set; }
+        public string Slides
+        {
+            get;
+            set;
+        }
 
-        public string Slides { get; set; }
+        public string Title
+        {
+            get;
+            set;
+        }
 
-        public string Title { get; set; }
-
-        public IEnumerable<UserSession> Users { get; set; }
-
-        #endregion Public Properties
+        public IEnumerable<UserSession> Users
+        {
+            get;
+            set;
+        }
     }
 }

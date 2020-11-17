@@ -11,8 +11,6 @@ namespace Coboost.Models.Admin.Tasks
     /// </summary>
     public abstract class BaseTask
     {
-        #region Public Enums
-
         /// <summary>
         ///     The types of questions that exists.
         /// </summary>
@@ -29,72 +27,80 @@ namespace Coboost.Models.Admin.Tasks
             Planned
         }
 
-        #endregion Public Enums
-
-        #region Protected Fields
-
         /// <summary>
         ///     Lock to prevent bugs from MultiThreading Client Requests
         ///     <para>We don't need things to run parallel, we just need them to not hog the main thread</para>
         /// </summary>
         protected readonly object ThreadLock = new object();
 
-        #endregion Protected Fields
-
-        #region Public Fields
-
         /// <summary>
         ///     This is used for SSE(Continuous Post Request), so that data is only sent when it is changed.
         /// </summary>
         public ManualResetEvent Reset = new ManualResetEvent(false);
 
-        #endregion Public Fields
+        public int Countdown
+        {
+            get;
+            set;
+        }
 
-        #region Protected Methods
+        /// <summary>
+        ///     The Index this task has.
+        /// </summary>
+        public int Index
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     Decides if this task should accept new data
+        /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public bool InProgress
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     Decides whether the results should be shown or hidden.
+        /// </summary>
+        public bool ShowResults
+        {
+            get;
+            set;
+        }
+
+        public int Timer
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     The question that is asked.
+        /// </summary>
+        public string Title
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     The type of question this is.
+        /// </summary>
+        public TaskType Type
+        {
+            get;
+            set;
+        }
 
         public void EventStream()
         {
             Reset ??= new ManualResetEvent(false);
             Reset.Set();
         }
-
-        #endregion Protected Methods
-
-        #region Public Properties
-
-        /// <summary>
-        ///     The Index this task has.
-        /// </summary>
-        public int Index { get; set; }
-
-        /// <summary>
-        ///     Decides if this task should accept new data
-        /// </summary>
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public bool InProgress { get; set; }
-
-        /// <summary>
-        ///     Decides whether the results should be shown or hidden.
-        /// </summary>
-        public bool ShowResults { get; set; }
-
-        public int Countdown { get; set; }
-
-        public int Timer { get; set; }
-
-        /// <summary>
-        ///     The question that is asked.
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        ///     The type of question this is.
-        /// </summary>
-        public TaskType Type { get; set; }
-
-        #endregion Public Properties
-
-        #region Public Methods
 
         public string Serialize(object target)
         {
@@ -148,7 +154,5 @@ namespace Coboost.Models.Admin.Tasks
 
             EventStream();
         }
-
-        #endregion Public Methods
     }
 }

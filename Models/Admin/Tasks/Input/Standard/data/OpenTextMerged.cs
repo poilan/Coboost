@@ -8,13 +8,13 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard.data
     /// </summary>
     public class OpenTextMerged : OpenTextInput
     {
-        #region Public Properties
-
         /// <summary>
         ///     The Inputs that was merged into this one
         /// </summary>
-        public List<OpenTextInput> Children { get; set; }
-
-        #endregion Public Properties
+        public List<OpenTextInput> Children
+        {
+            get;
+            set;
+        }
     }
 }

@@ -1,9 +1,10 @@
-﻿import React, { Component } from "react";
+﻿import React, {Component} from "react";
 import Axios from "axios";
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import {Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { Box, Typography, TextField, FormControlLabel, Switch } from "@material-ui/core";
+import {Box, Typography, TextField, FormControlLabel, Switch} from "@material-ui/core";
+
 
 const ModalPage = Styled(Modal)`
     border-radius: 20px;
@@ -44,7 +45,8 @@ const CreateButton = Styled.input`
 `;
 
 export class CreateTaskModal extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             type: props.type,
@@ -62,16 +64,18 @@ export class CreateTaskModal extends Component {
         };
     }
 
-    componentDidMount() {
-        if (this.props.type !== 0 && this.props.options !== undefined) {
+
+    componentDidMount()
+    {
+        if (this.props.type !== 0 && this.props.options !== undefined)
             this.setState({ options: this.props.options() });
-        }
-        else {
+        else
             this.setState({ description: this.props.title });
-        }
     }
 
-    TextContent() {
+
+    TextContent()
+    {
         const CreateOpenText = (event) => {
             event.preventDefault();
             const Code = sessionStorage.getItem("code");
@@ -86,15 +90,16 @@ export class CreateTaskModal extends Component {
                         'Content-Type': "application/json"
                     }
                 }).then(res => {
-                    if (res.status === 201) {
-                        this.setState({
-                            success: true,
-                            description: "",
-                            type: ""
-                        });
-                        this.onClose();
-                    }
-                });
+                if (res.status === 201)
+                {
+                    this.setState({
+                        success: true,
+                        description: "",
+                        type: ""
+                    });
+                    this.onClose();
+                }
+            });
         };
 
         const HandleDescription = (event) => {
@@ -106,27 +111,36 @@ export class CreateTaskModal extends Component {
         };
 
         return (
-            <Form onSubmit={CreateOpenText.bind(this)}>
-                <Box borderColor="transparent"
+            <Form
+                onSubmit={CreateOpenText.bind(this)} >
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <TextField fullWidth
+                    px={3} >
+                    <TextField
+                        fullWidth
                         id="TextTitle"
                         label="Task Text"
                         onChange={HandleDescription}
                         type="text"
                         value={this.state.description} />
                 </Box>
-                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit"
+                <CancelButton
+                    onClick={this.props.onClose} >
+                    Cancel
+                </CancelButton>
+                <CreateButton
+                    type="submit"
                     value="Add new Task" />
             </Form>
         );
     }
 
-    MultipleChoiceContent() {
+
+    MultipleChoiceContent()
+    {
         const HandleTitle = (event) => {
             event.preventDefault();
             var Title = event.target.value;
@@ -155,9 +169,9 @@ export class CreateTaskModal extends Component {
         };
 
         const AddOption = () => {
-            var Count = this.state.options !== undefined
-                ? this.state.options.length
-                : 0;
+            var Count = this.state.options !== undefined ?
+                            this.state.options.length :
+                            0;
             var User = localStorage.getItem("user");
 
             var Option = {
@@ -169,9 +183,9 @@ export class CreateTaskModal extends Component {
             };
 
             var Options = this.state.options;
-            Count > 0
-                ? Options.push(Option)
-                : Options = [Option];
+            Count > 0 ?
+                Options.push(Option) :
+                Options = [Option];
             this.setState({
                 options: Options
             });
@@ -188,9 +202,8 @@ export class CreateTaskModal extends Component {
                 ShowResults: true
             };
 
-            if (!this.state.extra) {
+            if (!this.state.extra)
                 Data.Max = 1;
-            }
 
             Axios.post(`admin/${Code}/create-vote-multi`, Data,
                 {
@@ -198,27 +211,31 @@ export class CreateTaskModal extends Component {
                         'Content-Type': "application/json"
                     }
                 }).then(res => {
-                    if (res.status === 201) {
-                        this.setState({
-                            type: "",
-                            description: "",
-                            options: [],
-                            success: true
-                        });
-                        this.onClose();
-                    }
-                });
+                if (res.status === 201)
+                {
+                    this.setState({
+                        type: "",
+                        description: "",
+                        options: [],
+                        success: true
+                    });
+                    this.onClose();
+                }
+            });
         };
 
         return (
-            <Form onSubmit={CreateMultipleChoice.bind(this)}>
+            <Form
+                onSubmit={CreateMultipleChoice.bind(this)} >
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                    px={3} >
+                    <TextField
+                        autoFocus={this.state.description == undefined || this.state.description.length < 1}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
@@ -227,12 +244,14 @@ export class CreateTaskModal extends Component {
                         } />
                 </Box>
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <FormControlLabel control={
+                    px={3} >
+                    <FormControlLabel
+                        control={
                         <Switch checked={this.state.extra}
                             onChange={(e) => {
                                 e.preventDefault();
@@ -248,17 +267,20 @@ export class CreateTaskModal extends Component {
                     }
                 </Box>
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <Box borderColor="transparent"
+                    px={3} >
+                    <Box
+                        borderColor="transparent"
                         component="fieldset"
                         pt={1}
-                        px={1}>
-                        <Typography component="legend"
-                            variant="subtitle2">
+                        px={1} >
+                        <Typography
+                            component="legend"
+                            variant="subtitle2" >
                             Options
                         </Typography>
                         {this.state.options !== undefined &&
@@ -271,10 +293,12 @@ export class CreateTaskModal extends Component {
                                         fullWidth />
                                 </Box>
                             )}
-                        <Box borderColor="transparent"
+                        <Box
+                            borderColor="transparent"
                             component="fieldset"
-                            mb={1}>
-                            <TextField color="gray"
+                            mb={1} >
+                            <TextField
+                                color="gray"
                                 fullWidth
                                 label="Add option..."
                                 onFocus={AddOption.bind(this)} />
@@ -282,14 +306,20 @@ export class CreateTaskModal extends Component {
                     </Box>
                 </Box>
 
-                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit"
+                <CancelButton
+                    onClick={this.props.onClose} >
+                    Cancel
+                </CancelButton>
+                <CreateButton
+                    type="submit"
                     value="Submit" />
             </Form>
         );
     }
 
-    PointsContent() {
+
+    PointsContent()
+    {
         const HandleTitle = (event) => {
             event.preventDefault();
             var Title = event.target.value;
@@ -302,9 +332,8 @@ export class CreateTaskModal extends Component {
             event.preventDefault();
             var Max = event.target.value;
 
-            if (Max > this.state.max) {
+            if (Max > this.state.max)
                 Max = this.state.max;
-            }
 
             this.setState({
                 min: Max
@@ -331,9 +360,9 @@ export class CreateTaskModal extends Component {
         };
 
         const AddOption = () => {
-            var Count = this.state.options !== undefined
-                ? this.state.options.length
-                : 0;
+            var Count = this.state.options !== undefined ?
+                            this.state.options.length :
+                            0;
             var User = localStorage.getItem("user");
 
             var Option = {
@@ -343,9 +372,9 @@ export class CreateTaskModal extends Component {
             };
 
             var Options = this.state.options;
-            Count > 0
-                ? Options.push(Option)
-                : Options = [Option];
+            Count > 0 ?
+                Options.push(Option) :
+                Options = [Option];
             this.setState({
                 options: Options
             });
@@ -370,26 +399,30 @@ export class CreateTaskModal extends Component {
                         'Content-Type': "application/json"
                     }
                 }).then(res => {
-                    if (res.status === 201) {
-                        this.setState({
-                            type: "",
-                            description: "",
-                            options: [],
-                            success: true
-                        });
-                        this.onClose();
-                    }
-                });
+                if (res.status === 201)
+                {
+                    this.setState({
+                        type: "",
+                        description: "",
+                        options: [],
+                        success: true
+                    });
+                    this.onClose();
+                }
+            });
         };
 
         return (
-            <Form onSubmit={CreatePoints.bind(this)}>
-                <Box borderColor="transparent"
+            <Form
+                onSubmit={CreatePoints.bind(this)} >
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                    px={3} >
+                    <TextField
+                        autoFocus={this.state.description == undefined || this.state.description.length < 1}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
@@ -397,15 +430,18 @@ export class CreateTaskModal extends Component {
                         value={this.state.description} />
                 </Box>
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <Box borderColor="transparent"
+                    px={3} >
+                    <Box
+                        borderColor="transparent"
                         display="inline"
-                        px={1}>
-                        <TextField id="points"
+                        px={1} >
+                        <TextField
+                            id="points"
                             label="Total Points"
                             name="points"
                             onChange={HandlePoints.bind(this)}
@@ -413,10 +449,12 @@ export class CreateTaskModal extends Component {
                             type="number"
                             value={this.state.max} />
                     </Box>
-                    <Box borderColor="transparent"
+                    <Box
+                        borderColor="transparent"
                         display="inline"
-                        px={0}>
-                        <TextField id="max"
+                        px={0} >
+                        <TextField
+                            id="max"
                             label="Max per option"
                             name="max"
                             onChange={HandleMax.bind(this)}
@@ -426,17 +464,20 @@ export class CreateTaskModal extends Component {
                     </Box>
                 </Box>
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={3}
                     pt={1}
-                    px={3}>
-                    <Box borderColor="transparent"
+                    px={3} >
+                    <Box
+                        borderColor="transparent"
                         component="fieldset"
                         pt={1}
-                        px={1}>
-                        <Typography component="legend"
-                            variant="subtitle2">
+                        px={1} >
+                        <Typography
+                            component="legend"
+                            variant="subtitle2" >
                             Options
                         </Typography>
                         {this.state.options !== undefined &&
@@ -451,24 +492,32 @@ export class CreateTaskModal extends Component {
                                         fullWidth />
                                 </Box>
                             )}
-                        <Box borderColor="transparent"
+                        <Box
+                            borderColor="transparent"
                             component="fieldset"
-                            mb={1}>
-                            <TextField color="gray"
+                            mb={1} >
+                            <TextField
+                                color="gray"
                                 fullWidth
                                 label="Add option..."
                                 onFocus={AddOption.bind(this)} />
                         </Box>
                     </Box>
                 </Box>
-                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit"
+                <CancelButton
+                    onClick={this.props.onClose} >
+                    Cancel
+                </CancelButton>
+                <CreateButton
+                    type="submit"
                     value="Submit" />
             </Form>
         );
     }
 
-    SliderContent() {
+
+    SliderContent()
+    {
         const HandleTitle = (event) => {
             event.preventDefault();
             var Title = event.target.value;
@@ -521,9 +570,9 @@ export class CreateTaskModal extends Component {
         };
 
         const AddOption = () => {
-            var Count = this.state.options !== undefined
-                ? this.state.options.length
-                : 0;
+            var Count = this.state.options !== undefined ?
+                            this.state.options.length :
+                            0;
             var User = localStorage.getItem("user");
 
             var Option = {
@@ -533,9 +582,9 @@ export class CreateTaskModal extends Component {
             };
 
             var Options = this.state.options;
-            Count > 0
-                ? Options.push(Option)
-                : Options = [Option];
+            Count > 0 ?
+                Options.push(Option) :
+                Options = [Option];
             this.setState({
                 options: Options
             });
@@ -561,25 +610,29 @@ export class CreateTaskModal extends Component {
                         'Content-Type': "application/json"
                     }
                 }).then(res => {
-                    if (res.status === 201) {
-                        this.setState({
-                            type: "",
-                            description: "",
-                            options: [],
-                            success: true
-                        });
-                        this.onClose();
-                    }
-                });
+                if (res.status === 201)
+                {
+                    this.setState({
+                        type: "",
+                        description: "",
+                        options: [],
+                        success: true
+                    });
+                    this.onClose();
+                }
+            });
         };
         return (
-            <Form onSubmit={CreateSlider.bind(this)}>
-                <Box borderColor="transparent"
+            <Form
+                onSubmit={CreateSlider.bind(this)} >
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={2}
                     pt={1}
-                    px={3}>
-                    <TextField autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                    px={3} >
+                    <TextField
+                        autoFocus={this.state.description == undefined || this.state.description.length < 1}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
@@ -587,28 +640,33 @@ export class CreateTaskModal extends Component {
                         value={this.state.description} />
                 </Box>
 
-                <Box borderColor="transparent"
-                    component="fieldset">
+                <Box
+                    borderColor="transparent"
+                    component="fieldset" >
 
-                    <Box borderColor="transparent"
+                    <Box
+                        borderColor="transparent"
                         component="fieldset"
                         display="inline"
                         mb={3}
                         pt={1}
                         px={3}
-                        width="100%">
-                        <Typography component="legend"
-                            variant="subtitle2">
+                        width="100%" >
+                        <Typography
+                            component="legend"
+                            variant="subtitle2" >
                             Minimum
                         </Typography>
 
-                        <TextField id="min-desc"
+                        <TextField
+                            id="min-desc"
                             label="Description"
                             name="min-desc"
                             onChange={HandleMinDescription.bind(this)}
                             type="text"
                             value={this.state.minDescription} />
-                        <TextField id="min"
+                        <TextField
+                            id="min"
                             label="Value"
                             name="min"
                             onChange={HandleMin.bind(this)}
@@ -617,25 +675,29 @@ export class CreateTaskModal extends Component {
                             value={this.state.min} />
                     </Box>
 
-                    <Box borderColor="transparent"
+                    <Box
+                        borderColor="transparent"
                         component="fieldset"
                         display="inline"
                         mb={3}
                         pt={1}
                         px={3}
-                        width="100%">
-                        <Typography component="legend"
-                            variant="subtitle2">
+                        width="100%" >
+                        <Typography
+                            component="legend"
+                            variant="subtitle2" >
                             Maximum
                         </Typography>
 
-                        <TextField id="max-desc"
+                        <TextField
+                            id="max-desc"
                             label="Description"
                             name="max-desc"
                             onChange={HandleMaxDescription.bind(this)}
                             type="text"
                             value={this.state.maxDescription} />
-                        <TextField id="max"
+                        <TextField
+                            id="max"
                             label="Value"
                             name="max"
                             onChange={HandleMax.bind(this)}
@@ -646,17 +708,20 @@ export class CreateTaskModal extends Component {
 
                 </Box>
 
-                <Box borderColor="transparent"
+                <Box
+                    borderColor="transparent"
                     component="fieldset"
                     mb={2}
                     pt={1}
-                    px={3}>
-                    <Box borderColor="transparent"
+                    px={3} >
+                    <Box
+                        borderColor="transparent"
                         component="fieldset"
                         pt={1}
-                        px={1}>
-                        <Typography component="legend"
-                            variant="subtitle2">
+                        px={1} >
+                        <Typography
+                            component="legend"
+                            variant="subtitle2" >
                             Options
                         </Typography>
                         {this.state.options !== undefined &&
@@ -671,27 +736,34 @@ export class CreateTaskModal extends Component {
                                         fullWidth />
                                 </Box>
                             )}
-                        <Box borderColor="transparent"
+                        <Box
+                            borderColor="transparent"
                             component="fieldset"
-                            mb={1}>
-                            <TextField color="gray"
+                            mb={1} >
+                            <TextField
+                                color="gray"
                                 fullWidth
                                 label="Add option..."
                                 onFocus={AddOption.bind(this)} />
                         </Box>
                     </Box>
                 </Box>
-                <CancelButton onClick={this.props.onClose}>Cancel</CancelButton>
-                <CreateButton type="submit"
+                <CancelButton
+                    onClick={this.props.onClose} >
+                    Cancel
+                </CancelButton>
+                <CreateButton
+                    type="submit"
                     value="Submit" />
             </Form>
         );
     }
 
-    onClose() {
-        if (this.props.onClose !== undefined) {
+
+    onClose()
+    {
+        if (this.props.onClose !== undefined)
             this.props.onClose(this.state.success);
-        }
         this.setState({
             type: "",
             title: "",
@@ -706,31 +778,35 @@ export class CreateTaskModal extends Component {
         });
     }
 
-    render() {
+
+    render()
+    {
         return (
-            <ModalPage centered
+            <ModalPage
+                centered
                 onHide={this.onClose.bind(this)}
-                show={this.state.showing}>
-                <Modal.Header closeButton>
+                show={this.state.showing} >
+                <Modal.Header
+                    closeButton >
                     <Modal.Title>
-                        {this.props.type === 0
-                            ? "Input: Open Text"
-                            : this.props.type === 1
-                                ? "Vote: Multiple Choice"
-                                : this.props.type === 2
-                                    ? "Vote: Points"
-                                    : "Vote: Slider"
+                        {this.props.type === 0 ?
+                             "Input: Open Text" :
+                             this.props.type === 1 ?
+                             "Vote: Multiple Choice" :
+                             this.props.type === 2 ?
+                             "Vote: Points" :
+                             "Vote: Slider"
                         }
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {this.props.type === 0
-                        ? this.TextContent()
-                        : this.props.type === 1
-                            ? this.MultipleChoiceContent()
-                            : this.props.type === 2
-                                ? this.PointsContent()
-                                : this.SliderContent()
+                    {this.props.type === 0 ?
+                         this.TextContent() :
+                         this.props.type === 1 ?
+                         this.MultipleChoiceContent() :
+                         this.props.type === 2 ?
+                         this.PointsContent() :
+                         this.SliderContent()
                     }
                 </Modal.Body>
             </ModalPage>

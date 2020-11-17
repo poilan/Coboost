@@ -1,7 +1,8 @@
-﻿import React, { Component } from "react";
-import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+﻿import React, {Component} from "react";
+import {ToggleButton, ToggleButtonGroup} from "react-bootstrap";
 import Styled from "styled-components";
 import "../Administrator/Tabs/node_modules/circular-std";
+
 
 const MultipleChoiceGroup = Styled(ToggleButtonGroup)`
     display: block;
@@ -85,15 +86,18 @@ export const MultipleChoiceButton = Styled(ToggleButton)`
 `;
 
 export class MultipleChoiceOption extends Component {
-    render() {
+    render()
+    {
         return (
             <React.Fragment>
-                <MultipleChoiceGroup name="multipleChoice"
+                <MultipleChoiceGroup
+                    name="multipleChoice"
                     toggle
-                    vertical>
-                    <MultipleChoiceButton name="test"
+                    vertical >
+                    <MultipleChoiceButton
+                        name="test"
                         size="lg"
-                        type="radio">
+                        type="radio" >
                         <Tick>
                             <TickStem />
                             <TickKick />

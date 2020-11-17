@@ -8,46 +8,68 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
 {
     public class Slider : BaseTask
     {
-        #region Public Properties
-
         /// <summary>
         ///     The deleted options
         /// </summary>
-        public List<SliderOption> Archive { get; set; }
+        public List<SliderOption> Archive
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The maximum value a option can receive
         /// </summary>
-        public int Max { get; set; }
+        public int Max
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The description of what the max represents
         /// </summary>
-        public string MaxDescription { get; set; }
+        public string MaxDescription
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The minimum value a option can receive
         /// </summary>
-        public int Min { get; set; }
+        public int Min
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The description of what the minimum represents
         /// </summary>
-        public string MinDescription { get; set; }
+        public string MinDescription
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The options for this vote
         /// </summary>
-        public List<SliderOption> Options { get; set; }
+        public List<SliderOption> Options
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The total amount of votes we have received
         /// </summary>
-        public List<SliderVote> Votes { get; set; }
-
-        #endregion Public Properties
-
-        #region Public Methods
+        public List<SliderVote> Votes
+        {
+            get;
+            set;
+        }
 
         public void AddClientVote(SliderVote vote)
         {
@@ -73,25 +95,21 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
                 if (option >= Options.Count || option < 0 || color == null)
                     return;
 
-                if (color.Length == 7 && color.StartsWith("#")) Options[option].Color = color;
+                if (color.Length == 7 && color.StartsWith("#"))
+                    Options[option].Color = color;
             }
 
             EventStream();
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         private void RecountVotes()
         {
-            foreach (SliderOption rating in Options) rating.Ratings.Clear();
+            foreach (SliderOption rating in Options)
+                rating.Ratings.Clear();
 
             foreach (SliderVote vote in Votes)
                 for (int j = 0; j < vote.Ratings.Count; j++)
                     Options[j].Ratings.Add(vote.Ratings[j]);
         }
-
-        #endregion Private Methods
     }
 }

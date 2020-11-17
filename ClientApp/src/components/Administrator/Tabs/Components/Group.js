@@ -1,65 +1,54 @@
-﻿import { IconButton, Menu, MenuItem } from "@material-ui/core";
+﻿import {IconButton, Menu, MenuItem} from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
-import { grey } from "@material-ui/core/colors";
+import {grey} from "@material-ui/core/colors";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import MenuIcon from "@material-ui/icons/Menu";
 import Axios from "axios";
 import "circular-std";
-import React, { Component } from "react";
-import { Form, Nav } from "react-bootstrap";
+import React, {Component} from "react";
+import {Form, Nav} from "react-bootstrap";
 import Styled from "styled-components";
-import { PageModal } from "../../../Services/PageModal";
-import { ColorPicker } from "./ColorPicker";
+import {PageModal} from "../../../Services/PageModal";
+import {ColorPicker} from "./ColorPicker";
+
 
 const GroupContainer = Styled.div`
-        width: 100%;
+    width: 100%;
+    overflow: hidden;
+    padding: 10px;
+    padding-top: 65px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
+    vertical-align: top;
+    position: relative;
+    display: ${props => props.empty ?
+                        "none" :
+                        "block"};
 
-        display: ${props => props.empty
-        ? "none"
-        : "block"};
+    background: ${props => props.group === 0 ?
+                           "#8c8da6" :
+                           props.color};
 
-        background: ${props => props.group === 0
-        ? "#8c8da6"
-        : props.color};
+    opacity: ${props => props.group === "new" ?
+                        "50%" :
+                        "100%"};
 
-        padding: 10px;
-        padding-top: 65px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
-        vertical-align: top;
-        position: relative;
+    &:hover {
+        filter: saturate(125%) drop-shadow(6px 6px 3px black);
 
-        opacity: ${props => props.group === "new"
-        ? "50%"
-        : "100%"};
-
-        overflow: hidden;
-
-        &:hover {
-           filter: saturate(125%) drop-shadow(6px 6px 3px black);
-
-           cursor: ${props => props.group === "new"
-        ? "pointer"
-        : props.showcase
-            ? "default"
-            : "cell"};
+        cursor: ${props => props.group === "new" ?
+                           "pointer" :
+                           props.showcase ?
+                           "default" :
+                           "cell"};
         }
     `;
 
 const IdChars = Styled.h1`
     display: inline-block;
     color: #fff;
-
-    width: ${props => props.size <= 2
-        ? (props.size === 2
-            ? "50%"
-            : "100%")
-        : (props.size === 4
-            ? "25%"
-            : "33%")};
-
     font-family: CircularStd;
     font-Size: 1rem;
     margin: 0;
@@ -67,6 +56,14 @@ const IdChars = Styled.h1`
     text-align: center;
     font-weight: 700;
     clear: both;
+    width: ${props => props.size <= 2 ?
+                      (props.size === 2 ?
+                           "50%" :
+                           "100%") :
+                      (props.size === 4 ?
+                           "25%" :
+                           "33%")};
+
 `;
 
 const GroupTitle = Styled.h1`
@@ -75,46 +72,50 @@ const GroupTitle = Styled.h1`
     font-weight: 600;
     font-size: 1rem;
     text-transform: uppercase;
-
-    width: ${props => props.new
-        ? "100%"
-        : ""};
-
-    max-width: ${props => props.new
-        ? "100%"
-        : "85%"};
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    text-align: ${props => props.new
-        ? "center"
-        : ""};
-
+    vertical-align: center;
     opacity: 98%;
     position: absolute;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+    padding: 2.5px;
 
-    top: ${props => props.new
-        ? "50%"
-        : "20px"};
-    vertical-align: center;
+    width: ${props => props.new ?
+                      "100%" :
+                      ""};
 
-    left: ${props => props.new
-        ? "50%"
-        : "15px"};
+    max-width: ${props => props.new ?
+                          "100%" :
+                          "75%"};
 
-    transform: ${props => props.new
-        ? "translate(-50%, -50%)"
-        : ""};
+    text-align: ${props => props.new ?
+                           "center" :
+                           ""};
 
-    pointer-events: ${props => props.new
-        ? "none"
-        : "initial"};
+    top: ${props => props.new ?
+                    "50%" :
+                    "17.5px"};
+
+    left: ${props => props.new ?
+                     "50%" :
+                     "12.5px"};
+
+    transform: ${props => props.new ?
+                          "translate(-50%, -50%)" :
+                          ""};
+
+    pointer-events: ${props => props.new ?
+                               "none" :
+                               "initial"};
 
     &:hover {
-        cursor: ${props => props.showcase
-        ? "default"
-        : "text"};
+        cursor: ${props => props.showcase ?
+                           "default" :
+                           "text"};
+        box-shadow: ${props => props.showcase ?
+                           "0" :
+                           "0 0 4px 2px #fff"};
     }
 `;
 
@@ -125,9 +126,9 @@ const GroupMenu = Styled(MenuIcon)`
     color: #fff;
     font-weight: 600;
 
-    display: ${props => props.showcase
-        ? "none"
-        : "block"};
+    display: ${props => props.showcase ?
+                        "none" :
+                        "block"};
 
     &:hover {
         background: rgba(0, 0, 0, .15);
@@ -185,7 +186,9 @@ export class Group extends Component {
         colorAnchor: null
     }
 
+
     validateHexColor = /^#([0-9A-Fa-f]{3}){1,2}$/;
+
 
     modal = {
         archive: {
@@ -207,13 +210,16 @@ export class Group extends Component {
                 };
 
                 return (
-                    <Form autoComplete="off"
-                        onSubmit={(e) => Archive(e)}>
+                    <Form
+                        autoComplete="off"
+                        onSubmit={(e) => Archive(e)} >
                         <ModalText>Are you sure you want to delete this group?</ModalText>
-                        <CancelButton onClick={() => this.modal.archive.close()}>
+                        <CancelButton
+                            onClick={() => this.modal.archive.close()} >
                             Cancel
                         </CancelButton>
-                        <CreateButton type="submit"
+                        <CreateButton
+                            type="submit"
                             value="Submit" />
                     </Form>
                 );
@@ -228,6 +234,7 @@ export class Group extends Component {
             }
         }
     }
+
 
     drag = {
         start: (e) => {
@@ -252,20 +259,24 @@ export class Group extends Component {
             const Drag = JSON.parse(e.dataTransfer.getData("drag"));
             const Code = sessionStorage.getItem("code");
 
-            if (Drag.member !== undefined) {
+            if (Drag.member !== undefined)
+            {
                 const Key = [Drag.group.toString(), Drag.member.toString()];
                 const Target = this.props.group;
                 const Selected = this.props.selected();
-                let Keys = [];
+                const Keys = [];
 
-                if (Selected.find(element => {return element[0] === Key[0] ? element[1] === Key[1] : false}))
+                if (Selected.find(element => {
+                    return element[0] === Key[0] ?
+                               element[1] === Key[1] :
+                               false;
+                }))
                 {
-                    Selected.forEach(select =>
-                    {
-                        let Subject = {
+                    Selected.forEach(select => {
+                        const Subject = {
                             Group: select[0],
                             Member: select[1]
-                        }
+                        };
 
                         Keys.push(Subject);
                     });
@@ -273,51 +284,49 @@ export class Group extends Component {
                 else
                 {
                     let Done = false;
-                    Selected.forEach(select =>
-                    {
+                    Selected.forEach(select => {
                         if (!Done && Key[0] >= select[0])
                         {
                             if ((Key[0] === select[0] && Key[1] > select[1]) || Key[0] > select[0])
                             {
-                                let Insert = {
+                                const Insert = {
                                     Group: Key[0],
                                     Member: Key[1]
-                                }
+                                };
                                 Keys.push(Insert);
                                 Done = true;
                             }
                         }
-                        let Subject = {
+                        const Subject = {
                             Group: select[0],
                             Member: select[1]
-                        }
+                        };
 
                         Keys.push(Subject);
                     });
 
-                    if(!Done)
+                    if (!Done)
                     {
-                        let Insert = {
+                        const Insert = {
                             Group: Key[0],
                             Member: Key[1]
-                        }
+                        };
                         Keys.push(Insert);
                     }
                 }
 
-                if (Target === "new") {
-                    Axios.post(`admin/${Code}/question-create-group-C${this.props.column}`).then(setTimeout(() => {
-                        Axios.post(`admin/${Code}/group/change-last`, Keys);
-                    },
+                if (Target === "new")
+                {
+                    Axios.post(`admin/${Code}/question-create-group-C${this.props.column}`).then(setTimeout(() => { Axios.post(`admin/${Code}/group/change-last`, Keys); },
                         200));
                 }
-                else {
+                else
                     Axios.post(`admin/${Code}/group/change-${Target}`, Keys);
-                }
 
                 this.props.clearSelect();
             }
-            else if (this.props.column !== 0 && Drag.column !== this.props.column) {
+            else if (this.props.column !== 0 && Drag.column !== this.props.column)
+            {
                 const Key = Drag.group;
                 const Target = this.props.column;
 
@@ -326,12 +335,15 @@ export class Group extends Component {
         }
     }
 
+
     handleDouble = (e) => {
-        if (this.props.double !== undefined && this.props.group !== 0 && this.props.group !== "new") {
+        if (this.props.double !== undefined && this.props.group !== 0 && this.props.group !== "new")
+        {
             e.stopPropagation();
             this.props.double(e);
         }
     }
+
 
     collapse = (e) => {
         e.stopPropagation();
@@ -343,11 +355,11 @@ export class Group extends Component {
         //});
     }
 
+
     colorChange = (color, e) => {
         e.stopPropagation();
-        if (!this.validateHexColor.test(color.hex)) {
+        if (!this.validateHexColor.test(color.hex))
             return;
-        }
 
         this.setState({
             colorAnchor: null
@@ -358,8 +370,13 @@ export class Group extends Component {
 
         Axios.post(`admin/${Code}/group${this.props.group}-recolor`,
             JSON.stringify(Color),
-            { headers: { 'Content-Type': "application/json" } });
+            {
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            });
     }
+
 
     colorOpen = (e) => {
         e.stopPropagation();
@@ -370,6 +387,7 @@ export class Group extends Component {
         });
     }
 
+
     deleteOpen = (e) => {
         e.stopPropagation();
         this.setState({
@@ -378,16 +396,21 @@ export class Group extends Component {
         this.modal.archive.open();
     }
 
+
     handleClick = (e) => {
-        if (!this.props.showcase && this.props.onClick !== undefined) {
+        if (!this.props.showcase && this.props.onClick !== undefined)
+        {
             this.props.onClick(this.props.group);
             e.stopPropagation();
         }
     }
 
-    render() {
+
+    render()
+    {
         return (
-            <GroupContainer color={this.props.color}
+            <GroupContainer
+                color={this.props.color}
                 column={this.props.column}
                 draggable={this.props.group !== 0 && !this.props.showcase}
                 empty={this.props.id === "0" && this.props.children.length < 1}
@@ -397,92 +420,98 @@ export class Group extends Component {
                 onDragOver={this.drag.over}
                 onDragStart={this.drag.start}
                 onDrop={this.drag.drop}
-                size={this.props.size}>
+                size={this.props.size} >
 
-                <GroupTitle id={this.props.id + "-title"}
+                <GroupTitle
+                    id={this.props.id + "-title"}
                     new={this.props.group === "new"}
                     onClick={(e) => e.stopPropagation()}
                     onDoubleClick={(e) => this.handleDouble(e)}
-                    showcase={this.props.showcase}>
+                    showcase={this.props.showcase} >
                     {this.props.title}
                     {!this.props.showcase &&
                         this.props.group !== "new" &&
                         <IconButton
                             aria-label="expand"
-                            onClick={(e) =>
-                                this.collapse(e)}
+                            onClick={(e) => this.collapse(e)}
                             size="small"
-                            style={{ outline: "0" }}>
-                            {!this.props.collapsed
-                                ? <KeyboardArrowUpIcon
-                                    style={{ color: grey[50] }} />
-                                : <KeyboardArrowDownIcon
-                                    style={{ color: grey[50] }} />}
+                            style={{
+                                outline: "0"
+                            }} >
+
+                            {!this.props.collapsed ?
+                                 <KeyboardArrowUpIcon
+                                    style={{
+                                        color: grey[50]
+                                    }} /> :
+                                 <KeyboardArrowDownIcon
+                                    style={{
+                                        color: grey[50]
+                                    }} />
+                            }
                         </IconButton>
                     }
                 </GroupTitle>
 
-                <Collapse in={!this.props.collapsed}
-                    timeout="auto">
-                    {this.props.size <= "2"
-                        ? (this.props.size === 2
-                            ? <React.Fragment>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    A
-                                      </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    B
-                                      </IdChars>
-                            </React.Fragment>
-                            : //Middle of: this.props.size == "2" ?
-                            "")
-                        : //Middle of: this.props.size <= "2" ?
-                        (this.props.size === 4
-                            ? <React.Fragment>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    A
-                                    </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    B
-                                    </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    C
-                                    </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    D
-                                    </IdChars>
-                            </React.Fragment>
-                            : //Middle of: this.props.size == "4" ?
-                            <React.Fragment>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    A
+                <Collapse
+                    in={!this.props.collapsed}
+                    timeout="auto" >
+                    {this.props.size <= "2" ?
+                         (this.props.size === 2 ?
+                              <React.Fragment>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      A
                                   </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    B
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      B
                                   </IdChars>
-                                <IdChars
-                                    id={this.props.id + "-title"}
-                                    size={this.props.size}>
-                                    C
+                              </React.Fragment> : //Middle of: this.props.size == "2" ?
+                              "") : //Middle of: this.props.size <= "2" ?
+                         (this.props.size === 4 ?
+                              <React.Fragment>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      A
                                   </IdChars>
-                            </React.Fragment>
-                        )
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      B
+                                  </IdChars>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      C
+                                  </IdChars>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      D
+                                  </IdChars>
+                              </React.Fragment> : //Middle of: this.props.size == "4" ?
+                              <React.Fragment>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      A
+                                  </IdChars>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      B
+                                  </IdChars>
+                                  <IdChars
+                                      id={this.props.id + "-title"}
+                                      size={this.props.size} >
+                                      C
+                                  </IdChars>
+                              </React.Fragment>
+                         )
                     }
 
                     {this.props.children}
@@ -494,43 +523,62 @@ export class Group extends Component {
                         id={this.props.id + "-title"}
                         onClick={(e) => {
                             e.stopPropagation();
-                            this.setState({ menuAnchor: e.currentTarget });
+                            this.setState({
+                                menuAnchor: e.currentTarget
+                            });
                         }}
-                        showcase={this.props.showcase}
-                    />}
+                        showcase={this.props.showcase} />
+                }
 
                 {this.state.modal.archive &&
                     <PageModal
                         body={this.modal.archive.content()}
                         onClose={this.modal.archive.close}
-                        title="Confirm Archiving"
-                    />}
+                        title="Confirm Archiving" />
+                }
 
-                <Menu anchorEl={this.state.menuAnchor}
+                <Menu
+                    anchorEl={this.state.menuAnchor}
                     anchorOrigin={{
                         vertical: "top",
                         horizontal: "right"
                     }}
-                    onClose={() => this.setState({ menuAnchor: null })}
+                    onClose={() => this.setState({
+                        menuAnchor: null
+                    })}
                     open={Boolean(this.state.menuAnchor)}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}>
+                    transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right"
+                    }} >
 
-                    <MenuItem onClick={this.colorOpen}>
+                    <MenuItem
+                        onClick={this.colorOpen} >
                         Change Color
                     </MenuItem>
 
-                    <MenuItem onClick={this.deleteOpen}>
+                    <MenuItem
+                        onClick={this.deleteOpen} >
                         Delete Group
                     </MenuItem>
 
                 </Menu>
 
-                <ColorPicker anchorEl={this.state.colorAnchor}
-                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                <ColorPicker
+                    anchorEl={this.state.colorAnchor}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right"
+                    }}
                     color={this.props.color}
                     onChangeComplete={this.colorChange}
-                    onClose={() => this.setState({ colorAnchor: null })}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }} />
+                    onClose={() => this.setState({
+                        colorAnchor: null
+                    })}
+                    transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right"
+                    }} />
 
             </GroupContainer>
         );

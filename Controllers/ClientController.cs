@@ -20,23 +20,13 @@ namespace Coboost.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        #region Private Fields
-
         // ReSharper disable once NotAccessedField.Local
         private readonly DatabaseContext _context;
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         public ClientController(DatabaseContext context)
         {
             _context = context;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         [HttpPost("{code}/add-vote-multi")]
         public void AddMultipleChoice(int code, [FromBody] MultipleChoiceVote vote)
@@ -110,7 +100,5 @@ namespace Coboost.Controllers
                 HttpContext.Response.StatusCode = 402;
             }
         }
-
-        #endregion Public Methods
     }
 }

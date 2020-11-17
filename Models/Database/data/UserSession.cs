@@ -4,17 +4,30 @@ namespace Coboost.Models.Database.data
 {
     public class UserSession
     {
-        #region Public Properties
-
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public Session Session { get; set; }
+        public Session Session
+        {
+            get;
+            set;
+        }
 
-        public int SessionId { get; set; }
+        public int SessionId
+        {
+            get;
+            set;
+        }
 
-        [UsedImplicitly] public User User { get; set; }
+        [UsedImplicitly]
+        public User User
+        {
+            get;
+            set;
+        }
 
-        public string UserId { get; set; }
-
-        #endregion Public Properties
+        public string UserId
+        {
+            get;
+            set;
+        }
     }
 }

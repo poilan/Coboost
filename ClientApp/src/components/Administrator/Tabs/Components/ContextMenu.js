@@ -1,7 +1,8 @@
-﻿import React, { Component } from "react";
-import { Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+﻿import React, {Component} from "react";
+import {Modal, InputGroup, Form, Button, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
+
 
 const MenuContainer = Styled.div`
     border: solid 1px #ccc;
@@ -20,34 +21,38 @@ const MenuContainer = Styled.div`
 `;
 
 const ContextItem = Styled.div`
-    border-bottom: ${props => props.last
-        ? ""
-        : "solid 1px #999"
+    border-bottom: ${props => props.last ?
+                              "" :
+                              "solid 1px #999"
     };
     padding: 5px 25px;
 `;
 
 export class ContextMenu extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.contextRef = React.createRef();
     }
 
-    click(index) {
-        if (this.props.items[index].callback) {
+
+    click(index)
+    {
+        if (this.props.items[index].callback)
             this.props.items[index].callback();
-        }
-        else {
+        else
             console.log(`No callback for the ${index + 1}. menu item!`);
-        }
     }
 
-    returnMenu(items) {
+
+    returnMenu(items)
+    {
         return (
-            <MenuContainer id="customcontext"
+            <MenuContainer
+                id="customcontext"
                 left={this.props.x - 4}
                 ref={this.contextRef}
-                top={this.props.y - 4}>
+                top={this.props.y - 4} >
                 {items.map((item, index, arr) =>
                     <ContextItem key={index} index={index}
                         last={arr.length - 1 === index}
@@ -59,12 +64,15 @@ export class ContextMenu extends Component {
         );
     }
 
-    render() {
+
+    render()
+    {
         return (
-            <div id="cmenu">
-                {this.props.visible
-                    ? this.returnMenu(this.props.items)
-                    : null}
+            <div
+                id="cmenu" >
+                {this.props.visible ?
+                     this.returnMenu(this.props.items) :
+                     null}
             </div>
         );
     }

@@ -5,12 +5,16 @@ namespace Coboost.Models.Admin.Tasks.Input.Grouped.data
 {
     public class TextCategoryOption : OpenTextInput
     {
-        #region Public Properties
+        public List<TextCategoryGroup> Archive
+        {
+            get;
+            set;
+        }
 
-        public List<TextCategoryGroup> Archive { get; set; }
-
-        public List<TextCategoryGroup> Groups { get; set; }
-
-        #endregion Public Properties
+        public List<TextCategoryGroup> Groups
+        {
+            get;
+            set;
+        }
     }
 }

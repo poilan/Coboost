@@ -13,16 +13,10 @@ namespace Coboost.Services.StreamContent
     [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class StreamContent : IActionResult
     {
-        #region Private Fields
-
         private readonly Action<Stream, CancellationToken> _onStreamAvailable;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private CancellationToken _cancelToken;
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         /// <summary>
         ///     Use this as a Return method to be able to push data using StreamWriter.Flush()
@@ -42,10 +36,6 @@ namespace Coboost.Services.StreamContent
             _cancelToken = cancelToken;
         }
 
-        #endregion Public Constructors
-
-        #region Public Methods
-
         public Task ExecuteResultAsync(ActionContext context)
         {
             Stream stream = context.HttpContext.Response.Body;
@@ -53,7 +43,5 @@ namespace Coboost.Services.StreamContent
             _onStreamAvailable(stream, _cancelToken);
             return Task.CompletedTask;
         }
-
-        #endregion Public Methods
     }
 }

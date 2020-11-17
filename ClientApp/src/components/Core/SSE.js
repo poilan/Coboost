@@ -1,5 +1,6 @@
 ﻿export class SSE {
-    constructor(address) {
+    constructor(address)
+    {
         this.address = address;
         this.open = false;
 
@@ -8,36 +9,32 @@
         this.eventSource = undefined;
     }
 
-    log = (msg) => {
-        console.log(`SSE: ${msg}`);
-    }
+
+    log = (msg) => { console.log(`SSE: ${msg}`); }
+
 
     addListener = (type, callback) => {
-        if (this.open === true) {
-            this.eventSource.addEventListener(type, (e) => {
-                callback(e);
-            }, false);
-        }
+        if (this.open === true)
+            this.eventSource.addEventListener(type, (e) => { callback(e); }, false);
     }
 
+
     startEventSource = (callback) => {
-        if (this.eventSource !== undefined) {
+        if (this.eventSource !== undefined)
             this.eventSource.close();
-        }
 
         this.eventSource = new EventSource(this.address);
         this.open = true;
 
         this.addListener("error", (e) => {
-            if (e.readyState === EventSource.CLOSED) {
+            if (e.readyState === EventSource.CLOSED)
+            {
                 this.log(`Error. connection has been closed (${e})`);
                 this.startEventSource(callback);
             }
         });
 
-        this.addListener("open", () => {
-            this.log("SSE has started.");
-        });
+        this.addListener("open", () => { this.log("SSE has started."); });
 
         callback(this.eventSource);
     }

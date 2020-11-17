@@ -1,5 +1,6 @@
 ﻿export class Presentation {
-    constructor(code) {
+    constructor(code)
+    {
         this.code = code;
 
         const ScreenW = window.screen.width; // Screen width;
@@ -16,8 +17,9 @@
         console.log(`Presenter has been binded to code '${this.code}'`);
     }
 
-    PresentInNewWindow() {
 
+    PresentInNewWindow()
+    {
         //sessionStorage.setItem("present_code", this.code);
 
         const Existing = window.open("", "BigScreen");

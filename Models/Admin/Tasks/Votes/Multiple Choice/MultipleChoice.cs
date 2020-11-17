@@ -17,23 +17,33 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
     /// </summary>
     public class MultipleChoice : BaseTask
     {
-        #region Public Properties
-
         /// <summary>
         ///     "Removed" options are stored here.
         /// </summary>
-        public List<MultipleChoiceOption> Archive { get; set; }
+        public List<MultipleChoiceOption> Archive
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The maximum number of choices users can vote for.
         /// </summary>
         // ReSharper disable once UnusedMember.Global
-        public int Max { get; set; }
+        public int Max
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The options you can pick from
         /// </summary>
-        public List<MultipleChoiceOption> Options { get; set; }
+        public List<MultipleChoiceOption> Options
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     The total number of votes
@@ -43,24 +53,17 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             get
             {
                 int i = 0;
-                if (Options.Count > 0) i += Options.Where(opt => opt.Votes.Count > 0).Sum(opt => opt.Votes.Count);
+                if (Options.Count > 0)
+                    i += Options.Where(opt => opt.Votes.Count > 0).Sum(opt => opt.Votes.Count);
                 return i;
             }
         }
-
-        #endregion Public Properties
-
-        #region Public Constructors
 
         public MultipleChoice()
         {
             Archive = new List<MultipleChoiceOption>();
             Options = new List<MultipleChoiceOption>();
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         /// <summary>
         ///     Adds another option to the vote
@@ -112,7 +115,8 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
                 if (option >= Options.Count || option < 0 || color == null)
                     return;
 
-                if (color.Length == 7 && color.StartsWith("#")) Options[option].Color = color;
+                if (color.Length == 7 && color.StartsWith("#"))
+                    Options[option].Color = color;
             }
 
             EventStream();
@@ -131,7 +135,5 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
 
             EventStream();
         }
-
-        #endregion Public Methods
     }
 }

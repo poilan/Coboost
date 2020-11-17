@@ -10,55 +10,29 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
     /// </summary>
     public class OpenText : BaseTask
     {
-        #region Public Constructors
+        /// <summary>
+        ///     "Removed" inputs are stored here
+        /// </summary>
+        public List<OpenTextInput> Archive
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     All groups of inputs
+        /// </summary>
+        public List<OpenTextGroup> Groups
+        {
+            get;
+            set;
+        }
 
         public OpenText()
         {
             Archive = new List<OpenTextInput>();
             Groups = new List<OpenTextGroup>();
         }
-
-        #endregion Public Constructors
-
-        #region Public Structs
-
-        /// <summary>
-        ///     Stores two integers that allows us to locate specified inputs.
-        /// </summary>
-        public struct Key
-        {
-            #region Public Fields
-
-            /// <summary>
-            ///     The Group Index the Input has
-            /// </summary>
-            public int Group;
-
-            /// <summary>
-            ///     The Member Index the Input has
-            /// </summary>
-            public int Member;
-
-            #endregion Public Fields
-        }
-
-        #endregion Public Structs
-
-        #region Public Properties
-
-        /// <summary>
-        ///     "Removed" inputs are stored here
-        /// </summary>
-        public List<OpenTextInput> Archive { get; set; }
-
-        /// <summary>
-        ///     All groups of inputs
-        /// </summary>
-        public List<OpenTextGroup> Groups { get; set; }
-
-        #endregion Public Properties
-
-        #region Public Methods
 
         /// <summary>
         ///     Creates a new group
@@ -97,19 +71,6 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             EventStream();
         }
 
-        public void Duplicate(OpenTextInput[] inputs)
-        {
-            lock (ThreadLock)
-            {
-                foreach (OpenTextInput input in inputs)
-                    Groups[0].Members.Add(input);
-
-                UpdateMemberIndexes(0);
-            }
-
-            EventStream();
-        }
-
         public void ArchiveGroup(int group)
         {
             lock (ThreadLock)
@@ -128,7 +89,10 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                     ArchiveInput(key);
                 }
 
+                int prev = Groups[group].Column;
                 Groups.RemoveAt(group);
+                if (Groups.All(check => check.Column != prev))
+                    RemoveColumn(group);
                 UpdateGroupIndexes();
             }
 
@@ -163,7 +127,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 }
 
                 UpdateGroupIndexes();
-                foreach (OpenTextGroup group in Groups) UpdateMemberIndexes(group.Index);
+                foreach (OpenTextGroup group in Groups)
+                    UpdateMemberIndexes(group.Index);
             }
 
             EventStream();
@@ -179,7 +144,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             int prev = Groups[group].Column;
             lock (ThreadLock)
             {
-                if (group < Groups.Count) Groups[group].Column = column;
+                if (group < Groups.Count)
+                    Groups[group].Column = column;
             }
 
             if (Groups.Any(check => check.Column == prev))
@@ -189,16 +155,6 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             }
 
             RemoveColumn(prev);
-        }
-
-        private void RemoveColumn(int target)
-        {
-            foreach (OpenTextGroup group in Groups.Where(group => group.Column >= target && group.Column > 1))
-                lock (ThreadLock)
-                {
-                    group.Column -= 1;
-                }
-
             EventStream();
         }
 
@@ -214,7 +170,21 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
 
             lock (ThreadLock)
             {
-                if (color.Length == 7 && color.StartsWith("#")) Groups[group].Color = color;
+                if (color.Length == 7 && color.StartsWith("#"))
+                    Groups[group].Color = color;
+            }
+
+            EventStream();
+        }
+
+        public void Duplicate(OpenTextInput[] inputs)
+        {
+            lock (ThreadLock)
+            {
+                foreach (OpenTextInput input in inputs)
+                    Groups[0].Members.Add(input);
+
+                UpdateMemberIndexes(0);
             }
 
             EventStream();
@@ -246,8 +216,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
         {
             lock (ThreadLock)
             {
-                if (parent.Group >= Groups.Count || parent.Member >= Groups[parent.Group].Members.Count ||
-                    child.Group >= Groups.Count || child.Member >= Groups[child.Group].Members.Count)
+                if (parent.Group >= Groups.Count || parent.Member >= Groups[parent.Group].Members.Count || child.Group >= Groups.Count || child.Member >= Groups[child.Group].Members.Count)
                     return;
 
                 //Check if parent is already merged with something
@@ -270,7 +239,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                         //Add child and all grand-kids to parent
                         mergedParent.Children.Add(singleChild);
 
-                        foreach (OpenTextInput kid in grandKids) mergedParent.Children.Add(kid);
+                        foreach (OpenTextInput kid in grandKids)
+                            mergedParent.Children.Add(kid);
                     }
                     else
                     {
@@ -314,7 +284,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                         //Add child and all grand-kids to parent
                         merge.Children.Add(singleChild);
 
-                        foreach (OpenTextInput kid in grandKids) merge.Children.Add(kid);
+                        foreach (OpenTextInput kid in grandKids)
+                            merge.Children.Add(kid);
                     }
                     else
                     {
@@ -346,7 +317,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 if (Groups[target.Group].Members[target.Member] is OpenTextMerged merged)
                 {
                     //Add all the children to the same group
-                    foreach (OpenTextInput inp in merged.Children) Groups[target.Group].Members.Add(inp);
+                    foreach (OpenTextInput inp in merged.Children)
+                        Groups[target.Group].Members.Add(inp);
 
                     //Remove the merged key
                     Groups[target.Group].Members.RemoveAt(target.Member);
@@ -368,7 +340,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
         {
             lock (ThreadLock)
             {
-                if (Groups.Count > group) Groups[group].Title = title;
+                if (Groups.Count > group)
+                    Groups[group].Title = title;
             }
 
             EventStream();
@@ -394,8 +367,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
         {
             lock (ThreadLock)
             {
-                if (key.Group >= Groups.Count || key.Member >= Groups[key.Group].Members.Count ||
-                    targetGroup >= Groups.Count)
+                if (key.Group >= Groups.Count || key.Member >= Groups[key.Group].Members.Count || targetGroup >= Groups.Count)
                     return;
 
                 //Grab the Input we want moved
@@ -454,7 +426,11 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             for (int i = 1; i < Groups.Count; i++)
                 if (Groups[i].Members.Count < 1) //TODO: Keep Previously Empty Groups?
                 {
+                    int prev = Groups[i].Column;
                     Groups.RemoveAt(i);
+                    if (Groups.All(check => check.Column != prev))
+                        RemoveColumn(prev);
+
                     i--;
                 }
 
@@ -466,13 +442,8 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                     UpdateMemberIndexes(group.Index);
                 }
 
-
             EventStream();
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
 
         private void ArchiveInput(Key member)
         {
@@ -483,6 +454,15 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             Groups[member.Group].Members.RemoveAt(member.Member);
             input.Index = Archive.Count;
             Archive.Add(input);
+        }
+
+        private void RemoveColumn(int target)
+        {
+            foreach (OpenTextGroup group in Groups.Where(group => group.Column >= target && group.Column > 1))
+                lock (ThreadLock)
+                {
+                    group.Column -= 1;
+                }
         }
 
         /*
@@ -546,14 +526,30 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
 
         private void UpdateGroupIndexes()
         {
-            for (int i = 0; i < Groups.Count; i++) Groups[i].Index = i;
+            for (int i = 0; i < Groups.Count; i++)
+                Groups[i].Index = i;
         }
 
         private void UpdateMemberIndexes(int group)
         {
-            for (int i = 0; i < Groups[group].Members.Count; i++) Groups[group].Members[i].Index = i;
+            for (int i = 0; i < Groups[group].Members.Count; i++)
+                Groups[group].Members[i].Index = i;
         }
 
-        #endregion Private Methods
+        /// <summary>
+        ///     Stores two integers that allows us to locate specified inputs.
+        /// </summary>
+        public struct Key
+        {
+            /// <summary>
+            ///     The Group Index the Input has
+            /// </summary>
+            public int Group;
+
+            /// <summary>
+            ///     The Member Index the Input has
+            /// </summary>
+            public int Member;
+        }
     }
 }

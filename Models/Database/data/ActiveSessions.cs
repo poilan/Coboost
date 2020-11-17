@@ -5,15 +5,9 @@ namespace Coboost.Models.Database.data
 {
     public class ActiveSessions
     {
-        #region Private Fields
-
         private static readonly object Padlock = new object();
 
         private static ActiveSessions _instance;
-
-        #endregion Private Fields
-
-        #region Public Properties
 
         public static ActiveSessions Instance
         {
@@ -29,17 +23,14 @@ namespace Coboost.Models.Database.data
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public Dictionary<int, AdminInstance> Sessions { get; }
-
-        #endregion Public Properties
-
-        #region Private Constructors
+        public Dictionary<int, AdminInstance> Sessions
+        {
+            get;
+        }
 
         private ActiveSessions()
         {
             Sessions = new Dictionary<int, AdminInstance>();
         }
-
-        #endregion Private Constructors
     }
 }

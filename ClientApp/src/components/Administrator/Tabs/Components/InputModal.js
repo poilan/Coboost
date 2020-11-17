@@ -1,9 +1,10 @@
-﻿import React, { Component, createRef } from "react";
+﻿import React, {Component, createRef} from "react";
 import Axios from "axios";
-import { Modal, Nav, Form } from "react-bootstrap";
+import {Modal, Nav, Form} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { TextField, Box } from "@material-ui/core";
+import {TextField, Box} from "@material-ui/core";
+
 
 const ModalPage = Styled(Modal)`
     border-radius: 20px;
@@ -17,20 +18,20 @@ const ModalPage = Styled(Modal)`
 
 const ContentInput = Styled(TextField)`
     display: block;
-    max-height: ${props => props.isTitle
-        ? "2rem"
-        : "8rem"};
+    max-height: ${props => props.isTitle ?
+                           "2rem" :
+                           "8rem"};
     min-height: 1rem;
     font-family: CircularStd;
     font-size: 1rem;
-    text-align: ${props => props.isTitle
-        ? "center"
-        : "left"};
+    text-align: ${props => props.isTitle ?
+                           "center" :
+                           "left"};
     color: black;
     border: 0;
-    border-bottom: 1px solid ${props => props.isTitle
-        ? "#4C7AD3"
-        : "#cfcfcf"};
+    border-bottom: 1px solid ${props => props.isTitle ?
+                                        "#4C7AD3" :
+                                        "#cfcfcf"};
     resize: none;
 `;
 
@@ -63,7 +64,8 @@ const CreateButton = Styled.input`
 `;
 
 export class InputModal extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             description: "",
@@ -76,7 +78,11 @@ export class InputModal extends Component {
         this.Submit = createRef();
     }
 
-    componentDidMount() { }
+
+    componentDidMount()
+    {
+    }
+
 
     SendInput = (e) => {
         e.preventDefault();
@@ -90,13 +96,13 @@ export class InputModal extends Component {
             UserID: User
         };
 
-        if (Description.length > 30) {
+        if (Description.length > 30)
             Data.Title = Title;
-        }
 
         Axios.post(`client/${Code}/add-text-open`, Data);
         this.OnClose();
     }
+
 
     HandleTitle = (event) => {
         event.preventDefault();
@@ -106,6 +112,7 @@ export class InputModal extends Component {
         });
     }
 
+
     HandleDescription = (event) => {
         event.preventDefault();
         var Description = event.target.value;
@@ -114,8 +121,10 @@ export class InputModal extends Component {
         });
     }
 
+
     OnTitleFocus = () => {
-        if (this.state.title.trim() === "") {
+        if (this.state.title.trim() === "")
+        {
             const Title = this.state.description.substring(0, 30);
             this.setState({
                 title: Title
@@ -123,43 +132,46 @@ export class InputModal extends Component {
         }
     }
 
+
     HandleInvalid = () => {
         const Description = this.state.description;
 
-        if (Description.length < 3) {
-            if (this.Description.current) {
+        if (Description.length < 3)
+        {
+            if (this.Description.current)
                 this.Description.current.focus();
-            }
 
             return;
         }
-        else if (Description.length > 30) {
+        else if (Description.length > 30)
+        {
             const Title = this.state.title;
 
-            if (Title.length < 3) {
-                if (this.Title.current) {
+            if (Title.length < 3)
+            {
+                if (this.Title.current)
                     this.Title.current.focus();
-                }
 
                 return;
             }
         }
     }
 
+
     HandleEnter = (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter")
+        {
             e.preventDefault();
             e.stopPropagation();
-            if (this.Submit.current) {
+            if (this.Submit.current)
                 this.Submit.current.click();
-            }
         }
     }
 
+
     OnClose = () => {
-        if (this.props.onClose !== undefined) {
+        if (this.props.onClose !== undefined)
             this.props.onClose();
-        }
         this.setState({
             title: "",
             description: "",
@@ -167,16 +179,20 @@ export class InputModal extends Component {
         });
     }
 
+
     Content = () => {
         return (
-            <Form autoComplete="off"
+            <Form
+                autoComplete="off"
                 onInvalid={this.HandleInvalid}
-                onSubmit={this.SendInput}>
-                <Box m={1}
+                onSubmit={this.SendInput} >
+                <Box
+                    m={1}
                     mb={2}
-                    p={1}>
-                    <ContentInput disabled={this.state.description == undefined ||
-                        this.state.description.length <= 30}
+                    p={1} >
+                    <ContentInput
+                        disabled={this.state.description == undefined ||
+                            this.state.description.length <= 30}
                         fullWidth
                         helperText={`${30 - this.state.title.length}`}
                         hidden={this.state.description == undefined || this.state.description.length <= 30}
@@ -192,14 +208,16 @@ export class InputModal extends Component {
                         value={this.state.title}
                         variant="outlined" />
                 </Box>
-                <Box m={1}
+                <Box
+                    m={1}
                     mb={2}
-                    p={1}>
-                    <ContentInput fullWidth
+                    p={1} >
+                    <ContentInput
+                        fullWidth
                         helperText={`${250 - this.state.description.length}
-                                    ${this.state.description.length > 30
-                                ? ""
-                                : ` | ${30 - this.state.description.length}`}`}
+                                    ${this.state.description.length > 30 ?
+                                      "" :
+                                      ` | ${30 - this.state.description.length}`}`}
                         inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                         inputRef={this.Description}
                         label="Input"
@@ -213,20 +231,28 @@ export class InputModal extends Component {
                         value={this.state.description}
                         variant="outlined" />
                 </Box>
-                <CancelButton onClick={this.OnClose}>Cancel</CancelButton>
-                <CreateButton ref={this.Submit}
+                <CancelButton
+                    onClick={this.OnClose} >
+                    Cancel
+                </CancelButton>
+                <CreateButton
+                    ref={this.Submit}
                     type="submit"
                     value="Submit" />
             </Form >
         );
     };
 
-    render() {
+
+    render()
+    {
         return (
-            <ModalPage centered
+            <ModalPage
+                centered
                 onHide={this.OnClose}
-                show={this.state.showing}>
-                <Modal.Header closeButton>
+                show={this.state.showing} >
+                <Modal.Header
+                    closeButton >
                     <Modal.Title>Write Input</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{this.Content()}</Modal.Body>

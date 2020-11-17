@@ -29,35 +29,12 @@ namespace Coboost.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        #region Private Fields
-
         private readonly DatabaseContext _context;
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         public AdminController(DatabaseContext context)
         {
             _context = context;
         }
-
-        #endregion Public Constructors
-
-        #region Public Structs
-
-        public struct Help
-        {
-            #region Public Properties
-
-            public string Title { get; set; }
-
-            #endregion Public Properties
-        }
-
-        #endregion Public Structs
-
-        #region Public Methods
 
         [HttpPost("{code}/active-{index}")]
         public void Active(int code, int index)
@@ -95,18 +72,6 @@ namespace Coboost.Controllers
             }
         }
 
-        [HttpPost("{code}/text-duplicate")]
-        public void Duplicate(int code, [FromBody] OpenTextInput[] inputs)
-        {
-            if (!DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
-                return;
-
-            if (!(admin.Tasks[admin.Active] is OpenText task))
-                return;
-
-            ThreadPool.QueueUserWorkItem(o => task.Duplicate(inputs));
-        }
-
         [HttpPost("{code}/question-archive-member-{group}-{member}")]
         public void ArchiveMember(int code, int group, int member)
         {
@@ -134,7 +99,6 @@ namespace Coboost.Controllers
             if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
                 OpenText open = admin.Tasks[admin.Active] as OpenText;
-
 
                 ThreadPool.QueueUserWorkItem(o => open?.ArchiveMembers(keys));
                 HttpContext.Response.StatusCode = 202;
@@ -352,7 +316,8 @@ namespace Coboost.Controllers
             else
             {
                 _context.Sessions.Remove(session);
-                if (DatabaseContext.Active.Sessions.ContainsKey(code)) DatabaseContext.Active.Sessions.Remove(code);
+                if (DatabaseContext.Active.Sessions.ContainsKey(code))
+                    DatabaseContext.Active.Sessions.Remove(code);
                 await _context.SaveChangesAsync();
                 HttpContext.Response.StatusCode = 200;
             }
@@ -371,6 +336,18 @@ namespace Coboost.Controllers
             {
                 HttpContext.Response.StatusCode = 412;
             }
+        }
+
+        [HttpPost("{code}/text-duplicate")]
+        public void Duplicate(int code, [FromBody] OpenTextInput[] inputs)
+        {
+            if (!DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+                return;
+
+            if (!(admin.Tasks[admin.Active] is OpenText task))
+                return;
+
+            ThreadPool.QueueUserWorkItem(o => task.Duplicate(inputs));
         }
 
         [HttpGet("{code}/question-{index}")]
@@ -414,19 +391,10 @@ namespace Coboost.Controllers
         [HttpGet("sessions-{email}")]
         public async Task<List<Session>> GetSessions(string email)
         {
-            User user = await _context.Users
-                .Include(u => u.Sessions)
-                .ThenInclude(s => s.Session)
-                .ThenInclude(s => s.Users)
-                .Include(u => u.Folders)
-                .ThenInclude(f => f.Session)
-                .ThenInclude(s => s.Folders)
-                .ThenInclude(f => f.Folder)
-                .Where(u => u.Email.Equals(email))
-                .SingleOrDefaultAsync();
+            User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).ThenInclude(s => s.Users).Include(u => u.Folders).ThenInclude(f => f.Session).ThenInclude(s => s.Folders).ThenInclude(f => f.Folder)
+                .Where(u => u.Email.Equals(email)).SingleOrDefaultAsync();
 
-            IEnumerable<Session> sessions = from userSession in user.Sessions
-                select userSession.Session;
+            IEnumerable<Session> sessions = from userSession in user.Sessions select userSession.Session;
             return sessions.ToList();
         }
 
@@ -435,7 +403,8 @@ namespace Coboost.Controllers
         {
             if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (color == null) HttpContext.Response.StatusCode = 400;
+                if (color == null)
+                    HttpContext.Response.StatusCode = 400;
 
                 if (admin.Tasks[admin.Active] is OpenText open)
                 {
@@ -565,7 +534,8 @@ namespace Coboost.Controllers
         {
             if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
             {
-                if (color == null) HttpContext.Response.StatusCode = 400;
+                if (color == null)
+                    HttpContext.Response.StatusCode = 400;
 
                 switch (admin.Tasks[admin.Active])
                 {
@@ -748,10 +718,17 @@ namespace Coboost.Controllers
                                 await Response.Body.FlushAsync();
                             }
                             {
+                                int timer = open.Timer;
+                                await Response.WriteAsync("event:" + "Timer\n");
+                                string json = $"data: {JsonConvert.SerializeObject(timer)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
                                 int countdown = open.Countdown;
                                 await Response.WriteAsync("event:" + "Countdown\n");
-                                string str = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
-                                await Response.WriteAsync(str);
+                                string json = $"data: {JsonConvert.SerializeObject(countdown)}\n\n";
+                                await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
                             {
@@ -985,6 +962,13 @@ namespace Coboost.Controllers
             }
         }
 
-        #endregion Public Methods
+        public struct Help
+        {
+            public string Title
+            {
+                get;
+                set;
+            }
+        }
     }
 }

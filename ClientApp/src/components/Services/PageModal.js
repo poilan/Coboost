@@ -1,7 +1,8 @@
 ﻿import React from "react";
 import Styled from "styled-components";
-import { Modal } from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import "circular-std";
+
 
 const ModalPage = Styled(Modal)`
     border-radius: 20px;
@@ -14,7 +15,8 @@ const ModalPage = Styled(Modal)`
 `;
 
 export class PageModal extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
 
         this.state = {
@@ -27,23 +29,28 @@ export class PageModal extends React.Component {
         this.onClosed = this.onClosed.bind(this);
     }
 
-    onClosed() {
-        if (this.props.onClose !== undefined) {
+
+    onClosed()
+    {
+        if (this.props.onClose !== undefined)
             this.props.onClose();
-        }
 
         this.setState({
             showing: false
         });
     }
 
-    render() {
+
+    render()
+    {
         const State = this.state;
         return (
-            <ModalPage centered
+            <ModalPage
+                centered
                 onHide={this.onClosed}
-                show={State.showing}>
-                <Modal.Header closeButton>
+                show={State.showing} >
+                <Modal.Header
+                    closeButton >
                     <Modal.Title>{State.title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{State.body}</Modal.Body>

@@ -1,24 +1,25 @@
-﻿import React, { Component, useRef, createRef } from "react";
+﻿import React, {Component, useRef, createRef} from "react";
 import Axios from "axios";
-import { Modal, InputGroup, Form, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown } from "react-bootstrap";
+import {Modal, InputGroup, Form, Row, Card, Popover, OverlayTrigger, Tab, Container, Nav, Col, DropdownButton, Dropdown} from "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
-import { PageModal } from "../../Services/PageModal";
-import { Input, InputDetails } from "./Components/Input";
-import { Group } from "./Components/Group";
-import { Column } from "./Components/Column";
-import { ResultBackground, ResultItem, ResultSlider } from "./Components/Results";
-import { CreateTaskModal } from "./Components/CreateModal";
-import { ContextMenu } from "./Components/ContextMenu";
-import { Tooltip, Collapse, IconButton, Button, Menu, MenuItem, TextField } from "@material-ui/core";
-import { InputModal } from "./Components/InputModal";
+import {PageModal} from "../../Services/PageModal";
+import {Input, InputDetails} from "./Components/Input";
+import {Group} from "./Components/Group";
+import {Column} from "./Components/Column";
+import {ResultBackground, ResultItem, ResultSlider} from "./Components/Results";
+import {CreateTaskModal} from "./Components/CreateModal";
+import {ContextMenu} from "./Components/ContextMenu";
+import {Tooltip, Collapse, IconButton, Button, Menu, MenuItem, TextField} from "@material-ui/core";
+import {InputModal} from "./Components/InputModal";
 import CreateIcon from "@material-ui/icons/Create";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
 import AllOutIcon from "@material-ui/icons/AllOut";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CallMergeIcon from "@material-ui/icons/CallMerge";
 import ArchiveIcon from "@material-ui/icons/Archive";
-import { width } from "@material-ui/system";
+import {width} from "@material-ui/system";
+
 
 const MainContainer = Styled.div`
     width: 100%;
@@ -27,7 +28,7 @@ const MainContainer = Styled.div`
     overflow: hidden;
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 0;
+    padding: 0;
     background: #E4E4E4;
     top: 0;
     left 0;
@@ -47,9 +48,9 @@ const ButtonToolbar = Styled.div`
     bottom: 0;
     transform: translateX(-50%);
 
-    ${props => props.disabled
-        ? ""
-        : `&&& {
+    ${props => props.disabled ?
+               "" :
+               `&&& {
             &:hover {
                 filter: brightness(150%);
                 cursor: pointer;
@@ -182,7 +183,7 @@ const ContentHeader = Styled(Card.Header)`
     width: 100%;
     background: #fff;
     height: 50px;
-    left:0;
+    left: 0;
     top: 0;
     position: absolute;
     margin: 0;
@@ -201,7 +202,8 @@ const ContentBody = Styled(Card.Body)`
 `;
 
 export class Organizer extends Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             overview: true,
@@ -262,12 +264,10 @@ export class Organizer extends Component {
                     const Key = event.target.id.split("-");
                     let Title;
 
-                    if (Key.indexOf("title") !== -1) {
+                    if (Key.indexOf("title") !== -1)
                         Title = this.props.tasks[this.props.active].Groups[Key[0]].Title;
-                    }
-                    else {
+                    else
                         Title = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]].Title;
-                    }
 
                     this.setState({
                         modal: {
@@ -287,12 +287,10 @@ export class Organizer extends Component {
                         const Title = {
                             Title: this.state.modal.string
                         };
-                        if (Key.indexOf("title") !== -1) {
+                        if (Key.indexOf("title") !== -1)
                             Axios.post(`admin/${Code}/question-rename-group-${Key[0]}`, Title);
-                        }
-                        else {
+                        else
                             Axios.post(`admin/${Code}/question-rename-member-${Key[0]}-${Key[1]}`, Title);
-                        }
 
                         this.modal.rename.close();
                     };
@@ -307,13 +305,16 @@ export class Organizer extends Component {
                     };
 
                     return (
-                        <Form autoComplete="off"
-                            onSubmit={Rename.bind(this)}>
+                        <Form
+                            autoComplete="off"
+                            onSubmit={Rename.bind(this)} >
                             <NewOptionNumber>Title</NewOptionNumber>
-                            <Form.Group controlId="validateTitle">
+                            <Form.Group
+                                controlId="validateTitle" >
                                 <InputGroup>
-                                    <Form.Control defaultValue={this.state.modal.string
-                                    }
+                                    <Form.Control
+                                        defaultValue={this.state.modal.string
+                                        }
                                         name="title"
                                         onChange={HandleTitle.bind(this)}
                                         placeholder="Input Title.."
@@ -321,8 +322,12 @@ export class Organizer extends Component {
                                         required />
                                 </InputGroup>
                             </Form.Group>
-                            <CancelButton onClick={this.modal.rename.close}>Cancel</CancelButton>
-                            <CreateButton type="submit"
+                            <CancelButton
+                                onClick={this.modal.rename.close} >
+                                Cancel
+                            </CancelButton>
+                            <CreateButton
+                                type="submit"
                                 value="Submit" />
                         </Form>
                     );
@@ -362,9 +367,8 @@ export class Organizer extends Component {
                         selected: []
                     });
 
-                    if (success === true) {
+                    if (success === true)
                         this.props.update(true);
-                    }
                     this.props.popClosed();
                 }
             },
@@ -374,7 +378,7 @@ export class Organizer extends Component {
                     const Key = id.split("-");
                     console.log(Key);
                     const Answer = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]];
-                    Answer.group = Key[0];
+                    Answer.Group = Key[0];
                     this.setState({
                         details: {
                             answer: Answer,
@@ -397,19 +401,21 @@ export class Organizer extends Component {
         };
     }
 
-    async componentDidMount() {
+
+    async componentDidMount()
+    {
         document.addEventListener("contextmenu", (event) => {
-                event.preventDefault();
-                const ClickX = event.clientX;
-                const ClickY = event.clientY;
-                this.setState({
-                    menu: {
-                        x: ClickX,
-                        y: ClickY,
-                        visible: true
-                    }
-                });
+            event.preventDefault();
+            const ClickX = event.clientX;
+            const ClickY = event.clientY;
+            this.setState({
+                menu: {
+                    x: ClickX,
+                    y: ClickY,
+                    visible: true
+                }
             });
+        });
 
         document.addEventListener("click",
             () => {
@@ -430,7 +436,8 @@ export class Organizer extends Component {
                     !this.state.modal.answer &&
                     !this.state.modal.rename &&
                     !this.state.details.open &&
-                    (event.key === "R" || event.key === "r")) {
+                    (event.key === "R" || event.key === "r"))
+                {
                     this.setState({
                         selected: [],
                         anchor: null
@@ -440,17 +447,23 @@ export class Organizer extends Component {
         this.AutoResultToggle();
     }
 
-    async AutoResultToggle() {
+
+    async AutoResultToggle()
+    {
         await setTimeout(() => {
-            this.setState({
-                resultsAsPercentage: !this.state.resultsAsPercentage
-            });
-            this.AutoResultToggle();
-        },
+                this.setState({
+                    resultsAsPercentage: !this.state.resultsAsPercentage
+                });
+                this.AutoResultToggle();
+            },
             6660);
     }
 
-    componentWillUnmount() { }
+
+    componentWillUnmount()
+    {
+    }
+
 
     clickTask = (event) => {
         this.setState({
@@ -458,6 +471,7 @@ export class Organizer extends Component {
         });
         this.loadTask(event);
     }
+
 
     loadTask = (event) => {
         const Key = event.target.id;
@@ -469,6 +483,7 @@ export class Organizer extends Component {
         this.props.SSE(Key);
     }
 
+
     toOverview = () => {
         this.setState({
             overview: true,
@@ -476,15 +491,18 @@ export class Organizer extends Component {
         });
     }
 
-    render() {
+
+    render()
+    {
         const Text = (task) => {
             const Shrink = (key) => {
                 const Columns = this.props.columns;
 
-                if (Columns[key] !== undefined) {
-                    Columns[key].width !== undefined
-                        ? Columns[key].width -= 1
-                        : Columns[key].width = 1;
+                if (Columns[key] !== undefined)
+                {
+                    Columns[key].width !== undefined ?
+                        Columns[key].width -= 1 :
+                        Columns[key].width = 1;
                 }
 
                 this.setState({
@@ -495,10 +513,11 @@ export class Organizer extends Component {
             const Grow = (key) => {
                 const Columns = this.props.columns;
 
-                if (Columns[key] !== undefined) {
-                    Columns[key].width !== undefined
-                        ? Columns[key].width += 1
-                        : Columns[key].width = 1;
+                if (Columns[key] !== undefined)
+                {
+                    Columns[key].width !== undefined ?
+                        Columns[key].width += 1 :
+                        Columns[key].width = 1;
                 }
 
                 this.setState({
@@ -513,17 +532,19 @@ export class Organizer extends Component {
 
             const Select = (id) => {
                 const Key = id;
-                if (this.state.selected.indexOf(Key) === -1) {
+                if (this.state.selected.indexOf(Key) === -1)
+                {
                     let Selected = this.state.selected;
 
-                    Selected
-                        ? Selected.push(Key)
-                        : Selected = [Key];
+                    Selected ?
+                        Selected.push(Key) :
+                        Selected = [Key];
                     this.setState({
                         selected: Selected
                     });
                 }
-                else {
+                else
+                {
                     const Selected = this.state.selected;
                     const Index = Selected.indexOf(Key);
                     Selected.splice(Index, 1);
@@ -538,15 +559,14 @@ export class Organizer extends Component {
                 task.Groups[id].Members.forEach((member) => {
                     const Key = `${id}-${member.Index}`;
 
-                    if (this.state.selected.indexOf(Key) === -1) {
+                    if (this.state.selected.indexOf(Key) === -1)
                         Select(Key);
-                    }
-                    else {
+                    else
                         CountSelected += 1;
-                    }
                 });
 
-                if (task.Groups[id].Members.length === CountSelected) {
+                if (task.Groups[id].Members.length === CountSelected)
+                {
                     task.Groups[id].Members.forEach((member) => {
                         const Key = `${id}-${member.Index}`;
                         Select(Key);
@@ -557,26 +577,28 @@ export class Organizer extends Component {
             const GetSelected = () => {
                 const Selected = [];
                 const Keys = [];
-                for (let I = 0; I < this.state.selected.length; I++) {
+                for (let I = 0; I < this.state.selected.length; I++)
+                {
                     const Key = this.state.selected[I].split("-");
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
-                    if (Answer !== undefined) {
+                    if (Answer !== undefined)
+                    {
                         Selected.push(this.state.selected[I]);
                         Keys.push(Key);
                     }
                 }
 
-                this.setState({ selected: Selected });
+                this.setState({
+                    selected: Selected
+                });
 
                 const Compare = (a, b) => {
                     const Group = b[0] - a[0];
 
-                    if (Group === 0) {
+                    if (Group === 0)
                         return b[1] - a[1];
-                    }
-                    else {
+                    else
                         return Group;
-                    }
                 };
                 return Keys.sort(Compare);
             };
@@ -584,7 +606,8 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = GetSelected();
-                for (let I = 0; I < Selected.length; I++) {
+                for (let I = 0; I < Selected.length; I++)
+                {
                     const Key = Selected[I];
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
                     const Data = {
@@ -599,9 +622,8 @@ export class Organizer extends Component {
             };
 
             const Merge = async () => {
-                if (!this.state.selected || this.state.selected.length <= 1) {
+                if (!this.state.selected || this.state.selected.length <= 1)
                     return;
-                }
 
                 const Code = sessionStorage.getItem("code");
                 const Selected = GetSelected();
@@ -610,11 +632,12 @@ export class Organizer extends Component {
 
                 //let change = [];
 
-                for (let I = 0; I < (Selected.length - 1); I++) {
+                for (let I = 0; I < (Selected.length - 1); I++)
+                {
                     const Subject = Selected[I];
 
                     await setTimeout(Axios.post(
-                        `admin/${Code}/question-merge${Master[0]}-${Master[1]}with${Subject[0]}-${Subject[1]}`),
+                            `admin/${Code}/question-merge${Master[0]}-${Master[1]}with${Subject[0]}-${Subject[1]}`),
                         500);
                 }
 
@@ -628,11 +651,10 @@ export class Organizer extends Component {
                     const Code = sessionStorage.getItem("code");
 
                     const Selected = GetSelected();
-                    let Keys = [];
+                    const Keys = [];
 
-                    Selected.forEach(select =>
-                    {
-                        let Key = {
+                    Selected.forEach(select => {
+                        const Key = {
                             Group: select[0],
                             Member: select[1]
                         };
@@ -662,68 +684,119 @@ export class Organizer extends Component {
             };
 
             const Meny = [
-                { "label": "Write input", "callback": this.modal.answer.open },
-                { "label": "Duplicate selected input", "callback": Duplicate },
-                { "label": "Merge selected inputs", "callback": Merge },
-                { "label": "Create vote from selected inputs", "callback": this.modal.create.open },
-                { "label": "Remove selected inputs", "callback": Archive.members }
+                {
+                    "label": "Write input",
+                    "callback": this.modal.answer.open
+                },
+                {
+                    "label": "Duplicate selected input",
+                    "callback": Duplicate
+                },
+                {
+                    "label": "Merge selected inputs",
+                    "callback": Merge
+                },
+                {
+                    "label": "Create vote from selected inputs",
+                    "callback": this.modal.create.open
+                },
+                {
+                    "label": "Remove selected inputs",
+                    "callback": Archive.members
+                }
             ];
 
-            const Clear = () =>
-            {
+            const Clear = () => {
                 this.setState({
                     selected: []
                 });
-            }
+            };
 
             return (
                 <MainContainer>
                     <ContentHeader>
-                        <Tools showControls={this.props.showControls}>
-                            <AnswerButton draggable="false"
-                                onClick={this.modal.answer.open
-                                }>
-                                <CreateIcon className="icon" />
-                                <br />Write input
+                        <Tools
+                            showControls={this.props.showControls} >
+                            <AnswerButton
+                                draggable="false"
+                                onClick={this.modal.answer.open} >
+                                <CreateIcon
+                                    className="icon" />
+                                <br />
+                                Write input
                             </AnswerButton>
-                            <MergeButton disabled
-                                draggable="false">
-                                <AllInclusiveIcon className="icon" />
-                                <br />Select All
+                            <MergeButton
+                                disabled
+                                draggable="false" >
+                                <AllInclusiveIcon
+                                    className="icon" />
+                                <br />
+                                Select All
                             </MergeButton>
-                            <AnswerButton draggable="false"
-                                onClick={() => this.setState({ selected: [] })
-                                }>
-                                <AllOutIcon className="icon" />
-                                <br />Deselect All
+                            <AnswerButton
+                                draggable="false"
+                                onClick={() => this.setState({ selected: [] })} >
+                                <AllOutIcon
+                                    className="icon" />
+                                <br />
+                                Deselect All
                             </AnswerButton>
-                            <MergeButton draggable="false"
-                                onClick={Merge}>
-                                <CallMergeIcon className="icon" />
+                            <MergeButton
+                                draggable="false"
+                                onClick={Merge} >
+                                <CallMergeIcon
+                                    className="icon" />
                                 <br />Merge
                             </MergeButton>
-                            <AnswerButton draggable="false"
-                                onClick={Duplicate}>
-                                <FileCopyIcon className="icon" />
-                                <br />Duplicate
+                            <AnswerButton
+                                draggable="false"
+                                onClick={Duplicate} >
+                                <FileCopyIcon
+                                    className="icon" />
+                                <br />
+                                Duplicate
                             </AnswerButton>
-                            <MergeButton draggable="false"
-                                onClick={Archive.members}>
-                                <ArchiveIcon className="icon" />
-                                <br />Archive
+                            <MergeButton
+                                draggable="false"
+                                onClick={Archive.members} >
+                                <ArchiveIcon
+                                    className="icon" />
+                                <br />
+                                Archive
                             </MergeButton>
                         </Tools>
 
                         <Countdown>
                             {
-                                task.Countdown <= 0
-                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
-                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <TextField
+                                        label="Task Timer: Seconds"
+                                        margin="none"
+                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                        style={{ width: "150px" }}
+                                        type="number"
+                                        value={task.Timer}
+                                        variant="standard" /> :
+                                    <TextField
+                                        disabled
+                                        label="Countdown: Seconds Left"
+                                        margin="none"
+                                        style={{ width: "150px" }}
+                                        value={task.Countdown}
+                                        variant="standard" />
                             }
                             {
-                                task.Countdown <= 0
-                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
-                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+                                        Start Timer
+                                    </Button> :
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+                                        Close Task
+                                    </Button>
                             }
                         </Countdown>
 
@@ -731,127 +804,177 @@ export class Organizer extends Component {
 
                     <ContentBody>
 
-                        <ButtonToolbar disabled={this.state.selected.length < 1}>
+                        <ButtonToolbar
+                            disabled={this.state.selected.length < 1} >
 
-                            <SendToMC disabled={this.state.selected.length < 1}
+                            <SendToMC
+                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: e.currentTarget })}>
+                                onClick={(e) => this.setState({ anchor: e.currentTarget })} >
                                 Send selected to new task
                             </SendToMC>
 
-                            <div style={{
-                                position: "absolute",
-                                left: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
 
-                            <div style={{
-                                position: "absolute",
-                                right: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(-45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    right: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(-45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
 
-                            <Menu anchorEl={this.state.anchor}
+                            <Menu
+                                anchorEl={this.state.anchor}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
                                 onClose={() => this.setState({ anchor: null })}
                                 open={Boolean(this.state.anchor)}
-                                transformOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                                transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
 
-                                {this.state.selected.length < 2 &&
-                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>
+                                {
+                                    this.state.selected.length < 2 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(0)} >
+                                            Open Text
+                                        </MenuItem>
                                 }
                                 {
                                     this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(1)} >
+                                            Multiple Choice
+                                        </MenuItem>
                                 }
                                 {
                                     this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(2)} >
+                                            Points
+                                        </MenuItem>
                                 }
                                 {
                                     this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(3)} >
+                                            Slider
+                                        </MenuItem>
                                 }
                             </Menu>
                         </ButtonToolbar>
 
                         {this.props.columns !== undefined &&
                             this.props.columns.map(column =>
-                                <Column column={column.index} width={column.width}
-                                    last={column.index + 1 === this.props.columns.length}
+                                <Column
+                                    clearSelect={Clear}
+                                    column={column.index}
                                     grow={() => Grow(column.index)}
+                                    last={column.index + 1 === this.props.columns.length}
+                                    selected={GetSelected}
                                     shrink={() => Shrink(column.index)}
-                                    selected={GetSelected} clearSelect={Clear}>
+                                    width={column.width} >
 
                                     {task.Groups !== undefined &&
                                         task.Groups.map(group => {
-                                            if (column.index === group.Column) {
-                                                return (
-                                                    <Group id={group.Index} key={group.Index} onClick={GroupSelect}
-                                                        group={group.Index} column={group.Column}
-                                                        title={group.Title} size={column.width}
-                                                        double={this.modal.rename.open} selected={GetSelected} clearSelect={Clear}
-                                                        color={group.Color} collapsed={group.Collapsed}>
+                                                if (column.index === group.Column)
+                                                {
+                                                    return (
+                                                        <Group
+                                                            clearSelect={Clear}
+                                                            collapsed={group.Collapsed}
+                                                            color={group.Color}
+                                                            column={group.Column}
+                                                            double={this.modal.rename.open}
+                                                            group={group.Index}
+                                                            id={group.Index}
+                                                            key={group.Index}
+                                                            onClick={GroupSelect}
+                                                            selected={GetSelected}
+                                                            size={column.width}
+                                                            title={group.Title} >
 
-                                                        {group.Members !== undefined &&
-                                                            group.Members.map(member =>
-                                                                <Input id={group.Index + "-" + member.Index} key={member.Index}
-                                                                    member={member.Index} group={group.Index}
-                                                                    column={group.Column} title={member.Title} size={column.width}
-                                                                    double={this.modal.details.open} description={member.Description}
-                                                                    checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
-                                                                    onClick={Select}
-                                                                    isMerged={member.Children != undefined
-                                                                        ? member.Children.length
-                                                                        : 0}
-                                                                />
-                                                            )}
-                                                    </Group>
-                                                );
+                                                            {group.Members !== undefined &&
+                                                                group.Members.map(member =>
+                                                                    <Input
+                                                                        checked={this.state.selected.indexOf(group.Index + "-" + member.Index) !== -1}
+                                                                        column={group.Column}
+                                                                        description={member.Description}
+                                                                        double={this.modal.details.open}
+                                                                        group={group.Index}
+                                                                        id={group.Index + "-" + member.Index}
+                                                                        isMerged={member.Children != undefined ?
+                                                                                      member.Children.length :
+                                                                                      0}
+                                                                        key={member.Index}
+                                                                        member={member.Index}
+                                                                        onClick={Select}
+                                                                        size={column.width}
+                                                                        title={member.Title} />
+                                                                )}
+                                                        </Group>
+                                                    );
+                                                }
+                                                else
+                                                    return null;
                                             }
-                                            else {
-                                                return null;
-                                            }
-                                        }
                                         )}
 
                                     {column.index + 1 === this.props.columns.length &&
-                                        <Group id="new" color="#575b75"
-                                            group="new" column={column.index} title="CREATE NEW GROUP" size={column.width}
+                                        <Group
+                                            clearSelect={Clear}
+                                            color="#575b75"
+                                            column={column.index}
+                                            group="new"
+                                            id="new"
                                             onClick={CreateGroup.bind(this)}
-                                            selected={GetSelected} clearSelect={Clear}
-                                        />
+                                            selected={GetSelected}
+                                            size={column.width}
+                                            title="CREATE NEW GROUP" />
                                     }
                                 </Column>
                             )
                         }
-                        <ContextMenu items={Meny}
+                        <ContextMenu
+                            items={Meny}
                             visible={this.state.menu.visible}
                             x={this.state.menu.x}
                             y={this.state.menu.y} />
                         {this.state.modal.answer &&
-                            <InputModal title="Write Input" onClose={this.modal.answer.close.bind(this)} />}
+                            <InputModal
+                                onClose={this.modal.answer.close.bind(this)}
+                                title="Write Input" />}
                         {this.state.modal.rename &&
-                            <PageModal title="Rename" body={this.modal.rename.content()} onClose={this.modal.rename.close.bind(this)} />}
+                            <PageModal
+                                body={this.modal.rename.content()}
+                                onClose={this.modal.rename.close.bind(this)}
+                                title="Rename" />}
                         {this.state.modal.create &&
-                            <CreateTaskModal type={this.state.modal.type}
+                            <CreateTaskModal
+                                onClose={this.modal.create.close.bind(this)}
+                                options={GetOptions}
                                 title={task.Groups[this.state.selected[0].split("-")[0]].Members[this.state.selected[0].split("-")[1]].Title}
-                                options={GetOptions} onClose={this.modal.create.close.bind(this)} />}
+                                type={this.state.modal.type} />}
                         {this.state.details.open &&
-                            <InputDetails answer={this.state.details.answer} close={this.modal.details.close} rename={this.modal.rename.open} />}
+                            <InputDetails
+                                answer={this.state.details.answer}
+                                close={this.modal.details.close}
+                                rename={this.modal.rename.open} />}
                     </ContentBody>
                 </MainContainer >
             );
@@ -859,14 +982,16 @@ export class Organizer extends Component {
 
         const MultipleChoice = (task) => {
             const Select = (key) => {
-                if (this.state.selected.indexOf(key) === -1) {
+                if (this.state.selected.indexOf(key) === -1)
+                {
                     const Selected = this.state.selected;
                     Selected.push(key);
                     this.setState({
                         selected: Selected
                     });
                 }
-                else {
+                else
+                {
                     const Selected = this.state.selected;
                     const Index = Selected.indexOf(key);
                     Selected.splice(Index, 1);
@@ -880,7 +1005,8 @@ export class Organizer extends Component {
                 const Options = [];
                 const Selected = this.state.selected;
 
-                for (let I = 0; I < Selected.length; I++) {
+                for (let I = 0; I < Selected.length; I++)
+                {
                     const Key = Selected[I];
                     const Answer = task.Options[Key];
 
@@ -897,87 +1023,145 @@ export class Organizer extends Component {
                 return Options;
             };
 
+
+
             return (
                 <MainContainer>
                     <ContentHeader>
                         <Countdown>
                             {
-                                task.Countdown <= 0
-                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
-                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <TextField
+                                        label="Task Timer: Seconds"
+                                        margin="none"
+                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                        style={{ width: "150px" }}
+                                        type="number"
+                                        value={task.Timer}
+                                        variant="standard" /> :
+                                    <TextField
+                                        disabled
+                                        label="Countdown: Seconds Left"
+                                        margin="none"
+                                        style={{ width: "150px" }}
+                                        value={task.Countdown}
+                                        variant="standard" />
                             }
                             {
-                                task.Countdown <= 0
-                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
-                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+                                        Start Timer
+                                    </Button> :
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+                                        Close Task
+                                    </Button>
                             }
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
                         {this.state.modal.create &&
-                            <CreateTaskModal type={this.state.modal.type} title={
-                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
-                                    this.modal.create.close.bind(this)} />}
+                            <CreateTaskModal
+                                onClose={this.modal.create.close}
+                                options={GetOptions}
+                                title={task.Options[parseInt(this.state.selected[0])].Description}
+                                type={this.state.modal.type} />}
 
-                        <ButtonToolbar disabled={this.state.selected.length < 1}>
-                            <SendToMC disabled={this.state.selected.length < 1}
+                        <ButtonToolbar
+                            disabled={this.state.selected.length < 1} >
+                            <SendToMC
+                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) =>
-                                    this.setState({ anchor: e.currentTarget })}>
+                                onClick={(e) => this.setState({ anchor: e.currentTarget })} >
                                 Send selected to new task
                             </SendToMC>
-                            <div style={{
-                                position: "absolute",
-                                left: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
-                            <div style={{
-                                position: "absolute",
-                                right: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(-45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    right: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(-45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
 
-                            <Menu anchorEl={this.state.anchor}
+                            <Menu
+                                anchorEl={this.state.anchor}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
                                 onClose={() => this.setState({ anchor: null })}
-                                open={
-                                    Boolean(this.state.anchor)}
-                                transformOrigin={
-                                    { vertical: "bottom", horizontal: "center" }}>
-                                {this.state.selected.length < 2 &&
-                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                                open={Boolean(this.state.anchor)}
+                                transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
+                                {
+                                    this.state.selected.length < 2 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(0)} >
+                                            Open Text
+                                        </MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(1)} >
+                                            Multiple Choice
+                                        </MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(2)} >
+                                            Points
+                                        </MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(3)} >
+                                            Slider
+                                        </MenuItem>
+                                }
                             </Menu>
                         </ButtonToolbar>
-                        <ResultBackground style={{ width: "95%", height: "80%" }} />
-                        {task.Options !== undefined &&
-                            task.Options.map(option =>
-                                <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title
-                                } color={option.Color} description={option.Description}
-                                    vote height="80%" total={task.Options.length}
-                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={Select}
-                                    percentage={((option.Votes.length / task.TotalVotes) * 100)} points={option.Votes.length
-                                    } showPercentage={this.state.resultsAsPercentage}
-                                />
-                            )}
+                        <ResultBackground
+                            style={{ width: "95%", height: "80%" }} />
+                        {
+                            task.Options !== undefined &&
+                                task.Options.map(option =>
+                                    <ResultItem
+                                        checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+                                        color={option.Color}
+                                        description={option.Description}
+                                        height="80%"
+                                        id={option.Index}
+                                        id={option.Index}
+                                        index={option.Index}
+                                        onClick={Select}
+                                        percentage={((option.Votes.length / task.TotalVotes) * 100)}
+                                        points={option.Votes.length}
+                                        showPercentage={this.state.resultsAsPercentage}
+                                        title={option.Title}
+                                        total={task.Options.length}
+                                        vote />
+                                )
+                        }
                     </ContentBody>
                 </MainContainer>
             );
@@ -985,14 +1169,16 @@ export class Organizer extends Component {
 
         const Points = (task) => {
             const Select = (key) => {
-                if (this.state.selected.indexOf(key) === -1) {
+                if (this.state.selected.indexOf(key) === -1)
+                {
                     const Selected = this.state.selected;
                     Selected.push(key);
                     this.setState({
                         selected: Selected
                     });
                 }
-                else {
+                else
+                {
                     const Selected = this.state.selected;
                     const Index = Selected.indexOf(key);
                     Selected.splice(Index, 1);
@@ -1005,7 +1191,8 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = this.state.selected;
-                for (let I = 0; I < Selected.length; I++) {
+                for (let I = 0; I < Selected.length; I++)
+                {
                     const Key = Selected[I];
                     const Answer = task.Options[Key];
                     const Data = {
@@ -1019,86 +1206,149 @@ export class Organizer extends Component {
                 return Options;
             };
 
+
+
             return (
                 <MainContainer>
                     <ContentHeader>
                         <Countdown>
                             {
-                                task.Countdown <= 0
-                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
-                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <TextField
+                                        label="Task Timer: Seconds"
+                                        margin="none"
+                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                        style={{ width: "150px" }}
+                                        type="number"
+                                        value={task.Timer}
+                                        variant="standard" /> :
+                                    <TextField
+                                        disabled
+                                        label="Countdown: Seconds Left"
+                                        margin="none"
+                                        style={{ width: "150px" }}
+                                        value={task.Countdown}
+                                        variant="standard" />
                             }
                             {
-                                task.Countdown <= 0
-                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
-                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                        style={{
+                                            width: "125px",
+                                            backgroundColor: "#b1b4c8"
+                                        }} >
+                                        Start Timer
+                                    </Button> :
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{
+                                            width: "125px",
+                                            backgroundColor: "#b1b4c8"
+                                        }} >
+                                        Close Task
+                                    </Button>
                             }
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
-                        {this.state.modal.create &&
-                            <CreateTaskModal type={this.state.modal.type} title={
-                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
-                                    this.modal.create.close.bind(this)} />}
+                        {
+                            this.state.modal.create &&
+                                <CreateTaskModal
+                                    onClose={this.modal.create.close.bind(this)}
+                                    options={GetOptions}
+                                    title={task.Options[parseInt(this.state.selected[0])].Description}
+                                    type={this.state.modal.type} />
+                        }
 
-                        <ButtonToolbar disabled={this.state.selected.length < 1}>
-                            <SendToMC disabled={this.state.selected.length < 1}
+                        <ButtonToolbar
+                            disabled={this.state.selected.length < 1} >
+                            <SendToMC
+                                disabled={this.state.selected.length < 1}
                                 draggable="false"
                                 onClick={(e) =>
-                                    this.setState({ anchor: e.currentTarget })}>
+                                    this.setState({
+                                        anchor: e.currentTarget
+                                    })} >
                                 Send selected to new task
                             </SendToMC>
-                            <div style={{
-                                position: "absolute",
-                                left: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
-                            <div style={{
-                                position: "absolute",
-                                right: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(-45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
 
-                            <Menu anchorEl={this.state.anchor}
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
+
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    right: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(-45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
+
+                            <Menu
+                                anchorEl={this.state.anchor}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
                                 onClose={() => this.setState({ anchor: null })}
-                                open={
-                                    Boolean(this.state.anchor)}
-                                transformOrigin={
-                                    { vertical: "bottom", horizontal: "center" }}>
-                                {this.state.selected.length < 2 &&
-                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
-                                {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                                open={Boolean(this.state.anchor)}
+                                transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
+
+                                {
+                                    this.state.selected.length < 2 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(0)} >
+                                            Open Text
+                                        </MenuItem>
+                                }
+                                {
+                                    this.state.selected.length > 1 &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(1)} >
+                                            Multiple Choice
+                                        </MenuItem> &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(2)} >
+                                            Points
+                                        </MenuItem> &&
+                                        <MenuItem
+                                            onClick={() => this.modal.create.open(3)} >
+                                            Slider
+                                        </MenuItem>
+                                }
                             </Menu>
                         </ButtonToolbar>
-                        <ResultBackground style={{ width: "95%", height: "80%" }} />
+                        <ResultBackground
+                            style={{ width: "95%", height: "80%" }} />
                         {task.Options !== undefined &&
                             task.Options.map(option =>
-                                <ResultItem id={option.Index} id={option.Index} index={option.Index} title={option.Title
-                                } color={option.Color} description={option.Description}
-                                    vote height="80%" total={task.Options.length}
-                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1} onClick={Select}
-                                    percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)} points={
-                                        option.Points} showPercentage={this.state.resultsAsPercentage}
-                                />
+                                <ResultItem
+                                    checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
+                                    color={option.Color}
+                                    description={option.Description}
+                                    height="80%"
+                                    id={option.Index}
+                                    index={option.Index}
+                                    onClick={Select}
+                                    percentage={((option.Points / (task.Votes.length * task.Amount)) * 100)}
+                                    points={option.Points}
+                                    showPercentage={this.state.resultsAsPercentage}
+                                    title={option.Title}
+                                    total={task.Options.length}
+                                    vote />
                             )}
                     </ContentBody>
                 </MainContainer>
@@ -1107,14 +1357,16 @@ export class Organizer extends Component {
 
         const Slider = (task) => {
             const Select = (key) => {
-                if (this.state.selected.indexOf(key) === -1) {
+                if (this.state.selected.indexOf(key) === -1)
+                {
                     const Selected = this.state.selected;
                     Selected.push(key);
                     this.setState({
                         selected: Selected
                     });
                 }
-                else {
+                else
+                {
                     const Selected = this.state.selected;
                     const Index = Selected.indexOf(key);
                     Selected.splice(Index, 1);
@@ -1127,7 +1379,8 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = this.state.selected;
-                for (let I = 0; I < Selected.length; I++) {
+                for (let I = 0; I < Selected.length; I++)
+                {
                     const Key = Selected[I];
                     const Answer = task.Options[Key];
                     const Data = {
@@ -1140,112 +1393,182 @@ export class Organizer extends Component {
                 }
                 return Options;
             };
+
+
+
             return (
                 <MainContainer>
                     <ContentHeader>
                         <Countdown>
                             {
-                                task.Countdown <= 0
-                                    ? <TextField defaultValue={task.Timer} onBlur={(e) => Axios.post(`admin/${sessionStorage.getItem("code")}/task${task.Index}-timer-${parseInt(e.target.value) >= 1 ? parseInt(e.target.value) : 1}`)} type="number" variant="standard" margin="none" style={{width: "150px"}} label="Task Timer: Seconds" />
-                                    : <TextField value={task.Countdown} disabled variant="standard" margin="none" style={{width: "150px"}} label="Countdown: Seconds Left" />
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <TextField
+                                        label="Task Timer: Seconds"
+                                        margin="none"
+                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                        style={{ width: "150px" }}
+                                        type="number"
+                                        value={task.Timer}
+                                        variant="standard" /> :
+                                    <TextField
+                                        disabled
+                                        label="Countdown: Seconds Left"
+                                        margin="none"
+                                        style={{ width: "150px" }}
+                                        value={task.Countdown}
+                                        variant="standard" />
                             }
                             {
-                                task.Countdown <= 0
-                                    ? <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}>Start Timer</Button>
-                                    : <Button style={{width: "125px", backgroundColor: "#b1b4c8"}} onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}>Close Task</Button>
+                                !task.InProgress || task.Countdown < 0 ?
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+
+                                        Start Timer
+                                    </Button> :
+                                    <Button
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
+
+                                        Close Task
+                                    </Button>
                             }
                         </Countdown>
+
                     </ContentHeader>
+
                     <ContentBody>
-                        {this.state.modal.create &&
-                            <CreateTaskModal type={this.state.modal.type} title={
-                                task.Options[parseInt(this.state.selected[0])].Description} options={GetOptions} onClose={
-                                    this.modal.create.close.bind(this)} />}
-                        <ButtonToolbar disabled={this.state.selected.length < 1}>
-                            <SendToMC disabled={this.state.selected.length < 1}
+                        {
+                            this.state.modal.create &&
+                                <CreateTaskModal
+                                    onClose={this.modal.create.close}
+                                    options={GetOptions}
+                                    title={task.Options[parseInt(this.state.selected[0])].Description}
+                                    type={this.state.modal.type} />
+                        }
+                        <ButtonToolbar
+                            disabled={this.state.selected.length < 1} >
+                            <SendToMC
+                                disabled={this.state.selected.length < 1}
                                 draggable="false"
                                 onClick={(e) =>
-                                    this.setState({ anchor: e.currentTarget })}>
+                                    this.setState({
+                                        anchor: e.currentTarget
+                                    })} >
                                 Send selected to new task
                             </SendToMC>
-                            <div style={{
-                                position: "absolute",
-                                left: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
-                            <div style={{
-                                position: "absolute",
-                                right: "-64px",
-                                bottom: "-79px",
-                                height: "150px",
-                                width: "75px",
-                                transform: "rotate(-45deg)",
-                                backgroundColor: "#575b75",
-                                border: "1px solid #fff",
-                                zIndex: "-1"
-                            }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    right: "-64px",
+                                    bottom: "-79px",
+                                    height: "150px",
+                                    width: "75px",
+                                    transform: "rotate(-45deg)",
+                                    backgroundColor: "#575b75",
+                                    border: "1px solid #fff",
+                                    zIndex: "-1"
+                                }} />
 
-                            <Menu anchorEl={this.state.anchor}
-                                anchorOrigin={{ vertical: "center", horizontal: "center" }}
+                            <Menu
+                                anchorEl={this.state.anchor}
+                                anchorOrigin={{
+                                    vertical: "center",
+                                    horizontal: "center"
+                                }}
                                 id="CreateMenu"
-                                onClose={() => this.setState({ anchor: null })}
+                                onClose={() => this.setState({
+                                    anchor: null
+                                })}
                                 open={Boolean(this.state.anchor)}
-                                transformOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                                transformOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "center"
+                                }} >
                                 {this.state.selected.length < 2 &&
-                                    <MenuItem onClick={() => this.modal.create.open(0)}>Open Text</MenuItem>}
+                                    <MenuItem
+                                        onClick={() => this.modal.create.open(0)} >
+                                        Open Text
+                                    </MenuItem>}
                                 {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(1)}>Multiple Choice</MenuItem>}
+                                    <MenuItem
+                                        onClick={() => this.modal.create.open(1)} >
+                                        Multiple Choice
+                                    </MenuItem>}
                                 {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(2)}>Points</MenuItem>}
+                                    <MenuItem
+                                        onClick={() => this.modal.create.open(2)} >
+                                        Points
+                                    </MenuItem>}
                                 {this.state.selected.length > 1 &&
-                                    <MenuItem onClick={() => this.modal.create.open(3)}>Slider</MenuItem>}
+                                    <MenuItem
+                                        onClick={() => this.modal.create.open(3)} >
+                                        Slider
+                                    </MenuItem>}
                             </Menu>
                         </ButtonToolbar>
                         {task.Options !== undefined &&
                             task.Options.map(option =>
-                                <ResultSlider id={option.Index} index={option.Index} title={option.Title} description={
-                                    option.Description} vote
-                                    average={option.Average} min={task.Min} max={task.Max} color={option.Color}
+                                <ResultSlider
+                                    average={option.Average}
                                     checked={this.state.selected.indexOf(option.Index.toString()) !== -1}
-                                    onClick={Select} minDescription={task.MinDescription} maxDescription={task.MaxDescription}
-                                />
+                                    color={option.Color}
+                                    description={
+                                        option.Description}
+                                    id={option.Index}
+                                    index={option.Index}
+                                    max={task.Max}
+                                    maxDescription={task.MaxDescription}
+                                    min={task.Min}
+                                    minDescription={task.MinDescription}
+                                    onClick={Select}
+                                    title={option.Title}
+                                    vote />
                             )}
                     </ContentBody>
                 </MainContainer>
             );
         };
 
-        if (!this.state.overview && this.props.tasks[this.props.active]) {
+        if (!this.state.overview && this.props.tasks[this.props.active])
+        {
             const Task = this.props.tasks[this.props.active];
-            if (this.props.active !== this.state.previous) {
+            if (this.props.active !== this.state.previous)
+            {
                 this.setState({
                     selected: [],
                     previous: this.props.active
                 });
             }
 
-            if (Task.Type === 0) {
+            if (Task.Type === 0)
                 return Text(Task);
-            }
-            else if (Task.Type === 1) {
+            else if (Task.Type === 1)
                 return MultipleChoice(Task);
-            }
-            else if (Task.Type === 2) {
+            else if (Task.Type === 2)
                 return Points(Task);
-            }
-            else {
+            else
                 return Slider(Task);
-            }
         }
-        else {
-            if (this.state.overview) {
-                this.setState({ overview: false });
+        else
+        {
+            if (this.state.overview)
+            {
+                this.setState({
+                    overview: false
+                });
             }
 
             return (

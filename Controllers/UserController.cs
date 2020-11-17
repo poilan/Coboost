@@ -13,13 +13,7 @@ namespace Coboost.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        #region Private Fields
-
         private readonly DatabaseContext _context;
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         /// <summary>
         ///     Instantiates the controller and retrieves an instance of the database context
@@ -29,10 +23,6 @@ namespace Coboost.Controllers
         {
             _context = context;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         /// <summary>
         ///     Attempts to find the user with the specified index and returns it. If no user is found,
@@ -45,13 +35,7 @@ namespace Coboost.Controllers
             if (email == null)
                 return null;
 
-            User user = await _context.Users
-                .Include(u => u.Sessions)
-                .ThenInclude(s => s.Session)
-                .Include(u => u.Folders)
-                .ThenInclude(f => f.Session)
-                .Where(u => u.Email.Equals(email))
-                .SingleAsync();
+            User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).Include(u => u.Folders).ThenInclude(f => f.Session).Where(u => u.Email.Equals(email)).SingleAsync();
 
             if (user == null)
                 return null;
@@ -67,10 +51,7 @@ namespace Coboost.Controllers
         [HttpGet("get-all")]
         public async Task<IEnumerable<User>> GetUsers()
         {
-            List<User> userList = await _context.Users
-                .Include(u => u.Sessions)
-                .ThenInclude(u => u.Session)
-                .ToListAsync();
+            List<User> userList = await _context.Users.Include(u => u.Sessions).ThenInclude(u => u.Session).ToListAsync();
 
             return userList;
         }
@@ -84,7 +65,9 @@ namespace Coboost.Controllers
         {
             User foundUser = await _context.Users.FindAsync(user.Email);
             if (foundUser != null)
-                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ? 202 : 401;
+                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ?
+                    202 :
+                    401;
             else
                 HttpContext.Response.StatusCode = 404;
         }
@@ -133,8 +116,7 @@ namespace Coboost.Controllers
 
             string recipient = user.Email;
             const string title = "Coboost Registration!";
-            string body =
-                $"Dear {user.FirstName},\nYour new account is now created an is available for use.\n\nRegards,\nCoboost";
+            string body = $"Dear {user.FirstName},\nYour new account is now created an is available for use.\n\nRegards,\nCoboost";
 
             Email email = new Email(recipient, title, body);
             await email.Send();
@@ -170,16 +152,12 @@ namespace Coboost.Controllers
 
             const int code = 239210;
 
-            string body = $"Dear {userExistence.FirstName},\n" +
-                          "You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" +
-                          $"Code: {code}\n\n" +
+            string body = $"Dear {userExistence.FirstName},\n" + "You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" + $"Code: {code}\n\n" +
                           "Regards\nTeam Coboost";
 
             Email email = new Email(recipient, title, body);
             await email.Send();
             HttpContext.Response.StatusCode = 202;
         }
-
-        #endregion Public Methods
     }
 }

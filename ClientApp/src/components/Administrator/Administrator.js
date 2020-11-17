@@ -1,18 +1,21 @@
 ﻿import React from "react";
 import Styled from "styled-components";
 import Axios from "axios";
-import { Presentation } from "./Presentation";
-import { BannerDropdown, BannerLink } from "../Classes/Dropdown";
-import { BsJustify } from "react-icons/bs";
-import { Tab, Col, Card } from "react-bootstrap";
-import { Facilitator } from "../Big Screen/Facilitator";
-import { CreateTaskModal } from "./Tabs/Components/CreateModal";
-import { Collection, Task } from "./Tabs/Components/Task";
-import { Organizer } from "./Tabs/Organizer";
-import { Tasks } from "./Tabs/Tasks";
-import { Breadcrumbs, Link, Menu, MenuItem, Divider } from "@material-ui/core";
+import {Presentation} from "./Presentation";
+import {BannerDropdown, BannerLink} from "../Classes/Dropdown";
+import {BsFullscreen, BsFullscreenExit, BsJustify} from "react-icons/bs";
+import {Tab, Col, Card} from "react-bootstrap";
+import {Facilitator} from "../Big Screen/Facilitator";
+import {CreateTaskModal} from "./Tabs/Components/CreateModal";
+import {Collection, Task} from "./Tabs/Components/Task";
+import {Organizer} from "./Tabs/Organizer";
+import {Tasks} from "./Tabs/Tasks";
+import {Breadcrumbs, Link, Menu, MenuItem, Divider} from "@material-ui/core";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
+import {borderRadius, borderRight} from "@material-ui/system";
+import zIndex from "@material-ui/core/styles/zIndex";
+
 
 const MainContainer = Styled.div`
     display: table;
@@ -87,8 +90,42 @@ const DivButton = Styled.div`
     }
 `;
 
+const FullscreenButton = Styled.button`
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    color: #100E0E;
+    outline: none;
+    position: relative;
+    float: right;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-family: CircularStd;
+    font-weight: 450;
+    text-align: center;
+    padding: 7px 20px;
+
+    :not(:first-child) {
+        margin: 0px 2px;
+    }
+
+    :hover {
+        /*background: none;*/
+        border: none;
+
+        color: #4C7AD3;
+    };
+
+    :focus {
+        outline: none;
+        box-shadow: 0 0 0px 3px rgba(76,122,211, 0.5); // Same color as text, just using RGB so opacity can be altered
+    }
+`;
+
 export class Administrator extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             title: "",
@@ -101,6 +138,7 @@ export class Administrator extends React.Component {
             presenter: null,
 
             showList: true,
+            fullscreen: false,
 
             modal: {
                 create: false,
@@ -113,7 +151,9 @@ export class Administrator extends React.Component {
         this.logout = this.logout.bind(this);
     }
 
-    componentDidMount() {
+
+    componentDidMount()
+    {
         const Code = sessionStorage.getItem("code");
         const Title = sessionStorage.getItem("title");
         const PresentManager = new Presentation(Code);
@@ -131,21 +171,16 @@ export class Administrator extends React.Component {
                 {
                     document.activeElement.blur();
                     if (this.state.tab === "task")
-                    {
                         this.selectTab("organize");
-                    }
                     else
-                    {
                         this.selectTab("task");
-                    }
                 }
             }
         });
 
         document.addEventListener("keydown", (e) => {
-            if (this.state.popup) {
+            if (this.state.popup)
                 return;
-            }
 
             if (e.keyCode === 37 || e.keyCode === 38)
             {
@@ -167,17 +202,21 @@ export class Administrator extends React.Component {
         this.update();
     }
 
-    componentWillUnmount() {
+
+    componentWillUnmount()
+    {
         this.SSE.close();
         const Code = sessionStorage.getItem("code");
         Axios.post(`admin/${Code}/close`);
     }
 
+
     update = async () => {
         this.SSE.close();
         const Code = sessionStorage.getItem("code");
         await Axios.get(`admin/${Code}/questions-all`).then((res) => {
-            if (res.status === 202) {
+            if (res.status === 202)
+            {
                 const TaskList = res.data;
                 this.setState({
                     tasks: TaskList
@@ -185,19 +224,18 @@ export class Administrator extends React.Component {
 
                 Axios.post(`admin/${Code}/save`);
 
-                if (this.state.active < this.state.tasks.length) {
+                if (this.state.active < this.state.tasks.length)
                     this.SSE.start(this.state.active);
-                }
-                else if (this.state.tasks.length > 0) {
+                else if (this.state.tasks.length > 0)
                     this.SSE.start(0);
-                }
             }
-            else if (res.status === 412) {
-
+            else if (res.status === 412)
+            {
                 //session not found
             }
         });
     }
+
 
     SSE = {
         source: undefined,
@@ -210,18 +248,17 @@ export class Administrator extends React.Component {
 
             let Columns = this.state.columns;
 
-            Columns
-                ? Columns.push(Column)
-                : Columns = [Column];
+            Columns ?
+                Columns.push(Column) :
+                Columns = [Column];
             this.setState({
                 columns: Columns
             });
         },
 
         start: (target) => {
-            if (target >= this.state.tasks.length || target < 0) {
+            if (target >= this.state.tasks.length || target < 0)
                 return;
-            }
 
             this.SSE.close();
 
@@ -235,7 +272,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Groups", (e) => {
-                try {
+                try
+                {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     const Columns = this.state.columns;
@@ -243,31 +281,31 @@ export class Administrator extends React.Component {
                     this.state.columns = [];
                     TaskList[target].Groups = Data;
 
-                    if (TaskList[target].Groups !== undefined) {
-                        for (let I = 0; I < TaskList[target].Groups.length; I++) {
-                            while (TaskList[target].Groups[I].Column + 1 >= this.state.columns.length) {
+                    if (TaskList[target].Groups !== undefined)
+                    {
+                        for (let I = 0; I < TaskList[target].Groups.length; I++)
+                        {
+                            while (TaskList[target].Groups[I].Column + 1 >= this.state.columns.length)
                                 this.SSE.addColumn();
-                            }
                         }
                     }
-                    else {
+                    else
                         this.SSE.addColumn();
-                    }
 
-                    for (let I = 0; I < this.state.columns.length; I++) {
-                        if (Columns[I] !== undefined) {
+                    for (let I = 0; I < this.state.columns.length; I++)
+                    {
+                        if (Columns[I] !== undefined)
                             this.state.columns[I].width = Columns[I].width;
-                        }
-                        else {
+                        else
                             break;
-                        }
                     }
                     this.setState(
                         {
                             tasks: TaskList
                         });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -275,7 +313,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Options", (e) => {
-                try {
+                try
+                {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Options = Data;
@@ -287,7 +326,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -295,7 +335,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Total", (e) => {
-                try {
+                try
+                {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].TotalVotes = Data;
@@ -303,7 +344,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -311,7 +353,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Votes", (e) => {
-                try {
+                try
+                {
                     const Votes = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Votes = Votes;
@@ -319,7 +362,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log("Failed to parse server event: Votes");
                     console.log(e);
                 }
@@ -327,7 +371,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Amount", (e) => {
-                try {
+                try
+                {
                     const Amount = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Amount = Amount;
@@ -335,7 +380,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log("Failed to parse server event: Amount");
                     console.log(e);
                 }
@@ -343,7 +389,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Status", (e) => {
-                try {
+                try
+                {
                     const InProgress = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].InProgress = InProgress;
@@ -351,15 +398,35 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log("Failed to parse server event: Status");
                     console.log(e);
                 }
             });
 
             // ReSharper disable once Html.EventNotResolved
+            this.SSE.source.addEventListener("Timer", (e) => {
+                try
+                {
+                    const Timer = JSON.parse(e.data);
+                    const TaskList = this.state.tasks;
+                    TaskList[target].Timer = Timer;
+                    this.setState({
+                        tasks: TaskList
+                    });
+                }
+                catch (e)
+                {
+                    console.log("Failed to parse server event: Countdown");
+                    console.log(e);
+                }
+            });
+
+            // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Countdown", (e) => {
-                try {
+                try
+                {
                     const Countdown = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Countdown = Countdown;
@@ -367,7 +434,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log("Failed to parse server event: Countdown");
                     console.log(e);
                 }
@@ -375,7 +443,8 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Results", (e) => {
-                try {
+                try
+                {
                     const Results = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].ShowResults = Results;
@@ -383,7 +452,8 @@ export class Administrator extends React.Component {
                         tasks: TaskList
                     });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log("Failed to parse server event: Results");
                     console.log(e);
                 }
@@ -391,48 +461,67 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Archive", (e) => {
-                try {
+                try
+                {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Archive = Data;
-                    this.setState(
-                        {
-                            tasks: TaskList
-                        });
+                    this.setState({
+                        tasks: TaskList
+                    });
                 }
-                catch (e) {
+                catch (e)
+                {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
             }, false);
 
             this.SSE.source.addEventListener("error", (e) => {
-                if (e.readyState === window.EventSource.CLOSED) {
+                if (e.readyState === window.EventSource.CLOSED)
                     console.log("SSE: connection closed");
-                }
-                else {
+                else
                     console.log(e);
-                }
             }, false);
 
             // ReSharper disable once Html.EventNotResolved
-            this.SSE.source.addEventListener("open", () => {
-                console.log("SSE: connection opened");
-            }, false);
+            this.SSE.source.addEventListener("open", () => { console.log("SSE: connection opened"); }, false);
         },
 
         close: () => {
-            if (this.SSE.source !== undefined && this.SSE.source.readyState !== window.EventSource.CLOSED) {
+            if (this.SSE.source !== undefined && this.SSE.source.readyState !== window.EventSource.CLOSED)
                 this.SSE.source.close();
-            }
         }
     }
 
-    selectTab(key) {
+
+    HandleTimer = (e, index) => {
+        const Code = sessionStorage.getItem("code");
+        let Value = parseInt(e.target.value);
+        const Tasks = this.state.tasks;
+
+        if (Value < 1)
+            Value = 1;
+        else if (Value > 2147483647)
+            Value = 2147483647;
+
+
+        Tasks[index].Timer = Value;
+        this.setState({
+            tasks: Tasks
+        });
+
+        Axios.post(`admin/${Code}/task${index}-timer-${Value}`);
+    };
+
+
+    selectTab(key)
+    {
         this.setState({
             tab: key
         });
     }
+
 
     present = () => {
         const State = this.state;
@@ -441,27 +530,28 @@ export class Administrator extends React.Component {
         Presenter.PresentInNewWindow();
     }
 
+
     logout = () => {
         localStorage.clear();
         sessionStorage.clear();
         this.props.history.push("/");
     }
 
+
     controls = {
         next: () => {
             const Index = this.state.active + 1;
-            if (Index < this.state.tasks.length) {
+            if (Index < this.state.tasks.length)
                 this.SSE.start(Index);
-            }
         },
 
         back: () => {
             const Index = this.state.active - 1;
-            if (Index >= 0) {
+            if (Index >= 0)
                 this.SSE.start(Index);
-            }
         }
     }
+
 
     shortcuts = {
         open: () => {
@@ -475,6 +565,8 @@ export class Administrator extends React.Component {
             });
         }
     }
+
+
     create = {
         close: (success) => {
             this.setState({
@@ -486,9 +578,8 @@ export class Administrator extends React.Component {
 
             this.shortcuts.close();
 
-            if (success === true) {
+            if (success === true)
                 this.update();
-            }
         },
 
         text: () => {
@@ -542,92 +633,135 @@ export class Administrator extends React.Component {
         }
     }
 
-    render() {
+
+    toggleFullscreen = () => {
+        const Document = window.document;
+        const Element = Document.documentElement;
+
+        const Request = Element.requestFullscreen ||
+            Element.mozRequestFullScreen ||
+            Element.webkitRequestFullScreen ||
+            Element.msRequestFullscreen;
+        const Cancel = Document.exitFullscreen ||
+            Document.mozCancelFullScreen ||
+            Document.webkitExitFullscreen ||
+            Document.msExitFullscreen;
+
+        let Fullscreen;
+
+        if (!Document.fullscreenElement &&
+            !Document.mozFullScreenElement &&
+            !Document.webkitFullscreenElement &&
+            !Document.msFullscreenElement)
+        {
+            Request.call(Element);
+            Fullscreen = true;
+        }
+        else
+        {
+            Cancel.call(Document);
+            Fullscreen = false;
+        }
+
+        this.setState({
+            fullscreen: Fullscreen
+        });
+    }
+
+
+    render()
+    {
         return (
             <MainContainer>
 
                 <Banner>
-                    <BreadCrumb aria-label="Breadcrumb"
-                        separator="&#187;">
-                        <BreadText color="initial"
-                            href="/">
+                    <BreadCrumb
+                        aria-label="Breadcrumb"
+                        separator="&#187;" >
+                        <BreadText
+                            color="initial"
+                            href="/" >
                             Coboost
                         </BreadText>
 
-                        <BreadText color="initial"
-                            href="/dashboard">
+                        <BreadText
+                            color="initial"
+                            href="/dashboard" >
                             Sessions
                         </BreadText>
 
-                        <BreadText color="initial"
+                        <BreadText
+                            color="initial"
                             href="#"
                             onClick={(e) => {
                                 e.preventDefault();
-                                this.state.tab === "task"
-                                    ? this.selectTab("organize")
-                                    : this.selectTab("task");
-                            }}>
+                                this.state.tab === "task" ?
+                                    this.selectTab("organize") :
+                                    this.selectTab("task");
+                            }} >
                             {this.state.title}
                         </BreadText>
 
                     </BreadCrumb>
 
-                    <BannerDropdown style={{
-                        float: "right",
-                        position: "relative",
-                        top: "50%",
-                        transform: "translateY(-50%)"
-                    }}
-                        title={<BsJustify />}>
-                        <BannerLink onClick={this.logout}>
+                    <BannerDropdown
+                        style={{
+                            float: "right",
+                            position: "relative",
+                            top: "50%",
+                            transform: "translateY(-50%)"
+                        }}
+                        title={<BsJustify />} >
+                        <BannerLink
+                            onClick={this.present} >
+                            Present in a new window
+                        </BannerLink>
+                        <Divider />
+                        <BannerLink
+                            onClick={this.logout} >
                             Logout
                         </BannerLink>
                     </BannerDropdown>
 
-                    <BannerDropdown style={{
-                        float: "right",
-                        position: "relative",
-                        top: "50%",
-                        transform: "translateY(-50%)"
-                    }}
-                        title="Presentation">
-                        <BannerLink disabled>
-                            Presentation Mode
-                        </BannerLink>
-                        <BannerLink onClick={this.present}>
-                            Present in a new window
-                        </BannerLink>
-                        <BannerLink disabled>
-                            Mirror Screen
-                        </BannerLink>
-                        <BannerLink disabled>
-                            Get Presentation Link
-                        </BannerLink>
-                    </BannerDropdown>
+                    <FullscreenButton
+                        onClick={this.toggleFullscreen} >
+                        {this.state.fullscreen ?
+                             <React.Fragment>
+                                 <BsFullscreenExit
+                                     class="icon" />
+                             </React.Fragment> :
+                             <React.Fragment>
+                                 <BsFullscreen
+                                     class="icon" />
+                             </React.Fragment>
+                        }
+                    </FullscreenButton>
 
-                    <BannerCode>{this.state.code > 0
-                        ? `Event code: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}`
-                        : null}</BannerCode>
+                    <BannerCode>{this.state.code > 0 ?
+                                     `Event code: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
+                                     null}</BannerCode>
                 </Banner>
 
                 <ContentCard>
-                    <Tab.Container activeKey={this.state.tab}
-                        onSelect={(k) => this.selectTab(k)}>
+                    <Tab.Container
+                        activeKey={this.state.tab}
+                        onSelect={(k) => this.selectTab(k)} >
 
-                        <DivButton onClick={() => {
-                            this.state.tab === "task"
-                                ? this.selectTab("organize")
-                                : this.selectTab("task");
-                        }}
+                        <DivButton
+                            onClick={() => {
+                                this.state.tab === "task" ?
+                                    this.selectTab("organize") :
+                                    this.selectTab("task");
+                            }}
                             style={{
                                 width: "30px",
                                 right: "0",
                                 bottom: "0",
                                 position: "absolute",
                                 height: "100%",
-                                backgroundColor: this.state.tab === "organize"
-                                    ? "#4d6dcb"
-                                    : "#4dcb4d",
+                                backgroundColor: this.state.tab === "organize" ?
+                                                     "#4d6dcb" :
+                                                     "#4dcb4d",
                                 color: "#ffffff",
                                 fontSize: "2rem",
                                 fontWeight: "600",
@@ -635,45 +769,107 @@ export class Administrator extends React.Component {
                                 textAlign: "center",
                                 border: "1px solid #414458",
                                 zIndex: "10"
-                            }}>
-                            {this.state.tab === "task"
-                                ? <div style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>A</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>U</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>D</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>I</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>E</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>N</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>C</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>E</p>
-                                </div>
-                                : <div style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }}>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>O</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>R</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>G</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>A</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>N</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>I</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>Z</p>
-                                    <p style={{ pointerEvents: "none", userSelect: "none" }}>E</p>
-                                </div>
+                            }} >
+                            {this.state.tab === "task" ?
+                                 <div
+                                     style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }} >
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         D
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         I
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         S
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         C
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         U
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         S
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         S
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         I
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         O
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         N
+                                     </p>
+                                 </div> :
+                                 <div
+                                     style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }} >
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         O
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         R
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         G
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         A
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         N
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         I
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         Z
+                                     </p>
+                                     <p
+                                         style={{ pointerEvents: "none", userSelect: "none" }} >
+                                         E
+                                     </p>
+                                 </div>
                             }
                         </DivButton>
 
-                        <div style={{
-                            width: this.state.showList
-                                ? "calc(max(15%, 300px) + 30px)"
-                                : "30px",
-                            left: "0",
-                            position: "absolute",
-                            height: "100%"
-                        }}>
+                        <div
+                            style={{
+                                width: this.state.showList ?
+                                           "calc(max(15%, 300px) + 5px)" :
+                                           "5px",
+                                left: "0",
+                                position: "absolute",
+                                height: "100%",
+                                borderRight: "5px solid #414458"
+                            }} >
 
                             {this.state.modal.create &&
-                                <CreateTaskModal onClose={this.create.close}
+                                <CreateTaskModal
+                                    onClose={this.create.close}
                                     type={this.state.modal.type} />
                             }
-                            <Menu anchorEl={this.state.anchor}
+                            <Menu
+                                anchorEl={this.state.anchor}
                                 anchorOrigin={{
                                     vertical: "bottom",
                                     horizontal: "center"
@@ -684,115 +880,132 @@ export class Administrator extends React.Component {
                                 transformOrigin={{
                                     vertical: "bottom",
                                     horizontal: "center"
-                                }}>
+                                }} >
 
-                                <MenuItem onClick={this.create.text}>
+                                <MenuItem
+                                    onClick={this.create.text} >
                                     Input: Open Text
                                 </MenuItem>
 
                                 <Divider />
 
-                                <MenuItem onClick={this.create.multipleChoice}>
+                                <MenuItem
+                                    onClick={this.create.multipleChoice} >
                                     Vote: Multiple Choice
                                 </MenuItem>
 
                                 <Divider />
 
-                                <MenuItem onClick={this.create.points}>
+                                <MenuItem
+                                    onClick={this.create.points} >
                                     Vote: Points
                                 </MenuItem>
 
                                 <Divider />
 
-                                <MenuItem onClick={this.create.slider}>
+                                <MenuItem
+                                    onClick={this.create.slider} >
                                     Vote: Slider
                                 </MenuItem>
 
                             </Menu>
 
-                            <Collection createTask={(event) => this.create.menu(event)}
+                            <Collection
+                                createTask={(event) => this.create.menu(event)}
                                 shown={this.state.showList}
-                                update={this.update.bind(this)}>
+                                update={this.update.bind(this)} >
                                 {this.state.tasks != undefined &&
                                     this.state.tasks.map(task =>
-                                        <Task active={this.state.active === task.Index}
+                                        <Task
+                                            active={this.state.active === task.Index}
                                             id={task.Index}
+                                            InProgress={task.InProgress}
                                             key={task.Index}
                                             onClick={(e) => this.SSE.start(e.target.id)}
+                                            ShowResults={task.ShowResults}
                                             title={task.Title}
                                             type={task.Type}
-                                            update={this.update.bind(this)}
-                                            InProgress={task.InProgress} ShowResults={task.ShowResults} />
+                                            update={this.update.bind(this)} />
                                     )}
                             </Collection>
 
-                            <DivButton onClick={() => {
-                                this.setState({ showList: !this.state.showList });
-                            }}
+                            <DivButton
+                                onClick={() => { this.setState({ showList: !this.state.showList }); }}
                                 style={{
                                     width: "30px",
-                                    right: "0",
+                                    right: "-35px",
                                     position: "absolute",
-                                    height: "100%",
+                                    height: "60px",
                                     backgroundColor: "#414458",
                                     color: "#ffffff",
-                                    borderRight: "1px solid #fff"
-                                }}>
-                                {this.state.showList
-                                    ? <KeyboardArrowLeftIcon
-                                        className="icon"
-                                        style={{
-                                            width: "100%",
-                                            height: "auto",
-                                            position: "absolute",
-                                            top: "50%",
-                                            left: "0",
-                                            transform: "translateY(-50%)"
-                                        }} />
-                                    : <KeyboardArrowRightIcon
-                                        className="icon"
-                                        style={{
-                                            width: "100%",
-                                            height: "auto",
-                                            position: "absolute",
-                                            top: "50%",
-                                            left: "0",
-                                            transform: "translateY(-50%)"
-                                        }} />
+                                    borderRight: "1px solid #fff",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    borderRadius: "0 30px 30px 0",
+                                    zIndex: "10"
+                                }} >
+                                {this.state.showList ?
+                                     <KeyboardArrowLeftIcon
+                                         className="icon"
+                                         style={{
+                                             width: "100%",
+                                             height: "auto",
+                                             position: "absolute",
+                                             top: "50%",
+                                             left: "0",
+                                             transform: "translateY(-50%)"
+                                         }} /> :
+                                     <KeyboardArrowRightIcon
+                                         className="icon"
+                                         style={{
+                                             width: "100%",
+                                             height: "auto",
+                                             position: "absolute",
+                                             top: "50%",
+                                             left: "0",
+                                             transform: "translateY(-50%)"
+                                         }} />
                                 }
                             </DivButton>
 
                         </div>
 
-                        <div style={{
-                            width: this.state.showList
-                                ? "calc(min(85%, calc(100% - 300px)) - 60px)"
-                                : "calc(100% - 100px)",
-                            left: this.state.showList
-                                ? "calc(max(15%, 300px) + 30px)"
-                                : "50px",
-                            position: "absolute",
-                            height: "100%"
-                        }}>
+                        <div
+                            style={{
+                                width: this.state.showList ?
+                                           "calc(min(85%, calc(100% - 300px)) - 35px)" :
+                                           "calc(100% - 35px)",
+                                left: this.state.showList ?
+                                          "calc(max(15%, 300px) + 5px)" :
+                                          "5px",
+                                position: "absolute",
+                                height: "100%"
+                            }} >
                             <Tab.Content>
-                                <Tab.Pane eventKey="task">
-                                    <Tasks active={this.state.active}
+                                <Tab.Pane
+                                    eventKey="task" >
+                                    <Tasks
+                                        active={this.state.active}
                                         changeTab={this.selectTab.bind(this)}
                                         SSE={this.SSE.start}
                                         tasks={this.state.tasks}
                                         update={this.update.bind(this)} />
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="organize">
-                                    <Organizer active={this.state.active}
+                                <Tab.Pane
+                                    eventKey="organize" >
+                                    <Organizer
+                                        active={this.state.active}
                                         changeTab={this.selectTab.bind(this)}
                                         columns={this.state.columns}
-                                        showControls={this.state.showList
-                                            ? true
-                                            : this.state.showControls}
+                                        handleTimer={this.HandleTimer}
+                                        popClosed={this.shortcuts.close}
+                                        popOpen={this.shortcuts.open}
+                                        showControls={this.state.showList ?
+                                                          true :
+                                                          this.state.showControls}
                                         SSE={this.SSE.start}
                                         tasks={this.state.tasks}
-                                        update={this.update.bind(this)}
-                                        popOpen={this.shortcuts.open} popClosed={this.shortcuts.close} />
+                                        update={this.update.bind(this)} />
                                 </Tab.Pane>
                             </Tab.Content>
                         </div>

@@ -5,20 +5,22 @@
     /// </summary>
     public class OpenTextInput
     {
-        #region Private Fields
-
         private string _title;
-
-        #endregion Private Fields
-
-        #region Public Properties
 
         /// <summary>
         ///     The Main Data of the Input
         /// </summary>
-        public string Description { get; set; }
+        public string Description
+        {
+            get;
+            set;
+        }
 
-        public int Index { get; set; }
+        public int Index
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         ///     Optional Title
@@ -27,7 +29,10 @@
         /// </summary>
         public string Title
         {
-            get => string.IsNullOrWhiteSpace(_title) ? Description : _title;
+            get =>
+                string.IsNullOrWhiteSpace(_title) ?
+                    Description :
+                    _title;
             set
             {
                 if (string.IsNullOrWhiteSpace(Description))
@@ -42,8 +47,10 @@
         /// <summary>
         ///     The User that sent it in
         /// </summary>
-        public string UserID { get; set; }
-
-        #endregion Public Properties
+        public string UserID
+        {
+            get;
+            set;
+        }
     }
 }

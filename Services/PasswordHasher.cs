@@ -6,8 +6,6 @@ namespace Coboost.Services
 {
     public static class PasswordHasher
     {
-        #region Public Methods
-
         /// <summary>
         ///     Hashes and returns a password
         /// </summary>
@@ -25,7 +23,8 @@ namespace Coboost.Services
         ///     Hashes and returns a password with the given salt
         /// </summary>
         /// <param name="password">The password you want hashed</param>
-        /// <param name="salt">The salt you would like to use
+        /// <param name="salt">
+        ///     The salt you would like to use
         ///     <para>Does accept already hashed passwords</para>
         /// </param>
         /// <returns>String Salt[16]+hash[20]</returns>
@@ -61,10 +60,6 @@ namespace Coboost.Services
             return true;
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         /// <summary>
         ///     Private GetHash
         /// </summary>
@@ -78,7 +73,5 @@ namespace Coboost.Services
 
             return hashPass;
         }
-
-        #endregion Private Methods
     }
 }

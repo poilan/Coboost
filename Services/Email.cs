@@ -9,23 +9,22 @@ namespace Coboost.Services
     /// </summary>
     public class Email
     {
-        #region Private Fields
-
         private const string From = "donotreply@mathiastb.no";
 
-        #endregion Private Fields
+        private string Body
+        {
+            get;
+        }
 
-        #region Private Properties
+        private string Recipient
+        {
+            get;
+        }
 
-        private string Body { get; }
-
-        private string Recipient { get; }
-
-        private string Title { get; }
-
-        #endregion Private Properties
-
-        #region Public Constructors
+        private string Title
+        {
+            get;
+        }
 
         /// <summary>
         ///     Creates a new email
@@ -39,10 +38,6 @@ namespace Coboost.Services
             Title = title;
             Body = body;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         /// <summary>
         ///     Returns true if the parameter is an email, doesn't detect invalid email addressees (123@notgmail.com, still returns
@@ -71,10 +66,6 @@ namespace Coboost.Services
         {
             await Send(this);
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
 
         /// <summary>
         ///     Sends the email in the parameter, returns true if successful false otherwise
@@ -108,7 +99,5 @@ namespace Coboost.Services
         {
             return new MailMessage(From, Recipient, Title, Body);
         }
-
-        #endregion Private Methods
     }
 }

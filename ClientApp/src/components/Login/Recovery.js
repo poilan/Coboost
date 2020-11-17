@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import Styled from "styled-components";
 import Axios from "axios";
-import { Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button } from "react-bootstrap";
+import {Card, Form, FormControl, FormGroup, TabContainer, InputGroup, Nav, Tab, Button} from "react-bootstrap";
+
 
 const LoginContainer = Styled.div`
     display: flex;
@@ -42,7 +43,8 @@ const InfoText = Styled.h2`
 `;
 
 export class Recovery extends React.Component {
-    constructor(props) {
+    constructor(props)
+    {
         super(props);
         this.state = {
             tab: "login",
@@ -56,7 +58,9 @@ export class Recovery extends React.Component {
         this.submitLogin = this.submitLogin.bind(this);
     }
 
-    handleChange(e) {
+
+    handleChange(e)
+    {
         const Tab = this.state.tab;
         const Name = e.target.name;
         const Value = e.target.value;
@@ -70,36 +74,46 @@ export class Recovery extends React.Component {
         });
     }
 
-    forgotPassword() {
 
+    forgotPassword()
+    {
         // TODO: forgotPassword
     }
 
-    loginTab() {
+
+    loginTab()
+    {
         return (
-            <Form autoComplete="on"
+            <Form
+                autoComplete="on"
                 onSubmit={this.submitLogin}
-                validated={this.state.login.validated}>
-                <FormGroup controlId="formBasicEmail">
+                validated={this.state.login.validated} >
+                <FormGroup
+                    controlId="formBasicEmail" >
                     <Form.Label>Username or Email</Form.Label>
-                    <FormInput name="email"
+                    <FormInput
+                        name="email"
                         onChange={this.handleChange
                         }
                         placeholder="myemail@address.com"
                         required
                         type="email" />
                 </FormGroup>
-                <CardButton type="submit">Start Recovery</CardButton>
+                <CardButton
+                    type="submit" >
+                    Start Recovery
+                </CardButton>
             </Form>
         );
     }
 
-    async submitLogin(event) {
+
+    async submitLogin(event)
+    {
         event.preventDefault();
 
-        if (!event.currentTarget.checkValidity()) {
+        if (!event.currentTarget.checkValidity())
             event.stopPropagation();
-        }
 
         /*const data = {
             Email: this.state.login.email,
@@ -123,52 +137,61 @@ export class Recovery extends React.Component {
         });*/
     }
 
-    async submitRegistration(event) {
+
+    async submitRegistration(event)
+    {
         event.preventDefault();
         const Data = this.state.recover;
 
         await Axios.post(`user/register`, Data).then(res => {
-            if (res.status === 202) {
-
+            if (res.status === 202)
+            {
                 //Registration Succeeded
                 //Redirect to log in?
             }
-            else if (res.status === 406) {
-
+            else if (res.status === 406)
+            {
                 //User didn't write in a correct email address
                 //or password was too short (needs to be 8 or more characters)
             }
-            else if (res.status === 409) {
-
+            else if (res.status === 409)
+            {
                 //That email is already in use
             }
-            else if (res.status === 400) {
-
+            else if (res.status === 400)
+            {
                 //Data wasn't received by server
             }
         });
     }
 
-    selectTab(key) {
+
+    selectTab(key)
+    {
         this.setState({
             tab: key
         });
     }
 
-    render() {
+
+    render()
+    {
         return (
             <LoginContainer>
                 <InfoText>Account Recovery</InfoText>
                 <LoginCard>
-                    <TabContainer defaultActiveKey="login"
-                        onSelect={this.selectTab}>
+                    <TabContainer
+                        defaultActiveKey="login"
+                        onSelect={this.selectTab} >
                         <Nav.Link>
-                            <Nav variant="tabs">
+                            <Nav
+                                variant="tabs" >
                             </Nav>
                         </Nav.Link>
                         <Card.Body>
                             <Tab.Content>
-                                <Tab.Pane eventKey="login">
+                                <Tab.Pane
+                                    eventKey="login" >
                                     {this.loginTab()}
                                 </Tab.Pane>
                             </Tab.Content>
