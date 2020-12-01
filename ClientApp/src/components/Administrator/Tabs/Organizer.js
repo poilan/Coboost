@@ -95,7 +95,7 @@ const Countdown = Styled.div`
 
 const AnswerButton = Styled(Nav.Link)`
     color: #fff;
-    background: #575b75;
+    background: #24305E;
     font-family: CircularStd;
     font-weight: 400;
     font-size: 1rem;
@@ -103,6 +103,7 @@ const AnswerButton = Styled(Nav.Link)`
     text-align: center;
     border: 2px solid #fff;
     border-right: 0;
+    border-radius: 5px;
     min-width: 150px;
     flex: 1 1 auto;
     height: 100%;
