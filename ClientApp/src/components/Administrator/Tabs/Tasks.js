@@ -103,7 +103,8 @@ export class Tasks extends Component {
         return (
             <SelectedSlide>
                 <Viewer
-                    admin={true} />
+                    admin={true}
+                    columns={this.props.columns} />
             </SelectedSlide>
         );
     }

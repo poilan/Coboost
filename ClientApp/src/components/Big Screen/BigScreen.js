@@ -98,7 +98,7 @@ const WelcomeContainer = Styled.div`
                              "320px" :
                              "initial"};
     column-gap: ${props => props.text ?
-                           "1rem" :
+                           "10rem" :
                            "initial"};
 `;
 
@@ -498,71 +498,124 @@ export class BigScreen extends Component {
         const Results = this.state.task.Groups;
         return (
             <React.Fragment>
-
-                {Results[0].Members.length > 0 &&
-                    !Results[0].Collapsed &&
+                {this.props.columns.map(column =>
                     <Column
+                        column={column.index}
                         empty
-                        key="C0"
-                        width={1} >
-
-                        <Group
-                            group={0}
-                            id={0}
-                            key={0}
-                            showcase
-                            size={1}
-                            title="Stack" >
-
-                            {Results[0].Members.map(member =>
-                                <Input
-                                    description={member.Description}
-                                    isMerged={0}
-                                    key={member.Index}
-                                    showcase
-                                    size={1}
-                                    title={member.Title} />
-                            )}
-                        </Group>
-                    </Column>
-                }
-                {Results.slice(1).map(group =>
-                    <React.Fragment>
-
-                        {group.Members.length > 0 &&
-                            !group.Collapsed &&
-                            <Column
-                                column={group.Column}
-                                empty
-                                key={`C${group.Index}`}
-                                width={1} >
-
-                                <Group
-                                    color={group.Color}
-                                    group={group.Index}
-                                    id={group.Index}
-                                    key={group.Index}
-                                    showcase
-                                    size={1}
-                                    title={group.Title} >
-
-                                    {group.Members.map(member =>
-                                        <Input
-                                            description={member.Description}
-                                            isMerged={0}
-                                            key={member.Index}
+                        width={column.width} >
+                        {Results && Results.map(group => {
+                                if (column.index === group.Column)
+                                {
+                                    return(
+                                        <Group
+                                            collapsed={group.Collapsed}
+                                            color={group.Color}
+                                            column={group.Column}
+                                            group={group.Index}
+                                            id={group.Index}
+                                            key={group.Index}
                                             showcase
-                                            size={1}
-                                            title={member.Title} />
-                                    )}
-                                </Group>
-                            </Column>
-                        }
-                    </React.Fragment>
+                                            size={column.width}
+                                            title={group.Title} >
+
+                                            {group.Members && group.Members.map(member =>
+                                                <Input
+                                                    column={group.Column}
+                                                    description={member.Description}
+                                                    group={group.Index}
+                                                    id={group.Index + "-" + member.Index}
+                                                    isMerged={0}
+                                                    key={member.Index}
+                                                    member={member.Index}
+                                                    showcase
+                                                    size={column.width}
+                                                    title={member.Title} />
+                                            )}
+                                        </Group>
+                                    );
+                                }
+                                else
+                                    return null;
+                            }
+                        )}
+                    </Column>
                 )}
+
             </React.Fragment>
         );
     }
+    // TODO: Delete this Old Function
+    //renderOpenTextResult()
+    //{
+    //    const Results = this.state.task.Groups;
+    //    return (
+    //        <React.Fragment>
+
+
+    //            {Results[0].Members.length > 0 &&
+    //                !Results[0].Collapsed &&
+    //                <Column
+    //                    empty
+    //                    key="C0"
+    //                    width={1} >
+
+    //                    <Group
+    //                        group={0}
+    //                        id={0}
+    //                        key={0}
+    //                        showcase
+    //                        size={1}
+    //                        title="Stack" >
+
+    //                        {Results[0].Members.map(member =>
+    //                            <Input
+    //                                description={member.Description}
+    //                                isMerged={0}
+    //                                key={member.Index}
+    //                                showcase
+    //                                size={1}
+    //                                title={member.Title} />
+    //                        )}
+    //                    </Group>
+    //                </Column>
+    //            }
+    //            {Results.slice(1).map(group =>
+    //                <React.Fragment>
+
+    //                    {group.Members.length > 0 &&
+    //                        !group.Collapsed &&
+    //                        <Column
+    //                            column={group.Column}
+    //                            empty
+    //                            key={`C${group.Index}`}
+    //                            width={1} >
+
+    //                            <Group
+    //                                color={group.Color}
+    //                                group={group.Index}
+    //                                id={group.Index}
+    //                                key={group.Index}
+    //                                showcase
+    //                                size={1}
+    //                                title={group.Title} >
+
+    //                                {group.Members.map(member =>
+    //                                    <Input
+    //                                        description={member.Description}
+    //                                        isMerged={0}
+    //                                        key={member.Index}
+    //                                        showcase
+    //                                        size={1}
+    //                                        title={member.Title} />
+    //                                )}
+    //                            </Group>
+    //                        </Column>
+    //                    }
+    //                </React.Fragment>
+    //            )}
+    //        </React.Fragment>
+    //    );
+    //}
 
 
     renderMultipleChoiceResult()
@@ -654,26 +707,73 @@ export class BigScreen extends Component {
 
     renderHidden()
     {
+        const Task = this.state.task;
         return (
-            <React.Fragment>
-                <Box
-                    style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} >
+            Task.Type === 0 ?
+                <React.Fragment>
+                    <Box
+                        style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} >
 
-                    <Typography
-                        align="center"
-                        display="block"
-                        variant="h2" >
-                        Keep working on your task!
-                    </Typography>
+                        <Typography
+                            align="center"
+                            display="block"
+                            variant="h2" >
+                            Keep working on your task!
+                        </Typography>
 
-                    <Typography
-                        align="center"
-                        display="block"
-                        variant="h2" >
-                        Results will soon be shown
-                    </Typography>
-                </Box>
-            </React.Fragment>
+                        <Typography
+                            align="center"
+                            display="block"
+                            variant="h2" >
+                            Inputs will soon be shown
+                        </Typography>
+                    </Box>
+                </React.Fragment> :
+                Task.Type === 3 ?
+                <React.Fragment>
+                    {Task.Options.map(option =>
+                        <ResultSlider
+                            color={option.Color}
+                            description={option.Description}
+                            id={option.Index}
+                            index={option.Index}
+                            max={Task.Max}
+                            maxDescription={Task.MaxDescription}
+                            min={Task.Min}
+                            minDescription={Task.MinDescription}
+                            showcase
+                            title={option.Title}
+                            vote />
+                    )}
+                </React.Fragment> :
+                <React.Fragment>
+                    <Box
+                        style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} >
+                        <Typography
+                            align="center"
+                            display="block"
+                            variant="h2" >
+                            Votes will soon be shown!
+                        </Typography>
+
+                        {Task.Options.map(option =>
+                            <ResultItem
+                                color={option.Color}
+                                description={option.Description}
+                                height="85%"
+                                id={option.Index}
+                                index={option.Index}
+                                key={option.Index}
+                                percentage={0}
+                                points={0}
+                                showcase
+                                showPercentage={this.state.resultsAsPercentage}
+                                title={option.Title}
+                                total={Task.Options.length}
+                                vote />
+                        )}
+                    </Box>
+                </React.Fragment>
         );
     }
 
@@ -695,20 +795,21 @@ export class BigScreen extends Component {
     }
 
 
+    secondsToMinutes = (countdown) => {
+        let Seconds = countdown, Minutes = 0;
+        while (Seconds >= 60)
+        {
+            Minutes += 1;
+            Seconds -= 60;
+        }
+        return `${Minutes}:${Seconds < 10 ?
+                             `0${Seconds}` :
+                             Seconds}`;
+    }
+
+
     render()
     {
-        let seconds, minutes;
-
-        if (this.state.task && this.state.task.InProgress && this.state.task.Countdown > -1)
-        {
-            seconds = this.state.task.Countdown;
-            minutes = 0;
-            while (seconds >= 60)
-            {
-                minutes += 1;
-                seconds -= 60;
-            }
-        }
         return (
             <React.Fragment>
                 <MainContainer>
@@ -749,9 +850,7 @@ export class BigScreen extends Component {
                             {this.state.task.InProgress ?
                                  this.state.task.Countdown < 0 ?
                                  "Task Open!" :
-                                 `Time: ${minutes}:${seconds < 10 ?
-                                                     `0${seconds}` :
-                                                     seconds}` :
+                                 `Time: ${this.secondsToMinutes(this.state.task.Countdown)}` :
                                  "Task Closed"}
                         </div>
                     }

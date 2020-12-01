@@ -15,21 +15,30 @@ import {ColorPicker} from "./ColorPicker";
 
 const GroupContainer = Styled.div`
     width: 100%;
-    overflow: hidden;
     padding: 10px;
     padding-top: 65px;
-    margin-bottom: 20px;
-    border-radius: 10px;
     box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
     vertical-align: top;
     position: relative;
-    display: ${props => props.empty ?
+    display: ${props => props.empty || props.showcase && props.group === 0 ?
                         "none" :
                         "block"};
 
     background: ${props => props.group === 0 ?
                            "#8c8da6" :
                            props.color};
+
+    height: ${props => props.group === 0 ?
+                       "100%" :
+                       ""};
+
+    margin-bottom: ${props => props.group === 0 ?
+                              "0" :
+                              "30px"};
+
+    border-radius: ${props => props.group === 0 ?
+                              "0px" :
+                              "10px"};
 
     opacity: ${props => props.group === "new" ?
                         "50%" :
@@ -38,11 +47,9 @@ const GroupContainer = Styled.div`
     &:hover {
         filter: saturate(125%) drop-shadow(6px 6px 3px black);
 
-        cursor: ${props => props.group === "new" ?
+        cursor: ${props => props.group === "new" || !props.showcase ?
                            "pointer" :
-                           props.showcase ?
-                           "default" :
-                           "cell"};
+                           "default"
         }
     `;
 
@@ -87,7 +94,7 @@ const GroupTitle = Styled.h1`
 
     max-width: ${props => props.new ?
                           "100%" :
-                          "75%"};
+                          "85%"};
 
     text-align: ${props => props.new ?
                            "center" :
@@ -332,6 +339,18 @@ export class Group extends Component {
 
                 Axios.post(`admin/${Code}/change-group${Key}-column${Target}`);
             }
+        },
+        title: (e) => {
+            const Drag = JSON.parse(e.dataTransfer.getData("drag"));
+
+            if (Drag.member !== undefined && this.props.group === Drag.group)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                const Key = [Drag.group.toString(), Drag.member.toString()];
+
+                this.props.double(e, Key);
+            }
         }
     }
 
@@ -427,30 +446,11 @@ export class Group extends Component {
                     new={this.props.group === "new"}
                     onClick={(e) => e.stopPropagation()}
                     onDoubleClick={(e) => this.handleDouble(e)}
-                    showcase={this.props.showcase} >
+                    showcase={this.props.showcase}
+                    onDragOver={this.drag.over}
+                    onDrop={this.drag.title}>
                     {this.props.title}
-                    {!this.props.showcase &&
-                        this.props.group !== "new" &&
-                        <IconButton
-                            aria-label="expand"
-                            onClick={(e) => this.collapse(e)}
-                            size="small"
-                            style={{
-                                outline: "0"
-                            }} >
 
-                            {!this.props.collapsed ?
-                                 <KeyboardArrowUpIcon
-                                    style={{
-                                        color: grey[50]
-                                    }} /> :
-                                 <KeyboardArrowDownIcon
-                                    style={{
-                                        color: grey[50]
-                                    }} />
-                            }
-                        </IconButton>
-                    }
                 </GroupTitle>
 
                 <Collapse
@@ -579,6 +579,31 @@ export class Group extends Component {
                         vertical: "top",
                         horizontal: "right"
                     }} />
+
+            {this.props.collapsed &&
+                    <div style={{ outline: "0", position: "absolute", height: "1.5rem", width: "40px", borderRadius: "20px 20px 0 0", border: "1px solid #fff", bottom: "0", left: "50%", transform: "translateX(-50%)", fontSize: "1rem", fontWeight: "600", color: "#fff", textAlign: "center"}}>
+                        {this.props.children.length}
+                    </div>
+                 }
+                {!this.props.showcase &&
+                        this.props.group !== "new" && this.props.group > 0 &&
+                        <IconButton
+                            aria-label="expand"
+                            onClick={(e) => this.collapse(e)}
+                            style={{ outline: "0", position: "absolute",  bottom: "-20px", height: "20px", width: "40px", borderRadius: "0 0 20px 20px", backgroundColor: this.props.color, left: "50%", transform: "translateX(-50%)"}} >
+
+                            {this.props.collapsed ?
+                                 <KeyboardArrowDownIcon
+                                    style={{
+                                        color: grey[50]
+                                    }} /> :
+                                 <KeyboardArrowUpIcon
+                                    style={{
+                                        color: grey[50]
+                                    }} />
+                            }
+                        </IconButton>
+                    }
 
             </GroupContainer>
         );

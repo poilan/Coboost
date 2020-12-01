@@ -213,6 +213,7 @@ export class InputModal extends Component {
                     mb={2}
                     p={1} >
                     <ContentInput
+                        autoFocus
                         fullWidth
                         helperText={`${250 - this.state.description.length}
                                     ${this.state.description.length > 30 ?

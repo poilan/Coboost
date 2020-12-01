@@ -5,24 +5,24 @@ import Axios from "axios";
 
 
 const Container = Styled.div`
-    width: ${props => props.width * 320}px;
-    height: ${props => props.showcase ?
-                       "" :
-                       "95%"};
+    width: ${props => props.width * 400}px;
+    height: calc(95% - 2rem);
     position: relative;
     overflow: ${props => props.showcase ?
                          "hidden" :
                          "auto"};
-    padding: 10px;
+    padding: ${props => props.column === 0 ?
+                        "2px" :
+                        "10px"};;
     display: ${props => props.empty ?
                         "none" :
-                        props.showcase ?
-                        "block" :
+                        props.column === 0 && props.showcase ?
+                        "none" :
                         "inline-block"};
     white-space: normal;
     margin-top: ${props => props.showcase ?
                            "0" :
-                           "20px"};
+                           "calc(20px + 2rem)"};
     border-right: ${props => props.showcase ?
                              "0" :
                              "2px solid #C4C4C4"};
@@ -33,7 +33,7 @@ const Container = Styled.div`
 `;
 
 const WidthControl = Styled.div`
-    width: ${props => props.width * 320}px;
+    width: ${props => props.width * 400}px;
     position: absolute;
     display: ${props => props.empty ?
                         "none" :
@@ -159,7 +159,9 @@ export function Column(props) {
                         props.children[0][0].props.children.length < 1)}
                 width={props.width} >
                 <Shrink
-                    available={props.width > 1}
+                    available={props.column === 0 ?
+                                   props.width > 0 :
+                                   props.width > 1}
                     onClick={() => props.shrink(props.column)} >
                     &#129080;
                 </Shrink>
@@ -175,8 +177,7 @@ export function Column(props) {
                     props.children[0][0] &&
                     props.children[0][0].props.children.length < 1}
                 onDragOver={DragOver}
-                onDrop={Drop
-                }
+                onDrop={Drop}
                 showcase={props.empty}
                 width={props.width} >
                 {props.children}

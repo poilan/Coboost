@@ -13,6 +13,7 @@ import Slider from "@material-ui/core/Slider";
 import Rating from "@material-ui/lab/Rating";
 import {BannerLink} from "../Classes/Dropdown";
 import {TextField} from "@material-ui/core";
+import {height} from "@material-ui/system";
 
 
 const MainContainer = Styled(Col)`
@@ -120,10 +121,8 @@ const ContentQuestion = Styled.p`
 
 const ContentInput = Styled(TextField)`
     display: block;
-    height: ${props => props.isTitle ?
-                       "30%" :
-                       "70%"};
-    min-height: 1rem;
+    position: relative;
+
     font-family: CircularStd;
     font-size: 1rem;
     text-align: ${props => props.isTitle ?
@@ -134,6 +133,9 @@ const ContentInput = Styled(TextField)`
     border-bottom: 1px solid ${props => props.isTitle ?
                                         "#4C7AD3" :
                                         "#cfcfcf"};
+    opacity: ${props => props.isTitle ?
+                        "80%" :
+                        "100%"};
     resize: none;
     outline: none;
 `;
@@ -711,19 +713,21 @@ export class Mobile extends React.Component {
                 <Form
                     autoComplete="off"
                     onInvalid={HandleInvalid}
-                    onSubmit={this.inputsClick} >
+                    onSubmit={this.inputsClick}
+                    style={{ height: "100%" }} >
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
                     <Box
-                        height="100%"
+                        height="calc(100% - 50px)"
                         m={1}
                         mb={2}
                         p={1}
+                        position="relative"
                         width="100%" >
                         <ContentInput
                             disabled={this.getTaskAnswers().length <= 30}
                             fullWidth
-                            helperText={`${30 - this.state.title.length}`}
+                            helperText={`${this.state.title.length}/30`}
                             inputProps={{
                                 minlength: 3,
                                 maxlength: 30,
@@ -740,10 +744,9 @@ export class Mobile extends React.Component {
                             variant="outlined" />
 
                         <ContentInput
+                            autoFocus={true}
                             fullWidth
-                            helperText={`${250 - this.getTaskAnswers().length}${this.getTaskAnswers().length > 30 ?
-                                                                                "" :
-                                                                                ` | ${30 - this.getTaskAnswers().length}`}`}
+                            helperText={`${this.getTaskAnswers().length}/250`}
                             inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                             inputRef={this.TextDescription}
                             label="Description"
@@ -752,7 +755,8 @@ export class Mobile extends React.Component {
                             name="description"
                             onChange={(e) => this.questionChange(e)}
                             required
-                            rowsMax={5}
+                            rows={5}
+                            rowsMax={10}
                             value={this.getTaskAnswers()}
                             variant="outlined" />
                     </Box>
@@ -1176,21 +1180,57 @@ export class Mobile extends React.Component {
     }
 
 
+    secondsToMinutes = (countdown) => {
+        let Seconds = countdown, Minutes = 0;
+        while (Seconds >= 60)
+        {
+            Minutes += 1;
+            Seconds -= 60;
+        }
+        return `Time: ${Minutes}:${Seconds < 10 ?
+                                   `0${Seconds}` :
+                                   Seconds}`;
+    }
+
+
     render()
     {
         return (
             <React.Fragment>
                 <MainContainer>
-                    <Header>
-                        <HeaderText
-                            active={this.state.activeHeader}
-                            id="inputs"
-                            onClick={(e) => this.headerClick(e.target)} >
-                            {this.getCurrentTask() !== undefined ?
-                                 this.tabTitle(this.getTaskType()) :
-                                 "Waiting"}
-                        </HeaderText>
-                    </Header>
+                    {
+                        //    <Header>
+                        //    <HeaderText
+                        //        active={this.state.activeHeader}
+                        //        id="inputs"
+                        //        onClick={(e) => this.headerClick(e.target)} >
+                        //        {this.getCurrentTask() !== undefined ?
+                        //             this.tabTitle(this.getTaskType()) :
+                        //             "Waiting"}
+                        //    </HeaderText>
+                        //</Header>
+                    }
+                    {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
+                        <div
+                            style={{
+                                zIndex: "10",
+                                position: "absolute",
+                                height: "50px",
+                                lineHeight: "50px",
+                                textAlign: "center",
+                                minWidth: "150px",
+                                border: "1px solid black",
+                                borderRadius: "15px",
+                                left: "50px",
+                                top: "25px",
+                                backgroundColor: "#fff",
+                                color: this.getCurrentTask().Countdown < 11 && this.getCurrentTask().Countdown > -1 ?
+                                           "red" :
+                                           "black"
+                            }} >
+                            {this.secondsToMinutes(this.getCurrentTask().Countdown)}
+                        </div>
+                    }
                     {this.renderPage()}
                 </MainContainer>
             </React.Fragment>

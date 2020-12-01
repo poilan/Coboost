@@ -10,12 +10,25 @@ import {CreateTaskModal} from "./Tabs/Components/CreateModal";
 import {Collection, Task} from "./Tabs/Components/Task";
 import {Organizer} from "./Tabs/Organizer";
 import {Tasks} from "./Tabs/Tasks";
-import {Breadcrumbs, Link, Menu, MenuItem, Divider} from "@material-ui/core";
+import {Breadcrumbs, Link, Menu, MenuItem, Divider, createMuiTheme, ThemeProvider} from "@material-ui/core";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import {borderRadius, borderRight} from "@material-ui/system";
-import zIndex from "@material-ui/core/styles/zIndex";
 
+
+const Theme = createMuiTheme({
+    palette: {
+        primary: {
+            main: "#374785",
+            contrastText: "#ffffff"
+        },
+        secondary: {
+            main: "#24305E",
+            contrastText: "#ffffff"
+        }
+
+    }
+});
 
 const MainContainer = Styled.div`
     display: table;
@@ -28,7 +41,9 @@ const MainContainer = Styled.div`
 
 const Banner = Styled(Col)`
     position: fixed;
-    background: #575b75;
+    background: ${props => props.task ?
+                           "#24305E" :
+                           "#374785"};
     height: 5%;
     width: 100%;
     min-height: 50px;
@@ -59,10 +74,10 @@ const BannerCode = Styled.div`
     display: inline-block;
     color: #fff;
     top: 50%;
-    left: 50%;
-    position: absolute;
+    float: right;
+    position: relative;
     margin-right: 20px;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
     text-align: center;
 `;
 
@@ -78,6 +93,7 @@ const ContentCard = Styled(Card)`
 `;
 
 const DivButton = Styled.div`
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
     &:hover {
         color: #ddd;
         filter: brightness(150%);
@@ -191,6 +207,21 @@ export class Administrator extends React.Component {
             {
                 e.preventDefault();
                 this.controls.next();
+            }
+        });
+
+        document.addEventListener("fullscreenchange", (e) => {
+            if (document.fullscreenElement)
+            {
+                this.setState({
+                    fullscreen: true
+                });
+            }
+            else
+            {
+                this.setState({
+                    fullscreen: false
+                });
             }
         });
 
@@ -673,80 +704,77 @@ export class Administrator extends React.Component {
     {
         return (
             <MainContainer>
+                <ThemeProvider
+                    theme={Theme} >
+                    <Banner
+                        task={this.state.tab === "task"} >
+                        <BreadCrumb
+                            aria-label="Breadcrumb"
+                            separator="&#187;" >
+                            <BreadText
+                                color="initial"
+                                href="/" >
+                                Coboost
+                            </BreadText>
 
-                <Banner>
-                    <BreadCrumb
-                        aria-label="Breadcrumb"
-                        separator="&#187;" >
-                        <BreadText
-                            color="initial"
-                            href="/" >
-                            Coboost
-                        </BreadText>
+                            <BreadText
+                                color="initial"
+                                href="/dashboard" >
+                                Sessions
+                            </BreadText>
 
-                        <BreadText
-                            color="initial"
-                            href="/dashboard" >
-                            Sessions
-                        </BreadText>
+                            <BreadText
+                                color="initial"
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    this.state.tab === "task" ?
+                                        this.selectTab("organize") :
+                                        this.selectTab("task");
+                                }} >
+                                {this.state.title}
+                            </BreadText>
 
-                        <BreadText
-                            color="initial"
-                            href="#"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                this.state.tab === "task" ?
-                                    this.selectTab("organize") :
-                                    this.selectTab("task");
-                            }} >
-                            {this.state.title}
-                        </BreadText>
+                        </BreadCrumb>
 
-                    </BreadCrumb>
+                        <BannerDropdown
+                            style={{
+                                float: "right",
+                                position: "relative",
+                                top: "50%",
+                                transform: "translateY(-50%)"
+                            }}
+                            title={<BsJustify />} >
+                            <BannerLink
+                                onClick={this.present} >
+                                Present in a new window
+                            </BannerLink>
+                            <Divider />
+                            <BannerLink
+                                onClick={this.logout} >
+                                Logout
+                            </BannerLink>
+                        </BannerDropdown>
 
-                    <BannerDropdown
-                        style={{
-                            float: "right",
-                            position: "relative",
-                            top: "50%",
-                            transform: "translateY(-50%)"
-                        }}
-                        title={<BsJustify />} >
-                        <BannerLink
-                            onClick={this.present} >
-                            Present in a new window
-                        </BannerLink>
-                        <Divider />
-                        <BannerLink
-                            onClick={this.logout} >
-                            Logout
-                        </BannerLink>
-                    </BannerDropdown>
+                        <FullscreenButton
+                            onClick={this.toggleFullscreen} >
+                            {this.state.fullscreen ?
+                                 <React.Fragment>
+                                     <BsFullscreenExit
+                                         class="icon" />
+                                 </React.Fragment> :
+                                 <React.Fragment>
+                                     <BsFullscreen
+                                         class="icon" />
+                                 </React.Fragment>
+                            }
+                        </FullscreenButton>
 
-                    <FullscreenButton
-                        onClick={this.toggleFullscreen} >
-                        {this.state.fullscreen ?
-                             <React.Fragment>
-                                 <BsFullscreenExit
-                                     class="icon" />
-                             </React.Fragment> :
-                             <React.Fragment>
-                                 <BsFullscreen
-                                     class="icon" />
-                             </React.Fragment>
-                        }
-                    </FullscreenButton>
-
-                    <BannerCode>{this.state.code > 0 ?
-                                     `Event code: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
-                                     null}</BannerCode>
-                </Banner>
-
-                <ContentCard>
-                    <Tab.Container
-                        activeKey={this.state.tab}
-                        onSelect={(k) => this.selectTab(k)} >
-
+                        <BannerCode>
+                            {this.state.code > 0 ?
+                                 `Room: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
+                                 null}
+                        </BannerCode>
                         <DivButton
                             onClick={() => {
                                 this.state.tab === "task" ?
@@ -754,263 +782,200 @@ export class Administrator extends React.Component {
                                     this.selectTab("task");
                             }}
                             style={{
-                                width: "30px",
-                                right: "0",
-                                bottom: "0",
+                                left: "50%",
+                                top: "50%",
                                 position: "absolute",
-                                height: "100%",
-                                backgroundColor: this.state.tab === "organize" ?
-                                                     "#4d6dcb" :
-                                                     "#4dcb4d",
+                                height: "39px",
+                                backgroundColor: this.state.tab === "task" ?
+                                                     "#374785" :
+                                                     "#24305E",
                                 color: "#ffffff",
-                                fontSize: "2rem",
+                                padding: "0 150px",
+                                fontSize: "1.25rem",
                                 fontWeight: "600",
-                                lineHeight: "2rem",
-                                textAlign: "center",
-                                border: "1px solid #414458",
+                                textAlign: "justify",
+                                borderRadius: "5px",
+                                border: "3px solid #aaa",
+                                transform: "translate(-50%, -50%)",
                                 zIndex: "10"
+
                             }} >
                             {this.state.tab === "task" ?
-                                 <div
-                                     style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }} >
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         D
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         I
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         S
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         C
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         U
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         S
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         S
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         I
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         O
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         N
-                                     </p>
-                                 </div> :
-                                 <div
-                                     style={{ width: "100%", position: "relative", top: "50%", transform: "translateY(-50%)" }} >
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         O
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         R
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         G
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         A
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         N
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         I
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         Z
-                                     </p>
-                                     <p
-                                         style={{ pointerEvents: "none", userSelect: "none" }} >
-                                         E
-                                     </p>
-                                 </div>
+                                 "Discussion" :
+                                 "Organize"
+
                             }
                         </DivButton>
+                    </Banner>
 
-                        <div
-                            style={{
-                                width: this.state.showList ?
-                                           "calc(max(15%, 300px) + 5px)" :
-                                           "5px",
-                                left: "0",
-                                position: "absolute",
-                                height: "100%",
-                                borderRight: "5px solid #414458"
-                            }} >
+                    <ContentCard>
+                        <Tab.Container
+                            activeKey={this.state.tab}
+                            onSelect={(k) => this.selectTab(k)} >
+                            <div
 
-                            {this.state.modal.create &&
-                                <CreateTaskModal
-                                    onClose={this.create.close}
-                                    type={this.state.modal.type} />
-                            }
-                            <Menu
-                                anchorEl={this.state.anchor}
-                                anchorOrigin={{
-                                    vertical: "bottom",
-                                    horizontal: "center"
-                                }}
-                                id="CreateMenu"
-                                onClose={() => this.setState({ anchor: null })}
-                                open={Boolean(this.state.anchor)}
-                                transformOrigin={{
-                                    vertical: "bottom",
-                                    horizontal: "center"
-                                }} >
-
-                                <MenuItem
-                                    onClick={this.create.text} >
-                                    Input: Open Text
-                                </MenuItem>
-
-                                <Divider />
-
-                                <MenuItem
-                                    onClick={this.create.multipleChoice} >
-                                    Vote: Multiple Choice
-                                </MenuItem>
-
-                                <Divider />
-
-                                <MenuItem
-                                    onClick={this.create.points} >
-                                    Vote: Points
-                                </MenuItem>
-
-                                <Divider />
-
-                                <MenuItem
-                                    onClick={this.create.slider} >
-                                    Vote: Slider
-                                </MenuItem>
-
-                            </Menu>
-
-                            <Collection
-                                createTask={(event) => this.create.menu(event)}
-                                shown={this.state.showList}
-                                update={this.update.bind(this)} >
-                                {this.state.tasks != undefined &&
-                                    this.state.tasks.map(task =>
-                                        <Task
-                                            active={this.state.active === task.Index}
-                                            id={task.Index}
-                                            InProgress={task.InProgress}
-                                            key={task.Index}
-                                            onClick={(e) => this.SSE.start(e.target.id)}
-                                            ShowResults={task.ShowResults}
-                                            title={task.Title}
-                                            type={task.Type}
-                                            update={this.update.bind(this)} />
-                                    )}
-                            </Collection>
-
-                            <DivButton
-                                onClick={() => { this.setState({ showList: !this.state.showList }); }}
                                 style={{
-                                    width: "30px",
-                                    right: "-35px",
+                                    width: this.state.showList ?
+                                               "calc(max(15%, 300px) + 5px)" :
+                                               "5px",
+                                    left: "0",
                                     position: "absolute",
-                                    height: "60px",
-                                    backgroundColor: "#414458",
-                                    color: "#ffffff",
-                                    borderRight: "1px solid #fff",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                    borderRadius: "0 30px 30px 0",
-                                    zIndex: "10"
+                                    height: "100%",
+                                    borderRight: "5px solid #414458"
                                 }} >
-                                {this.state.showList ?
-                                     <KeyboardArrowLeftIcon
-                                         className="icon"
-                                         style={{
-                                             width: "100%",
-                                             height: "auto",
-                                             position: "absolute",
-                                             top: "50%",
-                                             left: "0",
-                                             transform: "translateY(-50%)"
-                                         }} /> :
-                                     <KeyboardArrowRightIcon
-                                         className="icon"
-                                         style={{
-                                             width: "100%",
-                                             height: "auto",
-                                             position: "absolute",
-                                             top: "50%",
-                                             left: "0",
-                                             transform: "translateY(-50%)"
-                                         }} />
+
+                                {this.state.modal.create &&
+                                    <CreateTaskModal
+                                        onClose={this.create.close}
+                                        type={this.state.modal.type} />
                                 }
-                            </DivButton>
+                                <Menu
+                                    anchorEl={this.state.anchor}
+                                    anchorOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "center"
+                                    }}
+                                    id="CreateMenu"
+                                    onClose={() => this.setState({ anchor: null })}
+                                    open={Boolean(this.state.anchor)}
+                                    transformOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "center"
+                                    }} >
 
-                        </div>
+                                    <MenuItem
+                                        onClick={this.create.text} >
+                                        Input: Open Text
+                                    </MenuItem>
 
-                        <div
-                            style={{
-                                width: this.state.showList ?
-                                           "calc(min(85%, calc(100% - 300px)) - 35px)" :
-                                           "calc(100% - 35px)",
-                                left: this.state.showList ?
-                                          "calc(max(15%, 300px) + 5px)" :
-                                          "5px",
-                                position: "absolute",
-                                height: "100%"
-                            }} >
-                            <Tab.Content>
-                                <Tab.Pane
-                                    eventKey="task" >
-                                    <Tasks
-                                        active={this.state.active}
-                                        changeTab={this.selectTab.bind(this)}
-                                        SSE={this.SSE.start}
-                                        tasks={this.state.tasks}
-                                        update={this.update.bind(this)} />
-                                </Tab.Pane>
-                                <Tab.Pane
-                                    eventKey="organize" >
-                                    <Organizer
-                                        active={this.state.active}
-                                        changeTab={this.selectTab.bind(this)}
-                                        columns={this.state.columns}
-                                        handleTimer={this.HandleTimer}
-                                        popClosed={this.shortcuts.close}
-                                        popOpen={this.shortcuts.open}
-                                        showControls={this.state.showList ?
-                                                          true :
-                                                          this.state.showControls}
-                                        SSE={this.SSE.start}
-                                        tasks={this.state.tasks}
-                                        update={this.update.bind(this)} />
-                                </Tab.Pane>
-                            </Tab.Content>
-                        </div>
-                    </Tab.Container>
-                </ContentCard>
+                                    <Divider />
+
+                                    <MenuItem
+                                        onClick={this.create.multipleChoice} >
+                                        Vote: Multiple Choice
+                                    </MenuItem>
+
+                                    <Divider />
+
+                                    <MenuItem
+                                        onClick={this.create.points} >
+                                        Vote: Points
+                                    </MenuItem>
+
+                                    <Divider />
+
+                                    <MenuItem
+                                        onClick={this.create.slider} >
+                                        Vote: Slider
+                                    </MenuItem>
+
+                                </Menu>
+
+                                <Collection
+                                    createTask={(event) => this.create.menu(event)}
+                                    shown={this.state.showList}
+                                    update={this.update.bind(this)} >
+                                    {this.state.tasks != undefined &&
+                                        this.state.tasks.map(task =>
+                                            <Task
+                                                active={this.state.active === task.Index}
+                                                id={task.Index}
+                                                InProgress={task.InProgress}
+                                                key={task.Index}
+                                                onClick={(e) => this.SSE.start(e.target.id)}
+                                                ShowResults={task.ShowResults}
+                                                title={task.Title}
+                                                type={task.Type}
+                                                update={this.update.bind(this)} />
+                                        )}
+                                </Collection>
+
+                                <DivButton
+                                    onClick={() => { this.setState({ showList: !this.state.showList }); }}
+                                    style={{
+                                        width: "30px",
+                                        right: "-35px",
+                                        position: "absolute",
+                                        height: "60px",
+                                        backgroundColor: this.state.tab === "organize" ?
+                                                             "#374785" :
+                                                             "#24305E",
+                                        color: "#ffffff",
+                                        borderRight: "1px solid #fff",
+                                        top: "50%",
+                                        transform: "translateY(-50%)",
+                                        borderRadius: "0 30px 30px 0",
+                                        zIndex: "10"
+                                    }} >
+                                    {this.state.showList ?
+                                         <KeyboardArrowLeftIcon
+                                             className="icon"
+                                             style={{
+                                                 width: "100%",
+                                                 height: "auto",
+                                                 position: "absolute",
+                                                 top: "50%",
+                                                 left: "0",
+                                                 transform: "translateY(-50%)"
+                                             }} /> :
+                                         <KeyboardArrowRightIcon
+                                             className="icon"
+                                             style={{
+                                                 width: "100%",
+                                                 height: "auto",
+                                                 position: "absolute",
+                                                 top: "50%",
+                                                 left: "0",
+                                                 transform: "translateY(-50%)"
+                                             }} />
+                                    }
+                                </DivButton>
+
+                            </div>
+
+                            <div
+                                style={{
+                                    width: this.state.showList ?
+                                               "calc(min(85%, calc(100% - 300px)) - 5px)" :
+                                               "calc(100% - 5px)",
+                                    left: this.state.showList ?
+                                              "calc(max(15%, 300px) + 5px)" :
+                                              "5px",
+                                    position: "absolute",
+                                    height: "100%"
+                                }} >
+                                <Tab.Content>
+                                    <Tab.Pane
+                                        eventKey="task" >
+                                        <Tasks
+                                            active={this.state.active}
+                                            changeTab={this.selectTab.bind(this)}
+                                            columns={this.state.columns}
+                                            SSE={this.SSE.start}
+                                            tasks={this.state.tasks}
+                                            update={this.update.bind(this)} />
+                                    </Tab.Pane>
+                                    <Tab.Pane
+                                        eventKey="organize" >
+                                        <Organizer
+                                            active={this.state.active}
+                                            changeTab={this.selectTab.bind(this)}
+                                            columns={this.state.columns}
+                                            handleTimer={this.HandleTimer}
+                                            popClosed={this.shortcuts.close}
+                                            popOpen={this.shortcuts.open}
+                                            showControls={this.state.showList ?
+                                                              true :
+                                                              this.state.showControls}
+                                            SSE={this.SSE.start}
+                                            tasks={this.state.tasks}
+                                            update={this.update.bind(this)} />
+                                    </Tab.Pane>
+                                </Tab.Content>
+                            </div>
+                        </Tab.Container>
+                    </ContentCard>
+                </ThemeProvider>
             </MainContainer>
         );
     }

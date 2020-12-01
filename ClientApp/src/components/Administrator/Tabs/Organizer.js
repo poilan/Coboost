@@ -10,7 +10,7 @@ import {Column} from "./Components/Column";
 import {ResultBackground, ResultItem, ResultSlider} from "./Components/Results";
 import {CreateTaskModal} from "./Components/CreateModal";
 import {ContextMenu} from "./Components/ContextMenu";
-import {Tooltip, Collapse, IconButton, Button, Menu, MenuItem, TextField} from "@material-ui/core";
+import {Tooltip, Collapse, IconButton, Button, Menu, MenuItem, TextField, Typography, ButtonGroup, createMuiTheme, ThemeProvider, Popper, Grow, Paper, ClickAwayListener, MenuList, Box} from "@material-ui/core";
 import {InputModal} from "./Components/InputModal";
 import CreateIcon from "@material-ui/icons/Create";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
@@ -18,7 +18,10 @@ import AllOutIcon from "@material-ui/icons/AllOut";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CallMergeIcon from "@material-ui/icons/CallMerge";
 import ArchiveIcon from "@material-ui/icons/Archive";
-import {width} from "@material-ui/system";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import TimerIcon from "@material-ui/icons/Timer";
+import {width, height} from "@material-ui/system";
+import {green, red} from "@material-ui/core/colors";
 
 
 const MainContainer = Styled.div`
@@ -199,6 +202,16 @@ const ContentBody = Styled(Card.Body)`
     width: 100%;
     height: calc(100% - 50px);
     padding: 50px;
+    padding-top: calc(50px + 2rem);
+`;
+
+const TaskTitle = Styled(Typography)`
+    font-weight: 600 !important;
+    position: absolute;
+    left: 50%;
+    top: 1rem;
+    transform: translateX(-50%);
+    font-size: 2rem !important;
 `;
 
 export class Organizer extends Component {
@@ -221,7 +234,10 @@ export class Organizer extends Component {
                 remove: false,
                 type: 1
             },
-            anchor: null,
+            anchor: {
+                time: false,
+                task: null
+            },
 
             details: {
                 open: false,
@@ -235,7 +251,7 @@ export class Organizer extends Component {
             },
             resultsAsPercentage: false
         };
-
+        this.timeAnchor = createRef();
         //Contains all the modal's
         this.modal = {
             answer: {
@@ -260,11 +276,13 @@ export class Organizer extends Component {
             },
 
             rename: {
-                open: (event) => {
+                open: (event, titleKey) => {
                     const Key = event.target.id.split("-");
                     let Title;
 
-                    if (Key.indexOf("title") !== -1)
+                    if (titleKey)
+                        Title = this.props.tasks[this.props.active].Groups[titleKey[0]].Members[titleKey[1]].Title;
+                    else if (Key.indexOf("title") !== -1)
                         Title = this.props.tasks[this.props.active].Groups[Key[0]].Title;
                     else
                         Title = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]].Title;
@@ -353,7 +371,9 @@ export class Organizer extends Component {
                             create: true,
                             type: type
                         },
-                        anchor: null
+                        anchor: {
+                            task: null
+                        }
                     });
                     this.props.popOpen();
                 },
@@ -440,7 +460,9 @@ export class Organizer extends Component {
                 {
                     this.setState({
                         selected: [],
-                        anchor: null
+                        anchor: {
+                            task: null
+                        }
                     });
                 }
             });
@@ -492,10 +514,23 @@ export class Organizer extends Component {
     }
 
 
+    secondsToMinutes = (countdown) => {
+        let Seconds = countdown, Minutes = 0;
+        while (Seconds >= 60)
+        {
+            Minutes += 1;
+            Seconds -= 60;
+        }
+        return `${Minutes}:${Seconds < 10 ?
+                             `0${Seconds}` :
+                             Seconds}`;
+    }
+
+
     render()
     {
         const Text = (task) => {
-            const Shrink = (key) => {
+            const ColShrink = (key) => {
                 const Columns = this.props.columns;
 
                 if (Columns[key] !== undefined)
@@ -510,7 +545,7 @@ export class Organizer extends Component {
                 });
             };
 
-            const Grow = (key) => {
+            const ColGrow = (key) => {
                 const Columns = this.props.columns;
 
                 if (Columns[key] !== undefined)
@@ -581,7 +616,7 @@ export class Organizer extends Component {
                 {
                     const Key = this.state.selected[I].split("-");
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
-                    if (Answer !== undefined)
+                    if (Answer !== undefined && !task.Groups[Key[0]].Collapsed)
                     {
                         Selected.push(this.state.selected[I]);
                         Keys.push(Key);
@@ -712,6 +747,25 @@ export class Organizer extends Component {
                 });
             };
 
+
+            const TimeToggle = () => {
+                this.setState({
+                    anchor: {
+                        time: !this.state.anchor.time
+                    }
+                });
+            };
+            const TimeClose = (event) => {
+                if (this.timeAnchor.current && this.timeAnchor.current.contains(event.target))
+                    return;
+
+                this.setState({
+                    anchor: {
+                        time: false
+                    }
+                });
+            };
+
             return (
                 <MainContainer>
                     <ContentHeader>
@@ -768,41 +822,96 @@ export class Organizer extends Component {
 
                         <Countdown>
                             {
-                                !task.InProgress || task.Countdown < 0 ?
-                                    <TextField
-                                        label="Task Timer: Seconds"
-                                        margin="none"
-                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
-                                        style={{ width: "150px" }}
-                                        type="number"
-                                        value={task.Timer}
-                                        variant="standard" /> :
-                                    <TextField
-                                        disabled
-                                        label="Countdown: Seconds Left"
-                                        margin="none"
-                                        style={{ width: "150px" }}
-                                        value={task.Countdown}
-                                        variant="standard" />
-                            }
-                            {
-                                !task.InProgress || task.Countdown < 0 ?
+                                !task.InProgress ?
                                     <Button
-                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-                                        Start Timer
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "red" }} >
+                                        Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-                                        Close Task
+                                        style={{ width: "125px", backgroundColor: "green" }} >
+                                        Task Open
                                     </Button>
                             }
+                            {
+                                <React.Fragment>
+                                    <ButtonGroup
+                                        color="secondary"
+                                        ref={this.timeAnchor}
+                                        variant="contained" >
+                                        {
+                                            !task.InProgress || task.Countdown < 0 ?
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    Start Timer
+                                                </Button> :
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    {this.secondsToMinutes(task.Countdown)}
+                                                </Button>
+
+                                        }
+                                        <Button
+                                            aria-controls={this.state.anchor.time ?
+                                                               "split-button menu" :
+                                                               undefined}
+                                            aria-expanded={this.state.anchor.time ?
+                                                               "true" :
+                                                               undefined}
+                                            aria-haspopup="menu"
+                                            color="secondary"
+                                            onClick={TimeToggle}
+                                            size="small" >
+                                            <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+                                    <Popper
+                                        anchorEl={this.timeAnchor.current}
+                                        disablePortal
+                                        open={this.state.anchor.time}
+                                        role={undefined}
+                                        style={{ zIndex: "15" }} >
+                                        <Paper>
+                                            <ClickAwayListener
+                                                onClickAway={TimeClose} >
+                                                <Box
+                                                    m={1}
+                                                    mb={2}
+                                                    p={1} >
+                                                    <TextField
+                                                        label="Timer in Seconds"
+                                                        margin="none"
+                                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        style={{ width: "150px" }}
+                                                        type="number"
+                                                        value={task.Timer}
+                                                        variant="standard" />
+                                                </Box>
+                                            </ClickAwayListener>
+                                        </Paper>
+
+
+                                    </Popper>
+                                </React.Fragment>
+                            }
+
                         </Countdown>
 
                     </ContentHeader>
 
                     <ContentBody>
+                        <TaskTitle>
+                            {task.Title}
+                        </TaskTitle>
 
                         <ButtonToolbar
                             disabled={this.state.selected.length < 1} >
@@ -810,7 +919,7 @@ export class Organizer extends Component {
                             <SendToMC
                                 disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: e.currentTarget })} >
+                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
 
@@ -841,11 +950,11 @@ export class Organizer extends Component {
                                 }} />
 
                             <Menu
-                                anchorEl={this.state.anchor}
+                                anchorEl={this.state.anchor.task}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
-                                onClose={() => this.setState({ anchor: null })}
-                                open={Boolean(this.state.anchor)}
+                                onClose={() => this.setState({ anchor: { task: null } })}
+                                open={Boolean(this.state.anchor.task)}
                                 transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
 
                                 {
@@ -884,10 +993,10 @@ export class Organizer extends Component {
                                 <Column
                                     clearSelect={Clear}
                                     column={column.index}
-                                    grow={() => Grow(column.index)}
+                                    grow={() => ColGrow(column.index)}
                                     last={column.index + 1 === this.props.columns.length}
                                     selected={GetSelected}
-                                    shrink={() => Shrink(column.index)}
+                                    shrink={() => ColShrink(column.index)}
                                     width={column.width} >
 
                                     {task.Groups !== undefined &&
@@ -1023,6 +1132,24 @@ export class Organizer extends Component {
                 return Options;
             };
 
+            const TimeToggle = () => {
+                this.setState({
+                    anchor: {
+                        time: !this.state.anchor.time
+                    }
+                });
+            };
+            const TimeClose = (event) => {
+                if (this.timeAnchor.current && this.timeAnchor.current.contains(event.target))
+                    return;
+
+                this.setState({
+                    anchor: {
+                        time: false
+                    }
+                });
+            };
+
 
 
             return (
@@ -1030,39 +1157,95 @@ export class Organizer extends Component {
                     <ContentHeader>
                         <Countdown>
                             {
-                                !task.InProgress || task.Countdown < 0 ?
-                                    <TextField
-                                        label="Task Timer: Seconds"
-                                        margin="none"
-                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
-                                        style={{ width: "150px" }}
-                                        type="number"
-                                        value={task.Timer}
-                                        variant="standard" /> :
-                                    <TextField
-                                        disabled
-                                        label="Countdown: Seconds Left"
-                                        margin="none"
-                                        style={{ width: "150px" }}
-                                        value={task.Countdown}
-                                        variant="standard" />
-                            }
-                            {
-                                !task.InProgress || task.Countdown < 0 ?
+                                !task.InProgress ?
                                     <Button
-                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-                                        Start Timer
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "red" }} >
+                                        Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-                                        Close Task
+                                        style={{ width: "125px", backgroundColor: "green" }} >
+                                        Task Open
                                     </Button>
                             }
+                            {
+                                <React.Fragment>
+                                    <ButtonGroup
+                                        color="secondary"
+                                        ref={this.timeAnchor}
+                                        variant="contained" >
+                                        {
+                                            !task.InProgress || task.Countdown < 0 ?
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    Start Timer
+                                                </Button> :
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    {this.secondsToMinutes(task.Countdown)}
+                                                </Button>
+
+                                        }
+                                        <Button
+                                            aria-controls={this.state.anchor.time ?
+                                                               "split-button menu" :
+                                                               undefined}
+                                            aria-expanded={this.state.anchor.time ?
+                                                               "true" :
+                                                               undefined}
+                                            aria-haspopup="menu"
+                                            color="secondary"
+                                            onClick={TimeToggle}
+                                            size="small" >
+                                            <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+                                    <Popper
+                                        anchorEl={this.timeAnchor.current}
+                                        disablePortal
+                                        open={this.state.anchor.time}
+                                        role={undefined}
+                                        style={{ zIndex: "15" }} >
+                                        <Paper>
+                                            <ClickAwayListener
+                                                onClickAway={TimeClose} >
+                                                <Box
+                                                    m={1}
+                                                    mb={2}
+                                                    p={1} >
+                                                    <TextField
+                                                        label="Timer in Seconds"
+                                                        margin="none"
+                                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        style={{ width: "150px" }}
+                                                        type="number"
+                                                        value={task.Timer}
+                                                        variant="standard" />
+                                                </Box>
+                                            </ClickAwayListener>
+                                        </Paper>
+
+
+                                    </Popper>
+                                </React.Fragment>
+                            }
+
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
+                        <TaskTitle>
+                            {task.Title}
+                        </TaskTitle>
+
                         {this.state.modal.create &&
                             <CreateTaskModal
                                 onClose={this.modal.create.close}
@@ -1075,7 +1258,7 @@ export class Organizer extends Component {
                             <SendToMC
                                 disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: e.currentTarget })} >
+                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
                             <div
@@ -1104,11 +1287,11 @@ export class Organizer extends Component {
                                 }} />
 
                             <Menu
-                                anchorEl={this.state.anchor}
+                                anchorEl={this.state.anchor.task}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
-                                onClose={() => this.setState({ anchor: null })}
-                                open={Boolean(this.state.anchor)}
+                                onClose={() => this.setState({ anchor: { task: null } })}
+                                open={Boolean(this.state.anchor.task)}
                                 transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
                                 {
                                     this.state.selected.length < 2 &&
@@ -1206,6 +1389,24 @@ export class Organizer extends Component {
                 return Options;
             };
 
+            const TimeToggle = () => {
+                this.setState({
+                    anchor: {
+                        time: !this.state.anchor.time
+                    }
+                });
+            };
+            const TimeClose = (event) => {
+                if (this.timeAnchor.current && this.timeAnchor.current.contains(event.target))
+                    return;
+
+                this.setState({
+                    anchor: {
+                        time: false
+                    }
+                });
+            };
+
 
 
             return (
@@ -1213,45 +1414,95 @@ export class Organizer extends Component {
                     <ContentHeader>
                         <Countdown>
                             {
-                                !task.InProgress || task.Countdown < 0 ?
-                                    <TextField
-                                        label="Task Timer: Seconds"
-                                        margin="none"
-                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
-                                        style={{ width: "150px" }}
-                                        type="number"
-                                        value={task.Timer}
-                                        variant="standard" /> :
-                                    <TextField
-                                        disabled
-                                        label="Countdown: Seconds Left"
-                                        margin="none"
-                                        style={{ width: "150px" }}
-                                        value={task.Countdown}
-                                        variant="standard" />
-                            }
-                            {
-                                !task.InProgress || task.Countdown < 0 ?
+                                !task.InProgress ?
                                     <Button
-                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                        style={{
-                                            width: "125px",
-                                            backgroundColor: "#b1b4c8"
-                                        }} >
-                                        Start Timer
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "red" }} >
+                                        Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{
-                                            width: "125px",
-                                            backgroundColor: "#b1b4c8"
-                                        }} >
-                                        Close Task
+                                        style={{ width: "125px", backgroundColor: "green" }} >
+                                        Task Open
                                     </Button>
                             }
+                            {
+                                <React.Fragment>
+                                    <ButtonGroup
+                                        color="secondary"
+                                        ref={this.timeAnchor}
+                                        variant="contained" >
+                                        {
+                                            !task.InProgress || task.Countdown < 0 ?
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    Start Timer
+                                                </Button> :
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    {this.secondsToMinutes(task.Countdown)}
+                                                </Button>
+
+                                        }
+                                        <Button
+                                            aria-controls={this.state.anchor.time ?
+                                                               "split-button menu" :
+                                                               undefined}
+                                            aria-expanded={this.state.anchor.time ?
+                                                               "true" :
+                                                               undefined}
+                                            aria-haspopup="menu"
+                                            color="secondary"
+                                            onClick={TimeToggle}
+                                            size="small" >
+                                            <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+                                    <Popper
+                                        anchorEl={this.timeAnchor.current}
+                                        disablePortal
+                                        open={this.state.anchor.time}
+                                        role={undefined}
+                                        style={{ zIndex: "15" }} >
+                                        <Paper>
+                                            <ClickAwayListener
+                                                onClickAway={TimeClose} >
+                                                <Box
+                                                    m={1}
+                                                    mb={2}
+                                                    p={1} >
+                                                    <TextField
+                                                        label="Timer in Seconds"
+                                                        margin="none"
+                                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        style={{ width: "150px" }}
+                                                        type="number"
+                                                        value={task.Timer}
+                                                        variant="standard" />
+                                                </Box>
+                                            </ClickAwayListener>
+                                        </Paper>
+
+
+                                    </Popper>
+                                </React.Fragment>
+                            }
+
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
+                        <TaskTitle>
+                            {task.Title}
+                        </TaskTitle>
+
                         {
                             this.state.modal.create &&
                                 <CreateTaskModal
@@ -1266,10 +1517,7 @@ export class Organizer extends Component {
                             <SendToMC
                                 disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) =>
-                                    this.setState({
-                                        anchor: e.currentTarget
-                                    })} >
+                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
 
@@ -1300,11 +1548,11 @@ export class Organizer extends Component {
                                 }} />
 
                             <Menu
-                                anchorEl={this.state.anchor}
+                                anchorEl={this.state.anchor.task}
                                 anchorOrigin={{ vertical: "center", horizontal: "center" }}
                                 id="CreateMenu"
-                                onClose={() => this.setState({ anchor: null })}
-                                open={Boolean(this.state.anchor)}
+                                onClose={() => this.setState({ anchor: { task: null } })}
+                                open={Boolean(this.state.anchor.task)}
                                 transformOrigin={{ vertical: "bottom", horizontal: "center" }} >
 
                                 {
@@ -1394,6 +1642,24 @@ export class Organizer extends Component {
                 return Options;
             };
 
+            const TimeToggle = () => {
+                this.setState({
+                    anchor: {
+                        time: !this.state.anchor.time
+                    }
+                });
+            };
+            const TimeClose = (event) => {
+                if (this.timeAnchor.current && this.timeAnchor.current.contains(event.target))
+                    return;
+
+                this.setState({
+                    anchor: {
+                        time: false
+                    }
+                });
+            };
+
 
 
             return (
@@ -1401,43 +1667,96 @@ export class Organizer extends Component {
                     <ContentHeader>
                         <Countdown>
                             {
-                                !task.InProgress || task.Countdown < 0 ?
-                                    <TextField
-                                        label="Task Timer: Seconds"
-                                        margin="none"
-                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
-                                        style={{ width: "150px" }}
-                                        type="number"
-                                        value={task.Timer}
-                                        variant="standard" /> :
-                                    <TextField
-                                        disabled
-                                        label="Countdown: Seconds Left"
-                                        margin="none"
-                                        style={{ width: "150px" }}
-                                        value={task.Countdown}
-                                        variant="standard" />
-                            }
-                            {
-                                !task.InProgress || task.Countdown < 0 ?
+                                !task.InProgress ?
                                     <Button
-                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-
-                                        Start Timer
+                                        onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                        style={{ width: "125px", backgroundColor: "red" }} >
+                                        Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "125px", backgroundColor: "#b1b4c8" }} >
-
-                                        Close Task
+                                        style={{ width: "125px", backgroundColor: "green" }} >
+                                        Task Open
                                     </Button>
                             }
+                            {
+                                <React.Fragment>
+                                    <ButtonGroup
+                                        color="secondary"
+                                        ref={this.timeAnchor}
+                                        variant="contained" >
+                                        {
+                                            !task.InProgress || task.Countdown < 0 ?
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    Start Timer
+                                                </Button> :
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
+                                                    style={{ minWidth: "150px" }} >
+                                                    <TimerIcon />
+                                                    <br />
+                                                    {this.secondsToMinutes(task.Countdown)}
+                                                </Button>
+
+                                        }
+                                        <Button
+                                            aria-controls={this.state.anchor.time ?
+                                                               "split-button menu" :
+                                                               undefined}
+                                            aria-expanded={this.state.anchor.time ?
+                                                               "true" :
+                                                               undefined}
+                                            aria-haspopup="menu"
+                                            color="secondary"
+                                            onClick={TimeToggle}
+                                            size="small" >
+                                            <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+                                    <Popper
+                                        anchorEl={this.timeAnchor.current}
+                                        disablePortal
+                                        open={this.state.anchor.time}
+                                        role={undefined}
+                                        style={{ zIndex: "15" }} >
+                                        <Paper>
+                                            <ClickAwayListener
+                                                onClickAway={TimeClose} >
+                                                <Box
+                                                    m={1}
+                                                    mb={2}
+                                                    p={1} >
+                                                    <TextField
+                                                        label="Timer in Seconds"
+                                                        margin="none"
+                                                        onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        style={{ width: "150px" }}
+                                                        type="number"
+                                                        value={task.Timer}
+                                                        variant="standard" />
+                                                </Box>
+                                            </ClickAwayListener>
+                                        </Paper>
+
+
+                                    </Popper>
+                                </React.Fragment>
+                            }
+
                         </Countdown>
 
                     </ContentHeader>
 
                     <ContentBody>
+                        <TaskTitle>
+                            {task.Title}
+                        </TaskTitle>
                         {
                             this.state.modal.create &&
                                 <CreateTaskModal
@@ -1451,10 +1770,7 @@ export class Organizer extends Component {
                             <SendToMC
                                 disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) =>
-                                    this.setState({
-                                        anchor: e.currentTarget
-                                    })} >
+                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
                             <div
@@ -1483,16 +1799,14 @@ export class Organizer extends Component {
                                 }} />
 
                             <Menu
-                                anchorEl={this.state.anchor}
+                                anchorEl={this.state.anchor.task}
                                 anchorOrigin={{
                                     vertical: "center",
                                     horizontal: "center"
                                 }}
                                 id="CreateMenu"
-                                onClose={() => this.setState({
-                                    anchor: null
-                                })}
-                                open={Boolean(this.state.anchor)}
+                                onClose={() => this.setState({ anchor: { task: null } })}
+                                open={Boolean(this.state.anchor.task)}
                                 transformOrigin={{
                                     vertical: "bottom",
                                     horizontal: "center"
