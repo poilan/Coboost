@@ -858,7 +858,8 @@ export class Organizer extends Component {
                                             aria-haspopup="menu"
                                             color="secondary"
                                             onClick={TimeToggle}
-                                            size="small" >
+                                            size="small"
+                                            style={{ minWidth: "50px" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1190,7 +1191,8 @@ export class Organizer extends Component {
                                             aria-haspopup="menu"
                                             color="secondary"
                                             onClick={TimeToggle}
-                                            size="small" >
+                                            size="small"
+                                            style={{ minWidth: "50px" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1445,7 +1447,8 @@ export class Organizer extends Component {
                                             aria-haspopup="menu"
                                             color="secondary"
                                             onClick={TimeToggle}
-                                            size="small" >
+                                            size="small"
+                                            style={{ minWidth: "50px" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1696,7 +1699,8 @@ export class Organizer extends Component {
                                             aria-haspopup="menu"
                                             color="secondary"
                                             onClick={TimeToggle}
-                                            size="small" >
+                                            size="small"
+                                            style={{ minWidth: "50px" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
