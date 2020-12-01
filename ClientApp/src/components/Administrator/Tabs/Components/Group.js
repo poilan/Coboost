@@ -34,7 +34,7 @@ const GroupContainer = Styled.div`
 
     margin-bottom: ${props => props.group === 0 ?
                               "0" :
-                              "30px"};
+                              "22.5px"};
 
     border-radius: ${props => props.group === 0 ?
                               "0px" :

@@ -18,6 +18,8 @@ import AllOutIcon from "@material-ui/icons/AllOut";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CallMergeIcon from "@material-ui/icons/CallMerge";
 import ArchiveIcon from "@material-ui/icons/Archive";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import TimerIcon from "@material-ui/icons/Timer";
 import {width, height} from "@material-ui/system";
@@ -812,11 +814,19 @@ export class Organizer extends Component {
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        <LockIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        <LockOpenIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Open
                                     </Button>
                             }
@@ -832,7 +842,8 @@ export class Organizer extends Component {
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     Start Timer
                                                 </Button> :
@@ -841,7 +852,8 @@ export class Organizer extends Component {
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
@@ -1145,11 +1157,19 @@ export class Organizer extends Component {
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        <LockIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        <LockOpenIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Open
                                     </Button>
                             }
@@ -1165,7 +1185,8 @@ export class Organizer extends Component {
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     Start Timer
                                                 </Button> :
@@ -1174,7 +1195,8 @@ export class Organizer extends Component {
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
@@ -1401,11 +1423,19 @@ export class Organizer extends Component {
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        <LockIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        <LockOpenIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Open
                                     </Button>
                             }
@@ -1421,7 +1451,8 @@ export class Organizer extends Component {
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     Start Timer
                                                 </Button> :
@@ -1430,7 +1461,8 @@ export class Organizer extends Component {
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
@@ -1653,11 +1685,19 @@ export class Organizer extends Component {
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        <LockIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                         style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        <LockOpenIcon
+                                            className="icon"
+                                            style={{ color: "white" }} />
+                                        <br />
                                         Task Open
                                     </Button>
                             }
@@ -1673,7 +1713,8 @@ export class Organizer extends Component {
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     Start Timer
                                                 </Button> :
@@ -1682,7 +1723,8 @@ export class Organizer extends Component {
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
                                                     style={{ minWidth: "150px", outline: "0 !important" }} >
-                                                    <TimerIcon />
+                                                    <TimerIcon
+                                                        className="icon" />
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
