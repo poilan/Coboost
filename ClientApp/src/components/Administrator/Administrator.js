@@ -99,12 +99,13 @@ const DivButton = Styled.div`
     top: 50%;
     position: absolute;
     height: 45px;
+    line-height: 45px;
     box-sizing: border-box;
     color: #000;
     padding: 0 150px;
     font-size: 1.25rem;
     font-weight: 600;
-    text-align: justify;
+    text-align: center;
     border-radius: 5px;
     border: 3px solid #000;
     transform: translate(-50%, -50%);
