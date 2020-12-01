@@ -30,7 +30,7 @@ const CollectionContainer = Styled.div`
                            "hidden"};
     left: 0;
     scrollbar-width: thin;
-    scrollbar-color: #4C7AD3 #fff;
+    scrollbar-color: #4C7AD3 #555;
     z-index: 10;
 `;
 

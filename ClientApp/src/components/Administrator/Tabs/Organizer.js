@@ -39,7 +39,7 @@ const MainContainer = Styled.div`
     left 0;
 
     scrollbar-width: thin;
-    scrollbar-color: #374785 #fff;
+    scrollbar-color: #4C7AD3 #555;
 `;
 
 const ButtonToolbar = Styled.div`

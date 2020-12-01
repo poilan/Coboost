@@ -819,7 +819,7 @@ export class Administrator extends React.Component {
 
                         <BannerCode>
                             {this.state.code > 0 ?
-                                 `Room: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
+                                 `Session: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
                                  null}
                         </BannerCode>
                         <DivButton
