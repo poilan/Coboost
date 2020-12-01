@@ -21,7 +21,7 @@ const MainContainer = Styled(Col)`
 
 const Banner = Styled(Col)`
     position: sticky;
-    background: #575b75;
+    background: #374785;
     height: 75px;
     top: 0;
     left: 0;
@@ -49,7 +49,7 @@ const HeaderText = Styled.h1`
     font-size: 1rem;
 
     padding: 10px 35px;
-    border-bottom: 4px solid #575b75;
+    border-bottom: 4px solid #374785;
     cursor: pointer;
 
     flex: 1 1 auto;
@@ -615,11 +615,11 @@ export class Dashboard extends React.Component {
 
                         <BannerDropdown
                             style={{
-                            float: "right",
-                            position: "relative",
-                            top: "50%",
-                            transform: "translateY(-50%)"
-                        }}
+                                float: "right",
+                                position: "relative",
+                                top: "50%",
+                                transform: "translateY(-50%)"
+                            }}
                             title={<BsJustify />} >
                             <BannerLink
                                 onClick={this.logout} >
@@ -629,11 +629,11 @@ export class Dashboard extends React.Component {
 
                         <BannerDropdown
                             style={{
-                            float: "right",
-                            position: "relative",
-                            top: "50%",
-                            transform: "translateY(-50%)"
-                        }}
+                                float: "right",
+                                position: "relative",
+                                top: "50%",
+                                transform: "translateY(-50%)"
+                            }}
                             title="New Session" >
                             <BannerLink
                                 onClick={this.newProject} >
@@ -657,17 +657,20 @@ export class Dashboard extends React.Component {
                     </CategoryContainer>
                 </MainContainer>
                 {this.state.showNewSessionModal &&
-                    <PageModal body={this.modalContent()}
+                    <PageModal
+                        body={this.modalContent()}
                         onClose={this.closeModal}
                         title="New Session" />
                 }
                 {this.state.showNewTemplateModal &&
-                    <PageModal body={this.modalTemplateContent()}
+                    <PageModal
+                        body={this.modalTemplateContent()}
                         onClose={this.closeModal}
                         title="New Template" />
                 }
                 {this.state.modal.delete &&
-                    <PageModal body={this.modal.delete.content()}
+                    <PageModal
+                        body={this.modal.delete.content()}
                         onClose={this.modal.delete.close.bind(this)}
                         title="Confirm Delete" />
                 }

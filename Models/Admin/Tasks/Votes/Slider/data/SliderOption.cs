@@ -41,7 +41,7 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider.data
         }
 
         /// <summary>
-        ///     The color of the option Hex code (E.G. '#575b75')
+        ///     The color of the option Hex code (E.G. '#374785')
         /// </summary>
         public string Color
         {

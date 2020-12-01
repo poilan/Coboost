@@ -21,7 +21,7 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points.data
         private string _color;
 
         /// <summary>
-        ///     The color of the option Hex code (e.g. '#575b75')
+        ///     The color of the option Hex code (e.g. '#374785')
         /// </summary>
         public string Color
         {

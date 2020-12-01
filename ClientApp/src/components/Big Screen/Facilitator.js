@@ -31,7 +31,7 @@ const FacilitatorContainer = Styled.div`
 const FacilitatorButton = Styled.button`
     color: rgb(249, 251, 247);
     background-color: ${props => props.isBigScreen ?
-                                 "#575b75" :
+                                 "#374785" :
                                  "rgb(66, 67, 85)"};
     height: 100%;
     border: ${props => props.isBigScreen ?
@@ -161,7 +161,7 @@ const Slide = Styled.div`
                            "white"};
     border: 2px solid ${props => props.isActive ?
                                  "#4C7ADC" :
-                                 "#575b75"};
+                                 "#374785"};
     border-radius: 4px;
 
     flex: 1 1 auto;

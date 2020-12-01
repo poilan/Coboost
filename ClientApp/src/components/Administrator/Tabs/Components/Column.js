@@ -27,7 +27,7 @@ const Container = Styled.div`
                              "0" :
                              "2px solid #C4C4C4"};
     scrollbar-width: thin;
-    scrollbar-color: #575b75 #fff;
+    scrollbar-color: #374785 #fff;
     vertical-align: top;
     page-break-inside: avoid;
 `;

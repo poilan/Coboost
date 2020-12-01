@@ -37,7 +37,7 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice.data
         }
 
         /// <summary>
-        ///     The color of the option Hex code (e.g. '#575b75')
+        ///     The color of the option Hex code (e.g. '#374785')
         /// </summary>
         public string Color
         {

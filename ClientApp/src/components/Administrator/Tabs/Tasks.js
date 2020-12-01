@@ -16,7 +16,7 @@ const SlideContainer = Styled.div`
     left: 2%;
     width: 96%;
     height: 96%;
-    border: 1px solid #575b75;
+    border: 1px solid #374785;
     overflow: hidden;
 `;
 

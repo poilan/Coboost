@@ -50,7 +50,7 @@ const ContentContainer = Styled(Col)`
     text-align: center;
 
     scrollbar-width: thin;
-    scrollbar-color: #575b75 #fff;
+    scrollbar-color: #374785 #fff;
     font-Size: 1.5rem;
 `;
 
@@ -74,7 +74,7 @@ const EventCode = Styled.h1`
     font-family: CircularStd;
     text-align: center;
     color: #4C7AD3;
-    color: #575b75;
+    color: #374785;
     font-Size: 1.5rem;
     font-weight: 600;
 `;
@@ -117,7 +117,7 @@ const BottomBanner = Styled(Col)`
 const BottomBannerText = Styled.h1`
     font-family: CircularStd;
     font-Size: 1.5rem;
-    color: #575b75;
+    color: #374785;
     padding: 0 35px;
     float: left;
     top:50%;

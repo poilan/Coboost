@@ -74,7 +74,7 @@ const LeftTitle = Styled.h1`
 
 const JoinEventBtn = Styled.button`
     font-family: CircularStd;
-    background-color: #575b75;
+    background-color: #374785;
     color: rgb(255, 255, 255);
     display: inline;
     text-align: center;
@@ -95,7 +95,7 @@ const JoinEventBtn = Styled.button`
                     "0.25" :
                     "0.5"}rem;
     position: absolute;
-    border: 2px solid #575b75;
+    border: 2px solid #374785;
     border-radius: 1rem;
 `;
 
@@ -351,7 +351,7 @@ export class Home extends React.Component {
                         position: "fixed",
                         top: "0",
                         left: "0",
-                        background: "#575b75",
+                        background: "#374785",
                         opacity: "60%",
                         zIndex: "-4"
                     }} />

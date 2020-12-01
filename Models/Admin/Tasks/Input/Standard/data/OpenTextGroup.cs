@@ -39,7 +39,7 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard.data
         }
 
         /// <summary>
-        ///     The color of the group, Hex code (e.g. '#575b75')
+        ///     The color of the group, Hex code (e.g. '#374785')
         /// </summary>
         public string Color
         {

@@ -37,7 +37,7 @@ const MainContainer = Styled.div`
     left 0;
 
     scrollbar-width: thin;
-    scrollbar-color: #575b75 #fff;
+    scrollbar-color: #374785 #fff;
 `;
 
 const ButtonToolbar = Styled.div`
@@ -108,27 +108,20 @@ const AnswerButton = Styled(Nav.Link)`
     flex: 1 1 auto;
     height: 100%;
     line-height: 25px;
+    transition-duration: 0.5s;
 
     &:hover {
-        color: #ddd;
-        filter: brightness(150%);
+        background: #a8d0e6;
+        border-color: #000;
+        color: #000;
         cursor: pointer;
     }
 
-    &:active {
-        color: #fff;
-        filter: brightness(75%);
-    }
-
-    &:disabled {
-        color: #fff;
-        border-width: 1px
-    }
 `;
 
 const SendToMC = Styled(Nav.Link)`
     color: #fff;
-    background: #575b75;
+    background: #374785;
     font-family: CircularStd;
     font-weight: 450;
     text-align: center;
@@ -933,7 +926,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -946,7 +939,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1049,7 +1042,7 @@ export class Organizer extends Component {
                                     {column.index + 1 === this.props.columns.length &&
                                         <Group
                                             clearSelect={Clear}
-                                            color="#575b75"
+                                            color="#374785"
                                             column={column.index}
                                             group="new"
                                             id="new"
@@ -1272,7 +1265,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1284,7 +1277,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1533,7 +1526,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1546,7 +1539,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1786,7 +1779,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1798,7 +1791,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#575b75",
+                                    backgroundColor: "#374785",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />

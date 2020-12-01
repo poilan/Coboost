@@ -48,12 +48,12 @@ const HeaderText = Styled.h1`
     font-size: 1.5rem;
     border-bottom: 4px ${props => props.active === props.id ?
                                   "solid" :
-                                  "hidden"} #575b75;
+                                  "hidden"} #374785;
     cursor: pointer;
     box-sizing: border-box;
     &:hover {
         border-bottom: 4px solid ${props => props.active === props.id ?
-                                            "#575b75" :
+                                            "#374785" :
                                             "#4f4f4f"};
     }
 
@@ -115,7 +115,7 @@ const ContentQuestion = Styled.p`
 
     position: relative;
     padding: 5px 0;
-    border-bottom: 2px solid #575b75;
+    border-bottom: 2px solid #374785;
     height: 30px;
 `;
 
@@ -141,7 +141,7 @@ const ContentInput = Styled(TextField)`
 `;
 
 const ContentButton = Styled(Button)`
-    background: #575b75;
+    background: #374785;
     color: #fff;
 
     font-family: CircularStd;
@@ -159,7 +159,7 @@ const ContentButton = Styled(Button)`
     bottom: 0;
 
     &:disabled {
-        background: #575b75;
+        background: #374785;
         opacity: 100%;
         border: 4px solid rgb(93, 97, 107);
     }

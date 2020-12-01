@@ -19,7 +19,7 @@ const CollectionContainer = Styled.div`
     background: #fff;
     height: 100%;
     top: 0;
-    border: 1px solid #575b75;
+    border: 1px solid #374785;
     border-left: 0;
     border-bottom: 0;
     display: inline-block;
