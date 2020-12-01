@@ -1101,13 +1101,10 @@ export class Mobile extends React.Component {
             case 1: // Answer Screen
                 if (this.getCurrentTask() !== undefined)
                 {
-                    if (!this.getCurrentTask().InProgress)
-                        return this.closedRender();
-
                     const Type = this.getTaskType();
                     const Answer = this.getTaskAnswers();
 
-                    if (Answer !== 0)
+                    if (Answer !== 0 && this.getCurrentTask().InProgress)
                     {
                         if (Type === 0)
                             return this.questionRender();
@@ -1118,6 +1115,8 @@ export class Mobile extends React.Component {
                         else if (Type === 3)
                             return this.sliderRender();
                     }
+                    else if (!this.getCurrentTask().InProgress)
+                        return this.closedRender();
                 }
                 else
                 {
