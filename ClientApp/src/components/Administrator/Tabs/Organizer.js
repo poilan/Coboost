@@ -1487,8 +1487,6 @@ export class Organizer extends Component {
                                                 </Box>
                                             </ClickAwayListener>
                                         </Paper>
-
-
                                     </Popper>
                                 </React.Fragment>
                             }
