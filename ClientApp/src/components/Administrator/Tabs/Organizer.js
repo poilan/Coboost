@@ -105,7 +105,6 @@ const AnswerButton = Styled(Nav.Link)`
 
     &:hover {
         background: #a8d0e6;
-        border-color: #000;
         color: #000;
         cursor: pointer;
     }

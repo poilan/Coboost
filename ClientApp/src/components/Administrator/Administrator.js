@@ -119,7 +119,6 @@ const DivButton = Styled.div`
     &:hover {
         cursor: pointer;
         background: #a8d0e6;
-        border: 3px solid #000;
         color: #000;
     }
 
@@ -138,7 +137,6 @@ const ListButton = Styled.div`
                            "#24305E" :
                            "#374785"};
     color: #ffffff;
-    border-right: 1px solid #fff;
     top: 50%;
     transform: translateY(-50%);
     border-radius: 0 30px 30px 0;
@@ -147,9 +145,6 @@ const ListButton = Styled.div`
     &:hover {
         color: #fff;
         cursor: pointer;
-        border-color: ${props => props.task ?
-                                 "#24305E" :
-                                 "#374785"};
         background: #a8d0e6;
     }
 
