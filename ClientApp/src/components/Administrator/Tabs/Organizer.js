@@ -819,12 +819,12 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
                                         Task Open
                                     </Button>
                             }
@@ -893,14 +893,10 @@ export class Organizer extends Component {
                                                 </Box>
                                             </ClickAwayListener>
                                         </Paper>
-
-
                                     </Popper>
                                 </React.Fragment>
                             }
-
                         </Countdown>
-
                     </ContentHeader>
 
                     <ContentBody>
@@ -1155,12 +1151,12 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
                                         Task Open
                                     </Button>
                             }
@@ -1229,12 +1225,9 @@ export class Organizer extends Component {
                                                 </Box>
                                             </ClickAwayListener>
                                         </Paper>
-
-
                                     </Popper>
                                 </React.Fragment>
                             }
-
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
@@ -1413,12 +1406,12 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
                                         Task Open
                                     </Button>
                             }
@@ -1490,7 +1483,6 @@ export class Organizer extends Component {
                                     </Popper>
                                 </React.Fragment>
                             }
-
                         </Countdown>
                     </ContentHeader>
                     <ContentBody>
@@ -1665,12 +1657,12 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "red" }} >
                                         Task Closed
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ width: "150px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", outline: "0 !important", backgroundColor: "green" }} >
                                         Task Open
                                     </Button>
                             }
@@ -1739,12 +1731,9 @@ export class Organizer extends Component {
                                                 </Box>
                                             </ClickAwayListener>
                                         </Paper>
-
-
                                     </Popper>
                                 </React.Fragment>
                             }
-
                         </Countdown>
 
                     </ContentHeader>
