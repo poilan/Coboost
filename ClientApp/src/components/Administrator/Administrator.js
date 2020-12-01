@@ -116,12 +116,43 @@ const DivButton = Styled.div`
         color: #fff;
         cursor: pointer;
         border: 3px solid #fff;
-        background: #374785;
+        background: ${props => props.task ?
+                               "#24305E" :
+                               "#374785"};
     }
 
     &:active {
+        outline: 0;
+    }
+`;
+
+const ListButton = Styled.div`
+    transition-duration: 0.5s;
+    width: 30px;
+    right: -35px;
+    position: absolute;
+    height: 60px;
+    background: ${props => props.task ?
+                           "#24305E" :
+                           "#374785"};
+    color: #ffffff;
+    border-right: 1px solid #fff;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 0 30px 30px 0;
+    z-index: 10;
+
+    &:hover {
         color: #fff;
-        border: 3px solid #fff;
+        cursor: pointer;
+        border-color: ${props => props.task ?
+                                 "#24305E" :
+                                 "#374785"};
+        background: #a8d0e6;
+    }
+
+    &:active {
+        outline: 0;
     }
 `;
 
@@ -799,11 +830,11 @@ export class Administrator extends React.Component {
                                 this.state.tab === "task" ?
                                     this.selectTab("organize") :
                                     this.selectTab("task");
-                            }} >
+                            }}
+                            task={this.state.tab === "task"} >
                             {this.state.tab === "task" ?
                                  "Discussion" :
                                  "Organize"
-
                             }
                         </DivButton>
                     </Banner>
@@ -890,23 +921,9 @@ export class Administrator extends React.Component {
                                         )}
                                 </Collection>
 
-                                <DivButton
+                                <ListButton
                                     onClick={() => { this.setState({ showList: !this.state.showList }); }}
-                                    style={{
-                                        width: "30px",
-                                        right: "-35px",
-                                        position: "absolute",
-                                        height: "60px",
-                                        backgroundColor: this.state.tab === "organize" ?
-                                                             "#374785" :
-                                                             "#24305E",
-                                        color: "#ffffff",
-                                        borderRight: "1px solid #fff",
-                                        top: "50%",
-                                        transform: "translateY(-50%)",
-                                        borderRadius: "0 30px 30px 0",
-                                        zIndex: "10"
-                                    }} >
+                                    task={this.state.tab === "task"} >
                                     {this.state.showList ?
                                          <KeyboardArrowLeftIcon
                                              className="icon"
@@ -929,7 +946,7 @@ export class Administrator extends React.Component {
                                                  transform: "translateY(-50%)"
                                              }} />
                                     }
-                                </DivButton>
+                                </ListButton>
 
                             </div>
 
