@@ -101,25 +101,26 @@ const DivButton = Styled.div`
     height: 45px;
     line-height: 45px;
     box-sizing: border-box;
-    color: #000;
+
     padding: 0 150px;
     font-size: 1.25rem;
     font-weight: 600;
     text-align: center;
     border-radius: 5px;
-    border: 3px solid #000;
+
     transform: translate(-50%, -50%);
     z-index: 10;
 
-    background: #a8d0e6;
-
+    color: #fff;
+    border: 3px solid #fff;
+    background: ${props => props.task ?
+                           "#24305E" :
+                           "#374785"};
     &:hover {
-        color: #fff;
         cursor: pointer;
-        border: 3px solid #fff;
-        background: ${props => props.task ?
-                               "#24305E" :
-                               "#374785"};
+        background: #a8d0e6;
+        border: 3px solid #000;
+        color: #000;
     }
 
     &:active {
@@ -853,7 +854,10 @@ export class Administrator extends React.Component {
                                     left: "0",
                                     position: "absolute",
                                     height: "100%",
-                                    borderRight: "5px solid #414458"
+                                    borderRight: "5px solid",
+                                    borderColor: this.state.tab === "task" ?
+                                                     "#24305E" :
+                                                     "#374785"
                                 }} >
 
                                 {this.state.modal.create &&
