@@ -81,16 +81,9 @@ const Countdown = Styled.div`
     position: absolute;
     height: 50px;
     right: 0px;
-    min-width: 275px;
+    min-width: 350px;
+    outline: none !important;
 
-    :first-child {
-        width: 50px;
-        outline: none;
-    }
-
-    :last-child {
-        outline: none !important;
-    }
 `;
 
 const AnswerButton = Styled(Nav.Link)`
