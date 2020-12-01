@@ -94,15 +94,34 @@ const ContentCard = Styled(Card)`
 
 const DivButton = Styled.div`
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    transition-duration: 0.5s;
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    height: 45px;
+    box-sizing: border-box;
+    color: #000;
+    padding: 0 150px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: justify;
+    border-radius: 5px;
+    border: 3px solid #000;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+
+    background: #a8d0e6;
+
     &:hover {
-        color: #ddd;
-        filter: brightness(150%);
+        color: #fff;
         cursor: pointer;
+        border: 3px solid #fff;
+        background: #374785;
     }
 
     &:active {
         color: #fff;
-        filter: brightness(75%);
+        border: 3px solid #fff;
     }
 `;
 
@@ -780,25 +799,6 @@ export class Administrator extends React.Component {
                                 this.state.tab === "task" ?
                                     this.selectTab("organize") :
                                     this.selectTab("task");
-                            }}
-                            style={{
-                                left: "50%",
-                                top: "50%",
-                                position: "absolute",
-                                height: "39px",
-                                backgroundColor: this.state.tab === "task" ?
-                                                     "#374785" :
-                                                     "#24305E",
-                                color: "#ffffff",
-                                padding: "0 150px",
-                                fontSize: "1.25rem",
-                                fontWeight: "600",
-                                textAlign: "justify",
-                                borderRadius: "5px",
-                                border: "3px solid #aaa",
-                                transform: "translate(-50%, -50%)",
-                                zIndex: "10"
-
                             }} >
                             {this.state.tab === "task" ?
                                  "Discussion" :
