@@ -813,7 +813,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -822,7 +822,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -841,7 +841,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -851,7 +851,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1156,7 +1156,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1165,7 +1165,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1184,7 +1184,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1194,7 +1194,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1422,7 +1422,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1431,7 +1431,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1450,7 +1450,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1460,7 +1460,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1684,7 +1684,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1693,7 +1693,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1712,7 +1712,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1722,7 +1722,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", outline: "0 !important" }} >
+                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
