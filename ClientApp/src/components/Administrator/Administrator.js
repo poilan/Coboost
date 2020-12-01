@@ -98,8 +98,8 @@ const DivButton = Styled.div`
     left: 50%;
     top: 50%;
     position: absolute;
-    height: 39px;
-    line-height: 45px;
+    height: 45px;
+    line-height: 39px;
     box-sizing: border-box;
 
     padding: 0 150px;
