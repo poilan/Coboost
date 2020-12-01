@@ -98,7 +98,7 @@ const DivButton = Styled.div`
     left: 50%;
     top: 50%;
     position: absolute;
-    height: 45px;
+    height: 39px;
     line-height: 45px;
     box-sizing: border-box;
 
@@ -113,7 +113,7 @@ const DivButton = Styled.div`
 
     color: #fff;
     border: 3px solid #fff;
-    background: ${props => props.task ?
+    background: ${props => !props.task ?
                            "#24305E" :
                            "#374785"};
     &:hover {
