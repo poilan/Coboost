@@ -12,8 +12,43 @@ import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import Rating from "@material-ui/lab/Rating";
 import {BannerLink} from "../Classes/Dropdown";
-import {TextField} from "@material-ui/core";
+import {TextField, Snackbar, createMuiTheme, ThemeProvider} from "@material-ui/core";
 import {height} from "@material-ui/system";
+import MuiAlert from "@material-ui/lab/Alert";
+
+
+function Alert(props) {
+    return <MuiAlert
+               elevation={6}
+               variant="filled"
+               {...props} />;
+}
+
+
+const Theme = createMuiTheme({
+    palette: {
+        primary: {
+            main: "#24305E",
+            contrastText: "#ffffff"
+        },
+        secondary: {
+            main: "#374785",
+            contrastText: "#ffffff"
+        },
+        error: {
+            main: "#F76C6C"
+        },
+        warning: {
+            main: "#f8e9a1"
+        },
+        info: {
+            main: "#4C7AD3"
+        },
+        success: {
+            main: "#6CF76C"
+        }
+    }
+});
 
 
 const MainContainer = Styled(Col)`
@@ -308,6 +343,7 @@ export class Mobile extends React.Component {
             answers: [],
             inputs: [],
             title: "",
+            snackbar: false,
 
             loggedIn: false,
             sessionState: 1, // 0: Not started, 1: Answering, 2: Finished
@@ -570,6 +606,7 @@ export class Mobile extends React.Component {
         {
             case 0:
                 Word = "Input";
+                this.inputsEdit();
                 break;
             default:
                 Word = "Vote";
@@ -1197,7 +1234,9 @@ export class Mobile extends React.Component {
         return (
             <React.Fragment>
                 <MainContainer>
-                    {
+                    <ThemeProvider
+                        theme={Theme} >
+                        {
                         //    <Header>
                         //    <HeaderText
                         //        active={this.state.activeHeader}
@@ -1209,7 +1248,7 @@ export class Mobile extends React.Component {
                         //    </HeaderText>
                         //</Header>
                     }
-                    {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
+                        {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
                         <div
                             style={{
                                 zIndex: "10",
@@ -1230,7 +1269,18 @@ export class Mobile extends React.Component {
                             {this.secondsToMinutes(this.getCurrentTask().Countdown)}
                         </div>
                     }
-                    {this.renderPage()}
+                        {this.renderPage()}
+                        <Snackbar
+                            autoHideDuration={2000}
+                            onClose={() => this.setState({ snackbar: false })}
+                            open={this.state.snackbar} >
+                            <MuiAlert
+                                onClose={() => this.setState({ snackbar: false })}
+                                severity="success" >
+                                Message Sent
+                            </MuiAlert>
+                        </Snackbar>
+                    </ThemeProvider>
                 </MainContainer>
             </React.Fragment>
         );

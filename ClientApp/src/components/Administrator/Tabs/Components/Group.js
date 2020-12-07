@@ -1,4 +1,4 @@
-﻿import {IconButton, Menu, MenuItem} from "@material-ui/core";
+﻿import {IconButton, Menu, MenuItem, Divider, Icon} from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import {grey} from "@material-ui/core/colors";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
@@ -11,6 +11,7 @@ import {Form, Nav} from "react-bootstrap";
 import Styled from "styled-components";
 import {PageModal} from "../../../Services/PageModal";
 import {ColorPicker} from "./ColorPicker";
+import StarIcon from "@material-ui/icons/Star";
 
 
 const GroupContainer = Styled.div`
@@ -19,6 +20,9 @@ const GroupContainer = Styled.div`
     padding-top: 65px;
     box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
     vertical-align: top;
+    border-top: ${props => props.favorite ?
+                           "10px solid #debc5b" :
+                           ""};
     position: relative;
     display: ${props => props.empty || props.showcase && props.group === 0 ?
                         "none" :
@@ -28,7 +32,7 @@ const GroupContainer = Styled.div`
                            "#8c8da6" :
                            props.color};
 
-    height: ${props => props.group === 0 ?
+    minHeight: ${props => props.group === 0 ?
                        "100%" :
                        ""};
 
@@ -40,17 +44,16 @@ const GroupContainer = Styled.div`
                               "0px" :
                               "10px"};
 
-    opacity: ${props => props.group === "new" ?
+    opacity: ${props => props.group === "new" || props.collapsed ?
                         "50%" :
                         "100%"};
 
     &:hover {
         filter: saturate(125%) drop-shadow(6px 6px 3px black);
-
         cursor: ${props => props.group === "new" || !props.showcase ?
                            "pointer" :
                            "default"
-        }
+    }
     `;
 
 const IdChars = Styled.h1`
@@ -121,8 +124,8 @@ const GroupTitle = Styled.h1`
                            "default" :
                            "text"};
         box-shadow: ${props => props.showcase ?
-                           "0" :
-                           "0 0 4px 2px #fff"};
+                               "0" :
+                               "0 0 4px 2px #fff"};
     }
 `;
 
@@ -422,6 +425,22 @@ export class Group extends Component {
             this.props.onClick(this.props.group);
             e.stopPropagation();
         }
+        else if (this.props.toolHide)
+            this.collapse(e);
+        else if (this.props.toolFavorite)
+            this.handleFavorite(e);
+    }
+
+
+    handleFavorite = (e) => {
+        e.stopPropagation();
+        const Code = sessionStorage.getItem("code");
+        const Key =
+        {
+            Group: this.props.group,
+            Member: -1
+        };
+        Axios.post(`admin/${Code}/favorite`, Key);
     }
 
 
@@ -429,10 +448,12 @@ export class Group extends Component {
     {
         return (
             <GroupContainer
+                collapsed={this.props.collapsed}
                 color={this.props.color}
                 column={this.props.column}
                 draggable={this.props.group !== 0 && !this.props.showcase}
                 empty={this.props.id === "0" && this.props.children.length < 1}
+                favorite={this.props.favorite}
                 group={this.props.group}
                 id={this.props.id + "-title"}
                 onClick={this.handleClick}
@@ -446,9 +467,9 @@ export class Group extends Component {
                     new={this.props.group === "new"}
                     onClick={(e) => e.stopPropagation()}
                     onDoubleClick={(e) => this.handleDouble(e)}
-                    showcase={this.props.showcase}
                     onDragOver={this.drag.over}
-                    onDrop={this.drag.title}>
+                    onDrop={this.drag.title}
+                    showcase={this.props.showcase} >
                     {this.props.title}
 
                 </GroupTitle>
@@ -543,9 +564,12 @@ export class Group extends Component {
                         vertical: "top",
                         horizontal: "right"
                     }}
-                    onClose={() => this.setState({
-                        menuAnchor: null
-                    })}
+                    onClose={(e) => {
+                        e.stopPropagation();
+                        this.setState({
+                            menuAnchor: null
+                        });
+                    }}
                     open={Boolean(this.state.menuAnchor)}
                     transformOrigin={{
                         vertical: "top",
@@ -554,12 +578,17 @@ export class Group extends Component {
 
                     <MenuItem
                         onClick={this.colorOpen} >
-                        Change Color
+                        Color
                     </MenuItem>
 
                     <MenuItem
+                        onClick={this.handleFavorite} >
+                        Favorite
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem
                         onClick={this.deleteOpen} >
-                        Delete Group
+                        Delete
                     </MenuItem>
 
                 </Menu>
@@ -572,39 +601,63 @@ export class Group extends Component {
                     }}
                     color={this.props.color}
                     onChangeComplete={this.colorChange}
-                    onClose={() => this.setState({
-                        colorAnchor: null
-                    })}
+                    onClose={(e) => {
+                        e.stopPropagation();
+                        this.setState({
+                            colorAnchor: null
+                        });
+                    }}
                     transformOrigin={{
                         vertical: "top",
                         horizontal: "right"
                     }} />
 
-            {this.props.collapsed &&
-                    <div style={{ outline: "0", position: "absolute", height: "1.5rem", width: "40px", borderRadius: "20px 20px 0 0", border: "1px solid #fff", bottom: "0", left: "50%", transform: "translateX(-50%)", fontSize: "1rem", fontWeight: "600", color: "#fff", textAlign: "center"}}>
+                {this.props.collapsed &&
+                    <div
+                        style={{
+                            outline: "0",
+                            position: "absolute",
+                            height: "1.5rem",
+                            width: "40px",
+                            borderRadius: "20px 20px 0 0",
+                            border: "1px solid #fff",
+                            bottom: "0",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            fontSize: "1rem",
+                            fontWeight: "600",
+                            color: "#fff",
+                            textAlign: "center"
+                        }} >
                         {this.props.children.length}
                     </div>
-                 }
+                }
                 {!this.props.showcase &&
-                        this.props.group !== "new" && this.props.group > 0 &&
-                        <IconButton
-                            aria-label="expand"
-                            onClick={(e) => this.collapse(e)}
-                            style={{ outline: "0", position: "absolute",  bottom: "-20px", height: "20px", width: "40px", borderRadius: "0 0 20px 20px", backgroundColor: this.props.color, left: "50%", transform: "translateX(-50%)"}} >
+                    this.props.group !== "new" && this.props.group > 0 &&
+                    <IconButton
+                        aria-label="expand"
+                        onClick={(e) => this.collapse(e)}
+                        style={{ outline: "0", position: "absolute", bottom: "-20px", height: "20px", width: "40px", borderRadius: "0 0 20px 20px", backgroundColor: this.props.color, left: "50%", transform: "translateX(-50%)" }} >
 
-                            {this.props.collapsed ?
-                                 <KeyboardArrowDownIcon
-                                    style={{
-                                        color: grey[50]
-                                    }} /> :
-                                 <KeyboardArrowUpIcon
-                                    style={{
-                                        color: grey[50]
-                                    }} />
-                            }
-                        </IconButton>
-                    }
-
+                        {this.props.collapsed ?
+                             <KeyboardArrowDownIcon
+                                 style={{
+                                     color: grey[50]
+                                 }} /> :
+                             <KeyboardArrowUpIcon
+                                 style={{
+                                     color: grey[50]
+                                 }} />
+                        }
+                    </IconButton>
+                }
+                {
+                    //this.props.favorite &&
+                    //<Icon
+                    //    style={{ outline: "none", position: "absolute", height: "25px", width: "25px", top: "-10px", right: "-5px", color: "#f8e9a1" }} >
+                    //    <StarIcon />
+                    //</Icon>
+                }
             </GroupContainer>
         );
     }

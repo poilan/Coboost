@@ -24,6 +24,8 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import TimerIcon from "@material-ui/icons/Timer";
 import {width, height} from "@material-ui/system";
 import {green, red} from "@material-ui/core/colors";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
 
 const MainContainer = Styled.div`
@@ -83,14 +85,14 @@ const Countdown = Styled.div`
     position: absolute;
     height: 50px;
     right: 0px;
-    min-width: 350px;
+    min-width: 300px;
     outline: none !important;
 
 `;
 
 const AnswerButton = Styled(Nav.Link)`
     color: #fff;
-    background: #24305E;
+    background: #374785;
     font-family: CircularStd;
     font-weight: 400;
     font-size: 1rem;
@@ -99,7 +101,7 @@ const AnswerButton = Styled(Nav.Link)`
     border: 2px solid #fff;
     border-right: 0;
     border-radius: 5px;
-    min-width: 150px;
+    min-width: 125px;
     flex: 1 1 auto;
     height: 100%;
     line-height: 25px;
@@ -111,11 +113,14 @@ const AnswerButton = Styled(Nav.Link)`
         cursor: pointer;
     }
 
+    &:active {
+        outline: none;
+    }
 `;
 
 const SendToMC = Styled(Nav.Link)`
     color: #fff;
-    background: #374785;
+    background: #24305E;
     font-family: CircularStd;
     font-weight: 450;
     text-align: center;
@@ -130,6 +135,7 @@ const SendToMC = Styled(Nav.Link)`
 
     &:active {
         color: #fff;
+        outline: none;
     }
 `;
 
@@ -240,6 +246,7 @@ export class Organizer extends Component {
             resultsAsPercentage: false
         };
         this.timeAnchor = createRef();
+
         //Contains all the modal's
         this.modal = {
             answer: {
@@ -252,14 +259,17 @@ export class Organizer extends Component {
                     this.props.popOpen();
                 },
 
-                close: () => {
+                close: (repeat) => {
                     this.setState({
                         modal: {
                             string: "",
                             answer: false
                         }
                     });
-                    this.props.popClosed();
+                    if (repeat === true)
+                        setTimeout(() => this.modal.answer.open(), 100);
+                    else
+                        this.props.popClosed();
                 }
             },
 
@@ -706,28 +716,7 @@ export class Organizer extends Component {
                 });
             };
 
-            const Meny = [
-                {
-                    "label": "Write input",
-                    "callback": this.modal.answer.open
-                },
-                {
-                    "label": "Duplicate selected input",
-                    "callback": Duplicate
-                },
-                {
-                    "label": "Merge selected inputs",
-                    "callback": Merge
-                },
-                {
-                    "label": "Create vote from selected inputs",
-                    "callback": this.modal.create.open
-                },
-                {
-                    "label": "Remove selected inputs",
-                    "callback": Archive.members
-                }
-            ];
+
 
             const Clear = () => {
                 this.setState({
@@ -754,6 +743,46 @@ export class Organizer extends Component {
                 });
             };
 
+            const CollapseAll = (e) => {
+                const Code = sessionStorage.getItem("code");
+                const Value = e.currentTarget.id === "collapse" ?
+                                  true :
+                                  false;
+                Axios.post(`admin/${Code}/text-collapse`, JSON.stringify(Value),
+                    {
+                        headers: {
+                            'Content-Type': "application/json"
+                        }
+                    });
+            };
+
+            const RightClickMenu = [
+                {
+                    "label": "Write input",
+                    "callback": this.modal.answer.open
+                },
+                {
+                    "label": "Merge selected inputs",
+                    "callback": Merge
+                },
+                {
+                    "label": "Duplicate selected input",
+                    "callback": Duplicate
+                },
+                {
+                    "label": "Remove selected inputs",
+                    "callback": Archive.members
+                },
+                {
+                    "label": "Collapse All Groups",
+                    "callback": () => CollapseAll(true)
+                },
+                {
+                    "label": "Expand All Groups",
+                    "callback": () => CollapseAll(false)
+                }
+            ];
+
             return (
                 <MainContainer>
                     <ContentHeader>
@@ -767,13 +796,33 @@ export class Organizer extends Component {
                                 <br />
                                 Write input
                             </AnswerButton>
-                            <MergeButton
-                                disabled
-                                draggable="false" >
-                                <AllInclusiveIcon
+                            {
+                                //    <MergeButton
+                                //    disabled
+                                //    draggable="false" >
+                                //    <AllInclusiveIcon
+                                //        className="icon" />
+                                //    <br />
+                                //    Select All
+                                //</MergeButton>
+                            }
+                            <AnswerButton
+                                draggable="false"
+                                id="collapse"
+                                onClick={CollapseAll} >
+                                <ExpandLessIcon
                                     className="icon" />
                                 <br />
-                                Select All
+                                Collapse All
+                            </AnswerButton>
+                            <MergeButton
+                                draggable="false"
+                                id="expand"
+                                onClick={CollapseAll} >
+                                <ExpandMoreIcon
+                                    className="icon" />
+                                <br />
+                                Expand All
                             </MergeButton>
                             <AnswerButton
                                 draggable="false"
@@ -804,7 +853,7 @@ export class Organizer extends Component {
                                 <ArchiveIcon
                                     className="icon" />
                                 <br />
-                                Archive
+                                Delete
                             </MergeButton>
                         </Tools>
 
@@ -813,7 +862,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#F76C6C" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -822,7 +871,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#6cf76c" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -841,7 +890,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -851,7 +900,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -870,7 +919,7 @@ export class Organizer extends Component {
                                             color="secondary"
                                             onClick={TimeToggle}
                                             size="small"
-                                            style={{ minWidth: "50px" }} >
+                                            style={{ minWidth: "50px", outline: "none !important" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -888,12 +937,15 @@ export class Organizer extends Component {
                                                     mb={2}
                                                     p={1} >
                                                     <TextField
-                                                        label="Timer in Seconds"
+                                                        label="Minutes"
                                                         margin="none"
                                                         onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        onKeyDown={(e) => e.key === "Enter" ?
+                                                                          Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`).then(TimeClose()) :
+                                                                          ""}
                                                         style={{ width: "150px" }}
                                                         type="number"
-                                                        value={task.Timer}
+                                                        value={task.Timer / 60}
                                                         variant="standard" />
                                                 </Box>
                                             </ClickAwayListener>
@@ -927,7 +979,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -940,7 +992,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1006,6 +1058,7 @@ export class Organizer extends Component {
                                                             color={group.Color}
                                                             column={group.Column}
                                                             double={this.modal.rename.open}
+                                                            favorite={task.FavoriteGroups.indexOf(group.Index) !== -1}
                                                             group={group.Index}
                                                             id={group.Index}
                                                             key={group.Index}
@@ -1021,6 +1074,7 @@ export class Organizer extends Component {
                                                                         column={group.Column}
                                                                         description={member.Description}
                                                                         double={this.modal.details.open}
+                                                                        favorite={task.FavoriteMembers.indexOf(`${group.Index}-${member.Index}`) !== -1}
                                                                         group={group.Index}
                                                                         id={group.Index + "-" + member.Index}
                                                                         isMerged={member.Children != undefined ?
@@ -1043,7 +1097,7 @@ export class Organizer extends Component {
                                     {column.index + 1 === this.props.columns.length &&
                                         <Group
                                             clearSelect={Clear}
-                                            color="#374785"
+                                            color="#24305E"
                                             column={column.index}
                                             group="new"
                                             id="new"
@@ -1056,13 +1110,13 @@ export class Organizer extends Component {
                             )
                         }
                         <ContextMenu
-                            items={Meny}
+                            items={RightClickMenu}
                             visible={this.state.menu.visible}
                             x={this.state.menu.x}
                             y={this.state.menu.y} />
                         {this.state.modal.answer &&
                             <InputModal
-                                onClose={this.modal.answer.close.bind(this)}
+                                onClose={this.modal.answer.close}
                                 title="Write Input" />}
                         {this.state.modal.rename &&
                             <PageModal
@@ -1156,7 +1210,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#F76C6C" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1165,7 +1219,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#6cf76c" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1184,7 +1238,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1194,7 +1248,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1213,7 +1267,7 @@ export class Organizer extends Component {
                                             color="secondary"
                                             onClick={TimeToggle}
                                             size="small"
-                                            style={{ minWidth: "50px" }} >
+                                            style={{ minWidth: "50px", outline: "none !important" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1231,12 +1285,15 @@ export class Organizer extends Component {
                                                     mb={2}
                                                     p={1} >
                                                     <TextField
-                                                        label="Timer in Seconds"
+                                                        label="Minutes"
                                                         margin="none"
                                                         onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        onKeyDown={(e) => e.key === "Enter" ?
+                                                                          Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`).then(TimeClose()) :
+                                                                          ""}
                                                         style={{ width: "150px" }}
                                                         type="number"
-                                                        value={task.Timer}
+                                                        value={task.Timer / 60}
                                                         variant="standard" />
                                                 </Box>
                                             </ClickAwayListener>
@@ -1274,7 +1331,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1286,7 +1343,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1422,7 +1479,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#F76C6C" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1431,7 +1488,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#6cf76c" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1450,7 +1507,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1460,7 +1517,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1479,7 +1536,7 @@ export class Organizer extends Component {
                                             color="secondary"
                                             onClick={TimeToggle}
                                             size="small"
-                                            style={{ minWidth: "50px" }} >
+                                            style={{ minWidth: "50px", outline: "none !important" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1497,12 +1554,15 @@ export class Organizer extends Component {
                                                     mb={2}
                                                     p={1} >
                                                     <TextField
-                                                        label="Timer in Seconds"
+                                                        label="Minutes"
                                                         margin="none"
                                                         onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        onKeyDown={(e) => e.key === "Enter" ?
+                                                                          Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`).then(TimeClose()) :
+                                                                          ""}
                                                         style={{ width: "150px" }}
                                                         type="number"
-                                                        value={task.Timer}
+                                                        value={task.Timer / 60}
                                                         variant="standard" />
                                                 </Box>
                                             </ClickAwayListener>
@@ -1543,7 +1603,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1556,7 +1616,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1684,7 +1744,7 @@ export class Organizer extends Component {
                                 !task.InProgress ?
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "red" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#F76C6C" }} >
                                         <LockIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1693,7 +1753,7 @@ export class Organizer extends Component {
                                     </Button> :
                                     <Button
                                         onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                        style={{ minWidth: "150px", color: "#fff", display: "block", paddingTop: "2px", outline: "0 !important", backgroundColor: "green" }} >
+                                        style={{ minWidth: "125px", color: "#fff", display: "block", paddingTop: "2px", outline: "none !important", backgroundColor: "#6cf76c" }} >
                                         <LockOpenIcon
                                             className="icon"
                                             style={{ color: "white" }} />
@@ -1712,7 +1772,7 @@ export class Organizer extends Component {
                                                 <Button
                                                     color="secondary"
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/start-countdown`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1722,7 +1782,7 @@ export class Organizer extends Component {
                                                     color="secondary"
 
                                                     onClick={() => Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`)}
-                                                    style={{ minWidth: "150px", paddingTop: "2px", display: "block", outline: "0 !important" }} >
+                                                    style={{ minWidth: "125px", paddingTop: "2px", display: "block", outline: "none !important" }} >
                                                     <TimerIcon
                                                         className="icon" />
                                                     <br />
@@ -1741,7 +1801,7 @@ export class Organizer extends Component {
                                             color="secondary"
                                             onClick={TimeToggle}
                                             size="small"
-                                            style={{ minWidth: "50px" }} >
+                                            style={{ minWidth: "50px", outline: "none !important" }} >
                                             <ArrowDropDownIcon />
                                         </Button>
                                     </ButtonGroup>
@@ -1759,12 +1819,15 @@ export class Organizer extends Component {
                                                     mb={2}
                                                     p={1} >
                                                     <TextField
-                                                        label="Timer in Seconds"
+                                                        label="Minutes"
                                                         margin="none"
                                                         onChange={(e) => this.props.handleTimer(e, task.Index)}
+                                                        onKeyDown={(e) => e.key === "Enter" ?
+                                                                          Axios.post(`admin/${sessionStorage.getItem("code")}/task-toggle${task.Index}`).then(TimeClose()) :
+                                                                          ""}
                                                         style={{ width: "150px" }}
                                                         type="number"
-                                                        value={task.Timer}
+                                                        value={task.Timer / 60}
                                                         variant="standard" />
                                                 </Box>
                                             </ClickAwayListener>
@@ -1804,7 +1867,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />
@@ -1816,7 +1879,7 @@ export class Organizer extends Component {
                                     height: "150px",
                                     width: "75px",
                                     transform: "rotate(-45deg)",
-                                    backgroundColor: "#374785",
+                                    backgroundColor: "#24305E",
                                     border: "1px solid #fff",
                                     zIndex: "-1"
                                 }} />

@@ -6,6 +6,9 @@ import {Collection, Task} from "./Components/Task";
 import {CreateTaskModal} from "./Components/CreateModal";
 import {ContextMenu} from "./Components/ContextMenu";
 import {BigScreen} from "../../Big Screen/BigScreen";
+import MouseIcon from "@material-ui/icons/Mouse";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import StarIcon from "@material-ui/icons/Star";
 
 
 const SlideContainer = Styled.div`
@@ -32,18 +35,87 @@ const Viewer = Styled(BigScreen)`
     position: absolute;
 `;
 
+const ContentHeader = Styled(Card.Header)`
+    width: 100%;
+    background: #fff;
+    height: 50px;
+    left: 0;
+    top: 0;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    border: 0;
+`;
+
+const ContentBody = Styled(Card.Body)`
+    border: 0;
+    background: #E4E4E4;
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    height: calc(100% - 50px);
+    padding: 50px;
+    padding-top: calc(50px + 2rem);
+`;
+
+const Tools = Styled.div`
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    position: absolute;
+    height: 50px;
+    min-width: 300px;
+`;
+
+const ToolButton = Styled(Nav.Link)`
+
+    font-family: CircularStd;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 0 1rem;
+    text-align: center;
+    border: 2px solid #fff;
+    border-right: 0;
+    border-radius: 5px;
+    min-width: 125px;
+    flex: 1 1 auto;
+    height: 100%;
+    line-height: 25px;
+    transition-duration: 0.5s;
+    outline: none;
+
+    color: ${props => props.active ?
+                      "#000" :
+                      "#fff"};
+    background: ${props => props.active ?
+                           "#f8e9a1" :
+                           "#24305E"};
+
+
+    &:hover {
+        background: ${props => props.active ?
+                               "#f8e9a1" :
+                               "#a8d0e6"};
+        color: #000;
+        cursor: ${props => props.active ?
+                           "default" :
+                           "pointer"};
+    }
+
+`;
+
 export class Tasks extends Component {
     constructor(props)
     {
         super(props);
         this.state = {
-            tasks: props.tasks,
-
             create: {
                 type: "",
                 title: "",
                 options: []
             },
+
+            tool: "mouse",
 
             menu: {
                 x: 0,
@@ -60,63 +132,45 @@ export class Tasks extends Component {
     }
 
 
-    componentDidMount()
-    {
-        const Self = this;
-        document.addEventListener("contextmenu",
-            function() {
-                Self.setState({
-                    menu: {
-                        x: 0,
-                        y: 0,
-                        visible: false
-                    }
-                });
-            });
-    }
-
-
-    createTask = (event) => {
-        const ClickX = event.clientX;
-        const ClickY = event.clientY;
-        this.setState({
-            menu: {
-                x: ClickX,
-                y: ClickY,
-                visible: true
-            }
-        });
-    }
-
-
-    taskClick = (event) => { this.loadTask(event); }
-
-
-    loadTask = (event) => {
-        const Key = event.target.id;
-        this.props.SSE(Key);
-    }
-
-
-    renderActive()
-    {
-        return (
-            <SelectedSlide>
-                <Viewer
-                    admin={true}
-                    columns={this.props.columns} />
-            </SelectedSlide>
-        );
-    }
-
-
     render()
     {
         return (
             <React.Fragment>
-                <SlideContainer>
-                    {this.renderActive()}
-                </SlideContainer>
+                <ContentHeader>
+                    <Tools>
+                        <ToolButton
+                            active={this.state.tool === "mouse"}
+                            onClick={() => this.setState({ tool: "mouse" })} >
+                            <MouseIcon />
+                            <br />
+                            Mouse
+                        </ToolButton>
+                        <ToolButton
+                            active={this.state.tool === "hide"}
+                            onClick={() => this.setState({ tool: "hide" })} >
+                            <VisibilityOffIcon />
+                            <br />
+                            Hide/Show
+                        </ToolButton>
+                        <ToolButton
+                            active={this.state.tool === "favorite"}
+                            onClick={() => this.setState({ tool: "favorite" })} >
+                            <StarIcon />
+                            <br />
+                            Favorite
+                        </ToolButton>
+                    </Tools>
+                </ContentHeader>
+                <ContentBody>
+                    <SlideContainer>
+                        <SelectedSlide>
+                            <Viewer
+                                admin={true}
+                                columns={this.props.columns}
+                                tool={this.state.tool} />
+                        </SelectedSlide>
+                    </SlideContainer>
+                </ContentBody>
             </React.Fragment>
         );
     }

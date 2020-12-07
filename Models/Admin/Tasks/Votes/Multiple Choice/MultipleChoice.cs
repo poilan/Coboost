@@ -26,6 +26,12 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             set;
         }
 
+        public List<int> Favorites
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         ///     The maximum number of choices users can vote for.
         /// </summary>
@@ -63,6 +69,22 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
         {
             Archive = new List<MultipleChoiceOption>();
             Options = new List<MultipleChoiceOption>();
+        }
+
+        public void SetFavorite(int option)
+        {
+            lock (ThreadLock)
+            {
+                if (Options.Count > option || option < 0)
+                    return;
+
+                if (Favorites.Contains(option))
+                    Favorites.Remove(option);
+                else
+                    Favorites.Add(option);
+            }
+
+            EventStream();
         }
 
         /// <summary>

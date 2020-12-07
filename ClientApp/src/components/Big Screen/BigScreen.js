@@ -13,6 +13,7 @@ import {SSE} from "../Core/SSE";
 import {Typography, Box} from "@material-ui/core";
 
 
+
 const MainContainer = Styled(Col)`
     display: table;
     height: 100%;
@@ -95,10 +96,10 @@ const WelcomeContainer = Styled.div`
                              "auto" :
                              "initial"};
     column-width: ${props => props.text ?
-                             "320px" :
+                             "400px" :
                              "initial"};
     column-gap: ${props => props.text ?
-                           "10rem" :
+                           "20px" :
                            "initial"};
 `;
 
@@ -147,6 +148,9 @@ export class BigScreen extends Component {
 
             task: null,
             sse: null,
+            tool: {
+                hide: false
+            },
 
             resultsAsPercentage: false
         };
@@ -292,6 +296,57 @@ export class BigScreen extends Component {
                 catch (e)
                 {
                     Server.log("Failed to parse server event: Results");
+                }
+            });
+
+            Server.addListener("FavoriteGroups", (e) => {
+                try
+                {
+                    const FavGroups = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.FavoriteGroups = FavGroups;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e)
+                {
+                    Server.log("Failed to parse server event: FavoriteGroups");
+                    Server.log(e);
+                }
+            });
+
+            Server.addListener("FavoriteMembers", (e) => {
+                try
+                {
+                    const FavMembers = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.FavoriteMembers = FavMembers;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e)
+                {
+                    Server.log("Failed to parse server event: FavoriteMembers");
+                    Server.log(e);
+                }
+            });
+
+            Server.addListener("Favorites", (e) => {
+                try
+                {
+                    const Favorites = JSON.parse(e.data);
+                    const Task = this.state.task;
+                    Task.Favorites = Favorites;
+                    this.setState({
+                        task: Task
+                    });
+                }
+                catch (e)
+                {
+                    Server.log("Failed to parse server event: Favorites");
+                    Server.log(e);
                 }
             });
 
@@ -495,33 +550,39 @@ export class BigScreen extends Component {
 
     renderOpenTextResult()
     {
-        const Results = this.state.task.Groups;
+        const Task = this.state.task;
+        const Results = Task.Groups;
+
         return (
             <React.Fragment>
-                {this.props.columns.map(column =>
+                {this.props.columns.slice(1).map(column =>
                     <Column
                         column={column.index}
                         empty
                         width={column.width} >
-                        {Results && Results.map(group => {
-                                if (column.index === group.Column)
+                        {Results && Results.slice(1).map(group => {
+                                if (column.index === group.Column && (!group.Collapsed || this.props.tool === "hide"))
                                 {
                                     return(
                                         <Group
                                             collapsed={group.Collapsed}
                                             color={group.Color}
                                             column={group.Column}
+                                            favorite={Task.FavoriteGroups.indexOf(group.Index) !== -1}
                                             group={group.Index}
                                             id={group.Index}
                                             key={group.Index}
                                             showcase
                                             size={column.width}
-                                            title={group.Title} >
+                                            title={group.Title}
+                                            toolFavorite={this.props.tool === "favorite"}
+                                            toolHide={this.props.tool === "hide"} >
 
                                             {group.Members && group.Members.map(member =>
                                                 <Input
                                                     column={group.Column}
                                                     description={member.Description}
+                                                    favorite={Task.FavoriteMembers.indexOf(`${group.Index}-${member.Index}`) !== -1}
                                                     group={group.Index}
                                                     id={group.Index + "-" + member.Index}
                                                     isMerged={0}
@@ -529,7 +590,8 @@ export class BigScreen extends Component {
                                                     member={member.Index}
                                                     showcase
                                                     size={column.width}
-                                                    title={member.Title} />
+                                                    title={member.Title}
+                                                    toolFavorite={this.props.tool === "favorite"} />
                                             )}
                                         </Group>
                                     );
@@ -631,6 +693,7 @@ export class BigScreen extends Component {
                     <ResultItem
                         color={option.Color}
                         description={option.Description}
+                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
                         height="85%"
                         id={option.Index}
                         index={option.Index}
@@ -662,6 +725,7 @@ export class BigScreen extends Component {
                     <ResultItem
                         color={option.Color}
                         description={option.Description}
+                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
                         height="85%"
                         id={option.Index}
                         index={option.Index}
@@ -690,6 +754,7 @@ export class BigScreen extends Component {
                         average={option.Average}
                         color={option.Color}
                         description={option.Description}
+                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
                         id={option.Index}
                         index={option.Index}
                         max={Task.Max}
@@ -733,6 +798,7 @@ export class BigScreen extends Component {
                 <React.Fragment>
                     {Task.Options.map(option =>
                         <ResultSlider
+                            average={(Task.Max + Task.Min) / 2}
                             color={option.Color}
                             description={option.Description}
                             id={option.Index}
@@ -747,32 +813,32 @@ export class BigScreen extends Component {
                     )}
                 </React.Fragment> :
                 <React.Fragment>
-                    <Box
-                        style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} >
-                        <Typography
-                            align="center"
-                            display="block"
-                            variant="h2" >
-                            Votes will soon be shown!
-                        </Typography>
 
-                        {Task.Options.map(option =>
-                            <ResultItem
-                                color={option.Color}
-                                description={option.Description}
-                                height="85%"
-                                id={option.Index}
-                                index={option.Index}
-                                key={option.Index}
-                                percentage={0}
-                                points={0}
-                                showcase
-                                showPercentage={this.state.resultsAsPercentage}
-                                title={option.Title}
-                                total={Task.Options.length}
-                                vote />
-                        )}
-                    </Box>
+                    <Typography
+                        align="center"
+                        display="block"
+                        style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+                        variant="h2" >
+                        Votes will soon be shown!
+                    </Typography>
+
+                    {Task.Options.map(option =>
+                        <ResultItem
+                            color={option.Color}
+                            description={option.Description}
+                            height="85%"
+                            id={option.Index}
+                            index={option.Index}
+                            key={option.Index}
+                            percentage={0}
+                            points={0}
+                            showcase
+                            showPercentage={this.state.resultsAsPercentage}
+                            title={option.Title}
+                            total={Task.Options.length}
+                            vote />
+                    )}
+
                 </React.Fragment>
         );
     }

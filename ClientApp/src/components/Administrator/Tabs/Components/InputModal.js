@@ -99,8 +99,7 @@ export class InputModal extends Component {
         if (Description.length > 30)
             Data.Title = Title;
 
-        Axios.post(`client/${Code}/add-text-open`, Data);
-        this.OnClose();
+        Axios.post(`client/${Code}/add-text-open`, Data).then(res => this.OnClose(true));
     }
 
 
@@ -169,14 +168,13 @@ export class InputModal extends Component {
     }
 
 
-    OnClose = () => {
-        if (this.props.onClose !== undefined)
-            this.props.onClose();
+    OnClose = (repeat) => {
         this.setState({
             title: "",
             description: "",
             showing: false
         });
+        this.props.onClose(repeat);
     }
 
 
@@ -213,7 +211,7 @@ export class InputModal extends Component {
                     mb={2}
                     p={1} >
                     <ContentInput
-                        autoFocus
+                        autoFocus={true}
                         fullWidth
                         helperText={`${250 - this.state.description.length}
                                     ${this.state.description.length > 30 ?

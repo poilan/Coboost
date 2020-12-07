@@ -208,6 +208,22 @@ namespace Coboost.Controllers
             }
         }
 
+        [HttpPost("{code}/text-collapse")]
+        public void CollapseAll(int code, [FromBody] bool value)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            {
+                OpenText open = admin.Tasks[admin.Active] as OpenText;
+
+                ThreadPool.QueueUserWorkItem(o => open?.CollapseAll(value));
+                HttpContext.Response.StatusCode = 200;
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 412;
+            }
+        }
+
         [HttpPost("{code}/question-create-group-c{column}")]
         public void CreateGroup(int code, int column)
         {
@@ -456,6 +472,44 @@ namespace Coboost.Controllers
             {
                 HttpContext.Response.StatusCode = 412;
             }
+        }
+
+        [HttpPost("{code}/favorite")]
+        public void Favorite(int code, [FromBody] OpenText.Key target)
+        {
+            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+                switch (admin.Tasks[admin.Active])
+                {
+                    case OpenText open:
+                        if (target.Member < 0) //'true' == Group Favorite, 'false' == Member favorite
+                            ThreadPool.QueueUserWorkItem(o => open.SetGroupFavorite(target.Group));
+                        else
+                            ThreadPool.QueueUserWorkItem(o => open.SetMemberFavorite(target));
+
+                        HttpContext.Response.StatusCode = 200;
+                        break; // OpenText open
+
+                    case MultipleChoice mp:
+                        ThreadPool.QueueUserWorkItem(o => mp.SetFavorite(target.Group));
+                        HttpContext.Response.StatusCode = 201;
+                        break;
+
+                    case Points points:
+                        ThreadPool.QueueUserWorkItem(o => points.SetFavorite(target.Group));
+                        HttpContext.Response.StatusCode = 202;
+                        break;
+
+                    case Slider slider:
+                        ThreadPool.QueueUserWorkItem(o => slider.SetFavorite(target.Group));
+                        HttpContext.Response.StatusCode = 203;
+                        break;
+
+                    default:
+                        HttpContext.Response.StatusCode = 400;
+                        break;
+                }
+            else
+                HttpContext.Response.StatusCode = 412;
         }
 
         [HttpPost("load-{code}")]
@@ -738,6 +792,20 @@ namespace Coboost.Controllers
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
+                            {
+                                int[] favoriteGroups = open.FavoriteGroups.ToArray();
+                                await Response.WriteAsync("event:" + "FavoriteGroups\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favoriteGroups)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                string[] favoriteMembers = open.FavoriteMembers.ToArray();
+                                await Response.WriteAsync("event:" + "FavoriteMembers\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favoriteMembers)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
                             open.Reset.Reset();
                             open.Reset.WaitOne(10000);
                         }
@@ -766,6 +834,13 @@ namespace Coboost.Controllers
                                 MultipleChoiceOption[] archive = multiple.Archive.ToArray();
                                 await Response.WriteAsync("event:" + "Archive\n");
                                 string json = $"data: {JsonConvert.SerializeObject(archive)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int[] favorites = multiple.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
@@ -824,7 +899,13 @@ namespace Coboost.Controllers
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
-
+                            {
+                                int[] favorites = points.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
                             {
                                 PointsOption[] archive = points.Archive.ToArray();
                                 await Response.WriteAsync("event:" + "Archive\n");
@@ -874,6 +955,13 @@ namespace Coboost.Controllers
                                 SliderVote[] votes = slide.Votes.ToArray();
                                 await Response.WriteAsync("event:" + "Votes\n");
                                 string json = $"data: {JsonConvert.SerializeObject(votes)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int[] favorites = slide.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }

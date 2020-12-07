@@ -96,6 +96,7 @@ namespace Coboost.Models.Admin
             question.Archive = new List<MultipleChoiceOption>();
             question.Type = BaseTask.TaskType.MultipleChoice;
             question.ShowResults = true;
+            question.Favorites = new List<int>();
             question.Timer = 180;
             question.Countdown = -1;
             question.InProgress = true;
@@ -117,6 +118,8 @@ namespace Coboost.Models.Admin
             question.Type = BaseTask.TaskType.OpenText;
             question.ShowResults = true;
             question.Timer = 180;
+            question.FavoriteGroups = new List<int>();
+            question.FavoriteMembers = new List<string>();
             question.Countdown = -1;
             question.InProgress = true;
             Tasks.Add(question);
@@ -129,6 +132,7 @@ namespace Coboost.Models.Admin
             task.ShowResults = true;
             task.Votes = new List<PointsVote>();
             task.Archive = new List<PointsOption>();
+            task.Favorites = new List<int>();
             task.Timer = 180;
             task.Countdown = -1;
             task.InProgress = true;
@@ -143,6 +147,7 @@ namespace Coboost.Models.Admin
             task.Index = Tasks.Count;
             task.Type = BaseTask.TaskType.Slider;
             task.ShowResults = true;
+            task.Favorites = new List<int>();
             task.Votes = new List<SliderVote>();
             task.Archive = new List<SliderOption>();
             task.Timer = 180;
@@ -181,10 +186,29 @@ namespace Coboost.Models.Admin
                 task.InProgress = false;
                 task.Countdown = -1;
 
-                if (!(task is OpenText open))
-                    continue;
-                foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
-                    group.Collapsed = false;
+
+                if (task is OpenText open)
+                {
+                    open.FavoriteMembers ??= new List<string>();
+                    open.FavoriteGroups ??= new List<int>();
+                    foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
+                        group.Collapsed = false;
+                }
+                else
+                {
+                    switch (task)
+                    {
+                        case MultipleChoice mp:
+                            mp.Favorites ??= new List<int>();
+                            break;
+                        case Points p:
+                            p.Favorites ??= new List<int>();
+                            break;
+                        case Slider s:
+                            s.Favorites ??= new List<int>();
+                            break;
+                    }
+                }
             }
         }
 

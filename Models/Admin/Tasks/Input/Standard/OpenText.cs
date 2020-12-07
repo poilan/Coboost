@@ -20,6 +20,24 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
         }
 
         /// <summary>
+        ///     Indexes of the Groups that are marked as favorites
+        /// </summary>
+        public List<int> FavoriteGroups
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///     Index-Keys of the Group-Members that are marked as favorites
+        /// </summary>
+        public List<string> FavoriteMembers
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         ///     All groups of inputs
         /// </summary>
         public List<OpenTextGroup> Groups
@@ -94,6 +112,39 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 if (Groups.All(check => check.Column != prev))
                     RemoveColumn(group);
                 UpdateGroupIndexes();
+            }
+
+            EventStream();
+        }
+
+        public void SetGroupFavorite(int group)
+        {
+            lock (ThreadLock)
+            {
+                if (Groups.Count <= group || group < 0)
+                    return;
+
+                if (FavoriteGroups.Contains(group))
+                    FavoriteGroups.Remove(group);
+                else
+                    FavoriteGroups.Add(group);
+            }
+
+            EventStream();
+        }
+
+        public void SetMemberFavorite(Key input)
+        {
+            lock (ThreadLock)
+            {
+                if (Groups.Count <= input.Group || input.Group < 0)
+                    return;
+
+                string str = input.Group + "-" + input.Member;
+                if (FavoriteMembers.Contains(str))
+                    FavoriteMembers.Remove(str);
+                else
+                    FavoriteMembers.Add(str);
             }
 
             EventStream();
@@ -202,6 +253,21 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             lock (ThreadLock)
             {
                 Groups[group].Collapsed = !Groups[group].Collapsed;
+            }
+
+            EventStream();
+        }
+
+        /// <summary>
+        ///     Collapses or Expands all groups
+        /// </summary>
+        /// <param name="value">true collapses all, false expands all</param>
+        public void CollapseAll(bool value)
+        {
+            lock (ThreadLock)
+            {
+                foreach (OpenTextGroup group in Groups.Where(group => group.Collapsed != value))
+                    group.Collapsed = group.Index != 0 && value;
             }
 
             EventStream();

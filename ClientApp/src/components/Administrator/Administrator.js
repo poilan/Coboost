@@ -19,14 +19,25 @@ import {borderRadius, borderRight} from "@material-ui/system";
 const Theme = createMuiTheme({
     palette: {
         primary: {
-            main: "#374785",
+            main: "#24305E",
             contrastText: "#ffffff"
         },
         secondary: {
-            main: "#24305E",
+            main: "#374785",
             contrastText: "#ffffff"
+        },
+        error: {
+            main: "#F76C6C"
+        },
+        warning: {
+            main: "#f8e9a1"
+        },
+        info: {
+            main: "#4C7AD3"
+        },
+        success: {
+            main: "#6CF76C"
         }
-
     }
 });
 
@@ -41,7 +52,7 @@ const MainContainer = Styled.div`
 
 const Banner = Styled(Col)`
     position: fixed;
-    background: ${props => props.task ?
+    background: ${props => !props.task ?
                            "#24305E" :
                            "#374785"};
     height: 5%;
@@ -113,7 +124,7 @@ const DivButton = Styled.div`
 
     color: #fff;
     border: 3px solid #fff;
-    background: ${props => !props.task ?
+    background: ${props => props.task ?
                            "#24305E" :
                            "#374785"};
     &:hover {
@@ -123,7 +134,7 @@ const DivButton = Styled.div`
     }
 
     &:active {
-        outline: 0;
+        outline: none;
     }
 `;
 
@@ -133,7 +144,7 @@ const ListButton = Styled.div`
     right: -35px;
     position: absolute;
     height: 60px;
-    background: ${props => props.task ?
+    background: ${props => !props.task ?
                            "#24305E" :
                            "#374785"};
     color: #ffffff;
@@ -149,7 +160,7 @@ const ListButton = Styled.div`
     }
 
     &:active {
-        outline: 0;
+        outline: none;
     }
 `;
 
@@ -202,7 +213,7 @@ export class Administrator extends React.Component {
 
             showList: true,
             fullscreen: false,
-
+            BannerButtonText: "Organize",
             modal: {
                 create: false,
                 type: 0
@@ -232,7 +243,6 @@ export class Administrator extends React.Component {
                 }
                 else if (e.key === " ")
                 {
-                    document.activeElement.blur();
                     if (this.state.tab === "task")
                         this.selectTab("organize");
                     else
@@ -538,6 +548,62 @@ export class Administrator extends React.Component {
             });
 
             // ReSharper disable once Html.EventNotResolved
+            this.SSE.source.addEventListener("FavoriteGroups", (e) => {
+                try
+                {
+                    const FavGroups = JSON.parse(e.data);
+                    console.log(FavGroups);
+                    const TaskList = this.state.tasks;
+                    TaskList[target].FavoriteGroups = FavGroups;
+                    this.setState({
+                        tasks: TaskList
+                    });
+                }
+                catch (e)
+                {
+                    console.log("Failed to parse server event: FavoriteGroups");
+                    console.log(e);
+                }
+            });
+
+            // ReSharper disable once Html.EventNotResolved
+            this.SSE.source.addEventListener("FavoriteMembers", (e) => {
+                try
+                {
+                    const FavMembers = JSON.parse(e.data);
+                    const TaskList = this.state.tasks;
+                    console.log(FavMembers);
+                    TaskList[target].FavoriteMembers = FavMembers;
+                    this.setState({
+                        tasks: TaskList
+                    });
+                }
+                catch (e)
+                {
+                    console.log("Failed to parse server event: FavoriteMembers");
+                    console.log(e);
+                }
+            });
+
+            // ReSharper disable once Html.EventNotResolved
+            this.SSE.source.addEventListener("Favorites", (e) => {
+                try
+                {
+                    const Favorites = JSON.parse(e.data);
+                    const TaskList = this.state.tasks;
+                    TaskList[target].Favorites = Favorites;
+                    this.setState({
+                        tasks: TaskList
+                    });
+                }
+                catch (e)
+                {
+                    console.log("Failed to parse server event: Favorites");
+                    console.log(e);
+                }
+            });
+
+            // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Archive", (e) => {
                 try
                 {
@@ -575,7 +641,7 @@ export class Administrator extends React.Component {
 
     HandleTimer = (e, index) => {
         const Code = sessionStorage.getItem("code");
-        let Value = parseInt(e.target.value);
+        let Value = parseInt(e.target.value) * 60;
         const Tasks = this.state.tasks;
 
         if (Value < 1)
@@ -596,7 +662,10 @@ export class Administrator extends React.Component {
     selectTab(key)
     {
         this.setState({
-            tab: key
+            tab: key,
+            BannerButtonText: key === "task" ?
+                                  "Discussion" :
+                                  "Organize"
         });
     }
 
@@ -749,6 +818,7 @@ export class Administrator extends React.Component {
 
     render()
     {
+        let BannerButtonCheck = this.state.tab === "task";
         return (
             <MainContainer>
                 <ThemeProvider
@@ -819,7 +889,7 @@ export class Administrator extends React.Component {
 
                         <BannerCode>
                             {this.state.code > 0 ?
-                                 `Session: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
+                                 `Code: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
                                  null}
                         </BannerCode>
                         <DivButton
@@ -828,11 +898,18 @@ export class Administrator extends React.Component {
                                     this.selectTab("organize") :
                                     this.selectTab("task");
                             }}
+                            onMouseLeave={() => this.setState({
+                    BannerButtonText: this.state.tab === "task" ?
+                                          "Discussion" :
+                                          "Organize"
+                })}
+                            onMouseOver={() => this.setState({
+                                BannerButtonText: this.state.tab !== "task" ?
+                                                      "Discussion" :
+                                                      "Organize"
+                            })}
                             task={this.state.tab === "task"} >
-                            {this.state.tab === "task" ?
-                                 "Discussion" :
-                                 "Organize"
-                            }
+                            {this.state.BannerButtonText}
                         </DivButton>
                     </Banner>
 

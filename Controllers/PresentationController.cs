@@ -94,11 +94,27 @@ namespace Coboost.Controllers
                     {
                         case OpenText open:
                         {
-                            OpenTextGroup[] groups = open.Groups.ToArray();
-                            await Response.WriteAsync("event:" + "Groups\n");
-                            string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
-                            await Response.WriteAsync(json);
-                            await Response.Body.FlushAsync();
+                            {
+                                OpenTextGroup[] groups = open.Groups.ToArray();
+                                await Response.WriteAsync("event:" + "Groups\n");
+                                string json = $"data: {JsonConvert.SerializeObject(groups)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int[] favoriteGroups = open.FavoriteGroups.ToArray();
+                                await Response.WriteAsync("event:" + "FavoriteGroups\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favoriteGroups)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                string[] favoriteMembers = open.FavoriteMembers.ToArray();
+                                await Response.WriteAsync("event:" + "FavoriteMembers\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favoriteMembers)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
                             break;
                         }
                         case MultipleChoice choice:
@@ -114,6 +130,13 @@ namespace Coboost.Controllers
                                 int total = choice.TotalVotes;
                                 await Response.WriteAsync("event:" + "Total\n");
                                 string json = $"data: {JsonConvert.SerializeObject(total)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int[] favorites = choice.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
@@ -142,6 +165,13 @@ namespace Coboost.Controllers
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }
+                            {
+                                int[] favorites = point.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
                             break;
                         }
                         case Slider slider:
@@ -150,6 +180,13 @@ namespace Coboost.Controllers
                                 SliderOption[] options = slider.Options.ToArray();
                                 await Response.WriteAsync("event:" + "Options\n");
                                 string json = $"data: {JsonConvert.SerializeObject(options)}\n\n";
+                                await Response.WriteAsync(json);
+                                await Response.Body.FlushAsync();
+                            }
+                            {
+                                int[] favorites = slider.Favorites.ToArray();
+                                await Response.WriteAsync("event:" + "Favorites\n");
+                                string json = $"data: {JsonConvert.SerializeObject(favorites)}\n\n";
                                 await Response.WriteAsync(json);
                                 await Response.Body.FlushAsync();
                             }

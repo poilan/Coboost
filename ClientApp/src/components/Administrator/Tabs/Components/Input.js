@@ -3,14 +3,17 @@ import Styled from "styled-components";
 import "circular-std";
 import Axios from "axios";
 import {Modal} from "react-bootstrap";
-import {Button, Popper, Box, Typography, Paper, Hidden} from "@material-ui/core";
+import {Button, Popper, Box, Typography, Paper, Hidden, Icon} from "@material-ui/core";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import StarIcon from "@material-ui/icons/Star";
 
 
 const Container = Styled.div`
         font-family: CircularStd;
         font-size: 1rem;
-        background: #fff;
+        background: ${props => props.favorite ?
+                               "#debc5b" :
+                               "#fff"};
         font-weight: 600;
         position: relative;
         box-sizing: border-box;
@@ -128,7 +131,13 @@ export class Input extends Component {
 
     handleClicks = e => {
         e.stopPropagation();
-        if (this.props.showcase)
+
+        if (this.props.toolFavorite)
+        {
+            this.handleFavorite(e);
+            return;
+        }
+        else if (this.props.showcase)
             return;
 
         const Id = e.target.id;
@@ -172,6 +181,17 @@ export class Input extends Component {
     }
 
 
+    handleFavorite = (e) => {
+        e.stopPropagation();
+        const Code = sessionStorage.getItem("code");
+        const Key = {
+            Group: this.props.group,
+            Member: this.props.member
+        };
+        Axios.post(`admin/${Code}/favorite`, Key);
+    }
+
+
     render()
     {
         return (
@@ -189,6 +209,7 @@ export class Input extends Component {
                     checked={this.props.checked}
                     column={this.props.column}
                     draggable={!this.props.showcase}
+                    favorite={this.props.favorite}
                     group={this.props.group}
                     id={this.props.id}
                     member={this.props.member}
@@ -234,6 +255,13 @@ export class Input extends Component {
                                     description={this.props.description}
                                     title={this.props.title} />
                             </React.Fragment>
+                    }
+                    {
+                        //this.props.favorite &&
+                        //<Icon
+                        //    style={{ outline: "none", position: "absolute", top: "-10px", left: "-5px", color: "#f8e9a1" }} >
+                        //    <StarIcon />
+                        //</Icon>
                     }
                 </Container>
             </React.Fragment>
@@ -352,8 +380,8 @@ export class InputDetails extends React.Component {
                     <ShowChildren
                         onClick={() => this.setState({ showChildren: !this.state.showChildren })}
                         value={this.state.showChildren ?
-                                             "Hide Merged Inputs" :
-                                             "Show Merged Inputs"} />
+                                   "Hide Merged Inputs" :
+                                   "Show Merged Inputs"} />
                 }
 
                 {this.state.showChildren &&

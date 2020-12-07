@@ -35,6 +35,12 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             set;
         }
 
+        public List<int> Favorites
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         ///     The minimum value a option can receive
         /// </summary>
@@ -69,6 +75,22 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
         {
             get;
             set;
+        }
+
+        public void SetFavorite(int option)
+        {
+            lock (ThreadLock)
+            {
+                if (Options.Count > option || option < 0)
+                    return;
+
+                if (Favorites.Contains(option))
+                    Favorites.Remove(option);
+                else
+                    Favorites.Add(option);
+            }
+
+            EventStream();
         }
 
         public void AddClientVote(SliderVote vote)

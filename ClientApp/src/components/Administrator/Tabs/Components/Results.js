@@ -14,39 +14,58 @@ const BackgroundContainer = Styled.div`
     position: absolute;
 `;
 
+const PercentageText = Styled.div`
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #777;
+    transform: translateY(-50%);
+`;
+
 
 export function ResultBackground(props) {
     return (
         <BackgroundContainer {...props}>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", borderTop: "1px solid #ddd" }} >
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", backgroundColor: "#f6f6f6", borderTop: "1px solid #ddd" }} >
+                <PercentageText>90%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", borderTop: "1px solid #ddd" }} >
+                <PercentageText>80%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", backgroundColor: "#f6f6f6", borderTop: "1px solid #ddd" }} >
+                <PercentageText>70%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", borderTop: "1px solid #ddd" }} >
+                <PercentageText>60%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", backgroundColor: "#f6f6f6", borderTop: "1px solid #ddd" }} >
+                <PercentageText>50%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", borderTop: "1px solid #ddd" }} >
+                <PercentageText>40%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", backgroundColor: "#f6f6f6", borderTop: "1px solid #ddd" }} >
+                <PercentageText>30%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", borderTop: "1px solid #ddd" }} >
+                <PercentageText>20%</PercentageText>
             </div>
             <div
-                style={{ height: "10%", width: "100%", borderTop: "1px solid #e4e4e4" }} >
+                style={{ height: "10%", width: "100%", position: "relative", backgroundColor: "#f6f6f6", borderTop: "1px solid #ddd" }} >
+                <PercentageText>10%</PercentageText>
             </div>
         </BackgroundContainer>
     );
@@ -76,7 +95,7 @@ const Percentage = Styled.div`
     overflow: hidden;
     font-size: 1rem;
     text-align: center;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 600;
     position: absolute;
     bottom: 0;
@@ -151,6 +170,7 @@ export class ResultItem extends Component {
                 <Input
                     checked={this.props.checked}
                     description={this.props.description}
+                    favorite={this.props.favorite}
                     id={this.props.id}
                     index={this.props.index}
                     onClick={this.props.onClick}
@@ -216,6 +236,7 @@ export function ResultSlider(props) {
             <Input
                 checked={props.checked}
                 description={props.description}
+                favorite={this.props.favorite}
                 id={props.id}
                 index={props.index}
                 onClick={props.onClick}
@@ -234,6 +255,7 @@ export function ResultSlider(props) {
                     max={props.max}
                     min={props.min}
                     name={props.title}
+                    style={{ color: props.color }}
                     value={props.average}
                     valueLabelDisplay="on" />
             </Box>
