@@ -693,7 +693,7 @@ export class Mobile extends React.Component {
                 if (Title.length < 3)
                 {
                     if (this.TextTitle.current)
-                        this.TextTitle.current.focus();
+                        this.TextTitle.current.focus().select();
 
                     return;
                 }
@@ -761,25 +761,23 @@ export class Mobile extends React.Component {
                         p={1}
                         position="relative"
                         width="100%" >
-                        <ContentInput
-                            disabled={this.getTaskAnswers().length <= 30}
-                            fullWidth
-                            helperText={`${this.state.title.length}/30`}
-                            inputProps={{
-                                minlength: 3,
-                                maxlength: 30,
-                                autocomplete: "off"
-                            }}
-                            inputRef={this.TextTitle}
-                            isTitle
-                            label="Title"
-                            margin="none"
-                            onChange={TitleChange}
-                            onFocus={(e) => OnTitleFocus(e)}
-                            required
-                            value={this.state.title}
-                            variant="outlined" />
-
+                        {
+                            !this.getCurrentTask().ShortInputsOnly &&
+                                <ContentInput
+                                    disabled={this.getTaskAnswers().length <= 30}
+                                    fullWidth
+                                    helperText={`${this.state.title.length}/30`}
+                                    inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
+                                    inputRef={this.TextTitle}
+                                    isTitle
+                                    label="Title"
+                                    margin="none"
+                                    onChange={TitleChange}
+                                    onFocus={(e) => OnTitleFocus(e)}
+                                    required
+                                    value={this.state.title}
+                                    variant="outlined" />
+                        }
                         <ContentInput
                             autoFocus={true}
                             fullWidth
@@ -804,7 +802,7 @@ export class Mobile extends React.Component {
                         value="Submit" >
                         {this.getTaskAnswers().length < 3 ?
                              "Write an input to send!" :
-                             (this.getTaskAnswers().length > 30 && this.state.title < 3) ?
+                             (this.getTaskAnswers().length > 30 && (this.state.title < 3 && !this.getCurrentTask().ShortInputsOnly)) ?
                              "Write a title before sending!" :
                              "Send Input!"}
                     </ContentButton>
@@ -1237,38 +1235,38 @@ export class Mobile extends React.Component {
                     <ThemeProvider
                         theme={Theme} >
                         {
-                        //    <Header>
-                        //    <HeaderText
-                        //        active={this.state.activeHeader}
-                        //        id="inputs"
-                        //        onClick={(e) => this.headerClick(e.target)} >
-                        //        {this.getCurrentTask() !== undefined ?
-                        //             this.tabTitle(this.getTaskType()) :
-                        //             "Waiting"}
-                        //    </HeaderText>
-                        //</Header>
-                    }
+                            //    <Header>
+                            //    <HeaderText
+                            //        active={this.state.activeHeader}
+                            //        id="inputs"
+                            //        onClick={(e) => this.headerClick(e.target)} >
+                            //        {this.getCurrentTask() !== undefined ?
+                            //             this.tabTitle(this.getTaskType()) :
+                            //             "Waiting"}
+                            //    </HeaderText>
+                            //</Header>
+                        }
                         {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
-                        <div
-                            style={{
-                                zIndex: "10",
-                                position: "absolute",
-                                height: "50px",
-                                lineHeight: "50px",
-                                textAlign: "center",
-                                minWidth: "150px",
-                                border: "1px solid black",
-                                borderRadius: "15px",
-                                left: "50px",
-                                top: "25px",
-                                backgroundColor: "#fff",
-                                color: this.getCurrentTask().Countdown < 11 && this.getCurrentTask().Countdown > -1 ?
-                                           "red" :
-                                           "black"
-                            }} >
-                            {this.secondsToMinutes(this.getCurrentTask().Countdown)}
-                        </div>
-                    }
+                            <div
+                                style={{
+                                    zIndex: "10",
+                                    position: "absolute",
+                                    height: "50px",
+                                    lineHeight: "50px",
+                                    textAlign: "center",
+                                    minWidth: "150px",
+                                    border: "1px solid black",
+                                    borderRadius: "15px",
+                                    left: "50px",
+                                    top: "25px",
+                                    backgroundColor: "#fff",
+                                    color: this.getCurrentTask().Countdown < 11 && this.getCurrentTask().Countdown > -1 ?
+                                               "red" :
+                                               "black"
+                                }} >
+                                {this.secondsToMinutes(this.getCurrentTask().Countdown)}
+                            </div>
+                        }
                         {this.renderPage()}
                         <Snackbar
                             autoHideDuration={2000}

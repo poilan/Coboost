@@ -12,7 +12,7 @@ const Container = Styled.div`
         font-family: CircularStd;
         font-size: 1rem;
         background: ${props => props.favorite ?
-                               "#debc5b" :
+                               "#ebd69b" :
                                "#fff"};
         font-weight: 600;
         position: relative;

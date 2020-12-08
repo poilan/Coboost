@@ -37,6 +37,12 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             set;
         }
 
+        public bool ShortInputsOnly
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         ///     All groups of inputs
         /// </summary>
@@ -108,6 +114,12 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 }
 
                 int prev = Groups[group].Column;
+                {
+                    //Check if this is in favorites
+                    if (FavoriteGroups.Contains(group))
+                        FavoriteGroups.Remove(group);
+                }
+
                 Groups.RemoveAt(group);
                 if (Groups.All(check => check.Column != prev))
                     RemoveColumn(group);
@@ -314,6 +326,15 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                         mergedParent.Children.Add(Groups[child.Group].Members[child.Member]);
                     }
 
+                    //Check if this is in favorites
+                    string str = $"{child.Group}-{child.Member}";
+                    if (FavoriteMembers.Contains(str))
+                    {
+                        FavoriteMembers.Remove(str);
+                        str = $"{parent.Group}-{parent.Member}";
+                        FavoriteMembers.Add(str);
+                    }
+
                     //Remove the child from its old location
                     Groups[child.Group].Members.RemoveAt(child.Member);
                     UpdateMemberIndexes(child.Group);
@@ -357,9 +378,18 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                     {
                         //Add child to new parent
                         merge.Children.Add(Groups[child.Group].Members[child.Member]);
-                        Groups[child.Group].Members.RemoveAt(child.Member);
                     }
 
+                    //Check if this is in favorites
+                    string str = $"{child.Group}-{child.Member}";
+                    if (FavoriteMembers.Contains(str))
+                    {
+                        FavoriteMembers.Remove(str);
+                        str = $"{parent.Group}-{parent.Member}";
+                        FavoriteMembers.Add(str);
+                    }
+
+                    Groups[child.Group].Members.RemoveAt(child.Member);
                     Groups[parent.Group].Members[parent.Member] = merge;
                     UpdateMemberIndexes(child.Group);
                 }
@@ -439,8 +469,6 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 //Grab the Input we want moved
                 OpenTextInput input = Groups[key.Group].Members[key.Member];
 
-                //Remove it from its old location
-                Groups[key.Group].Members.RemoveAt(key.Member);
 
                 //Update the Index of the Input
                 input.Index = Groups[targetGroup].Members.Count;
@@ -448,9 +476,28 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 //Add it to the desired group
                 Groups[targetGroup].Members.Add(input);
 
+                {
+                    //Check if this is in favorites
+                    string str = $"{key.Group}-{key.Member}";
+                    if (FavoriteMembers.Contains(str))
+                    {
+                        FavoriteMembers.Remove(str);
+                        str = $"{targetGroup}-{input.Index}";
+                        FavoriteMembers.Add(str);
+                    }
+                }
+                //Remove it from its old location
+                Groups[key.Group].Members.RemoveAt(key.Member);
+
+
                 //Remove the Group if it is empty
                 if (key.Group != 0 && Groups[key.Group].Members.Count < 1)
                 {
+                    {
+                        //Check if this is in favorites
+                        if (FavoriteGroups.Contains(key.Group))
+                            FavoriteGroups.Remove(key.Group);
+                    }
                     Groups.RemoveAt(key.Group);
                     UpdateGroupIndexes();
                 }
@@ -481,6 +528,16 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
 
                 lock (ThreadLock)
                 {
+                    {
+                        //Check if this is in favorites
+                        string str = $"{key.Group}-{key.Member}";
+                        if (FavoriteMembers.Contains(str))
+                        {
+                            FavoriteMembers.Remove(str);
+                            str = $"{target}-{input.Index}";
+                            FavoriteMembers.Add(str);
+                        }
+                    }
                     //Remove it from its old location
                     Groups[key.Group].Members.RemoveAt(key.Member);
 
@@ -493,6 +550,11 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 if (Groups[i].Members.Count < 1) //TODO: Keep Previously Empty Groups?
                 {
                     int prev = Groups[i].Column;
+                    {
+                        //Check if this is in favorites
+                        if (FavoriteGroups.Contains(i))
+                            FavoriteGroups.Remove(i);
+                    }
                     Groups.RemoveAt(i);
                     if (Groups.All(check => check.Column != prev))
                         RemoveColumn(prev);
@@ -516,6 +578,12 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
             //Grab the Input we want moved
             OpenTextInput input = Groups[member.Group].Members[member.Member];
 
+            {
+                //Check if this is in favorites
+                string str = $"{member.Group}-{member.Member}";
+                if (FavoriteMembers.Contains(str))
+                    FavoriteMembers.Remove(str);
+            }
             //Remove it from its old location
             Groups[member.Group].Members.RemoveAt(member.Member);
             input.Index = Archive.Count;

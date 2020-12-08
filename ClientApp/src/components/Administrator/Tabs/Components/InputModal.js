@@ -124,7 +124,32 @@ export class InputModal extends Component {
     OnTitleFocus = () => {
         if (this.state.title.trim() === "")
         {
-            const Title = this.state.description.substring(0, 30);
+            let Title = this.state.description.substring(0, 30);
+            let Index = Title.lastIndexOf(" ");
+
+            if (Index !== -1)
+            {
+                Index = 0;
+                for (let I = 0; I < 3; I++)
+                {
+                    const Check = Title.indexOf(" ", Index + 1);
+
+                    if (Check === -1)
+                    {
+                        if (Index > 0)
+                            break;
+                        else
+                        {
+                            Index = 30;
+                            break;
+                        }
+                    }
+                    else
+                        Index = Check;
+                }
+
+                Title = Title.substring(0, Index);
+            }
             this.setState({
                 title: Title
             });
@@ -149,7 +174,7 @@ export class InputModal extends Component {
             if (Title.length < 3)
             {
                 if (this.Title.current)
-                    this.Title.current.focus();
+                    this.Title.current.focus().select();
 
                 return;
             }
@@ -189,12 +214,9 @@ export class InputModal extends Component {
                     mb={2}
                     p={1} >
                     <ContentInput
-                        disabled={this.state.description == undefined ||
-                            this.state.description.length <= 30}
                         fullWidth
-                        helperText={`${30 - this.state.title.length}`}
-                        hidden={this.state.description == undefined || this.state.description.length <= 30}
-                        inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
+                        helperText={`${this.state.title.length}/30`}
+                        inputProps={{ minlength: 1, maxlength: 30, autocomplete: "off" }}
                         inputRef={this.Title}
                         isTitle
                         label="Title"
@@ -213,11 +235,11 @@ export class InputModal extends Component {
                     <ContentInput
                         autoFocus={true}
                         fullWidth
-                        helperText={`${250 - this.state.description.length}
+                        helperText={`${this.state.description.length}/250
                                     ${this.state.description.length > 30 ?
                                       "" :
-                                      ` | ${30 - this.state.description.length}`}`}
-                        inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                                      `(${30 - this.state.description.length})`}`}
+                        inputProps={{ minlength: 1, maxlength: 250, autofocus: true, autocomplete: "off" }}
                         inputRef={this.Description}
                         label="Input"
                         margin="normal"
@@ -226,7 +248,7 @@ export class InputModal extends Component {
                         onChange={this.HandleDescription}
                         onKeyDown={this.HandleEnter.bind(this)}
                         required
-                        rowsMax={5}
+                        rows={4}
                         value={this.state.description}
                         variant="outlined" />
                 </Box>

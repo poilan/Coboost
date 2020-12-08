@@ -81,7 +81,8 @@ export class CreateTaskModal extends Component {
             const Code = sessionStorage.getItem("code");
             var Data = {
                 Title: this.state.description,
-                ShowResults: true
+                ShowResults: true,
+                ShortInputsOnly: !this.state.extra
             };
 
             Axios.post(`admin/${Code}/create-text-open`, Data,
@@ -120,12 +121,31 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
+                        autoFocus={true}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
                         onChange={HandleDescription}
                         type="text"
                         value={this.state.description} />
+                </Box>
+                <Box
+                    borderColor="transparent"
+                    component="fieldset"
+                    mb={3}
+                    pt={1}
+                    px={3} >
+                    <FormControlLabel
+                        control={<Switch
+                                     checked={!this.state.extra}
+                                     name="TextSwitch"
+                                     onChange={(e) => {
+                                         e.preventDefault();
+                                         this.setState({ extra: !this.state.extra });
+                                     }} />}
+                        label={!this.state.extra ?
+                                   "Long Inputs Enabled" :
+                                   "Long Inputs Disabled"} />
                 </Box>
                 <CancelButton
                     onClick={this.props.onClose} >
@@ -235,13 +255,12 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
-                        autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                        autoFocus={this.state.options.length === 0}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
                         onChange={HandleTitle}
-                        value={this.state.description
-                        } />
+                        value={this.state.description} />
                 </Box>
 
                 <Box
@@ -251,19 +270,21 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <FormControlLabel
-                        control={
-                        <Switch checked={this.state.extra}
-                            onChange={(e) => {
-                                e.preventDefault();
-                                this.setState({ extra: !this.state.extra });
-                            }}
-                            name="TextSwitch" />
-                    }
+                        control={<Switch
+                                     checked={this.state.extra}
+                                     name="TextSwitch"
+                                     onChange={(e) => {
+                                         e.preventDefault();
+                                         this.setState({ extra: !this.state.extra });
+                                     }} />}
                         label="Allow Multiple Answers" />
                     {this.state.extra &&
-                        <TextField id="TextMax" type="number" label="Max Answers" value={this.state.max}
+                        <TextField
+                            id="TextMax"
+                            label="Max Answers"
                             onChange={HandleMax}
-                        />
+                            type="number"
+                            value={this.state.max} />
                     }
                 </Box>
 
@@ -285,12 +306,19 @@ export class CreateTaskModal extends Component {
                         </Typography>
                         {this.state.options !== undefined &&
                             this.state.options.map(option =>
-                                <Box component="fieldset" mb={1} borderColor="transparent">
-                                    <TextField id={`Option-${option.Index}`} label={`Option ${option.Index + 1}`}
-                                        key={option.Index} name={option.Index}
-                                        value={option.Description} onChange={HandleOption.bind(this)}
+                                <Box
+                                    borderColor="transparent"
+                                    component="fieldset"
+                                    mb={1} >
+                                    <TextField
                                         autoFocus={(option.Index + 1) === this.state.options.length}
-                                        fullWidth />
+                                        fullWidth
+                                        id={`Option-${option.Index}`}
+                                        key={option.Index}
+                                        label={`Option ${option.Index + 1}`}
+                                        name={option.Index}
+                                        onChange={HandleOption.bind(this)}
+                                        value={option.Description} />
                                 </Box>
                             )}
                         <Box
@@ -422,7 +450,7 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
-                        autoFocus={this.state.description == undefined || this.state.description.length < 1}
+                        autoFocus={this.state.options.length === 0}
                         fullWidth
                         id="TextTitle"
                         label="Task Text"
@@ -482,14 +510,19 @@ export class CreateTaskModal extends Component {
                         </Typography>
                         {this.state.options !== undefined &&
                             this.state.options.map(option =>
-                                <Box component="fieldset" mb={1} borderColor="transparent">
-                                    <TextField id={`Option-${option.Index}`}
-                                        label={`Option ${option.Index + 1}`}
-                                        key={option.Index} name={option.Index}
-                                        value={option.Description}
-                                        onChange={HandleOption.bind(this)}
+                                <Box
+                                    borderColor="transparent"
+                                    component="fieldset"
+                                    mb={1} >
+                                    <TextField
                                         autoFocus={(option.Index + 1) === this.state.options.length}
-                                        fullWidth />
+                                        fullWidth
+                                        id={`Option-${option.Index}`}
+                                        key={option.Index}
+                                        label={`Option ${option.Index + 1}`}
+                                        name={option.Index}
+                                        onChange={HandleOption.bind(this)}
+                                        value={option.Description} />
                                 </Box>
                             )}
                         <Box
@@ -726,14 +759,19 @@ export class CreateTaskModal extends Component {
                         </Typography>
                         {this.state.options !== undefined &&
                             this.state.options.map(option =>
-                                <Box component="fieldset" mb={1} borderColor="transparent">
-                                    <TextField id={`Option-${option.Index}`}
-                                        label={`Option ${option.Index + 1}`}
-                                        key={option.Index} name={option.Index}
-                                        value={option.Description}
-                                        onChange={HandleOption.bind(this)}
+                                <Box
+                                    borderColor="transparent"
+                                    component="fieldset"
+                                    mb={1} >
+                                    <TextField
                                         autoFocus={(option.Index + 1) === this.state.options.length}
-                                        fullWidth />
+                                        fullWidth
+                                        id={`Option-${option.Index}`}
+                                        key={option.Index}
+                                        label={`Option ${option.Index + 1}`}
+                                        name={option.Index}
+                                        onChange={HandleOption.bind(this)}
+                                        value={option.Description} />
                                 </Box>
                             )}
                         <Box

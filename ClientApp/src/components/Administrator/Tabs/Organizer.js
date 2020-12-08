@@ -26,6 +26,10 @@ import {width, height} from "@material-ui/system";
 import {green, red} from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import StarBorderIcon from "@material-ui/icons/StarBorder";
+import StarHalfIcon from "@material-ui/icons/StarHalf";
+import StarIcon from "@material-ui/icons/Star";
+import ClearIcon from "@material-ui/icons/Clear";
 
 
 const MainContainer = Styled.div`
@@ -76,6 +80,8 @@ const Tools = Styled.div`
     position: absolute;
     height: 50px;
     min-width: 300px;
+    padding: 0 1px;
+    background: #fff;
 `;
 
 const Countdown = Styled.div`
@@ -636,6 +642,40 @@ export class Organizer extends Component {
                 return Keys.sort(Compare);
             };
 
+            const SelectFavoriteGroups = () => {
+                const Favorites = task.FavoriteGroups;
+                const Selected = [];
+
+                for (let I = 0; I < Favorites.length; I++)
+                {
+                    for (let K = 0; K < task.Groups[Favorites[I]].Members.length; K++)
+                    {
+                        const Answer = task.Groups[Favorites[I]].Members[K];
+                        if (Answer !== undefined)
+                            Selected.push(`${Favorites[I]}-${K}`);
+                    }
+                }
+                this.setState({
+                    selected: Selected
+                });
+            };
+
+            const SelectFavoriteMembers = () => {
+                const Favorites = task.FavoriteMembers;
+                const Selected = [];
+
+                for (let I = 0; I < Favorites.length; I++)
+                {
+                    const Key = Favorites[I].split("-");
+                    const Answer = task.Groups[Key[0]].Members[Key[1]];
+                    if (Answer !== undefined)
+                        Selected.push(Favorites[I]);
+                }
+                this.setState({
+                    selected: Selected
+                });
+            };
+
             const GetOptions = () => {
                 const Options = [];
                 const Selected = GetSelected();
@@ -806,15 +846,9 @@ export class Organizer extends Component {
                                 //    Select All
                                 //</MergeButton>
                             }
-                            <AnswerButton
-                                draggable="false"
-                                id="collapse"
-                                onClick={CollapseAll} >
-                                <ExpandLessIcon
-                                    className="icon" />
-                                <br />
-                                Collapse All
-                            </AnswerButton>
+                            <div
+                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+
                             <MergeButton
                                 draggable="false"
                                 id="expand"
@@ -822,23 +856,21 @@ export class Organizer extends Component {
                                 <ExpandMoreIcon
                                     className="icon" />
                                 <br />
-                                Expand All
+                                Expand Groups
                             </MergeButton>
                             <AnswerButton
                                 draggable="false"
-                                onClick={() => this.setState({ selected: [] })} >
-                                <AllOutIcon
+                                id="collapse"
+                                onClick={CollapseAll} >
+                                <ExpandLessIcon
                                     className="icon" />
                                 <br />
-                                Deselect All
+                                Collapse Groups
                             </AnswerButton>
-                            <MergeButton
-                                draggable="false"
-                                onClick={Merge} >
-                                <CallMergeIcon
-                                    className="icon" />
-                                <br />Merge
-                            </MergeButton>
+
+                            <div
+                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+
                             <AnswerButton
                                 draggable="false"
                                 onClick={Duplicate} >
@@ -849,12 +881,49 @@ export class Organizer extends Component {
                             </AnswerButton>
                             <MergeButton
                                 draggable="false"
+                                onClick={Merge} >
+                                <CallMergeIcon
+                                    className="icon" />
+                                <br />
+                                Merge
+                            </MergeButton>
+                            <MergeButton
+                                draggable="false"
                                 onClick={Archive.members} >
                                 <ArchiveIcon
                                     className="icon" />
                                 <br />
-                                Delete
+                                Remove
                             </MergeButton>
+
+                            <div
+                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+
+                            <AnswerButton
+                                draggable="false"
+                                onClick={SelectFavoriteMembers} >
+                                <StarIcon
+                                    className="icon" />
+                                <br />
+                                Favorite Members
+                            </AnswerButton>
+                            <AnswerButton
+                                draggable="false"
+                                onClick={SelectFavoriteGroups} >
+                                <StarBorderIcon
+                                    className="icon" />
+                                <br />
+                                Favorite Groups
+                            </AnswerButton>
+                            <AnswerButton
+                                draggable="false"
+                                onClick={() => this.setState({ selected: [] })} >
+                                <ClearIcon
+                                    className="icon" />
+                                <br />
+                                Clear Selected
+                            </AnswerButton>
+
                         </Tools>
 
                         <Countdown>
@@ -965,9 +1034,10 @@ export class Organizer extends Component {
                             disabled={this.state.selected.length < 1} >
 
                             <SendToMC
-                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
+                                onClick={this.state.selected.length < 1 ?
+                                             SelectFavoriteMembers :
+                                             (e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
 
@@ -1160,6 +1230,20 @@ export class Organizer extends Component {
                 }
             };
 
+            const SelectFavorites = () => {
+                const Favorites = task.Favorites;
+                const Selected = [];
+
+                for (let I = 0; I < Favorites.length; I++)
+                {
+                    const Answer = task.Options[Favorites[I]];
+                    if (Answer !== undefined)
+                        Selected.push(Favorites[I]);
+                }
+
+                this.setState({ selected: Selected });
+            };
+
             const GetOptions = () => {
                 const Options = [];
                 const Selected = this.state.selected;
@@ -1318,9 +1402,10 @@ export class Organizer extends Component {
                         <ButtonToolbar
                             disabled={this.state.selected.length < 1} >
                             <SendToMC
-                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
+                                onClick={this.state.selected.length < 1 ?
+                                             SelectFavorites :
+                                             (e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
                             <div
@@ -1431,6 +1516,20 @@ export class Organizer extends Component {
                         selected: Selected
                     });
                 }
+            };
+
+            const SelectFavorites = () => {
+                const Favorites = task.Favorites;
+                const Selected = [];
+
+                for (let I = 0; I < Favorites.length; I++)
+                {
+                    const Answer = task.Options[Favorites[I]];
+                    if (Answer !== undefined)
+                        Selected.push(Favorites[I]);
+                }
+
+                this.setState({ selected: Selected });
             };
 
             const GetOptions = () => {
@@ -1589,9 +1688,10 @@ export class Organizer extends Component {
                         <ButtonToolbar
                             disabled={this.state.selected.length < 1} >
                             <SendToMC
-                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
+                                onClick={this.state.selected.length < 1 ?
+                                             SelectFavorites :
+                                             (e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
 
@@ -1696,6 +1796,20 @@ export class Organizer extends Component {
                         selected: Selected
                     });
                 }
+            };
+
+            const SelectFavorites = () => {
+                const Favorites = task.Favorites;
+                const Selected = [];
+
+                for (let I = 0; I < Favorites.length; I++)
+                {
+                    const Answer = task.Options[Favorites[I]];
+                    if (Answer !== undefined)
+                        Selected.push(Favorites[I]);
+                }
+
+                this.setState({ selected: Selected });
             };
 
             const GetOptions = () => {
@@ -1854,9 +1968,10 @@ export class Organizer extends Component {
                         <ButtonToolbar
                             disabled={this.state.selected.length < 1} >
                             <SendToMC
-                                disabled={this.state.selected.length < 1}
                                 draggable="false"
-                                onClick={(e) => this.setState({ anchor: { task: e.currentTarget } })} >
+                                onClick={this.state.selected.length < 1 ?
+                                             SelectFavorites :
+                                             (e) => this.setState({ anchor: { task: e.currentTarget } })} >
                                 Send selected to new task
                             </SendToMC>
                             <div

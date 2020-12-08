@@ -21,7 +21,7 @@ const GroupContainer = Styled.div`
     box-shadow: 0 1px 0 1px rgba(0, 0, 0, .12);
     vertical-align: top;
     border-top: ${props => props.favorite ?
-                           "10px solid #debc5b" :
+                           "10px solid #ebd69b" :
                            ""};
     position: relative;
     display: ${props => props.empty || props.showcase && props.group === 0 ?
