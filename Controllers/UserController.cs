@@ -145,7 +145,7 @@ namespace Coboost.Controllers
             HttpContext.Response.StatusCode = 201;
         }
 
-        [HttpGet]
+        [HttpGet("confirm-email")]
         public async Task ConfirmEmail(string userid, string token)
         {
             User user = await _context.Users.FindAsync(userid);
