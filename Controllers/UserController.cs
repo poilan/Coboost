@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Coboost.Models.Database;
 using Coboost.Models.Database.data;
@@ -19,6 +20,7 @@ namespace Coboost.Controllers
         ///     Instantiates the controller and retrieves an instance of the database context
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="userManager"></param>
         public UserController(DatabaseContext context)
         {
             _context = context;
@@ -35,8 +37,8 @@ namespace Coboost.Controllers
             if (email == null)
                 return null;
 
-            User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).Include(u => u.Folders).ThenInclude(f => f.Session).Where(u => u.Email.Equals(email)).SingleAsync();
-
+            //User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).Include(u => u.Folders).ThenInclude(f => f.Session).Where(u => u.Email.Equals(email)).SingleAsync();
+            User user = await _context.Users.FindAsync(email);
             if (user == null)
                 return null;
 
@@ -51,8 +53,8 @@ namespace Coboost.Controllers
         [HttpGet("get-all")]
         public async Task<IEnumerable<User>> GetUsers()
         {
-            List<User> userList = await _context.Users.Include(u => u.Sessions).ThenInclude(u => u.Session).ToListAsync();
-
+            //List<User> userList = await _context.Users.Include(u => u.Sessions).ThenInclude(u => u.Session).ToListAsync();
+            List<User> userList = await _context.Users.ToListAsync();
             return userList;
         }
 
@@ -80,6 +82,7 @@ namespace Coboost.Controllers
         [HttpPost("register")]
         public async Task Register([FromBody] User user)
         {
+            //TODO: Move Valid User Check into own Method
             if (user == null)
             {
                 //Data not received
@@ -101,6 +104,12 @@ namespace Coboost.Controllers
                 return;
             }
 
+            user.PhoneNumber = "12345678";
+            user.EmailConfirmed = false;
+            user.LastUsed = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            user.UniqueDaysUsed = 0;
+            user.Company = "TEMPPPPPPPPPPPPPPPPPP";
+
             User userExistence = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence != null)
             {
@@ -109,18 +118,54 @@ namespace Coboost.Controllers
                 return;
             }
 
+            //Hash their Password
             user.Password = PasswordHasher.GetHash(user.Password);
 
+
+            string token = Guid.NewGuid().ToString();
+            string callbackUrl = Url.Action("ConfirmEmail", "User", new
+            {
+                userId = user.Email,
+                code = token
+            }, HttpContext.Request.Scheme);
+
+            user.Token = token;
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
+            //TODO: Add this to the Email Class
             string recipient = user.Email;
-            const string title = "Coboost Registration!";
-            string body = $"Dear {user.FirstName},\nYour new account is now created an is available for use.\n\nRegards,\nCoboost";
+            string title = "Coboost - Confirm Email";
+            string body = $"Dear {user.FirstName},\n" + "Your new account is waiting, you only have to confirm this email is yours!.\n" + "If you haven't attempted to create a user, you can safely ignore this email.\n" + "\n" + "\n" +
+                          "To enable your Account please click on the link below:\n" + $"${callbackUrl}\n" + "\n" + "\n" + "Regards,\n" + "Coboost";
 
             Email email = new Email(recipient, title, body);
             await email.Send();
+
             HttpContext.Response.StatusCode = 201;
+        }
+
+
+        public async Task ConfirmEmail(string userid, string token)
+        {
+            User user = await _context.Users.FindAsync(userid);
+
+            bool result = string.Equals(user.Token, token);
+
+            if (result)
+            {
+                user.EmailConfirmed = true;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                string recipient = user.Email;
+                const string title = "Coboost";
+                string body = $"Dear {user.FirstName},\nYour new account is now created an is available for use.\n\nRegards,\nCoboost";
+
+                Email mail = new Email(recipient, title, body);
+                await mail.Send();
+                HttpContext.Response.StatusCode = 200;
+            }
         }
 
         [HttpPost("start-recovery")]

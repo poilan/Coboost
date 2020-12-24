@@ -18,7 +18,6 @@ using Coboost.Models.Database;
 using Coboost.Models.Database.data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -404,14 +403,29 @@ namespace Coboost.Controllers
             return null;
         }
 
+        //[HttpGet("{code}/phases")]
+        //public string GetPhases(int code)
+        //{
+        //    if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+        //    {
+        //        HttpContext.Response.StatusCode = 202;
+        //        string json = JsonConvert.SerializeObject(admin.Phase);
+
+        //        return json;
+        //    }
+
+        //    HttpContext.Response.StatusCode = 412;
+        //    return null;
+        //}
+
         [HttpGet("sessions-{email}")]
         public async Task<List<Session>> GetSessions(string email)
         {
-            User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).ThenInclude(s => s.Users).Include(u => u.Folders).ThenInclude(f => f.Session).ThenInclude(s => s.Folders).ThenInclude(f => f.Folder)
-                .Where(u => u.Email.Equals(email)).SingleOrDefaultAsync();
+            //User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).ThenInclude(s => s.Users).Include(u => u.Folders).ThenInclude(f => f.Session).ThenInclude(s => s.Folders).ThenInclude(f => f.Folder)
+            //    .Where(u => u.Email.Equals(email)).SingleOrDefaultAsync();
+            List<Session> sessions = _context.Sessions.ToList();
 
-            IEnumerable<Session> sessions = from userSession in user.Sessions select userSession.Session;
-            return sessions.ToList();
+            return sessions;
         }
 
         [HttpPost("{code}/group{group}-recolor")]

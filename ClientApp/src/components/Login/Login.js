@@ -273,7 +273,21 @@ export class Login extends React.Component {
     async submitRegistration(event)
     {
         event.preventDefault();
-        const Data = this.state.register;
+        if (this.state.register.password !== this.state.register.repeatPassword)
+            return false;
+
+        const Data = {
+            Email: this.state.register.email,
+            FirstName: this.state.register.firstName,
+            LastName: this.state.register.lastName,
+            Password: this.state.register.password,
+            PhoneNumber: "12345678",
+            EmailConfirmed: false,
+            LastUsed: Date.UTC.toString(),
+            UniqueDaysUsed: 0,
+            Company: "3123"
+
+        };
 
         await Axios.post(`user/register`, Data).then(res => {
             if (res.status === 201)

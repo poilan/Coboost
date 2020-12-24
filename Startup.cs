@@ -61,19 +61,19 @@ namespace Coboost
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /* Setup MySQL
-            var dbDetails = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));*/
+            // Setup MySQL
+            string dbDetails = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DatabaseContext>(options => options.UseMySql(dbDetails));
 
             // Setup Microsoft SQL Db
-            string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
-            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
+            //string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
+            //services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
+
 
             services.AddControllersWithViews().AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
