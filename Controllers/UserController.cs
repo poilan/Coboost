@@ -137,7 +137,7 @@ namespace Coboost.Controllers
             string recipient = user.Email;
             string title = "Coboost - Confirm Email";
             string body = $"Dear {user.FirstName},\n" + "Your new account is waiting, you only have to confirm this email is yours!.\n" + "If you haven't attempted to create a user, you can safely ignore this email.\n" + "\n" + "\n" +
-                          "To enable your Account please click on the link below:\n" + $"${callbackUrl}\n" + "\n" + "\n" + "Regards,\n" + "Coboost";
+                          "To enable your Account please click on the link below:\n" + " <a href=\"" + callbackUrl + "\">link</a>" + "\n" + "\n" + "\n" + "Regards,\n" + "Coboost";
 
             Email email = new Email(recipient, title, body);
             await email.Send();
