@@ -123,10 +123,10 @@ namespace Coboost.Controllers
 
 
             string token = Guid.NewGuid().ToString();
-            string callbackUrl = Url.Action("ConfirmEmail", "User", new
+            string callbackUrl = Url.Action("ConfirmEmail", "user", new
             {
                 userId = user.Email,
-                code = token
+                token
             }, HttpContext.Request.Scheme);
 
             user.Token = token;
