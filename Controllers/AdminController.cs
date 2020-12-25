@@ -423,7 +423,7 @@ namespace Coboost.Controllers
         {
             //User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).ThenInclude(s => s.Users).Include(u => u.Folders).ThenInclude(f => f.Session).ThenInclude(s => s.Folders).ThenInclude(f => f.Folder)
             //    .Where(u => u.Email.Equals(email)).SingleOrDefaultAsync();
-            List<Session> sessions = (List<Session>) _context.Sessions.ToList().Where(u => u.Email.Equals(email));
+            List<Session> sessions = _context.Sessions.Where(u => u.Email.Equals(email)).ToList();
 
             return sessions;
         }
