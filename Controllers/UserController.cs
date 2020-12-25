@@ -201,7 +201,7 @@ namespace Coboost.Controllers
                 HttpContext.Response.StatusCode = 202;
             }
 
-            HttpContext.Response.Redirect("http://innonor.mathiastb.no/");
+            HttpContext.Response.Redirect("http://innonor.mathiastb.no");
         }
 
         [HttpPost("start-recovery")]
@@ -273,7 +273,7 @@ namespace Coboost.Controllers
                 HttpContext.Response.StatusCode = 202;
             }
 
-            HttpContext.Response.Redirect("http://innonor.mathiastb.no/");
+            HttpContext.Response.Redirect("http://innonor.mathiastb.no");
         }
     }
 }
