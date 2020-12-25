@@ -1,6 +1,7 @@
 using Coboost.Models.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -68,6 +69,12 @@ namespace Coboost
             // Setup Microsoft SQL Db
             //string dbDetails = Configuration.GetConnectionString("MicrosoftSQL");
             //services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(dbDetails));
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 5001;
+            });
 
 
             services.AddControllersWithViews().AddNewtonsoftJson(o =>

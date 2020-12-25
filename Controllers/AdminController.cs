@@ -24,7 +24,6 @@ using Newtonsoft.Json;
 
 namespace Coboost.Controllers
 {
-    [RequireHttps]
     [Route("[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
