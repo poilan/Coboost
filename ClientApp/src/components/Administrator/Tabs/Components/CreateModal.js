@@ -121,10 +121,12 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
+                        autoComplete="on"
                         autoFocus={true}
                         fullWidth
-                        id="TextTitle"
+                        id="text-title"
                         label="Task Text"
+                        name="text-title"
                         onChange={HandleDescription}
                         type="text"
                         value={this.state.description} />
@@ -246,6 +248,7 @@ export class CreateTaskModal extends Component {
 
         return (
             <Form
+                autoComplete="off"
                 onSubmit={CreateMultipleChoice.bind(this)} >
 
                 <Box
@@ -255,10 +258,12 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
-                        autoFocus={this.state.options.length === 0}
+                        autoComplete="on"
+                        autoFocus
                         fullWidth
-                        id="TextTitle"
-                        label="Task Text"
+                        id="multiple-title"
+                        label="Task Name"
+                        name="multiple"
                         onChange={HandleTitle}
                         value={this.state.description} />
                 </Box>
@@ -442,6 +447,7 @@ export class CreateTaskModal extends Component {
 
         return (
             <Form
+                autoComplete="off"
                 onSubmit={CreatePoints.bind(this)} >
                 <Box
                     borderColor="transparent"
@@ -450,10 +456,12 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
+                        autoComplete="on"
                         autoFocus={this.state.options.length === 0}
                         fullWidth
-                        id="TextTitle"
-                        label="Task Text"
+                        id="points-title"
+                        label="Task Name"
+                        name="points-title"
                         onChange={HandleTitle}
                         value={this.state.description} />
                 </Box>
@@ -657,6 +665,7 @@ export class CreateTaskModal extends Component {
         };
         return (
             <Form
+                autoComplete="off"
                 onSubmit={CreateSlider.bind(this)} >
                 <Box
                     borderColor="transparent"
@@ -665,10 +674,12 @@ export class CreateTaskModal extends Component {
                     pt={1}
                     px={3} >
                     <TextField
+                        autoComplete="on"
                         autoFocus={this.state.description == undefined || this.state.description.length < 1}
                         fullWidth
-                        id="TextTitle"
-                        label="Task Text"
+                        id="slide-title"
+                        label="Task Name"
+                        name="slide-title"
                         onChange={HandleTitle}
                         value={this.state.description} />
                 </Box>
@@ -821,12 +832,15 @@ export class CreateTaskModal extends Component {
     {
         return (
             <ModalPage
+                aria-describedby="create-body"
+                aria-labelledby="create-title"
                 centered
                 onHide={this.onClose.bind(this)}
                 show={this.state.showing} >
                 <Modal.Header
                     closeButton >
-                    <Modal.Title>
+                    <Modal.Title
+                        id="create-title" >
                         {this.props.type === 0 ?
                              "Input: Open Text" :
                              this.props.type === 1 ?
@@ -837,7 +851,8 @@ export class CreateTaskModal extends Component {
                         }
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body
+                    id="create-body" >
                     {this.props.type === 0 ?
                          this.TextContent() :
                          this.props.type === 1 ?

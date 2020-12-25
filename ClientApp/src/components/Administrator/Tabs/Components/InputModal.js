@@ -86,73 +86,74 @@ export class InputModal extends Component {
 
     SendInput = (e) => {
         e.preventDefault();
-        const Title = this.state.title;
-        const Description = this.state.description;
-        const User = localStorage.getItem("user");
-        const Code = sessionStorage.getItem("code");
+        const title = this.state.title;
+        const description = this.state.description;
+        const user = localStorage.getItem("user");
+        const code = sessionStorage.getItem("code");
 
-        const Data = {
-            Description: Description,
-            UserID: User
+        const data = {
+            Description: description,
+            UserID: user
         };
 
-        if (Description.length > 30)
-            Data.Title = Title;
+        if (description.length > 30)
+            data.Title = title;
 
-        Axios.post(`client/${Code}/add-text-open`, Data).then(res => this.OnClose(true));
+        Axios.post(`client/${code}/add-text-open`, data).then(() => this.OnClose(true));
     }
 
 
     HandleTitle = (event) => {
         event.preventDefault();
-        var Title = event.target.value;
+        const title = event.target.value;
         this.setState({
-            title: Title
+            title: title
         });
     }
 
 
     HandleDescription = (event) => {
         event.preventDefault();
-        var Description = event.target.value;
+        const description = event.target.value;
         this.setState({
-            description: Description
+            description: description
         });
     }
 
 
-    OnTitleFocus = () => {
+    OnTitleFocus = (e) => {
         if (this.state.title.trim() === "")
         {
-            let Title = this.state.description.substring(0, 30);
-            let Index = Title.lastIndexOf(" ");
+            let title = this.state.description.substring(0, 30);
+            let index = title.lastIndexOf(" ");
 
-            if (Index !== -1)
+            if (index !== -1)
             {
-                Index = 0;
-                for (let I = 0; I < 3; I++)
+                index = 0;
+                for (let i = 0; i < 3; i++)
                 {
-                    const Check = Title.indexOf(" ", Index + 1);
+                    const check = title.indexOf(" ", index + 1);
 
-                    if (Check === -1)
+                    if (check === -1)
                     {
-                        if (Index > 0)
+                        if (index > 0)
                             break;
                         else
                         {
-                            Index = 30;
+                            index = 30;
                             break;
                         }
                     }
                     else
-                        Index = Check;
+                        index = check;
                 }
 
-                Title = Title.substring(0, Index);
+                title = title.substring(0, index);
             }
             this.setState({
-                title: Title
+                title: title
             });
+            event.target.select();
         }
     }
 
@@ -169,9 +170,9 @@ export class InputModal extends Component {
         }
         else if (Description.length > 30)
         {
-            const Title = this.state.title;
+            const title = this.state.title;
 
-            if (Title.length < 3)
+            if (title.length < 3)
             {
                 if (this.Title.current)
                     this.Title.current.focus().select();
@@ -216,11 +217,13 @@ export class InputModal extends Component {
                     <ContentInput
                         fullWidth
                         helperText={`${this.state.title.length}/30`}
+                        id="input-title"
                         inputProps={{ minlength: 1, maxlength: 30, autocomplete: "off" }}
                         inputRef={this.Title}
                         isTitle
                         label="Title"
                         margin="normal"
+                        name="title"
                         onChange={this.HandleTitle}
                         onFocus={this.OnTitleFocus}
                         onKeyDown={this.HandleEnter.bind(this)}
@@ -239,6 +242,7 @@ export class InputModal extends Component {
                                     ${this.state.description.length > 30 ?
                                       "" :
                                       `(${30 - this.state.description.length})`}`}
+                        id="input-description"
                         inputProps={{ minlength: 1, maxlength: 250, autofocus: true, autocomplete: "off" }}
                         inputRef={this.Description}
                         label="Input"
@@ -269,14 +273,22 @@ export class InputModal extends Component {
     {
         return (
             <ModalPage
+                aria-describedby="registerTab"
+                aria-labelledby="loginTab"
                 centered
                 onHide={this.OnClose}
                 show={this.state.showing} >
                 <Modal.Header
                     closeButton >
-                    <Modal.Title>Write Input</Modal.Title>
+                    <Modal.Title
+                        id="input-modal-title" >
+                        Write Input
+                    </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{this.Content()}</Modal.Body>
+                <Modal.Body
+                    id="input-modal-description" >
+                    {this.Content()}
+                </Modal.Body>
             </ModalPage>
         );
     }

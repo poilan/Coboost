@@ -1,13 +1,13 @@
-﻿import React, {Component} from "react";
-import {Modal, Backdrop, Fade, Divider, withStyles, Button, TextField, Link, Checkbox, Typography, duration, CircularProgress} from "@material-ui/core";
+﻿import {Backdrop, Button, Checkbox, CircularProgress, createStyles, Fade, Modal, TextField, Typography, withStyles} from "@material-ui/core";
 import Axios from "axios";
-import {Alert} from "react-bootstrap";
+import React, {Component} from "react";
 
 
 /**
  * Material-UI Styling/CSS classes
  */
-const UseStyles = (theme) => ({
+
+const UseStyles = (theme) => createStyles({
     modal: {
         display: "flex",
         alignItems: "center",
@@ -133,18 +133,25 @@ class LoginModal extends Component {
      * Changes the active tab
      * @param {string} key the name of the new active tab
      */
-    handleTab = (key) => {
+    HandleTab = (key) => {
         this.setState({
             tab: key
         });
     }
 
 
-    submit = {
+
+    /**
+     * This is where all of our "form - onSubmit" functions are stored.
+     * They check the data, before sending the request to this.server
+     * It Is also where we set "state.working" to true and false.
+     * If the server function returns true, this modal will then close.
+     */
+    handleSubmit = {
         /**
-         * Prevents form refresh & Calls "request.login" with "state.login"
+         * Prevents form refresh & Calls "server.login" with "state.login"
          * @param {Event} e form event
-         * @returns {boolean} Successfully logged in?
+         * @returns {boolean} logged in === true
          */
         login: async (e) => {
             e.preventDefault();
@@ -169,9 +176,9 @@ class LoginModal extends Component {
             }
         },
         /**
-         * Prevents form refresh & Calls "request.register" with "state.register"
+         * Prevents form refresh && checks form validity && Calls "server.register" with "state.register"
          * @param {Event} e form event
-         * @returns {boolean} Successfully registered? TODO: Not what this returns?
+         * @returns {boolean} Account Confirmation Email === Sent
          */
         register: async (e) => {
             e.preventDefault();
@@ -196,7 +203,6 @@ class LoginModal extends Component {
                 Password: this.state.register.password,
                 PhoneNumber: this.state.register.phone,
                 Company: this.state.register.company
-
             };
 
             //Axios Register
@@ -212,6 +218,12 @@ class LoginModal extends Component {
                 return false;
             }
         },
+        /**
+         * Prevents form refresh && checks form validity && calls "server.forgot" with "state.forgot"
+         * @param {Event} e form event
+         * @returns {boolean} (Password Change Email === Sent)
+         * (Shitty name, i know. ATM this takes the new password RIGHT NOW, stores it in hashed form, but doesn't replace the old one before the link sent to your email is accessed.)
+         */
         forgot: async (e) => {
             e.preventDefault();
             if (!e.currentTarget.checkValidity())
@@ -250,6 +262,11 @@ class LoginModal extends Component {
     }
 
 
+    /**
+     * This is where we have all our HttpRequests to the Server.
+     * contains: .login, .register & .forgot.
+     * They return false, if server fails. And Also uses alert() to inform the user of their next step.
+     */
     server = {
         /**
          * Sends the Login information to the server
@@ -258,20 +275,20 @@ class LoginModal extends Component {
          * @returns {boolean}
          */
         login: async (data) => {
-            let Result = false;
+            let result = false;
             await Axios.post(`user/login`, data).then(() => {
                 localStorage.setItem("user", data.email);
-                Result = true;
+                result = true;
             }, (error) => {
                 if (error.response.status === 409)
                     alert("You have to confirm your email! We (re)sent you a link to your email, your account won't be available before you click it!");
                 else
                     alert("Wrong username or password");
 
-                Result = false;
+                result = false;
             });
 
-            return Result;
+            return result;
         },
         /**
          * Sends the registration information to the server
@@ -280,13 +297,13 @@ class LoginModal extends Component {
          * @returns {boolean}
          */
         register: async (data) => {
-            let Result = false;
+            let result = false;
             await Axios.post(`user/register`, data).then(() => {
                 alert("Account Created! We just have to confirm your email! \n" +
                     "We sent you an email, simply click the link in there and your account will be activated! \n" +
                     "If you can't find it, check your spam folder, etc. etc. \n" +
                     "Also, we will send another one if you attempt to log into it without confirming your email.");
-                Result = true;
+                result = true;
             }, error => {
                 if (error.response.status === 406)
                 {
@@ -309,19 +326,25 @@ class LoginModal extends Component {
                     //That email is already in use
                 }
 
-                Result = false;
+                result = false;
             });
-            return Result;
+            return result;
         },
+        /**
+         * Sends the Password Recovery Request to the Server.
+         * The User receives an Email on success, and the password doesn't change before they click the link there. TODO: Have them write the new password AFTER clicking the link
+         * @param {} data The User Data sent to the server.
+         * @returns {boolean} dependent on the servers success.
+         */
         forgot: async (data) => {
-            let Result = false;
+            let result = false;
 
             await Axios.post(`user/start-recovery`, data).then(() => {
                 alert("We have good news and we have bad news! \n" +
                     "The Good news is that it worked! \n" +
                     "The Bad news is that I can't simply trust that you are who you say you are. \n" +
                     "But if you are, I sent you an Email, just hop over there and click on the link to confirm the change! ");
-                Result = true;
+                result = true;
             }, error => {
                 if (error.response.status === 406)
                 {
@@ -345,34 +368,32 @@ class LoginModal extends Component {
                     //That email is already in use
                 }
 
-                Result = false;
+                result = false;
             });
-            return Result;
+            return result;
         }
     }
 
 
-    forgotPassword = () => { }
-
-
-    /* Render Region */
-
-
+    /**
+     * Where all of this class JSX forms are located. The Forms are:
+     * .login, .register & .forgot
+     */
     forms = {
         /**
          * JSX form for user log in
          * @returns {JSX}
          */
         login: () => {
-            const { classes } = this.props;
+            const Classes = this.props.classes;
             return(
                 <form
-                    className={classes.root}
-                    onSubmit={this.submit.login} >
+                    className={Classes.root}
+                    onSubmit={this.handleSubmit.login} >
 
                     <TextField
                         autoComplete="username"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="login-email"
                         InputLabelProps={{ required: false }}
@@ -385,8 +406,8 @@ class LoginModal extends Component {
                     <br />
 
                     <TextField
-                        autoComplete="current-password"
-                        className={classes.input}
+                        autoComplete="off"
+                        className={Classes.input}
                         fullWidth
                         id="login-password"
                         InputLabelProps={{ required: false }}
@@ -400,7 +421,7 @@ class LoginModal extends Component {
 
 
                     <Button
-                        className={classes.forgot}
+                        className={Classes.forgot}
                         id="login-forgot-password"
                         onClick={() => this.handleTab("forgot")}
                         size="small"
@@ -411,7 +432,7 @@ class LoginModal extends Component {
                     <br />
 
                     <Button
-                        className={classes.button}
+                        className={Classes.button}
                         id="login-submit"
                         type="submit"
                         variant="contained" >
@@ -425,17 +446,17 @@ class LoginModal extends Component {
          * @returns {JSX}
          */
         register: () => {
-            const { classes } = this.props;
+            const Classes = this.props.classes;
             return(
                 <form
-                    className={classes.root}
-                    onSubmit={this.submit.register} >
+                    className={Classes.root}
+                    onSubmit={this.handleSubmit.register} >
 
                     { /* Email */
                     }
                     <TextField
                         autoComplete="email"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="register-email"
                         label="Email"
@@ -449,8 +470,8 @@ class LoginModal extends Component {
                     { /* Password + Repeat Password*/
                     }
                     <TextField
-                        autoComplete="new-password"
-                        className={classes.input}
+                        autoComplete="off"
+                        className={Classes.input}
                         fullWidth
                         id="register-password"
                         inputProps={{ minLength: "8" }}
@@ -462,8 +483,8 @@ class LoginModal extends Component {
                         value={this.state.register.password} />
                     <br />
                     <TextField
-                        autoComplete="new-password"
-                        className={classes.input}
+                        autoComplete="off"
+                        className={Classes.input}
                         fullWidth
                         id="register-repeat-password"
                         inputProps={{ minLength: "8" }}
@@ -479,7 +500,7 @@ class LoginModal extends Component {
                     }
                     <TextField
                         autoComplete="given-name"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="register-firstName"
                         label="First Name"
@@ -490,7 +511,7 @@ class LoginModal extends Component {
                     <br />
                     <TextField
                         autoComplete="family-name"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="register-lastName"
                         label="Last Name"
@@ -504,7 +525,7 @@ class LoginModal extends Component {
                     <br />
                     <TextField
                         autoComplete="tel-national"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="register-phone"
                         label="Phone Number"
@@ -518,7 +539,7 @@ class LoginModal extends Component {
                     <br />
                     <TextField
                         autoComplete="organization"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="register-company"
                         label="Company Name"
@@ -556,7 +577,7 @@ class LoginModal extends Component {
                     { /* Submit button */
                     }
                     <Button
-                        className={classes.button}
+                        className={Classes.button}
                         id="register-submit"
                         type="submit"
                         variant="contained" >
@@ -565,12 +586,20 @@ class LoginModal extends Component {
                 </form>
             );
         },
+        /**
+         * JSX form for changing password.
+         * TODO: Right now, you "change password" then have to click the link in your email to confirm it.
+         * TODO: (Should be the other way because clicking the link, immediately confirms the password change that someone else might have requested)         *
+         * TODO: Security In Prototype 1 is so laughable that it is either done like this, or one could be able to bypass the Email Entirely
+         * TODO: (I.E. If you know/figure out the code, the only request you need to use is the final one. So it has to be directly from the email)
+         * @returns {JSX} JSX form
+         */
         forgot: () => {
-            const { classes } = this.props;
+            const Classes = this.props.classes;
             return(
                 <form
-                    className={classes.root}
-                    onSubmit={this.submit.forgot} >
+                    className={Classes.root}
+                    onSubmit={this.handleSubmit.forgot} >
 
                     <Typography>
                         Please Enter your email and your desired password.
@@ -580,7 +609,7 @@ class LoginModal extends Component {
 
                     <TextField
                         autoComplete="email"
-                        className={classes.input}
+                        className={Classes.input}
                         fullWidth
                         id="forgot-email"
                         label="Email"
@@ -591,11 +620,11 @@ class LoginModal extends Component {
                         value={this.state.forgot.email} />
                     <br />
 
-                    { /* Password + Repeat Password*/
+                    { /* Password + Repeat Password */
                     }
                     <TextField
-                        autoComplete="new-password"
-                        className={classes.input}
+                        autoComplete="off"
+                        className={Classes.input}
                         fullWidth
                         id="forgot-password"
                         inputProps={{ minLength: "8" }}
@@ -607,8 +636,8 @@ class LoginModal extends Component {
                         value={this.state.forgot.password} />
                     <br />
                     <TextField
-                        autoComplete="new-password"
-                        className={classes.input}
+                        autoComplete="off"
+                        className={Classes.input}
                         fullWidth
                         id="forgot-repeat-password"
                         label="Repeat Password"
@@ -619,7 +648,7 @@ class LoginModal extends Component {
                         value={this.state.forgot.repeatPassword} />
 
                     <Button
-                        className={classes.button}
+                        className={Classes.button}
                         id="forgot-submit"
                         type="submit"
                         variant="contained" >
@@ -632,81 +661,120 @@ class LoginModal extends Component {
 
 
     /**
+     * Provides us with the White background &&
+     * Has the Tabs, and controls for them.
+     */
+    body(classes)
+    {
+        return(
+            <div
+                className={classes.paper} >
+
+                { /* Modal Tabs, This is how we navigate between Login and Sign Up*/
+                }
+                <div
+                    id="login-title" >
+                    <Button
+                        className={classes.tab}
+                        disableElevation={this.state.tab !== "login"}
+                        id="loginTab"
+                        onClick={() => this.handleTab("login")}
+                        style={{
+                            left: "0",
+                            backgroundColor: `${this.state.tab === "login" ?
+                                                "#fff" :
+                                                "#ccc"}`
+                        }}
+                        type="button" >
+                        <h6>
+                            Log In
+                        </h6>
+                    </Button>
+                    { /* The Styling used, does 2 things. Places them at different "lefts" ( left: 0 on the one above and right: 0 on the one below would have the same effect.)
+                     * And gives the Non-active tab a gray color, so the user can easily tell which one is active. The rest of the CSS is provided by classes.tab */
+                    }
+                    <Button
+                        className={classes.tab}
+                        disableElevation={this.state.tab !== "register"}
+                        id="registerTab"
+                        onClick={() => this.handleTab("register")}
+                        style={{
+                            left: "50%",
+                            backgroundColor: `${this.state.tab === "register" ?
+                                                "#fff" :
+                                                "#ccc"}`
+                        }}
+                        type="button" >
+                        <h6>
+                            Sign Up
+                        </h6>
+                    </Button>
+                </div>
+
+
+                { /* Here we are simply adding a div with some marginTop to get a little space
+                 * And then we are calling one of our forms (based on the active tab)
+                   *
+                   * IT IS REQUIRED that the sub classes in this.forms has IDENTICAL names as its respective state.tab
+                   * (I.E. this.forms.login === this.forms["login"])
+                 */
+                }
+                <div
+                    id="login-body"
+                    style={{ marginTop: "16px" }} >
+                    {this.forms[this.state.tab]()}
+                </div>
+            </div>
+        );
+    }
+
+
+    /**
      * Main Render Method
-     * Contains Modal, transition, tabs and Modal-Header
+     * Contains the Modal and Transition Elements, then calls body() for the "entire" modal card.
+     * Also has "The server is processing your request" backdrop, activated when "this.state.working" is true.
      */
     render()
     {
-        const { classes } = this.props;
+        const Classes = this.props.classes;
         return(
             <Modal
+                aria-describedby="login-body"
+                aria-labelledby="login-title"
                 BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500
                 }}
-                className={classes.modal}
+                className={Classes.modal}
                 closeAfterTransition
                 onClose={this.props.onClose}
                 open={this.props.open} >
+                <div>
+                    { /* Modal & Fade give us A PopUp With a Fading Transition */
+                        /* ReSharper disable all */
+                    }
 
-                <Fade /* Fade in Transition */
-                    in={this.props.open} >
-                    <div
-                        className={classes.paper} >
-                        {
-                            /* Modal Tabs */
-                            <div>
-                                <Button
-                                    className={classes.tab}
-                                    disableElevation={this.state.tab !== "login"}
-                                    id="loginTab"
-                                    onClick={() => this.handleTab("login")}
-                                    style={{
-                                        left: "0",
-                                        backgroundColor: `${this.state.tab === "login" ?
-                                                            "#fff" :
-                                                            "#ccc"}`
-                                    }}
-                                    type="button" >
-                                    <h6>
-                                        Log In
-                                    </h6>
-                                </Button>
-                                <Button
-                                    className={classes.tab}
-                                    disableElevation={this.state.tab !== "register"}
-                                    id="registerTab"
-                                    onClick={() => this.handleTab("register")}
-                                    style={{
-                                        left: "50%",
-                                        backgroundColor: `${this.state.tab === "register" ?
-                                                            "#fff" :
-                                                            "#ccc"}`
-                                    }}
-                                    type="button" >
-                                    <h6>
-                                        Sign Up
-                                    </h6>
-                                </Button>
-                            </div>
+                    <Fade
+                        in={this.props.open}
+                        timeout="500" >
+
+                        {this.body(Classes) /* All the interface of the Modal (The White Card) */
                         }
+                    </Fade>
 
 
-                        {
-                            /* Modal Body */
-                            <div
-                                style={{ marginTop: "16px" }} >
-                                {this.forms[this.state.tab]()}
-                            </div>
-                        }
-                        <Backdrop
-                            className={classes.backdrop}
-                            open={this.state.working} >
-                            <CircularProgress
-                                color="inherit" />
-                        </Backdrop>
-                    </div>
-                </Fade>
+                    { /* This Backdrop element, is used to communicate back end/database work to the user
+                 *  Activate this before every Axios request, and deactivate it when the request is over.
+                  * Otherwise users will go insane in the 0-5.0 seconds it takes, and bombard our back end with useless requests.
+                  * */
+                    }
+                    <Backdrop
+                        className={Classes.backdrop}
+                        open={this.state.working} >
+                        <CircularProgress
+                            color="inherit" />
+                    </Backdrop>
+                </div>
             </Modal>
         );
     }
