@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Coboost.Controllers
 {
+    [RequireHttps]
     [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
