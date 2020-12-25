@@ -4,6 +4,7 @@ import Styled from "styled-components";
 import {Nav, Container, Row, Col, Button} from "react-bootstrap";
 import "circular-std";
 import {IconMain, IconLogo} from "../Classes/Icons";
+import LoginModal from "../Login/LoginModal";
 
 
 const LeftHalf = Styled(Col)`
@@ -188,7 +189,8 @@ export class Home extends React.Component {
             code: "",
             width: window.innerWidth,
 
-            loggedIn: false
+            loggedIn: false,
+            modal: false
         };
 
         this.onWindowSizeChange = this.onWindowSizeChange.bind(this);
@@ -272,12 +274,30 @@ export class Home extends React.Component {
                              Get Started
                          </LoginButton> :
                          <LoginButton
-                             href="/Login" >
+                             onClick={this.handleModal.open} >
                              Login
                          </LoginButton>}
                 </Nav.Item>
+                <LoginModal
+                    onClose={this.handleModal.close}
+                    open={this.state.modal} />
             </RightNav>
         );
+    }
+
+
+    handleModal = {
+        open: () => { this.setState({ modal: true }); },
+        close: () => {
+            this.setState({ modal: false });
+
+            if (localStorage.getItem("user") !== null)
+            {
+                this.setState({
+                    loggedIn: true
+                });
+            }
+        }
     }
 
 

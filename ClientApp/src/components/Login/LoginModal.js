@@ -1,31 +1,71 @@
-﻿import {Component} from "react";
-import {Modal, Backdrop, Fade, Divider, makeStyles, Button, TextField, Link, Checkbox, Typography} from "@material-ui/core";
+﻿import React, {Component} from "react";
+import {Modal, Backdrop, Fade, Divider, withStyles, Button, TextField, Link, Checkbox, Typography, duration, CircularProgress} from "@material-ui/core";
 import Axios from "axios";
+import {Alert} from "react-bootstrap";
 
 
 /**
  * Material-UI Styling/CSS classes
  */
-const UseStyles = makeStyles((theme) => ({
+const UseStyles = (theme) => ({
     modal: {
         display: "flex",
         alignItems: "center",
         justifyContent: "center"
+
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
         borderRadius: "10px",
         border: "2px solid #555",
         boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3)
+        padding: theme.spacing(6.5, 4, 3),
+        position: "relative"
     },
     root: {
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
             width: "25ch"
         }
+    },
+    input: {
+        display: "inline-block",
+        width: "300px !important"
+    },
+    wideInput: {
+        display: "inline-block",
+        width: "616px !important"
+    },
+    button: {
+        marginTop: "16px",
+        display: "block",
+        position: "relative",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "80%",
+        backgroundColor: "#4C7AD3",
+        color: "#fff",
+        outline: "none !important"
+    },
+    forgot: {
+        color: "#4C7AD3",
+        margin: "8px",
+        float: "right"
+    },
+    tab: {
+        width: "50%",
+        borderRadius: "0",
+        height: "52px",
+        position: "absolute",
+        top: "0",
+        outline: "none !important"
+
+    },
+    backdrop: {
+        zIndex: theme.zIndex.modal + 1,
+        color: "#fff"
     }
-}));
+});
 
 /**
  * Pop-up Login Modal
@@ -33,12 +73,12 @@ const UseStyles = makeStyles((theme) => ({
  *      open => Boolean that decides if the modal is visible
  *      onClose => function that closes modal
  */
-export class LoginModal extends Component {
+class LoginModal extends Component {
     constructor(props)
     {
         super(props);
         this.state = {
-            showing: true,
+            working: false,
             tab: "login",
 
             /**
@@ -58,17 +98,16 @@ export class LoginModal extends Component {
                 company: "",
                 phone: "",
                 password: "",
-                repeatPassword: ""
+                repeatPassword: "",
+                agreement: false
             },
-            validate: {
-                code: "",
+            forgot: {
+                email: "",
+                password: "",
+                repeatPassword: ""
             }
         };
-        this.classes = UseStyles();
     }
-
-
-    /* Set Region */
 
 
     /**
@@ -79,7 +118,7 @@ export class LoginModal extends Component {
     handleChange = (e) => {
         const Tab = this.state.tab;
         const Name = e.target.name;
-        const Value = e.target.Value;
+        const Value = e.target.value;
 
         const Data = this.state[Tab];
         Data[Name] = Value;
@@ -101,52 +140,112 @@ export class LoginModal extends Component {
     }
 
 
-    /* Get Region */
-
-
-    GetTitle = () => {
-        if (this.state.tab === "login")
-            return "Log In";
-        else if (this.state.tab === "register")
-            return "Sign Up";
-        else
-            return "Email Confirmation";
-    }
-
-
     submit = {
         /**
          * Prevents form refresh & Calls "request.login" with "state.login"
          * @param {Event} e form event
-         * @returns {boolean} Successfully logged in? TODO: Not what this returns?
+         * @returns {boolean} Successfully logged in?
          */
-        login: (e) => {
+        login: async (e) => {
             e.preventDefault();
             if (!e.currentTarget.checkValidity())
                 e.stopPropagation();
+
+            this.setState({ working: true }); //This makes the user know work is being done, should always be set to false at end of what made it true!
 
             const Data = this.state.login;
 
-            //TODO: Axios Login
+            //Axios Login
+            if (await this.server.login(Data))
+            {
+                this.setState({ working: false });
+                this.props.onClose();
+                return true;
+            }
+            else
+            {
+                this.setState({ working: false });
+                return false;
+            }
         },
         /**
          * Prevents form refresh & Calls "request.register" with "state.register"
-         * @param {Event} e
+         * @param {Event} e form event
          * @returns {boolean} Successfully registered? TODO: Not what this returns?
          */
-        register: (e) => {
+        register: async (e) => {
             e.preventDefault();
             if (!e.currentTarget.checkValidity())
                 e.stopPropagation();
 
-            const Data = this.state.register;
+            if (this.state.register.password !== this.state.register.repeatPassword)
+            {
+                const Register = this.state.register;
+                Register.password = "";
+                Register.repeatPassword = "";
+                this.setState({ register: Register });
+                alert("Passwords did not match!");
+                return false;
+            }
+            this.setState({ working: true }); //This makes the user know work is being done, should always be set to false at end of what made it true!
 
-            //TODO: Axios Register
+            const Data = {
+                Email: this.state.register.email,
+                FirstName: this.state.register.firstName,
+                LastName: this.state.register.lastName,
+                Password: this.state.register.password,
+                PhoneNumber: this.state.register.phone,
+                Company: this.state.register.company
+
+            };
+
+            //Axios Register
+            if (await this.server.register(Data))
+            {
+                this.setState({ working: false });
+                this.props.onClose();
+                return true;
+            }
+            else
+            {
+                this.setState({ working: false });
+                return false;
+            }
         },
-        validate: (e) => {
+        forgot: async (e) => {
             e.preventDefault();
             if (!e.currentTarget.checkValidity())
                 e.stopPropagation();
+
+            if (this.state.forgot.password !== this.state.forgot.repeatPassword)
+            {
+                const Forgot = this.state.forgot;
+                Forgot.password = "";
+                Forgot.repeatPassword = "";
+                this.setState({ forgot: Forgot });
+                alert("Passwords did not match!");
+                return false;
+            }
+
+            this.setState({ working: true }); //This makes the user know work is being done, should always be set to false at end of what made it true!
+
+            const Data = {
+                Email: this.state.forgot.email,
+                Password: this.state.forgot.password
+            };
+
+            //Axios Forgot Password
+            if (await this.server.forgot(Data))
+            {
+                this.setState({ working: false });
+                this.props.onClose();
+                return true;
+            }
+            else
+            {
+                this.setState({ working: false });
+                return false;
+            }
         }
     }
 
@@ -159,30 +258,46 @@ export class LoginModal extends Component {
          * @returns {boolean}
          */
         login: async (data) => {
+            let Result = false;
             await Axios.post(`user/login`, data).then(() => {
                 localStorage.setItem("user", data.email);
-                this.props.history.push("/"); //TODO: Move this line and the one above to another method
-                return true;
-            }, () => {
-                alert("Wrong username or password");
-                return false;
+                Result = true;
+            }, (error) => {
+                if (error.response.status === 409)
+                    alert("You have to confirm your email! We (re)sent you a link to your email, your account won't be available before you click it!");
+                else
+                    alert("Wrong username or password");
+
+                Result = false;
             });
+
+            return Result;
         },
         /**
          * Sends the registration information to the server
          * returns true if accepted, false otherwise
          * @param {} data Registration Information
-         * @returns {}
+         * @returns {boolean}
          */
         register: async (data) => {
+            let Result = false;
             await Axios.post(`user/register`, data).then(() => {
-                this.handleTab("validate"); //TODO: Move this line to another method inside an if statement
-                alert("Account Created! It will be available as soon as you confirm your email.");
-                return true;
+                alert("Account Created! We just have to confirm your email! \n" +
+                    "We sent you an email, simply click the link in there and your account will be activated! \n" +
+                    "If you can't find it, check your spam folder, etc. etc. \n" +
+                    "Also, we will send another one if you attempt to log into it without confirming your email.");
+                Result = true;
             }, error => {
                 if (error.response.status === 406)
                 {
-                    alert("Please verify your email address, and make sure your password is 8 or more characters");
+                    alert("Well..... this is embarrassing... that information is invalid..?\n" +
+                        "I don't know how you did it, but the fields should prevent you from doing it.\n" +
+                        " Alright.... lets take it slow: In the Email Field write an EMAIL, YOUR EMAIL... ahem.. sorry.. \n" +
+                        "Then your password needs to be 8 or more, characters long. Now this next bit might be how you got this error. \n" +
+                        "Ready? you can only use LETTERS and NUMBERS and SYMBOLS and LITERALLY ANYTHING THAT IS POSSIBLE TO WRITE ON THE KEYBOARD! \n" +
+                        "Ok... ok... I am calm... \n" +
+                        "I just don't get how you got here, unless you are viciously and cruelly FORCING poor defenseless code to do your twisted and fucked up bidding! \n" +
+                        "YOU MONSTER!");
 
                     //User didn't write in a correct email address
                     //or password was too short (needs to be 8 or more characters)
@@ -194,8 +309,45 @@ export class LoginModal extends Component {
                     //That email is already in use
                 }
 
-                return false;
+                Result = false;
             });
+            return Result;
+        },
+        forgot: async (data) => {
+            let Result = false;
+
+            await Axios.post(`user/start-recovery`, data).then(() => {
+                alert("We have good news and we have bad news! \n" +
+                    "The Good news is that it worked! \n" +
+                    "The Bad news is that I can't simply trust that you are who you say you are. \n" +
+                    "But if you are, I sent you an Email, just hop over there and click on the link to confirm the change! ");
+                Result = true;
+            }, error => {
+                if (error.response.status === 406)
+                {
+                    alert("Well..... this is embarrassing... that information is invalid..?\n" +
+                        "I don't know how you did it, but the fields should prevent you from doing it.\n" +
+                        " Alright.... lets take it slow: In the Email Field write an EMAIL, YOUR EMAIL... ahem.. sorry.. \n" +
+                        "Then your password needs to be 8 or more, characters long. Now this next bit might be how you got this error. \n" +
+                        "Ready? you can ONLY use LETTERS and NUMBERS and SYMBOLS and LITERALLY ANYTHING THAT IS POSSIBLE TO WRITE ON THE KEYBOARD! \n" +
+                        "Ok... ok... I am calm... \n" +
+                        "I just don't get how you got here, unless you are viciously and cruelly FORCING poor defenseless code to do your twisted and fucked up bidding! \n" +
+                        "YOU MONSTER! If you didn't do this on purpose however, It'd be great if you could inform my owners about it. \n");
+
+                    //User didn't write in a correct email address
+                    //or password was too short (needs to be 8 or more characters)
+                }
+                else if (error.response.status === 404)
+                {
+                    alert("I have never heard of that person before. \n" +
+                        "Email doesn't look familiar either.");
+
+                    //That email is already in use
+                }
+
+                Result = false;
+            });
+            return Result;
         }
     }
 
@@ -212,43 +364,59 @@ export class LoginModal extends Component {
          * @returns {JSX}
          */
         login: () => {
+            const { classes } = this.props;
             return(
                 <form
-                    className={this.classes.root}
+                    className={classes.root}
                     onSubmit={this.submit.login} >
+
                     <TextField
                         autoComplete="username"
+                        className={classes.input}
+                        fullWidth
                         id="login-email"
                         InputLabelProps={{ required: false }}
                         label="Email"
                         name="email"
                         onChange={this.handleChange}
                         required
-                        type="email" />
+                        type="email"
+                        value={this.state.login.email} />
+                    <br />
+
                     <TextField
                         autoComplete="current-password"
+                        className={classes.input}
+                        fullWidth
                         id="login-password"
                         InputLabelProps={{ required: false }}
                         label="Password"
                         name="password"
                         onChange={this.handleChange}
                         required
-                        type="password" />
+                        type="password"
+                        value={this.state.login.password} />
+                    <br />
+
 
                     <Button
+                        className={classes.forgot}
+                        id="login-forgot-password"
+                        onClick={() => this.handleTab("forgot")}
+                        size="small"
+                        variant="text" >
+                        Forgot Password?
+                    </Button>
+
+                    <br />
+
+                    <Button
+                        className={classes.button}
                         id="login-submit"
                         type="submit"
                         variant="contained" >
                         Log In
                     </Button>
-
-                    { //TODO: Create fully functioning Password Reset, then uncomment this
-                        //    <Button
-                        //    id="login-forgot-password"
-                        //    onClick={this.forgotPassword} >
-                        //    Forgot Password?
-                        //</Button>
-                    }
                 </form>
             );
         },
@@ -257,97 +425,138 @@ export class LoginModal extends Component {
          * @returns {JSX}
          */
         register: () => {
+            const { classes } = this.props;
             return(
                 <form
-                    className={this.classes.root}
+                    className={classes.root}
                     onSubmit={this.submit.register} >
 
                     { /* Email */
                     }
                     <TextField
                         autoComplete="email"
+                        className={classes.input}
+                        fullWidth
                         id="register-email"
                         label="Email"
                         name="email"
                         onChange={this.handleChange}
                         required
-                        type="email" />
-
-                    { /* First & Last Name */
-                    }
-                    <TextField
-                        autoComplete="given-name"
-                        id="register-firstName"
-                        label="First Name"
-                        name="firstName"
-                        onChange={this.handleChange}
-                        type="text" />
-                    <TextField
-                        autoComplete="family-name"
-                        id="register-lastName"
-                        label="Last Name"
-                        name="lastName"
-                        onChange={this.handleChange}
-                        type="text" />
-
-                    { /* Phone Number */
-                    }
-                    <TextField
-                        autoComplete="tel-national"
-                        id="register-phone"
-                        label="Phone Number"
-                        name="phone"
-                        onChange={this.handleChange}
-                        type="tel" />
-
-                    { /* Company */
-                    }
-                    <TextField
-                        autoComplete="organization"
-                        id="register-company"
-                        label="Company Name"
-                        name="company"
-                        onChange={this.handleChange}
-                        type="text" />
+                        type="email"
+                        value={this.state.register.email} />
+                    <br />
 
                     { /* Password + Repeat Password*/
                     }
                     <TextField
                         autoComplete="new-password"
+                        className={classes.input}
+                        fullWidth
                         id="register-password"
+                        inputProps={{ minLength: "8" }}
                         label="Password"
                         name="password"
                         onChange={this.handleChange}
                         required
-                        type="password" />
+                        type="password"
+                        value={this.state.register.password} />
+                    <br />
                     <TextField
                         autoComplete="new-password"
+                        className={classes.input}
+                        fullWidth
                         id="register-repeat-password"
+                        inputProps={{ minLength: "8" }}
                         label="Repeat Password"
                         name="repeatPassword"
                         onChange={this.handleChange}
                         required
-                        type="password" />
+                        type="password"
+                        value={this.state.register.repeatPassword} />
+
+                    <br />
+                    { /* First & Last Name */
+                    }
+                    <TextField
+                        autoComplete="given-name"
+                        className={classes.input}
+                        fullWidth
+                        id="register-firstName"
+                        label="First Name"
+                        name="firstName"
+                        onChange={this.handleChange}
+                        type="text"
+                        value={this.state.register.firstName} />
+                    <br />
+                    <TextField
+                        autoComplete="family-name"
+                        className={classes.input}
+                        fullWidth
+                        id="register-lastName"
+                        label="Last Name"
+                        name="lastName"
+                        onChange={this.handleChange}
+                        type="text"
+                        value={this.state.register.lastName} />
+
+                    { /* Phone Number */
+                    }
+                    <br />
+                    <TextField
+                        autoComplete="tel-national"
+                        className={classes.input}
+                        fullWidth
+                        id="register-phone"
+                        label="Phone Number"
+                        name="phone"
+                        onChange={this.handleChange}
+                        type="tel"
+                        value={this.state.register.phone} />
+
+                    { /* Company */
+                    }
+                    <br />
+                    <TextField
+                        autoComplete="organization"
+                        className={classes.input}
+                        fullWidth
+                        id="register-company"
+                        label="Company Name"
+                        name="company"
+                        onChange={this.handleChange}
+                        type="text"
+                        value={this.state.register.company} />
+
 
                     { /* Checkbox to confirm Email
                      * TODO: Create Link to Full Agreement, in New Tab!
                       * */
                     }
-                    <div>
+                    <div
+                        style={{ marginTop: "16px" }} >
                         <Checkbox
                             id="register-beta-agreement"
                             name="agreement"
                             onchange={this.handleChange}
+                            required
                             value={this.state.register.agreement} />
                         <Typography
-                            id="register-beta-text" >
-                            I accept the terms a beta tester
+                            component="label"
+                            id="register-beta-text"
+                            style={{ transform: "translateY(50%)" }} >
+                            I agree and consent to the
+                            <br />
+                            <a
+                                href="#" >
+                                Beta Participation Agreement
+                            </a>
                         </Typography>
                     </div>
-
+                    <br />
                     { /* Submit button */
                     }
                     <Button
+                        className={classes.button}
                         id="register-submit"
                         type="submit"
                         variant="contained" >
@@ -356,33 +565,62 @@ export class LoginModal extends Component {
                 </form>
             );
         },
-        validate: () => {
+        forgot: () => {
+            const { classes } = this.props;
             return(
                 <form
-                    className={this.classes.root}
-                    onSubmit={this.submit.validate} >
+                    className={classes.root}
+                    onSubmit={this.submit.forgot} >
 
-                    <Typography
-                        variant="h2" >
-                        Account Registered!
-                    </Typography>
-                    <Typography
-                        variant="body1" >
-                        Now we just have to confirm your email, please enter the code that we sent to your email below.
+                    <Typography>
+                        Please Enter your email and your desired password.
+                        <br />
+                        You will receive an email to confirm the change.
                     </Typography>
 
                     <TextField
-                        autoComplete="one-time-code"
-                        id="validate-code"
-                        label="Email Code"
-                        name="code"
-                        inputProps={{min: 100000, max: 999999}}
+                        autoComplete="email"
+                        className={classes.input}
+                        fullWidth
+                        id="forgot-email"
+                        label="Email"
+                        name="email"
                         onChange={this.handleChange}
                         required
-                        type="number" />
+                        type="email"
+                        value={this.state.forgot.email} />
+                    <br />
+
+                    { /* Password + Repeat Password*/
+                    }
+                    <TextField
+                        autoComplete="new-password"
+                        className={classes.input}
+                        fullWidth
+                        id="forgot-password"
+                        inputProps={{ minLength: "8" }}
+                        label="Password"
+                        name="password"
+                        onChange={this.handleChange}
+                        required
+                        type="password"
+                        value={this.state.forgot.password} />
+                    <br />
+                    <TextField
+                        autoComplete="new-password"
+                        className={classes.input}
+                        fullWidth
+                        id="forgot-repeat-password"
+                        label="Repeat Password"
+                        name="repeatPassword"
+                        onChange={this.handleChange}
+                        required
+                        type="password"
+                        value={this.state.forgot.repeatPassword} />
 
                     <Button
-                        id="validate-submit"
+                        className={classes.button}
+                        id="forgot-submit"
                         type="submit"
                         variant="contained" >
                         Confirm
@@ -399,13 +637,14 @@ export class LoginModal extends Component {
      */
     render()
     {
+        const { classes } = this.props;
         return(
             <Modal
                 BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500
                 }}
-                className={this.classes.modal}
+                className={classes.modal}
                 closeAfterTransition
                 onClose={this.props.onClose}
                 open={this.props.open} >
@@ -413,47 +652,64 @@ export class LoginModal extends Component {
                 <Fade /* Fade in Transition */
                     in={this.props.open} >
                     <div
-                        className={this.classes.paper} >
-
-                        {
-                            /* Modal Head */
-                            <h2>
-                                {this.state.tab !== "register" ?
-                                     "Log In" :
-                                     "Sign Up"}
-                            </h2>
-                        }
-                        <Divider />
-
+                        className={classes.paper} >
                         {
                             /* Modal Tabs */
                             <div>
                                 <Button
-                                    id="loginButton"
-                                    onClick={this.handleTab("login")}
+                                    className={classes.tab}
+                                    disableElevation={this.state.tab !== "login"}
+                                    id="loginTab"
+                                    onClick={() => this.handleTab("login")}
+                                    style={{
+                                        left: "0",
+                                        backgroundColor: `${this.state.tab === "login" ?
+                                                            "#fff" :
+                                                            "#ccc"}`
+                                    }}
                                     type="button" >
-                                    Log In
+                                    <h6>
+                                        Log In
+                                    </h6>
                                 </Button>
                                 <Button
-                                    id="registerButton"
-                                    onClick={this.handleTab("register")}
+                                    className={classes.tab}
+                                    disableElevation={this.state.tab !== "register"}
+                                    id="registerTab"
+                                    onClick={() => this.handleTab("register")}
+                                    style={{
+                                        left: "50%",
+                                        backgroundColor: `${this.state.tab === "register" ?
+                                                            "#fff" :
+                                                            "#ccc"}`
+                                    }}
                                     type="button" >
-                                    Sign Up
+                                    <h6>
+                                        Sign Up
+                                    </h6>
                                 </Button>
                             </div>
                         }
-                        <Divider />
 
 
                         {
                             /* Modal Body */
-                            <div>
-                                {this.forms[this.state.tab]}
+                            <div
+                                style={{ marginTop: "16px" }} >
+                                {this.forms[this.state.tab]()}
                             </div>
                         }
+                        <Backdrop
+                            className={classes.backdrop}
+                            open={this.state.working} >
+                            <CircularProgress
+                                color="inherit" />
+                        </Backdrop>
                     </div>
                 </Fade>
             </Modal>
         );
     }
 };
+
+export default withStyles(UseStyles)(LoginModal)

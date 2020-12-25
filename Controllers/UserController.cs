@@ -67,11 +67,46 @@ namespace Coboost.Controllers
         {
             User foundUser = await _context.Users.FindAsync(user.Email);
             if (foundUser != null)
-                HttpContext.Response.StatusCode = PasswordHasher.Verify(user.Password, foundUser.Password) ?
-                    202 :
-                    401;
+            {
+                if (PasswordHasher.Verify(user.Password, foundUser.Password))
+                {
+                    if (foundUser.EmailConfirmed)
+                    {
+                        HttpContext.Response.StatusCode = 202;
+                    }
+                    else
+                    {
+                        string token = Guid.NewGuid().ToString();
+                        string callbackUrl = Url.Action("ConfirmEmail", "user", new
+                        {
+                            userId = foundUser.Email,
+                            token
+                        }, HttpContext.Request.Scheme);
+
+                        foundUser.Token = token;
+                        _context.Users.Update(foundUser);
+                        await _context.SaveChangesAsync();
+
+                        //TODO: Add this to the Email Class
+                        string recipient = foundUser.Email;
+                        string title = "Coboost - Confirm Email";
+                        string body = $"Dear {foundUser.FirstName},\n" + "Your new account is waiting, you only have to confirm this email is yours!.\n" + "If you haven't attempted to create a user, you can safely ignore this email.\n" + "\n" +
+                                      "\n" + "To enable your Account please click on the link below:\n" + callbackUrl + "\n" + "\n" + "\n" + "Regards,\n" + "Coboost";
+
+                        Email email = new Email(recipient, title, body);
+                        await email.Send();
+                        HttpContext.Response.StatusCode = 409;
+                    }
+                }
+                else
+                {
+                    HttpContext.Response.StatusCode = 404;
+                }
+            }
             else
+            {
                 HttpContext.Response.StatusCode = 404;
+            }
         }
 
         /// <summary>
@@ -104,11 +139,9 @@ namespace Coboost.Controllers
                 return;
             }
 
-            user.PhoneNumber = "12345678";
             user.EmailConfirmed = false;
             user.LastUsed = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
             user.UniqueDaysUsed = 0;
-            user.Company = "TEMPPPPPPPPPPPPPPPPPP";
 
             User userExistence = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(user.Email));
             if (userExistence != null)
@@ -154,6 +187,7 @@ namespace Coboost.Controllers
 
             if (result)
             {
+                user.LastUsed = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
                 user.EmailConfirmed = true;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
@@ -166,6 +200,8 @@ namespace Coboost.Controllers
                 await mail.Send();
                 HttpContext.Response.StatusCode = 202;
             }
+
+            HttpContext.Response.Redirect("http://innonor.mathiastb.no/");
         }
 
         [HttpPost("start-recovery")]
@@ -192,17 +228,52 @@ namespace Coboost.Controllers
                 return;
             }
 
+
+            string token = PasswordHasher.GetHash(user.Password);
+            string callbackUrl = Url.Action("ConfirmRecovery", "user", new
+            {
+                userId = user.Email,
+                token
+            }, HttpContext.Request.Scheme);
+
+            userExistence.Token = token;
+
+            _context.Users.Update(userExistence);
+            await _context.SaveChangesAsync();
+
             string recipient = user.Email;
+
+
             const string title = "Coboost Account Recovery";
 
-            const int code = 239210;
-
-            string body = $"Dear {userExistence.FirstName},\n" + "You recently requested to reset your password for your Coboost account. Please use the code below into the recovery code field to recover your account.\n\n" + $"Code: {code}\n\n" +
+            string body = $"Dear {userExistence.FirstName},\n" + "You recently requested to reset your password for your Coboost account.\n" +
+                          "If you didn't, or simply don't want to change your password after all. DO NOT CLICK ON THAT LINK, since that link will confirm the change as soon as it loads\n" +
+                          "If you did make the request, and are sure you want to change it. Then the new password will replace the old one THE VERY SECOND you click that link. Copy-pasting it would also work.\n\n" + callbackUrl + "\n\n" +
                           "Regards\nTeam Coboost";
 
             Email email = new Email(recipient, title, body);
             await email.Send();
             HttpContext.Response.StatusCode = 202;
+        }
+
+        [HttpGet("confirm-recovery")]
+        public async Task ConfirmRecovery(string userid, string token)
+        {
+            User user = await _context.Users.FindAsync(userid);
+
+            bool result = string.Equals(user.Token, token);
+
+            if (result)
+            {
+                user.Password = user.Token;
+                user.EmailConfirmed = true;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                HttpContext.Response.StatusCode = 202;
+            }
+
+            HttpContext.Response.Redirect("http://innonor.mathiastb.no/");
         }
     }
 }
