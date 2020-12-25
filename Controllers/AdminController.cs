@@ -308,15 +308,15 @@ namespace Coboost.Controllers
             await _context.Sessions.AddAsync(data);
             await _context.SaveChangesAsync();
 
-            // Join the user and session
-            UserSession userSession = new UserSession
-            {
-                UserId = data.Email,
-                SessionId = data.Identity
-            };
+            //// Join the user and session
+            //UserSession userSession = new UserSession
+            //{
+            //    UserId = data.Email,
+            //    SessionId = data.Identity
+            //};
 
-            await _context.UserSessions.AddAsync(userSession);
-            await _context.SaveChangesAsync();
+            //await _context.UserSessions.AddAsync(userSession);
+            //await _context.SaveChangesAsync();
 
             HttpContext.Response.StatusCode = 202;
         }
@@ -420,11 +420,11 @@ namespace Coboost.Controllers
         //}
 
         [HttpGet("sessions-{email}")]
-        public async Task<List<Session>> GetSessions(string email)
+        public List<Session> GetSessions(string email)
         {
             //User user = await _context.Users.Include(u => u.Sessions).ThenInclude(s => s.Session).ThenInclude(s => s.Users).Include(u => u.Folders).ThenInclude(f => f.Session).ThenInclude(s => s.Folders).ThenInclude(f => f.Folder)
             //    .Where(u => u.Email.Equals(email)).SingleOrDefaultAsync();
-            List<Session> sessions = _context.Sessions.ToList();
+            List<Session> sessions = (List<Session>) _context.Sessions.ToList().Where(u => u.Email.Equals(email));
 
             return sessions;
         }

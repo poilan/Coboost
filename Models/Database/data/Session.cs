@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -18,11 +17,11 @@ namespace Coboost.Models.Database.data
             set;
         }
 
-        public IEnumerable<UserFolder> Folders
-        {
-            get;
-            set;
-        }
+        //public IEnumerable<UserFolder> Folders
+        //{
+        //    get;
+        //    set;
+        //}
 
         [Key]
         public int Identity
@@ -61,10 +60,10 @@ namespace Coboost.Models.Database.data
             set;
         }
 
-        public IEnumerable<UserSession> Users
-        {
-            get;
-            set;
-        }
+        //public IEnumerable<UserSession> Users
+        //{
+        //    get;
+        //    set;
+        //}
     }
 }
