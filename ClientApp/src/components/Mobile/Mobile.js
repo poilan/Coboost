@@ -365,7 +365,7 @@ export class Mobile extends React.Component {
     }
 
 
-    componentWillMount()
+    componentDidMount()
     {
         if (localStorage.getItem("user") !== null)
         {
@@ -374,9 +374,14 @@ export class Mobile extends React.Component {
             });
         }
 
+        this.onMount();
+    }
+
+
+    onMount = async () => {
         const Code = sessionStorage.getItem("code");
 
-        Axios.get(`admin/${Code}/questions-all`).then(res => {
+        await Axios.get(`admin/${Code}/questions-all`).then(res => {
             if (res.status === 202)
             {
                 const Data = res.data;
@@ -389,6 +394,7 @@ export class Mobile extends React.Component {
             }
         });
 
+        // ReSharper disable once InconsistentNaming
         var EventSource = new SSE(`client/${Code}/question`);
 
         this.setState({

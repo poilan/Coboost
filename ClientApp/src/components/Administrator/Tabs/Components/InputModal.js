@@ -153,7 +153,7 @@ export class InputModal extends Component {
             this.setState({
                 title: title
             });
-            event.target.select();
+            e.target.select();
         }
     }
 

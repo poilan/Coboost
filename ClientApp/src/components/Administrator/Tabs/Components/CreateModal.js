@@ -82,7 +82,7 @@ export class CreateTaskModal extends Component {
             var Data = {
                 Title: this.state.description,
                 ShowResults: true,
-                ShortInputsOnly: !this.state.extra
+                ShortInputsOnly: this.state.extra
             };
 
             Axios.post(`admin/${Code}/create-text-open`, Data,
@@ -139,15 +139,13 @@ export class CreateTaskModal extends Component {
                     px={3} >
                     <FormControlLabel
                         control={<Switch
-                                     checked={!this.state.extra}
+                                     checked={this.state.extra}
                                      name="TextSwitch"
                                      onChange={(e) => {
                                          e.preventDefault();
                                          this.setState({ extra: !this.state.extra });
                                      }} />}
-                        label={!this.state.extra ?
-                                   "Long Inputs Enabled" :
-                                   "Long Inputs Disabled"} />
+                        label="Short Inputs Only" />
                 </Box>
                 <CancelButton
                     onClick={this.props.onClose} >
