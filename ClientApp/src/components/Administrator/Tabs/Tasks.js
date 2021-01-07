@@ -48,6 +48,11 @@ const ContentHeader = Styled(Card.Header)`
 `;
 
 const ContentBody = Styled(Card.Body)`
+    cursor: ${props => props.cursor === "favorite" ?
+                       "url(https://cur.cursors-4u.net/symbols/sym-7/sym635.ani), url(https://cur.cursors-4u.net/symbols/sym-6/sym599.cur), auto !important;" :
+                       props.cursor === "hide" ?
+                       "url(https://cur.cursors-4u.net/cursors/cur-2/cur226.cur), auto !important;" :
+                       "auto"}
     border: 0;
     background: #E4E4E4;
     position: absolute;
@@ -90,7 +95,6 @@ const ToolButton = Styled(Nav.Link)`
     background: ${props => props.active ?
                            "#f8e9a1" :
                            "#24305E"};
-
 
     &:hover {
         background: ${props => props.active ?
@@ -139,29 +143,27 @@ export class Tasks extends Component {
                 <ContentHeader>
                     <Tools>
                         <ToolButton
-                            active={this.state.tool === "mouse"}
-                            onClick={() => this.setState({ tool: "mouse" })} >
-                            <MouseIcon />
-                            <br />
-                            Mouse
-                        </ToolButton>
-                        <ToolButton
                             active={this.state.tool === "hide"}
-                            onClick={() => this.setState({ tool: "hide" })} >
+                            onClick={() => this.state.tool === "hide" ?
+                                           this.setState({ tool: "mouse" }) :
+                                           this.setState({ tool: "hide" })} >
                             <VisibilityOffIcon />
                             <br />
                             Hide/Show
                         </ToolButton>
                         <ToolButton
                             active={this.state.tool === "favorite"}
-                            onClick={() => this.setState({ tool: "favorite" })} >
+                            onClick={() => this.state.tool === "favorite" ?
+                                           this.setState({ tool: "mouse" }) :
+                                           this.setState({ tool: "favorite" })} >
                             <StarIcon />
                             <br />
                             Favorite
                         </ToolButton>
                     </Tools>
                 </ContentHeader>
-                <ContentBody>
+                <ContentBody
+                    cursor={this.state.tool === "mouse"} >
                     <SlideContainer>
                         <SelectedSlide>
                             <Viewer

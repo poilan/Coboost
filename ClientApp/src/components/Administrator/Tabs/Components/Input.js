@@ -12,7 +12,7 @@ const Container = Styled.div`
         font-family: CircularStd;
         font-size: 1rem;
         background: ${props => props.favorite ?
-                               "#ebd69b" :
+                               "#f7edd4" :
                                "#fff"};
         font-weight: 600;
         position: relative;
@@ -130,16 +130,16 @@ export class Input extends Component {
 
 
     handleClicks = e => {
-        e.stopPropagation();
-
         if (this.props.toolFavorite)
         {
+            e.stopPropagation();
             this.handleFavorite(e);
             return;
         }
         else if (this.props.showcase)
             return;
 
+        e.stopPropagation();
         const Id = e.target.id;
         if (this.state.clickTimeout !== null)
         {

@@ -402,23 +402,35 @@ export class Mobile extends React.Component {
         });
 
         EventSource.startEventSource(() => {
-            EventSource.addListener("question", (e) => {
+            EventSource.addListener("question", async (e) => {
                 try
                 {
                     const Data = JSON.parse(e.data); // Question data
 
                     const Index = parseInt(Data.Index);
+                    let inputs = this.state.inputs;
+                    const Spent = inputs[Index].Spent;
 
-                    const Inputs = this.state.inputs;
-                    const Spent = Inputs[Index].Spent;
 
-                    Inputs[Index] = Data;
+                    if (Index >= inputs.length)
+                    {
+                        await Axios.get(`admin/${Code}/questions-all`).then(res => {
+                            if (res.status === 202)
+                            {
+                                const Data = res.data;
+
+                                inputs = Data;
+                            }
+                        });
+                    }
+
+                    inputs[Index] = Data;
 
                     if (Index === this.state.currentInput)
-                        Inputs[Index].Spent = Spent;
+                        inputs[Index].Spent = Spent;
 
                     this.setState({
-                        inputs: Inputs
+                        inputs: inputs
                     });
 
                     if (Index !== this.state.currentInput)
@@ -466,7 +478,7 @@ export class Mobile extends React.Component {
                 {
                     const Values = [];
 
-                    for (let I = 0; I < question.Options.length; I++)
+                    for (let i = 0; i < question.Options.length; i++)
                         Values.push(0);
                     Answer.value = Values;
                     question.Spent = 0;
@@ -475,7 +487,7 @@ export class Mobile extends React.Component {
                 {
                     const Values = [];
 
-                    for (let I = 0; I < question.Options.length; I++)
+                    for (let i = 0; i < question.Options.length; i++)
                         Values.push(question.Min);
 
                     Answer.value = Values;
@@ -606,16 +618,16 @@ export class Mobile extends React.Component {
         const LastInput = this.getLastTask();
         const LastType = LastInput.Type;
 
-        let Word;
+        let word;
 
         switch (LastType)
         {
             case 0:
-                Word = "Input";
+                word = "Input";
                 this.inputsEdit();
                 break;
             default:
-                Word = "Vote";
+                word = "Vote";
                 break;
         }
 
@@ -623,16 +635,16 @@ export class Mobile extends React.Component {
             <ContentContainer>
                 <ContentTitle
                     blue >
-                    {Word} sent!
+                    {word} sent!
                 </ContentTitle>
                 <IconDone />
                 <ContentBody
                     boxed >
-                    You may send another {Word}! or you can take it easy while waiting for the next task.
+                    You may send another {word}! or you can take it easy while waiting for the next task.
                 </ContentBody>
                 <ContentButton
                     onClick={this.inputsEdit} >
-                    New {Word}
+                    New {word}
                 </ContentButton>
             </ContentContainer>
         );
@@ -717,36 +729,39 @@ export class Mobile extends React.Component {
         };
 
         const OnTitleFocus = () => {
+            if (this.getCurrentTask().ShortInputsOnly)
+                return;
+
             if (this.state.title.trim() === "")
             {
-                let Title = this.getTaskAnswers().substring(0, 30).trim();
-                let Index = Title.lastIndexOf(" ");
+                let title = this.getTaskAnswers().substring(0, 30).trim();
+                let index = title.lastIndexOf(" ");
 
-                if (Index !== -1)
+                if (index !== -1)
                 {
-                    Index = 0;
-                    for (let I = 0; I < 3; I++)
+                    index = 0;
+                    for (let i = 0; i < 3; i++)
                     {
-                        const Check = Title.indexOf(" ", Index + 1);
+                        const Check = title.indexOf(" ", index + 1);
 
                         if (Check === -1)
                         {
-                            if (Index > 0)
+                            if (index > 0)
                                 break;
                             else
                             {
-                                Index = 30;
+                                index = 30;
                                 break;
                             }
                         }
                         else
-                            Index = Check;
+                            index = Check;
                     }
 
-                    Title = Title.substring(0, Index);
+                    title = title.substring(0, index);
                 }
                 this.setState({
-                    title: Title
+                    title: title
                 });
             }
         };
@@ -768,49 +783,57 @@ export class Mobile extends React.Component {
                         position="relative"
                         width="100%" >
                         {
+                            <ContentInput
+                                autoFocus={this.getCurrentTask().ShortInputsOnly}
+                                helperText={`${this.state.title.length}/30`}
+                                inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
+                                inputRef={this.TextTitle}
+                                isTitle
+                                label={this.getCurrentTask().ShortInputsOnly ?
+                                           "Input" :
+                                           "Title"}
+                                margin="none"
+                                onChange={TitleChange}
+                                onFocus={(e) => OnTitleFocus(e)}
+                                required
+                                value={this.state.title}
+                                variant="outlined" />
+                        }
+                        {
                             !this.getCurrentTask().ShortInputsOnly &&
                                 <ContentInput
-                                    disabled={this.getTaskAnswers().length <= 30}
-                                    fullWidth
-                                    helperText={`${this.state.title.length}/30`}
-                                    inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
-                                    inputRef={this.TextTitle}
-                                    isTitle
-                                    label="Title"
+                                    autoFocus={true}
+                                    helperText={`${this.getTaskAnswers().length}/250`}
+                                    inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                                    inputRef={this.TextDescription}
+                                    label="Description"
                                     margin="none"
-                                    onChange={TitleChange}
-                                    onFocus={(e) => OnTitleFocus(e)}
+                                    multiline
+                                    name="description"
+                                    onChange={(e) => this.questionChange(e)}
                                     required
-                                    value={this.state.title}
+                                    rows={5}
+                                    rowsMax={10}
+                                    value={this.getTaskAnswers()}
                                     variant="outlined" />
                         }
-                        <ContentInput
-                            autoFocus={true}
-                            fullWidth
-                            helperText={`${this.getTaskAnswers().length}/250`}
-                            inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
-                            inputRef={this.TextDescription}
-                            label="Description"
-                            margin="none"
-                            multiline
-                            name="description"
-                            onChange={(e) => this.questionChange(e)}
-                            required
-                            rows={5}
-                            rowsMax={10}
-                            value={this.getTaskAnswers()}
-                            variant="outlined" />
                     </Box>
 
                     <ContentButton
                         ref={this.TextForm}
                         type="submit"
                         value="Submit" >
-                        {this.getTaskAnswers().length < 3 ?
+                        {!this.getCurrentTask().ShortInputsOnly ?
+                             this.getTaskAnswers().length < 3 ?
                              "Write an input to send!" :
-                             (this.getTaskAnswers().length > 30 && (this.state.title < 3 && !this.getCurrentTask().ShortInputsOnly)) ?
+                             this.getTaskAnswers().length > 30 && this.state.title < 3 ?
                              "Write a title before sending!" :
-                             "Send Input!"}
+                             "Send Input!" :
+                             this.state.title < 3 ?
+                             "Write an input to send!" :
+                             "Send Input!"
+
+                        }
                     </ContentButton>
                 </Form>
             </ContentContainer>
@@ -848,13 +871,13 @@ export class Mobile extends React.Component {
     }
 
 
-    pointsChange(index, value)
+    pointsChange(index, points)
     {
         const Answers = this.getTaskAnswers();
-        let Spent = 0;
+        let spent = 0;
         const Tasks = this.getTasks();
-        let Value = parseInt(value);
-        const Change = Value - Answers[index];
+        let value = parseInt(points);
+        const Change = value - Answers[index];
 
         if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change)
         {
@@ -863,23 +886,23 @@ export class Mobile extends React.Component {
             if (Maximum < 1)
                 return false;
             else
-                Value = Maximum;
+                value = Maximum;
         }
 
 
-        for (let I = 0; I < this.getTaskOptions().length; I++)
+        for (let i = 0; i < this.getTaskOptions().length; i++)
         {
-            if (Answers[I] == undefined)
-                Answers[I] = 0;
+            if (Answers[i] == undefined)
+                Answers[i] = 0;
 
-            if (index === I)
-                Answers[I] = Value;
+            if (index === i)
+                Answers[i] = value;
 
-            if (Answers[I] > 0)
-                Spent += Answers[I];
+            if (Answers[i] > 0)
+                spent += Answers[i];
         }
 
-        Tasks[this.getTaskIndex()].Spent = Spent;
+        Tasks[this.getTaskIndex()].Spent = spent;
         this.setState({
             inputs: Tasks
         });
@@ -907,26 +930,30 @@ export class Mobile extends React.Component {
 
         // Send the input
         const Code = sessionStorage.getItem("code");
-        let User = "anonymous";
+        let user = "anonymous";
         if (State.loggedIn)
-            User = localStorage.getItem("user");
+            user = localStorage.getItem("user");
 
         var Data = {
-            UserID: User
+            UserID: user
         };
 
         // Send
         if (Type === 0)
         { // Open Text
-            Data.Description = Answer.trim();
-
-            if (Data.Description.length > 30)
+            if (this.getCurrentTask().ShortInputsOnly)
+                Data.Description = this.state.title.trim();
+            else
             {
-                if (this.state.title.trim().length < 3)
-                    return false;
-                Data.Title = this.state.title.trim();
-            }
+                Data.Description = Answer.trim();
 
+                if (Data.Description.length > 30)
+                {
+                    if (this.state.title.trim().length < 3)
+                        return false;
+                    Data.Title = this.state.title.trim();
+                }
+            }
             Axios.post(`client/${Code}/add-text-open`, Data);
         }
         else if (Type === 1)
@@ -1187,49 +1214,49 @@ export class Mobile extends React.Component {
 
     tabTitle(type)
     {
-        let Title;
+        let title;
         const Task = this.getCurrentTask();
 
         switch (type)
         {
             case 0:
-                Title = "Open Text";
+                title = "Open Text";
                 break;
             case 1:
-                Title = `Pick your ${this.getOptionMax() > 1 ?
+                title = `Pick your ${this.getOptionMax() > 1 ?
                                      this.getOptionMax() + " favorites!" :
                                      "favorite!"}`;
                 break;
             case 2:
-                Title = `Give Points: ${Task.Spent == undefined ?
+                title = `Give Points: ${Task.Spent == undefined ?
                                         Task.Amount :
                                         Task.Amount - Task.Spent} points left!`;
                 break;
             case 3:
-                Title = "Slider";
+                title = "Slider";
                 break;
             default:
-                Title = "Waiting";
+                title = "Waiting";
                 break;
         }
 
         if (Task.Countdown > -1)
-            Title += `  |  Timer: ${Task.Countdown} seconds`;
+            title += `  |  Timer: ${Task.Countdown} seconds`;
 
-        return Title;
+        return title;
     }
 
 
     secondsToMinutes = (countdown) => {
-        let Seconds = countdown, Minutes = 0;
-        while (Seconds >= 60)
+        let seconds = countdown, minutes = 0;
+        while (seconds >= 60)
         {
-            Minutes += 1;
-            Seconds -= 60;
+            minutes += 1;
+            seconds -= 60;
         }
-        return `Time: ${Minutes}:${Seconds < 10 ?
-                                   `0${Seconds}` :
-                                   Seconds}`;
+        return `Time: ${minutes}:${seconds < 10 ?
+                                   `0${seconds}` :
+                                   seconds}`;
     }
 
 

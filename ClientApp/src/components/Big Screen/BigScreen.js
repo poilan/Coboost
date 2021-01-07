@@ -862,15 +862,15 @@ export class BigScreen extends Component {
 
 
     secondsToMinutes = (countdown) => {
-        let Seconds = countdown, Minutes = 0;
-        while (Seconds >= 60)
+        let seconds = countdown, minutes = 0;
+        while (seconds >= 60)
         {
-            Minutes += 1;
-            Seconds -= 60;
+            minutes += 1;
+            seconds -= 60;
         }
-        return `${Minutes}:${Seconds < 10 ?
-                             `0${Seconds}` :
-                             Seconds}`;
+        return `${minutes}:${seconds < 10 ?
+                             `0${seconds}` :
+                             seconds}`;
     }
 
 

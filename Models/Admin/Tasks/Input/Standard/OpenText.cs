@@ -136,10 +136,41 @@ namespace Coboost.Models.Admin.Tasks.Input.Standard
                 if (Groups.Count <= group || group < 0)
                     return;
 
-                if (FavoriteGroups.Contains(group))
-                    FavoriteGroups.Remove(group);
-                else
-                    FavoriteGroups.Add(group);
+                //TODO: OLD_FAVORITE_GROUPS
+                //if (FavoriteGroups.Contains(group))
+                //    FavoriteGroups.Remove(group);
+                //else
+                //    FavoriteGroups.Add(group);
+                bool checkAction = false;
+                for (int i = 0; i < Groups[group].Members.Count; i++)
+                {
+                    Key key = new Key
+                    {
+                        Group = group,
+                        Member = i
+                    };
+
+                    //Skip if already contained
+                    string str = key.Group + "-" + key.Member;
+                    if (FavoriteMembers.Contains(str))
+                        continue;
+
+
+                    checkAction = true;
+                    SetMemberFavorite(key);
+                }
+
+                //If all members are already favorites, un-favorite them all instead
+                if (!checkAction)
+                    for (int i = 0; i < Groups[@group].Members.Count; i++)
+                    {
+                        Key key = new Key
+                        {
+                            Group = @group,
+                            Member = i
+                        };
+                        SetMemberFavorite(key);
+                    }
             }
 
             EventStream();

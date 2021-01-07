@@ -343,11 +343,11 @@ export class Task extends Component {
                          <Ico_Text
                              id={this.props.id}
                              style={{
-                                 height: "60px",
-                                 width: "55px",
-                                 marginTop: "10px",
-                                 marginRight: "5px"
-                             }} /> :
+                                    height: "60px",
+                                    width: "55px",
+                                    marginTop: "10px",
+                                    marginRight: "5px"
+                                }} /> :
                          <Ico_MultipleChoice
                              style={{ height: "60px", width: "60px", marginTop: "10px" }} /> :
                          this.props.type === 2 ?
@@ -366,7 +366,9 @@ export class Task extends Component {
                             id={this.props.id} >
 
                             {this.props.type === 0 ?
-                                 "Text" :
+                                 this.props.shortInputs ?
+                                 "Short Text" :
+                                 "Long Text" :
                                  this.props.type === 1 ?
                                  "Multiple Choice" :
                                  this.props.type === 2 ?
@@ -392,11 +394,11 @@ export class Task extends Component {
                              <LockIcon
                                  className="icon"
                                  style={{
-                                     opacity: this.state.hover ?
-                                                  "60%" :
-                                                  "0%",
-                                     color: "black"
-                                 }} />
+                                    opacity: this.state.hover ?
+                                                 "60%" :
+                                                 "0%",
+                                    color: "black"
+                                }} />
                         }
                     </TaskLock>
 
@@ -407,11 +409,11 @@ export class Task extends Component {
                              <VisibilityIcon
                                  className="icon"
                                  style={{
-                                     opacity: this.state.hover ?
-                                                  "60%" :
-                                                  "0%",
-                                     color: "black"
-                                 }} /> :
+                                    opacity: this.state.hover ?
+                                                 "60%" :
+                                                 "0%",
+                                    color: "black"
+                                }} /> :
                              <VisibilityOffIcon
                                  className="icon"
                                  style={{ opacity: "60%", color: "black" }} />

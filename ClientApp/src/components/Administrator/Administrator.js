@@ -334,13 +334,13 @@ export class Administrator extends React.Component {
                 width: 1
             };
 
-            let Columns = this.state.columns;
+            let columns = this.state.columns;
 
-            Columns ?
-                Columns.push(Column) :
-                Columns = [Column];
+            columns ?
+                columns.push(Column) :
+                columns = [Column];
             this.setState({
-                columns: Columns
+                columns: columns
             });
         },
 
@@ -371,19 +371,19 @@ export class Administrator extends React.Component {
 
                     if (TaskList[target].Groups !== undefined)
                     {
-                        for (let I = 0; I < TaskList[target].Groups.length; I++)
+                        for (let i = 0; i < TaskList[target].Groups.length; i++)
                         {
-                            while (TaskList[target].Groups[I].Column + 1 >= this.state.columns.length)
+                            while (TaskList[target].Groups[i].Column + 1 >= this.state.columns.length)
                                 this.SSE.addColumn();
                         }
                     }
                     else
                         this.SSE.addColumn();
 
-                    for (let I = 0; I < this.state.columns.length; I++)
+                    for (let i = 0; i < this.state.columns.length; i++)
                     {
-                        if (Columns[I] !== undefined)
-                            this.state.columns[I].width = Columns[I].width;
+                        if (Columns[i] !== undefined)
+                            this.state.columns[i].width = Columns[i].width;
                         else
                             break;
                     }
@@ -641,21 +641,20 @@ export class Administrator extends React.Component {
 
     HandleTimer = (e, index) => {
         const Code = sessionStorage.getItem("code");
-        let Value = parseInt(e.target.value) * 60;
+        let value = parseInt(e.target.value) * 60;
         const Tasks = this.state.tasks;
 
-        if (Value < 1)
-            Value = 1;
-        else if (Value > 2147483647)
-            Value = 2147483647;
+        if (value < 1)
+            value = 1;
+        else if (value > 2147483647)
+            value = 2147483647;
 
-
-        Tasks[index].Timer = Value;
+        Tasks[index].Timer = value;
         this.setState({
             tasks: Tasks
         });
 
-        Axios.post(`admin/${Code}/task${index}-timer-${Value}`);
+        Axios.post(`admin/${Code}/task${index}-timer-${value}`);
     };
 
 
@@ -794,7 +793,7 @@ export class Administrator extends React.Component {
             Document.webkitExitFullscreen ||
             Document.msExitFullscreen;
 
-        let Fullscreen;
+        let fullscreen;
 
         if (!Document.fullscreenElement &&
             !Document.mozFullScreenElement &&
@@ -802,23 +801,23 @@ export class Administrator extends React.Component {
             !Document.msFullscreenElement)
         {
             Request.call(Element);
-            Fullscreen = true;
+            fullscreen = true;
         }
         else
         {
             Cancel.call(Document);
-            Fullscreen = false;
+            fullscreen = false;
         }
 
         this.setState({
-            fullscreen: Fullscreen
+            fullscreen: fullscreen
         });
     }
 
 
     render()
     {
-        let BannerButtonCheck = this.state.tab === "task";
+        let banner_button_check = this.state.tab === "task";
         return (
             <MainContainer>
                 <ThemeProvider
@@ -899,10 +898,10 @@ export class Administrator extends React.Component {
                                     this.selectTab("task");
                             }}
                             onMouseLeave={() => this.setState({
-                    BannerButtonText: this.state.tab === "task" ?
-                                          "Discussion" :
-                                          "Organize"
-                })}
+                                BannerButtonText: this.state.tab === "task" ?
+                                                      "Discussion" :
+                                                      "Organize"
+                            })}
                             onMouseOver={() => this.setState({
                                 BannerButtonText: this.state.tab !== "task" ?
                                                       "Discussion" :
@@ -991,6 +990,7 @@ export class Administrator extends React.Component {
                                                 InProgress={task.InProgress}
                                                 key={task.Index}
                                                 onClick={(e) => this.SSE.start(e.target.id)}
+                                                shortInputs={task.ShortInputsOnly}
                                                 ShowResults={task.ShowResults}
                                                 title={task.Title}
                                                 type={task.Type}

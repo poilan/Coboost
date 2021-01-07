@@ -282,20 +282,20 @@ export class Organizer extends Component {
             rename: {
                 open: (event, titleKey) => {
                     const Key = event.target.id.split("-");
-                    let Title;
+                    let title;
 
                     if (titleKey)
-                        Title = this.props.tasks[this.props.active].Groups[titleKey[0]].Members[titleKey[1]].Title;
+                        title = this.props.tasks[this.props.active].Groups[titleKey[0]].Members[titleKey[1]].Title;
                     else if (Key.indexOf("title") !== -1)
-                        Title = this.props.tasks[this.props.active].Groups[Key[0]].Title;
+                        title = this.props.tasks[this.props.active].Groups[Key[0]].Title;
                     else
-                        Title = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]].Title;
+                        title = this.props.tasks[this.props.active].Groups[Key[0]].Members[Key[1]].Title;
 
                     this.setState({
                         modal: {
                             rename: true,
                             key: Key,
-                            string: Title
+                            string: title
                         }
                     });
                     this.props.popOpen();
@@ -519,15 +519,15 @@ export class Organizer extends Component {
 
 
     secondsToMinutes = (countdown) => {
-        let Seconds = countdown, Minutes = 0;
-        while (Seconds >= 60)
+        let seconds = countdown, minutes = 0;
+        while (seconds >= 60)
         {
-            Minutes += 1;
-            Seconds -= 60;
+            minutes += 1;
+            seconds -= 60;
         }
-        return `${Minutes}:${Seconds < 10 ?
-                             `0${Seconds}` :
-                             Seconds}`;
+        return `${minutes}:${seconds < 10 ?
+                             `0${seconds}` :
+                             seconds}`;
     }
 
 
@@ -573,13 +573,13 @@ export class Organizer extends Component {
                 const Key = id;
                 if (this.state.selected.indexOf(Key) === -1)
                 {
-                    let Selected = this.state.selected;
+                    let selected = this.state.selected;
 
-                    Selected ?
-                        Selected.push(Key) :
-                        Selected = [Key];
+                    selected ?
+                        selected.push(Key) :
+                        selected = [Key];
                     this.setState({
-                        selected: Selected
+                        selected: selected
                     });
                 }
                 else
@@ -594,17 +594,17 @@ export class Organizer extends Component {
             };
 
             const GroupSelect = (id) => {
-                let CountSelected = 0; //This counts every input in the group that was selected, deselects all only if all were already selected.
+                let count_selected = 0; //This counts every input in the group that was selected, deselects all only if all were already selected.
                 task.Groups[id].Members.forEach((member) => {
                     const Key = `${id}-${member.Index}`;
 
                     if (this.state.selected.indexOf(Key) === -1)
                         Select(Key);
                     else
-                        CountSelected += 1;
+                        count_selected += 1;
                 });
 
-                if (task.Groups[id].Members.length === CountSelected)
+                if (task.Groups[id].Members.length === count_selected)
                 {
                     task.Groups[id].Members.forEach((member) => {
                         const Key = `${id}-${member.Index}`;
@@ -616,13 +616,13 @@ export class Organizer extends Component {
             const GetSelected = () => {
                 const Selected = [];
                 const Keys = [];
-                for (let I = 0; I < this.state.selected.length; I++)
+                for (let i = 0; i < this.state.selected.length; i++)
                 {
-                    const Key = this.state.selected[I].split("-");
+                    const Key = this.state.selected[i].split("-");
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
                     if (Answer !== undefined && !task.Groups[Key[0]].Collapsed)
                     {
-                        Selected.push(this.state.selected[I]);
+                        Selected.push(this.state.selected[i]);
                         Keys.push(Key);
                     }
                 }
@@ -642,34 +642,16 @@ export class Organizer extends Component {
                 return Keys.sort(Compare);
             };
 
-            const SelectFavoriteGroups = () => {
-                const Favorites = task.FavoriteGroups;
-                const Selected = [];
-
-                for (let I = 0; I < Favorites.length; I++)
-                {
-                    for (let K = 0; K < task.Groups[Favorites[I]].Members.length; K++)
-                    {
-                        const Answer = task.Groups[Favorites[I]].Members[K];
-                        if (Answer !== undefined)
-                            Selected.push(`${Favorites[I]}-${K}`);
-                    }
-                }
-                this.setState({
-                    selected: Selected
-                });
-            };
-
             const SelectFavoriteMembers = () => {
                 const Favorites = task.FavoriteMembers;
                 const Selected = [];
 
-                for (let I = 0; I < Favorites.length; I++)
+                for (let i = 0; i < Favorites.length; i++)
                 {
-                    const Key = Favorites[I].split("-");
+                    const Key = Favorites[i].split("-");
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
                     if (Answer !== undefined)
-                        Selected.push(Favorites[I]);
+                        Selected.push(Favorites[i]);
                 }
                 this.setState({
                     selected: Selected
@@ -679,9 +661,9 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = GetSelected();
-                for (let I = 0; I < Selected.length; I++)
+                for (let i = 0; i < Selected.length; i++)
                 {
-                    const Key = Selected[I];
+                    const Key = Selected[i];
                     const Answer = task.Groups[Key[0]].Members[Key[1]];
                     const Data = {
                         UserID: Answer.UserID,
@@ -705,9 +687,9 @@ export class Organizer extends Component {
 
                 //let change = [];
 
-                for (let I = 0; I < (Selected.length - 1); I++)
+                for (let i = 0; i < (Selected.length - 1); i++)
                 {
-                    const Subject = Selected[I];
+                    const Subject = Selected[i];
 
                     await setTimeout(Axios.post(
                             `admin/${Code}/question-merge${Master[0]}-${Master[1]}with${Subject[0]}-${Subject[1]}`),
@@ -756,14 +738,11 @@ export class Organizer extends Component {
                 });
             };
 
-
-
             const Clear = () => {
                 this.setState({
                     selected: []
                 });
             };
-
 
             const TimeToggle = () => {
                 this.setState({
@@ -798,28 +777,16 @@ export class Organizer extends Component {
 
             const RightClickMenu = [
                 {
-                    "label": "Write input",
-                    "callback": this.modal.answer.open
-                },
-                {
-                    "label": "Merge selected inputs",
+                    "label": "Merge selected",
                     "callback": Merge
                 },
                 {
-                    "label": "Duplicate selected input",
+                    "label": "Duplicate selected",
                     "callback": Duplicate
                 },
                 {
-                    "label": "Remove selected inputs",
+                    "label": "Remove selected",
                     "callback": Archive.members
-                },
-                {
-                    "label": "Collapse All Groups",
-                    "callback": () => CollapseAll(true)
-                },
-                {
-                    "label": "Expand All Groups",
-                    "callback": () => CollapseAll(false)
                 }
             ];
 
@@ -847,7 +814,7 @@ export class Organizer extends Component {
                                 //</MergeButton>
                             }
                             <div
-                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+                                style={{ width: "10px", background: "#fff", height: "100%" }} />
 
                             <MergeButton
                                 draggable="false"
@@ -869,7 +836,7 @@ export class Organizer extends Component {
                             </AnswerButton>
 
                             <div
-                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+                                style={{ width: "10px", background: "#fff", height: "100%" }} />
 
                             <AnswerButton
                                 draggable="false"
@@ -897,7 +864,7 @@ export class Organizer extends Component {
                             </MergeButton>
 
                             <div
-                                style={{ width: "2px", background: "#fff", height: "100%" }} />
+                                style={{ width: "10px", background: "#fff", height: "100%" }} />
 
                             <AnswerButton
                                 draggable="false"
@@ -905,23 +872,16 @@ export class Organizer extends Component {
                                 <StarIcon
                                     className="icon" />
                                 <br />
-                                Favorite Members
+                                Select Favorites
                             </AnswerButton>
-                            <AnswerButton
-                                draggable="false"
-                                onClick={SelectFavoriteGroups} >
-                                <StarBorderIcon
-                                    className="icon" />
-                                <br />
-                                Favorite Groups
-                            </AnswerButton>
+
                             <AnswerButton
                                 draggable="false"
                                 onClick={() => this.setState({ selected: [] })} >
                                 <ClearIcon
                                     className="icon" />
                                 <br />
-                                Clear Selected
+                                Unselect All
                             </AnswerButton>
 
                         </Tools>
@@ -975,7 +935,6 @@ export class Organizer extends Component {
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
-
                                         }
                                         <Button
                                             aria-controls={this.state.anchor.time ?
@@ -1148,8 +1107,8 @@ export class Organizer extends Component {
                                                                         group={group.Index}
                                                                         id={group.Index + "-" + member.Index}
                                                                         isMerged={member.Children != undefined ?
-                                                                                      member.Children.length :
-                                                                                      0}
+                                                                                  member.Children.length :
+                                                                                  0}
                                                                         key={member.Index}
                                                                         member={member.Index}
                                                                         onClick={Select}
@@ -1234,11 +1193,11 @@ export class Organizer extends Component {
                 const Favorites = task.Favorites;
                 const Selected = [];
 
-                for (let I = 0; I < Favorites.length; I++)
+                for (let i = 0; i < Favorites.length; i++)
                 {
-                    const Answer = task.Options[Favorites[I]];
+                    const Answer = task.Options[Favorites[i]];
                     if (Answer !== undefined)
-                        Selected.push(Favorites[I]);
+                        Selected.push(Favorites[i]);
                 }
 
                 this.setState({ selected: Selected });
@@ -1248,9 +1207,9 @@ export class Organizer extends Component {
                 const Options = [];
                 const Selected = this.state.selected;
 
-                for (let I = 0; I < Selected.length; I++)
+                for (let i = 0; i < Selected.length; i++)
                 {
-                    const Key = Selected[I];
+                    const Key = Selected[i];
                     const Answer = task.Options[Key];
 
                     const Data = {
@@ -1283,8 +1242,6 @@ export class Organizer extends Component {
                     }
                 });
             };
-
-
 
             return (
                 <MainContainer>
@@ -1338,7 +1295,6 @@ export class Organizer extends Component {
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
-
                                         }
                                         <Button
                                             aria-controls={this.state.anchor.time ?
@@ -1522,11 +1478,11 @@ export class Organizer extends Component {
                 const Favorites = task.Favorites;
                 const Selected = [];
 
-                for (let I = 0; I < Favorites.length; I++)
+                for (let i = 0; i < Favorites.length; i++)
                 {
-                    const Answer = task.Options[Favorites[I]];
+                    const Answer = task.Options[Favorites[i]];
                     if (Answer !== undefined)
-                        Selected.push(Favorites[I]);
+                        Selected.push(Favorites[i]);
                 }
 
                 this.setState({ selected: Selected });
@@ -1535,9 +1491,9 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = this.state.selected;
-                for (let I = 0; I < Selected.length; I++)
+                for (let i = 0; i < Selected.length; i++)
                 {
-                    const Key = Selected[I];
+                    const Key = Selected[i];
                     const Answer = task.Options[Key];
                     const Data = {
                         UserID: Answer.UserID,
@@ -1567,8 +1523,6 @@ export class Organizer extends Component {
                     }
                 });
             };
-
-
 
             return (
                 <MainContainer>
@@ -1622,7 +1576,6 @@ export class Organizer extends Component {
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
-
                                         }
                                         <Button
                                             aria-controls={this.state.anchor.time ?
@@ -1802,11 +1755,11 @@ export class Organizer extends Component {
                 const Favorites = task.Favorites;
                 const Selected = [];
 
-                for (let I = 0; I < Favorites.length; I++)
+                for (let i = 0; i < Favorites.length; i++)
                 {
-                    const Answer = task.Options[Favorites[I]];
+                    const Answer = task.Options[Favorites[i]];
                     if (Answer !== undefined)
-                        Selected.push(Favorites[I]);
+                        Selected.push(Favorites[i]);
                 }
 
                 this.setState({ selected: Selected });
@@ -1815,9 +1768,9 @@ export class Organizer extends Component {
             const GetOptions = () => {
                 const Options = [];
                 const Selected = this.state.selected;
-                for (let I = 0; I < Selected.length; I++)
+                for (let i = 0; i < Selected.length; i++)
                 {
-                    const Key = Selected[I];
+                    const Key = Selected[i];
                     const Answer = task.Options[Key];
                     const Data = {
                         UserID: Answer.UserID,
@@ -1847,8 +1800,6 @@ export class Organizer extends Component {
                     }
                 });
             };
-
-
 
             return (
                 <MainContainer>
@@ -1902,7 +1853,6 @@ export class Organizer extends Component {
                                                     <br />
                                                     {this.secondsToMinutes(task.Countdown)}
                                                 </Button>
-
                                         }
                                         <Button
                                             aria-controls={this.state.anchor.time ?

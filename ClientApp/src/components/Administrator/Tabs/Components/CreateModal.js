@@ -69,8 +69,29 @@ export class CreateTaskModal extends Component {
     {
         if (this.props.type !== 0 && this.props.options !== undefined)
             this.setState({ options: this.props.options() });
-        else
+        else if (this.props.title.trim())
             this.setState({ description: this.props.title });
+        else
+        {
+            let title = "";
+
+            switch (this.props.type)
+            {
+                case 0:
+                    title = "Give Input: ";
+                    break;
+                case 1:
+                    title = "Choose Favorites!";
+                    break;
+                case 2:
+                    title = "Give Points!";
+                    break;
+                case 3:
+                    title = "Give Rating!";
+                    break;
+            }
+            this.setState({ description: title });
+        }
     }
 
 
