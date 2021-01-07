@@ -69,7 +69,7 @@ export class CreateTaskModal extends Component {
     {
         if (this.props.type !== 0 && this.props.options !== undefined)
             this.setState({ options: this.props.options() });
-        else if (this.props.title.trim())
+        else if (this.props.title)
             this.setState({ description: this.props.title });
         else
         {
