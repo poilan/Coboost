@@ -782,10 +782,12 @@ export class Mobile extends React.Component {
                         mb={2}
                         p={1}
                         position="relative"
+                        style={{ maxWidth: "500px", left: "50%", transform: "translateX(-50%)" }}
                         width="100%" >
                         {
                             <ContentInput
                                 autoFocus={this.getCurrentTask().ShortInputsOnly}
+                                fullWidth
                                 helperText={`${this.state.title.length}/30`}
                                 inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
                                 inputRef={this.TextTitle}
@@ -793,7 +795,6 @@ export class Mobile extends React.Component {
                                 label={this.getCurrentTask().ShortInputsOnly ?
                                            "Input" :
                                            "Title"}
-                                margin="none"
                                 onChange={TitleChange}
                                 onFocus={(e) => OnTitleFocus(e)}
                                 required
@@ -804,11 +805,11 @@ export class Mobile extends React.Component {
                             !this.getCurrentTask().ShortInputsOnly &&
                                 <ContentInput
                                     autoFocus={true}
+                                    fullWidth
                                     helperText={`${this.getTaskAnswers().length}/250`}
                                     inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
                                     inputRef={this.TextDescription}
                                     label="Description"
-                                    margin="none"
                                     multiline
                                     name="description"
                                     onChange={(e) => this.questionChange(e)}
