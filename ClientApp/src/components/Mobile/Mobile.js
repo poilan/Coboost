@@ -409,7 +409,7 @@ export class Mobile extends React.Component {
 
                     const Index = parseInt(Data.Index);
                     let inputs = this.state.inputs;
-                    const Spent = inputs[Index].Spent;
+
 
 
                     if (Index >= inputs.length)
@@ -424,6 +424,7 @@ export class Mobile extends React.Component {
                         });
                     }
 
+                    const Spent = inputs[Index].Spent;
                     inputs[Index] = Data;
 
                     if (Index === this.state.currentInput)
