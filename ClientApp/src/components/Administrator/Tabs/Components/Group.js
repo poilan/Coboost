@@ -50,9 +50,9 @@ const GroupContainer = Styled.div`
 
     &:hover {
         filter: saturate(125%) drop-shadow(6px 6px 3px black);
-        cursor: ${props => props.group === "new" || !props.showcase ?
+        cursor: ${props => props.group === "new" ?
                            "pointer" :
-                           "default"
+                           "inherit"
     }
     `;
 

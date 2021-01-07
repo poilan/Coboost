@@ -54,13 +54,13 @@ const Container = Styled.div`
         &:hover {
             filter: brightness(80%) drop-shadow(6px 6px 3px black);
             cursor: ${props => props.showcase ?
-                               "default" :
+                               "inherit" :
                                "grab"};
         }
 
         &:active {
             cursor: ${props => props.showcase ?
-                               "default" :
+                               "inherit" :
                                "grabbing"};
         }
 `;
