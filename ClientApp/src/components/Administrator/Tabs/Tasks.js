@@ -52,7 +52,7 @@ const ContentBody = Styled(Card.Body)`
                        "url(https://cur.cursors-4u.net/symbols/sym-7/sym635.ani), url(https://cur.cursors-4u.net/symbols/sym-6/sym599.cur), auto !important;" :
                        props.cursor === "hide" ?
                        "url(https://cur.cursors-4u.net/cursors/cur-2/cur226.cur), auto !important;" :
-                       "auto"}
+                       "auto;"}
     border: 0;
     background: #E4E4E4;
     position: absolute;
@@ -163,7 +163,7 @@ export class Tasks extends Component {
                     </Tools>
                 </ContentHeader>
                 <ContentBody
-                    cursor={this.state.tool === "mouse"} >
+                    cursor={this.state.tool} >
                     <SlideContainer>
                         <SelectedSlide>
                             <Viewer
