@@ -777,12 +777,12 @@ export class Mobile extends React.Component {
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
                     <Box
-                        height="calc(100% - 50px)"
+                        height="calc(100% - 120px)"
                         m={1}
                         mb={2}
                         p={1}
-                        position="relative"
-                        style={{ maxWidth: "500px", left: "50%", transform: "translateX(-50%)" }}
+                        position="absolute"
+                        style={{ maxWidth: "500px", top: "45px", left: "50%", transform: "translateX(-50%)" }}
                         width="100%" >
                         {
                             <ContentInput
