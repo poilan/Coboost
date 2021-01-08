@@ -2,7 +2,7 @@
 import {Redirect} from "react-router-dom";
 import Axios from "axios";
 import {Button, Nav, Col, ToggleButton, Dropdown, ToggleButtonGroup, NavLink, DropdownButton, Form} from
-    "react-bootstrap";
+  "react-bootstrap";
 import Styled from "styled-components";
 import "circular-std";
 import {Ico_Loading, Ico_Group152} from "../Classes/Icons";
@@ -18,36 +18,36 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 
 function Alert(props) {
-    return <MuiAlert
-               elevation={6}
-               variant="filled"
-               {...props} />;
+  return <MuiAlert
+           elevation={6}
+           variant="filled"
+           {...props} />;
 }
 
 
 const Theme = createMuiTheme({
-    palette: {
-        primary: {
-            main: "#24305E",
-            contrastText: "#ffffff"
-        },
-        secondary: {
-            main: "#374785",
-            contrastText: "#ffffff"
-        },
-        error: {
-            main: "#F76C6C"
-        },
-        warning: {
-            main: "#f8e9a1"
-        },
-        info: {
-            main: "#4C7AD3"
-        },
-        success: {
-            main: "#6CF76C"
-        }
+  palette: {
+    primary: {
+      main: "#24305E",
+      contrastText: "#ffffff"
+    },
+    secondary: {
+      main: "#374785",
+      contrastText: "#ffffff"
+    },
+    error: {
+      main: "#F76C6C"
+    },
+    warning: {
+      main: "#f8e9a1"
+    },
+    info: {
+      main: "#4C7AD3"
+    },
+    success: {
+      main: "#6CF76C"
     }
+  }
 });
 
 
@@ -332,482 +332,482 @@ const MultipleChoiceButton = Styled(ToggleButton)`
 `;
 
 export class Mobile extends React.Component {
-    constructor(props)
+  constructor(props)
+  {
+    super(props);
+    this.state = {
+      activeHeader: "inputs",
+      currentInput: 0,
+      lastInput: 0,
+
+      answers: [],
+      inputs: [],
+      title: "",
+      snackbar: false,
+
+      loggedIn: false,
+      sessionState: 1, // 0: Not started, 1: Answering, 2: Finished
+      SSE: null
+    };
+
+    //this.eventSource = undefined;
+    this.headerClick = this.headerClick.bind(this);
+    this.questionChange = this.questionChange.bind(this);
+    this.choicePick = this.choicePick.bind(this);
+    this.inputsClick = this.inputsClick.bind(this);
+    this.inputsEdit = this.inputsEdit.bind(this);
+    this.logout = this.logout.bind(this);
+
+    //DOM References
+    this.TextTitle = createRef();
+    this.TextDescription = createRef();
+    this.TextForm = createRef();
+  }
+
+
+  componentDidMount()
+  {
+    if (localStorage.getItem("user") !== null)
     {
-        super(props);
-        this.state = {
-            activeHeader: "inputs",
-            currentInput: 0,
-            lastInput: 0,
-
-            answers: [],
-            inputs: [],
-            title: "",
-            snackbar: false,
-
-            loggedIn: false,
-            sessionState: 1, // 0: Not started, 1: Answering, 2: Finished
-            SSE: null
-        };
-
-        //this.eventSource = undefined;
-        this.headerClick = this.headerClick.bind(this);
-        this.questionChange = this.questionChange.bind(this);
-        this.choicePick = this.choicePick.bind(this);
-        this.inputsClick = this.inputsClick.bind(this);
-        this.inputsEdit = this.inputsEdit.bind(this);
-        this.logout = this.logout.bind(this);
-
-        //DOM References
-        this.TextTitle = createRef();
-        this.TextDescription = createRef();
-        this.TextForm = createRef();
+      this.setState({
+        loggedIn: true
+      });
     }
 
+    this.onMount();
+  }
 
-    componentDidMount()
-    {
-        if (localStorage.getItem("user") !== null)
+
+  onMount = async () => {
+    const Code = sessionStorage.getItem("code");
+
+    await Axios.get(`admin/${Code}/questions-all`).then(res => {
+      if (res.status === 202)
+      {
+        const Data = res.data;
+
+        this.setState({
+          inputs: Data
+        });
+
+        this.parseAnswers();
+      }
+    });
+
+    // ReSharper disable once InconsistentNaming
+    var EventSource = new SSE(`client/${Code}/question`);
+
+    this.setState({
+      SSE: EventSource
+    });
+
+    EventSource.startEventSource(() => {
+      EventSource.addListener("question", async (e) => {
+        try
         {
-            this.setState({
-                loggedIn: true
-            });
-        }
+          const Data = JSON.parse(e.data); // Question data
 
-        this.onMount();
-    }
+          const Index = parseInt(Data.Index);
+          let inputs = this.state.inputs;
 
 
-    onMount = async () => {
-        const Code = sessionStorage.getItem("code");
 
-        await Axios.get(`admin/${Code}/questions-all`).then(res => {
-            if (res.status === 202)
-            {
+          if (Index >= inputs.length)
+          {
+            await Axios.get(`admin/${Code}/questions-all`).then(res => {
+              if (res.status === 202)
+              {
                 const Data = res.data;
 
-                this.setState({
-                    inputs: Data
-                });
-
-                this.parseAnswers();
-            }
-        });
-
-        // ReSharper disable once InconsistentNaming
-        var EventSource = new SSE(`client/${Code}/question`);
-
-        this.setState({
-            SSE: EventSource
-        });
-
-        EventSource.startEventSource(() => {
-            EventSource.addListener("question", async (e) => {
-                try
-                {
-                    const Data = JSON.parse(e.data); // Question data
-
-                    const Index = parseInt(Data.Index);
-                    let inputs = this.state.inputs;
-
-
-
-                    if (Index >= inputs.length)
-                    {
-                        await Axios.get(`admin/${Code}/questions-all`).then(res => {
-                            if (res.status === 202)
-                            {
-                                const Data = res.data;
-
-                                inputs = Data;
-                            }
-                        });
-                    }
-
-                    const Spent = inputs[Index].Spent;
-                    inputs[Index] = Data;
-
-                    if (Index === this.state.currentInput)
-                        inputs[Index].Spent = Spent;
-
-                    this.setState({
-                        inputs: inputs
-                    });
-
-                    if (Index !== this.state.currentInput)
-                    {
-                        this.parseAnswers();
-
-                        this.setState({
-                            currentInput: Index,
-                            sessionState: 1
-                        });
-                    }
-                }
-                catch (Event)
-                {
-                    EventSource.log(`Failed to parse server event${Event}`);
-                }
+                inputs = Data;
+              }
             });
-        });
-    }
+          }
 
+          const Spent = inputs[Index].Spent;
+          inputs[Index] = Data;
 
-    componentWillUnmount()
-    {
-        if (this.eventSource)
-            this.eventSource.close();
-    }
+          if (Index === this.state.currentInput)
+            inputs[Index].Spent = Spent;
 
+          this.setState({
+            inputs: inputs
+          });
 
-    parseAnswers()
-    {
-        var Answers = [];
-
-        const Questions = this.getTasks();
-        Questions.forEach((question, index) => {
-            var Answer = {
-                index: index,
-                value: question.Type === 0 ?
-                           "" :
-                           []
-            };
-
-            if (question.Options !== undefined)
-            {
-                if (question.Type === 2)
-                {
-                    const Values = [];
-
-                    for (let i = 0; i < question.Options.length; i++)
-                        Values.push(0);
-                    Answer.value = Values;
-                    question.Spent = 0;
-                }
-                else if (question.Type === 3)
-                {
-                    const Values = [];
-
-                    for (let i = 0; i < question.Options.length; i++)
-                        Values.push(question.Min);
-
-                    Answer.value = Values;
-                }
-            }
-
-            if (Answers[index] !== undefined)
-                Answers[index] = Answer;
-            else
-                Answers.push(Answer);
-        });
-
-        this.setState({
-            answers: Answers
-        });
-    }
-
-
-    getTasks()
-    {
-        return this.state.inputs;
-    }
-
-
-    getTaskIndex()
-    {
-        return this.state.currentInput;
-    }
-
-
-    getTaskAnswers()
-    {
-        const Index = this.getTaskIndex();
-        const Type = this.getTaskType();
-        const AnswerData = this.state.answers[Index];
-
-        if (AnswerData)
-            return AnswerData.value;
-        else
-        {
-            switch (Type)
-            {
-                case 0:
-                    return "";
-                default:
-                    return [];
-            }
-        }
-    }
-
-
-    setTaskAnswers(answer)
-    {
-        const State = this.state;
-        const Index = this.getTaskIndex();
-        const Answers = State.answers;
-        Answers[Index].value = answer;
-
-        this.setState({
-            answers: Answers
-        });
-    }
-
-
-    getCurrentTask()
-    {
-        const Inputs = this.getTasks();
-        return Inputs[this.getTaskIndex()];
-    }
-
-
-    getLastTask()
-    {
-        const Inputs = this.getTasks();
-        return Inputs[this.state.lastInput];
-    }
-
-
-    getTaskType()
-    {
-        return this.getCurrentTask().Type;
-    }
-
-
-    getTaskTitle()
-    {
-        return this.getCurrentTask().Title;
-    }
-
-
-    getTaskOptions()
-    {
-        return this.getCurrentTask().Options;
-    }
-
-
-    getOptionMax()
-    {
-        return this.getCurrentTask().Max;
-    }
-
-
-    headerClick(target)
-    {
-        const Id = target.id;
-
-        this.setState({
-            activeHeader: Id
-        });
-    }
-
-
-    welcomeRender()
-    {
-        return (
-            <ContentContainer>
-                <ContentTitle>Welcome!</ContentTitle>
-                <ContentBody>Wait for the remaining participants, or until the administrator starts the presentation</ContentBody>
-                <IconLoader />
-                <ContentFooter>2 Participants</ContentFooter>
-            </ContentContainer>
-        );
-    }
-
-
-    finishedRender()
-    {
-        const LastInput = this.getLastTask();
-        const LastType = LastInput.Type;
-
-        let word;
-
-        switch (LastType)
-        {
-            case 0:
-                word = "Input";
-                this.inputsEdit();
-                break;
-            default:
-                word = "Vote";
-                break;
-        }
-
-        return (
-            <ContentContainer>
-                <ContentTitle
-                    blue >
-                    {word} sent!
-                </ContentTitle>
-                <IconDone />
-                <ContentBody
-                    boxed >
-                    You may send another {word}! or you can take it easy while waiting for the next task.
-                </ContentBody>
-                <ContentButton
-                    onClick={this.inputsEdit} >
-                    New {word}
-                </ContentButton>
-            </ContentContainer>
-        );
-    }
-
-
-    closedRender()
-    {
-        return (
-            <ContentContainer>
-                <ContentTitle
-                    blue >
-                    Task Closed
-                </ContentTitle>
-
-                <IconDone />
-
-                <ContentBody
-                    boxed >
-                    This task appears to be closed, please remain patient.
-                </ContentBody>
-
-                <ContentButton>Nothing at all</ContentButton>
-            </ContentContainer>
-        );
-    }
-
-
-    questionChange(e)
-    {
-        const Target = e.target;
-        const Value = Target.value;
-        Target.style.height = "inherit";
-        Target.style.height = `${Target.scrollHeight + 1}px`;
-
-        this.setTaskAnswers(Value);
-    }
-
-
-    questionRender()
-    {
-        const TitleChange = (e) => {
-            const Target = e.target;
-            const Value = Target.value;
+          if (Index !== this.state.currentInput)
+          {
+            this.parseAnswers();
 
             this.setState({
-                title: Value
+              currentInput: Index,
+              sessionState: 1
             });
-        };
-        const HandleInvalid = () => {
-            const Description = this.getTaskAnswers();
+          }
+        }
+        catch (Event)
+        {
+          EventSource.log(`Failed to parse server event${Event}`);
+        }
+      });
+    });
+  }
 
-            if (Description.length < 3)
+
+  componentWillUnmount()
+  {
+    if (this.eventSource)
+      this.eventSource.close();
+  }
+
+
+  parseAnswers()
+  {
+    var Answers = [];
+
+    const Questions = this.getTasks();
+    Questions.forEach((question, index) => {
+      var Answer = {
+        index: index,
+        value: question.Type === 0 ?
+                 "" :
+                 []
+      };
+
+      if (question.Options !== undefined)
+      {
+        if (question.Type === 2)
+        {
+          const Values = [];
+
+          for (let i = 0; i < question.Options.length; i++)
+            Values.push(0);
+          Answer.value = Values;
+          question.Spent = 0;
+        }
+        else if (question.Type === 3)
+        {
+          const Values = [];
+
+          for (let i = 0; i < question.Options.length; i++)
+            Values.push(question.Min);
+
+          Answer.value = Values;
+        }
+      }
+
+      if (Answers[index] !== undefined)
+        Answers[index] = Answer;
+      else
+        Answers.push(Answer);
+    });
+
+    this.setState({
+      answers: Answers
+    });
+  }
+
+
+  getTasks()
+  {
+    return this.state.inputs;
+  }
+
+
+  getTaskIndex()
+  {
+    return this.state.currentInput;
+  }
+
+
+  getTaskAnswers()
+  {
+    const Index = this.getTaskIndex();
+    const Type = this.getTaskType();
+    const AnswerData = this.state.answers[Index];
+
+    if (AnswerData)
+      return AnswerData.value;
+    else
+    {
+      switch (Type)
+      {
+        case 0:
+          return "";
+        default:
+          return [];
+      }
+    }
+  }
+
+
+  setTaskAnswers(answer)
+  {
+    const State = this.state;
+    const Index = this.getTaskIndex();
+    const Answers = State.answers;
+    Answers[Index].value = answer;
+
+    this.setState({
+      answers: Answers
+    });
+  }
+
+
+  getCurrentTask()
+  {
+    const Inputs = this.getTasks();
+    return Inputs[this.getTaskIndex()];
+  }
+
+
+  getLastTask()
+  {
+    const Inputs = this.getTasks();
+    return Inputs[this.state.lastInput];
+  }
+
+
+  getTaskType()
+  {
+    return this.getCurrentTask().Type;
+  }
+
+
+  getTaskTitle()
+  {
+    return this.getCurrentTask().Title;
+  }
+
+
+  getTaskOptions()
+  {
+    return this.getCurrentTask().Options;
+  }
+
+
+  getOptionMax()
+  {
+    return this.getCurrentTask().Max;
+  }
+
+
+  headerClick(target)
+  {
+    const Id = target.id;
+
+    this.setState({
+      activeHeader: Id
+    });
+  }
+
+
+  welcomeRender()
+  {
+    return (
+      <ContentContainer>
+        <ContentTitle>Welcome!</ContentTitle>
+        <ContentBody>Wait for the remaining participants, or until the administrator starts the presentation</ContentBody>
+        <IconLoader />
+        <ContentFooter>2 Participants</ContentFooter>
+      </ContentContainer>
+    );
+  }
+
+
+  finishedRender()
+  {
+    const LastInput = this.getLastTask();
+    const LastType = LastInput.Type;
+
+    let word;
+
+    switch (LastType)
+    {
+      case 0:
+        word = "Input";
+        this.inputsEdit();
+        break;
+      default:
+        word = "Vote";
+        break;
+    }
+
+    return (
+      <ContentContainer>
+        <ContentTitle
+          blue >
+          {word} sent!
+        </ContentTitle>
+        <IconDone />
+        <ContentBody
+          boxed >
+          You may send another {word}! or you can take it easy while waiting for the next task.
+        </ContentBody>
+        <ContentButton
+          onClick={this.inputsEdit} >
+          New {word}
+        </ContentButton>
+      </ContentContainer>
+    );
+  }
+
+
+  closedRender()
+  {
+    return (
+      <ContentContainer>
+        <ContentTitle
+          blue >
+          Task Closed
+        </ContentTitle>
+
+        <IconDone />
+
+        <ContentBody
+          boxed >
+          This task appears to be closed, please remain patient.
+        </ContentBody>
+
+        <ContentButton>Nothing at all</ContentButton>
+      </ContentContainer>
+    );
+  }
+
+
+  questionChange(e)
+  {
+    const Target = e.target;
+    const Value = Target.value;
+    Target.style.height = "inherit";
+    Target.style.height = `${Target.scrollHeight + 1}px`;
+
+    this.setTaskAnswers(Value);
+  }
+
+
+  questionRender()
+  {
+    const TitleChange = (e) => {
+      const Target = e.target;
+      const Value = Target.value;
+
+      this.setState({
+        title: Value
+      });
+    };
+    const HandleInvalid = () => {
+      const Description = this.getTaskAnswers();
+
+      if (Description.length < 3)
+      {
+        if (this.TextDescription.current)
+          this.TextDescription.current.focus();
+
+        return;
+      }
+      else if (Description.length > 30)
+      {
+        const Title = this.state.title;
+
+        if (Title.length < 3)
+        {
+          if (this.TextTitle.current)
+            this.TextTitle.current.focus().select();
+
+          return;
+        }
+      }
+    };
+
+    const HandleEnter = (e) => {
+      if (e.key === "Enter")
+      {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.TextForm.current)
+          this.TextForm.current.click();
+      }
+    };
+
+    const OnTitleFocus = () => {
+      if (this.getCurrentTask().ShortInputsOnly)
+        return;
+
+      if (this.state.title.trim() === "")
+      {
+        let title = this.getTaskAnswers().substring(0, 30).trim();
+        let index = title.lastIndexOf(" ");
+
+        if (index !== -1)
+        {
+          index = 0;
+          for (let i = 0; i < 3; i++)
+          {
+            const Check = title.indexOf(" ", index + 1);
+
+            if (Check === -1)
             {
-                if (this.TextDescription.current)
-                    this.TextDescription.current.focus();
-
-                return;
+              if (index > 0)
+                break;
+              else
+              {
+                index = 30;
+                break;
+              }
             }
-            else if (Description.length > 30)
+            else
+              index = Check;
+          }
+
+          title = title.substring(0, index);
+        }
+        this.setState({
+          title: title
+        });
+      }
+    };
+
+    return (
+      <ContentContainer>
+        <Form
+          autoComplete="off"
+          onInvalid={HandleInvalid}
+          onSubmit={this.inputsClick}
+          style={{ height: "100%" }} >
+          <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
+
+          <Box
+            height="calc(100% - 120px)"
+            m={1}
+            mb={2}
+            p={1}
+            position="absolute"
+            style={{ maxWidth: "500px", top: "45px", left: "50%", transform: "translateX(-50%)" }}
+            width="100%" >
             {
-                const Title = this.state.title;
-
-                if (Title.length < 3)
-                {
-                    if (this.TextTitle.current)
-                        this.TextTitle.current.focus().select();
-
-                    return;
-                }
-            }
-        };
-
-        const HandleEnter = (e) => {
-            if (e.key === "Enter")
-            {
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.TextForm.current)
-                    this.TextForm.current.click();
-            }
-        };
-
-        const OnTitleFocus = () => {
-            if (this.getCurrentTask().ShortInputsOnly)
-                return;
-
-            if (this.state.title.trim() === "")
-            {
-                let title = this.getTaskAnswers().substring(0, 30).trim();
-                let index = title.lastIndexOf(" ");
-
-                if (index !== -1)
-                {
-                    index = 0;
-                    for (let i = 0; i < 3; i++)
-                    {
-                        const Check = title.indexOf(" ", index + 1);
-
-                        if (Check === -1)
-                        {
-                            if (index > 0)
-                                break;
-                            else
-                            {
-                                index = 30;
-                                break;
-                            }
-                        }
-                        else
-                            index = Check;
-                    }
-
-                    title = title.substring(0, index);
-                }
-                this.setState({
-                    title: title
-                });
-            }
-        };
-
-        return (
-            <ContentContainer>
-                <Form
-                    autoComplete="off"
-                    onInvalid={HandleInvalid}
-                    onSubmit={this.inputsClick}
-                    style={{ height: "100%" }} >
-                    <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
-
-                    <Box
-                        height="calc(100% - 120px)"
-                        m={1}
-                        mb={2}
-                        p={1}
-                        position="absolute"
-                        style={{ maxWidth: "500px", top: "45px", left: "50%", transform: "translateX(-50%)" }}
-                        width="100%" >
-                        {
-                            <ContentInput
+                          <ContentInput
                                 autoFocus={this.getCurrentTask().ShortInputsOnly}
                                 fullWidth
                                 helperText={`${this.state.title.length}/30`}
-                                inputProps={{ minlength: 3, maxlength: 30, autocomplete: "off" }}
+                                inputProps={{ minlength: 3, maxlength: 30, autoComplete: "off" }}
                                 inputRef={this.TextTitle}
                                 isTitle
                                 label={this.getCurrentTask().ShortInputsOnly ?
-                                           "Input" :
-                                           "Title"}
+                                         "Input" :
+                                         "Title"}
                                 onChange={TitleChange}
                                 onFocus={(e) => OnTitleFocus(e)}
                                 required
                                 value={this.state.title}
                                 variant="outlined" />
                         }
-                        {
-                            !this.getCurrentTask().ShortInputsOnly &&
-                                <ContentInput
+            {
+                          !this.getCurrentTask().ShortInputsOnly &&
+                            <ContentInput
                                     autoFocus={true}
                                     fullWidth
                                     helperText={`${this.getTaskAnswers().length}/250`}
-                                    inputProps={{ minlength: 3, maxlength: 250, autofocus: true, autocomplete: "off" }}
+                                    inputProps={{ minlength: 3, maxlength: 250, autoFocus: true, autoComplete: "off" }}
                                     inputRef={this.TextDescription}
                                     label="Description"
                                     multiline
@@ -819,214 +819,214 @@ export class Mobile extends React.Component {
                                     value={this.getTaskAnswers()}
                                     variant="outlined" />
                         }
-                    </Box>
+          </Box>
 
-                    <ContentButton
-                        ref={this.TextForm}
-                        type="submit"
-                        value="Submit" >
-                        {!this.getCurrentTask().ShortInputsOnly ?
-                             this.getTaskAnswers().length < 3 ?
-                             "Write an input to send!" :
-                             this.getTaskAnswers().length > 30 && this.state.title < 3 ?
-                             "Write a title before sending!" :
-                             "Send Input!" :
-                             this.state.title < 3 ?
-                             "Write an input to send!" :
-                             "Send Input!"
+          <ContentButton
+            ref={this.TextForm}
+            type="submit"
+            value="Submit" >
+            {!this.getCurrentTask().ShortInputsOnly ?
+                           this.getTaskAnswers().length < 3 ?
+                           "Write an input to send!" :
+                           this.getTaskAnswers().length > 30 && this.state.title < 3 ?
+                           "Write a title before sending!" :
+                           "Send Input!" :
+                           this.state.title < 3 ?
+                           "Write an input to send!" :
+                           "Send Input!"
 
                         }
-                    </ContentButton>
-                </Form>
-            </ContentContainer>
-        );
-    }
+          </ContentButton>
+        </Form>
+      </ContentContainer>
+    );
+  }
 
 
-    choicePick(picked)
-    {
-        const Index = this.getTaskIndex();
-        const Max = this.getOptionMax();
+  choicePick(picked)
+  {
+    const Index = this.getTaskIndex();
+    const Max = this.getOptionMax();
 
-        if (picked.length >= this.getTaskAnswers().length && picked.length > Max)
-            return;
+    if (picked.length >= this.getTaskAnswers().length && picked.length > Max)
+      return;
 
-        var Chosen = [];
+    var Chosen = [];
 
-        picked.forEach(pick => {
-            var PickData = pick.split("-");
-            var ChoiceIndex = parseInt(PickData[0]);
+    picked.forEach(pick => {
+      var PickData = pick.split("-");
+      var ChoiceIndex = parseInt(PickData[0]);
 
-            if (ChoiceIndex === Index)
-            {
-                Chosen.push(pick);
+      if (ChoiceIndex === Index)
+      {
+        Chosen.push(pick);
 
-                if (Chosen.length >= Max)
-                {
-                    this.setTaskAnswers(Chosen);
-                    return;
-                }
-            }
-        });
-
-        this.setTaskAnswers(Chosen);
-    }
-
-
-    pointsChange(index, points)
-    {
-        const Answers = this.getTaskAnswers();
-        let spent = 0;
-        const Tasks = this.getTasks();
-        let value = parseInt(points);
-        const Change = value - Answers[index];
-
-        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change)
+        if (Chosen.length >= Max)
         {
-            const Maximum = Tasks[this.getTaskIndex()].Amount - Tasks[this.getTaskIndex()].Spent;
-
-            if (Maximum < 1)
-                return false;
-            else
-                value = Maximum;
+          this.setTaskAnswers(Chosen);
+          return;
         }
+      }
+    });
+
+    this.setTaskAnswers(Chosen);
+  }
 
 
-        for (let i = 0; i < this.getTaskOptions().length; i++)
+  pointsChange(index, points)
+  {
+    const Answers = this.getTaskAnswers();
+    let spent = 0;
+    const Tasks = this.getTasks();
+    let value = parseInt(points);
+    const Change = value - Answers[index];
+
+    if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change)
+    {
+      const Maximum = Tasks[this.getTaskIndex()].Amount - Tasks[this.getTaskIndex()].Spent;
+
+      if (Maximum < 1)
+        return false;
+      else
+        value = Maximum;
+    }
+
+
+    for (let i = 0; i < this.getTaskOptions().length; i++)
+    {
+      if (Answers[i] == undefined)
+        Answers[i] = 0;
+
+      if (index === i)
+        Answers[i] = value;
+
+      if (Answers[i] > 0)
+        spent += Answers[i];
+    }
+
+    Tasks[this.getTaskIndex()].Spent = spent;
+    this.setState({
+      inputs: Tasks
+    });
+    this.setTaskAnswers(Answers);
+    return true;
+  }
+
+
+  sliderChange(index, value)
+  {
+    const Answers = this.getTaskAnswers();
+    Answers[index] = value;
+    this.setTaskAnswers(Answers);
+  }
+
+
+  inputsClick(e)
+  {
+    e.preventDefault();
+    const State = this.state;
+    const Current = this.getTaskIndex();
+
+    const Type = this.getTaskType();
+    const Answer = this.getTaskAnswers();
+
+    // Send the input
+    const Code = sessionStorage.getItem("code");
+    let user = "anonymous";
+    if (State.loggedIn)
+      user = localStorage.getItem("user");
+
+    var Data = {
+      UserID: user
+    };
+
+    // Send
+    if (Type === 0)
+    { // Open Text
+      if (this.getCurrentTask().ShortInputsOnly)
+        Data.Description = this.state.title.trim();
+      else
+      {
+        Data.Description = Answer.trim();
+
+        if (Data.Description.length > 30)
         {
-            if (Answers[i] == undefined)
-                Answers[i] = 0;
-
-            if (index === i)
-                Answers[i] = value;
-
-            if (Answers[i] > 0)
-                spent += Answers[i];
+          if (this.state.title.trim().length < 3)
+            return false;
+          Data.Title = this.state.title.trim();
         }
+      }
+      Axios.post(`client/${Code}/add-text-open`, Data);
+    }
+    else if (Type === 1)
+    { // Multiple Choice
+      Answer.forEach(option => {
+        var OptionData = option.split("-");
+        var Index = parseInt(OptionData[1]);
+        Data.Option = Index;
 
-        Tasks[this.getTaskIndex()].Spent = spent;
-        this.setState({
-            inputs: Tasks
-        });
-        this.setTaskAnswers(Answers);
-        return true;
+        Axios.post(`client/${Code}/add-vote-multi`, Data);
+      });
+    }
+    else if (Type === 2)
+    { // Points
+      Data.Points = Answer;
+      Axios.post(`client/${Code}/add-vote-points`, Data);
+    }
+    else if (Type === 3)
+    { // Slider
+      Data.Ratings = Answer;
+      Axios.post(`client/${Code}/add-vote-slider`, Data);
     }
 
+    this.parseAnswers();
 
-    sliderChange(index, value)
-    {
-        const Answers = this.getTaskAnswers();
-        Answers[index] = value;
-        this.setTaskAnswers(Answers);
-    }
-
-
-    inputsClick(e)
-    {
-        e.preventDefault();
-        const State = this.state;
-        const Current = this.getTaskIndex();
-
-        const Type = this.getTaskType();
-        const Answer = this.getTaskAnswers();
-
-        // Send the input
-        const Code = sessionStorage.getItem("code");
-        let user = "anonymous";
-        if (State.loggedIn)
-            user = localStorage.getItem("user");
-
-        var Data = {
-            UserID: user
-        };
-
-        // Send
-        if (Type === 0)
-        { // Open Text
-            if (this.getCurrentTask().ShortInputsOnly)
-                Data.Description = this.state.title.trim();
-            else
-            {
-                Data.Description = Answer.trim();
-
-                if (Data.Description.length > 30)
-                {
-                    if (this.state.title.trim().length < 3)
-                        return false;
-                    Data.Title = this.state.title.trim();
-                }
-            }
-            Axios.post(`client/${Code}/add-text-open`, Data);
-        }
-        else if (Type === 1)
-        { // Multiple Choice
-            Answer.forEach(option => {
-                var OptionData = option.split("-");
-                var Index = parseInt(OptionData[1]);
-                Data.Option = Index;
-
-                Axios.post(`client/${Code}/add-vote-multi`, Data);
-            });
-        }
-        else if (Type === 2)
-        { // Points
-            Data.Points = Answer;
-            Axios.post(`client/${Code}/add-vote-points`, Data);
-        }
-        else if (Type === 3)
-        { // Slider
-            Data.Ratings = Answer;
-            Axios.post(`client/${Code}/add-vote-slider`, Data);
-        }
-
-        this.parseAnswers();
-
-        this.setState({
-            lastInput: Current,
-            sessionState: 2,
-            title: ""
-        });
-        return true;
-    }
+    this.setState({
+      lastInput: Current,
+      sessionState: 2,
+      title: ""
+    });
+    return true;
+  }
 
 
-    inputsEdit()
-    {
-        const LastInput = this.state.lastInput;
-        this.setState({
-            currentInput: LastInput,
-            sessionState: 1
-        });
-    }
+  inputsEdit()
+  {
+    const LastInput = this.state.lastInput;
+    this.setState({
+      currentInput: LastInput,
+      sessionState: 1
+    });
+  }
 
 
-    logout()
-    {
-        localStorage.clear();
-        sessionStorage.clear();
-        this.props.history.push("/");
-    }
+  logout()
+  {
+    localStorage.clear();
+    sessionStorage.clear();
+    this.props.history.push("/");
+  }
 
 
-    choiceRender()
-    {
-        return (
-            <ContentContainer>
+  choiceRender()
+  {
+    return (
+      <ContentContainer>
 
-                <ContentQuestion>
-                    {this.getTaskTitle()}
-                </ContentQuestion>
+        <ContentQuestion>
+          {this.getTaskTitle()}
+        </ContentQuestion>
 
-                <MultipleChoiceGroup
-                    name={`group-${this.getTaskIndex()}`}
-                    onChange={this.choicePick}
-                    toggle
-                    type="checkbox"
-                    value={this.getTaskAnswers()}
-                    vertical >
+        <MultipleChoiceGroup
+          name={`group-${this.getTaskIndex()}`}
+          onChange={this.choicePick}
+          toggle
+          type="checkbox"
+          value={this.getTaskAnswers()}
+          vertical >
 
-                    {this.getTaskOptions().map((choice) =>
-                        <MultipleChoiceButton
+          {this.getTaskOptions().map((choice) =>
+                      <MultipleChoiceButton
                             key={choice.Index}
                             name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
                             size="lg"
@@ -1040,32 +1040,32 @@ export class Mobile extends React.Component {
                             {choice.Title}
                         </MultipleChoiceButton>
                     )}
-                </MultipleChoiceGroup>
+        </MultipleChoiceGroup>
 
-                <ContentButton
-                    onClick={this.inputsClick} >
-                    Send Vote
-                </ContentButton>
-            </ContentContainer>
-        );
-    }
+        <ContentButton
+          onClick={this.inputsClick} >
+          Send Vote
+        </ContentButton>
+      </ContentContainer>
+    );
+  }
 
 
-    pointsRender()
-    {
-        const Task = this.getCurrentTask();
-        const Answers = this.state.answers[this.getTaskIndex()];
-        return (
-            <ContentContainer>
-                <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box
-                    borderColor="transparent"
-                    component="fieldset"
-                    mb={3}
-                    pt={2}
-                    px={2} >
-                    {Task.Options.map((point) =>
-                        <Box
+  pointsRender()
+  {
+    const Task = this.getCurrentTask();
+    const Answers = this.state.answers[this.getTaskIndex()];
+    return (
+      <ContentContainer>
+        <ContentQuestion>{Task.Title}</ContentQuestion>
+        <Box
+          borderColor="transparent"
+          component="fieldset"
+          mb={3}
+          pt={2}
+          px={2} >
+          {Task.Options.map((point) =>
+                      <Box
                             borderColor="transparent"
                             component="fieldset"
                             key={point.Index}
@@ -1080,52 +1080,52 @@ export class Mobile extends React.Component {
                                 max={Task.Max}
                                 name={point.Title}
                                 onChange={(e, value) =>
-                                    this.pointsChange(point.Index, value)}
+                                  this.pointsChange(point.Index, value)}
                                 value={Answers !== undefined ?
-                                           Answers.value[point.Index] :
-                                           0
+                                         Answers.value[point.Index] :
+                                         0
                                 } />
                         </Box>
                     )}
-                </Box>
-                <ContentButton
-                    disabled={Task.Spent !== Task.Amount}
-                    onClick={this.inputsClick} >
-                    {Task.Spent !== Task.Amount ?
-                         (Task.Amount - Task.Spent) + " points left!" :
-                         "Send Vote"}
-                </ContentButton>
-            </ContentContainer>
-        );
-    }
+        </Box>
+        <ContentButton
+          disabled={Task.Spent !== Task.Amount}
+          onClick={this.inputsClick} >
+          {Task.Spent !== Task.Amount ?
+                       (Task.Amount - Task.Spent) + " points left!" :
+                       "Send Vote"}
+        </ContentButton>
+      </ContentContainer>
+    );
+  }
 
 
-    sliderRender()
-    {
-        const Task = this.getCurrentTask();
-        const Answers = this.state.answers[this.getTaskIndex()];
-        const Marks = [
-            {
-                value: Task.Min,
-                label: `${Task.Min}`
-            },
-            {
-                value: Task.Max,
-                label: `${Task.Max}`
-            }
-        ];
+  sliderRender()
+  {
+    const Task = this.getCurrentTask();
+    const Answers = this.state.answers[this.getTaskIndex()];
+    const Marks = [
+      {
+        value: Task.Min,
+        label: `${Task.Min}`
+      },
+      {
+        value: Task.Max,
+        label: `${Task.Max}`
+      }
+    ];
 
-        return (
-            <ContentContainer>
-                <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box
-                    borderColor="transparent"
-                    component="fieldset"
-                    mb={2}
-                    pt={1}
-                    px={2} >
-                    {Task.Options.map((slider) =>
-                        <Box
+    return (
+      <ContentContainer>
+        <ContentQuestion>{Task.Title}</ContentQuestion>
+        <Box
+          borderColor="transparent"
+          component="fieldset"
+          mb={2}
+          pt={1}
+          px={2} >
+          {Task.Options.map((slider) =>
+                      <Box
                             borderColor="transparent"
                             component="fieldset"
                             key={slider.Index}
@@ -1145,177 +1145,177 @@ export class Mobile extends React.Component {
                                 onChange={(e, value) => this.sliderChange(slider.Index, value)}
                                 step={1}
                                 value={Answers !== undefined ?
-                                           Answers.value[slider.Index] :
-                                           Task.Min}
+                                         Answers.value[slider.Index] :
+                                         Task.Min}
                                 valueLabelDisplay="on" />
                         </Box>
                     )}
-                </Box>
-                <ContentButton
-                    onClick={this.inputsClick} >
-                    Send Vote
-                </ContentButton>
-            </ContentContainer>
-        );
-    }
+        </Box>
+        <ContentButton
+          onClick={this.inputsClick} >
+          Send Vote
+        </ContentButton>
+      </ContentContainer>
+    );
+  }
 
 
-    processScreens()
+  processScreens()
+  {
+    const State = this.state.sessionState;
+
+    switch (State)
     {
-        const State = this.state.sessionState;
-
-        switch (State)
+      case 0: // Start Screen
+        return this.welcomeRender();
+      case 1: // Answer Screen
+        if (this.getCurrentTask() !== undefined)
         {
-            case 0: // Start Screen
-                return this.welcomeRender();
-            case 1: // Answer Screen
-                if (this.getCurrentTask() !== undefined)
-                {
-                    const Type = this.getTaskType();
-                    const Answer = this.getTaskAnswers();
+          const Type = this.getTaskType();
+          const Answer = this.getTaskAnswers();
 
-                    if (Answer !== 0 && this.getCurrentTask().InProgress)
-                    {
-                        if (Type === 0)
-                            return this.questionRender();
-                        else if (Type === 1)
-                            return this.choiceRender();
-                        else if (Type === 2)
-                            return this.pointsRender();
-                        else if (Type === 3)
-                            return this.sliderRender();
-                    }
-                    else if (!this.getCurrentTask().InProgress)
-                        return this.closedRender();
-                }
-                else
-                {
-                    if (this.getTaskIndex() > 0)
-                        return this.finishedRender();
-                    else
-                        return this.welcomeRender();
-                }
-
-            default: // Wait for more questions
-                return this.finishedRender();
+          if (Answer !== 0 && this.getCurrentTask().InProgress)
+          {
+            if (Type === 0)
+              return this.questionRender();
+            else if (Type === 1)
+              return this.choiceRender();
+            else if (Type === 2)
+              return this.pointsRender();
+            else if (Type === 3)
+              return this.sliderRender();
+          }
+          else if (!this.getCurrentTask().InProgress)
+            return this.closedRender();
         }
-    }
-
-
-    renderPage()
-    {
-        const Tab = this.state.activeHeader;
-
-        switch (Tab)
+        else
         {
-            default:
-                return this.processScreens();
-        }
-    }
-
-
-    tabTitle(type)
-    {
-        let title;
-        const Task = this.getCurrentTask();
-
-        switch (type)
-        {
-            case 0:
-                title = "Open Text";
-                break;
-            case 1:
-                title = `Pick your ${this.getOptionMax() > 1 ?
-                                     this.getOptionMax() + " favorites!" :
-                                     "favorite!"}`;
-                break;
-            case 2:
-                title = `Give Points: ${Task.Spent == undefined ?
-                                        Task.Amount :
-                                        Task.Amount - Task.Spent} points left!`;
-                break;
-            case 3:
-                title = "Slider";
-                break;
-            default:
-                title = "Waiting";
-                break;
+          if (this.getTaskIndex() > 0)
+            return this.finishedRender();
+          else
+            return this.welcomeRender();
         }
 
-        if (Task.Countdown > -1)
-            title += `  |  Timer: ${Task.Countdown} seconds`;
-
-        return title;
+      default: // Wait for more questions
+        return this.finishedRender();
     }
+  }
 
 
-    secondsToMinutes = (countdown) => {
-        let seconds = countdown, minutes = 0;
-        while (seconds >= 60)
-        {
-            minutes += 1;
-            seconds -= 60;
-        }
-        return `Time: ${minutes}:${seconds < 10 ?
-                                   `0${seconds}` :
-                                   seconds}`;
-    }
+  renderPage()
+  {
+    const Tab = this.state.activeHeader;
 
-
-    render()
+    switch (Tab)
     {
-        return (
-            <React.Fragment>
-                <MainContainer>
-                    <ThemeProvider
-                        theme={Theme} >
-                        {
-                            //    <Header>
-                            //    <HeaderText
-                            //        active={this.state.activeHeader}
-                            //        id="inputs"
-                            //        onClick={(e) => this.headerClick(e.target)} >
-                            //        {this.getCurrentTask() !== undefined ?
-                            //             this.tabTitle(this.getTaskType()) :
-                            //             "Waiting"}
-                            //    </HeaderText>
-                            //</Header>
+      default:
+        return this.processScreens();
+    }
+  }
+
+
+  tabTitle(type)
+  {
+    let title;
+    const Task = this.getCurrentTask();
+
+    switch (type)
+    {
+      case 0:
+        title = "Open Text";
+        break;
+      case 1:
+        title = `Pick your ${this.getOptionMax() > 1 ?
+                             this.getOptionMax() + " favorites!" :
+                             "favorite!"}`;
+        break;
+      case 2:
+        title = `Give Points: ${Task.Spent == undefined ?
+                                Task.Amount :
+                                Task.Amount - Task.Spent} points left!`;
+        break;
+      case 3:
+        title = "Slider";
+        break;
+      default:
+        title = "Waiting";
+        break;
+    }
+
+    if (Task.Countdown > -1)
+      title += `  |  Timer: ${Task.Countdown} seconds`;
+
+    return title;
+  }
+
+
+  secondsToMinutes = (countdown) => {
+    let seconds = countdown, minutes = 0;
+    while (seconds >= 60)
+    {
+      minutes += 1;
+      seconds -= 60;
+    }
+    return `Time: ${minutes}:${seconds < 10 ?
+                               `0${seconds}` :
+                               seconds}`;
+  }
+
+
+  render()
+  {
+    return (
+      <React.Fragment>
+        <MainContainer>
+          <ThemeProvider
+            theme={Theme} >
+            {
+                          //    <Header>
+                          //    <HeaderText
+                          //        active={this.state.activeHeader}
+                          //        id="inputs"
+                          //        onClick={(e) => this.headerClick(e.target)} >
+                          //        {this.getCurrentTask() !== undefined ?
+                          //             this.tabTitle(this.getTaskType()) :
+                          //             "Waiting"}
+                          //    </HeaderText>
+                          //</Header>
                         }
-                        {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
-                            <div
+            {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
+                          <div
                                 style={{
-                                    zIndex: "10",
-                                    position: "absolute",
-                                    height: "50px",
-                                    lineHeight: "50px",
-                                    textAlign: "center",
-                                    minWidth: "150px",
-                                    border: "1px solid black",
-                                    borderRadius: "15px",
-                                    left: "50px",
-                                    top: "25px",
-                                    backgroundColor: "#fff",
-                                    color: this.getCurrentTask().Countdown < 11 && this.getCurrentTask().Countdown > -1 ?
-                                               "red" :
-                                               "black"
+                                  zIndex: "10",
+                                  position: "absolute",
+                                  height: "50px",
+                                  lineHeight: "50px",
+                                  textAlign: "center",
+                                  minWidth: "150px",
+                                  border: "1px solid black",
+                                  borderRadius: "15px",
+                                  left: "50px",
+                                  top: "25px",
+                                  backgroundColor: "#fff",
+                                  color: this.getCurrentTask().Countdown < 11 && this.getCurrentTask().Countdown > -1 ?
+                                           "red" :
+                                           "black"
                                 }} >
                                 {this.secondsToMinutes(this.getCurrentTask().Countdown)}
                             </div>
                         }
-                        {this.renderPage()}
-                        <Snackbar
-                            autoHideDuration={2000}
-                            onClose={() => this.setState({ snackbar: false })}
-                            open={this.state.snackbar} >
-                            <MuiAlert
-                                onClose={() => this.setState({ snackbar: false })}
-                                severity="success" >
-                                Message Sent
-                            </MuiAlert>
-                        </Snackbar>
-                    </ThemeProvider>
-                </MainContainer>
-            </React.Fragment>
-        );
-    }
+            {this.renderPage()}
+            <Snackbar
+              autoHideDuration={2000}
+              onClose={() => this.setState({ snackbar: false })}
+              open={this.state.snackbar} >
+              <MuiAlert
+                onClose={() => this.setState({ snackbar: false })}
+                severity="success" >
+                Message Sent
+              </MuiAlert>
+            </Snackbar>
+          </ThemeProvider>
+        </MainContainer>
+      </React.Fragment>
+    );
+  }
 }

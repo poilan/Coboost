@@ -64,232 +64,231 @@ const CreateButton = Styled.input`
 `;
 
 export class InputModal extends Component {
-    constructor(props)
+  constructor(props)
+  {
+    super(props);
+    this.state = {
+      description: "",
+      title: "",
+      showing: true
+    };
+
+    this.Title = createRef();
+    this.Description = createRef();
+    this.Submit = createRef();
+  }
+
+
+  componentDidMount()
+  {
+  }
+
+
+  SendInput = (e) => {
+    e.preventDefault();
+    const title = this.state.title;
+    const description = this.state.description;
+    const user = localStorage.getItem("user");
+    const code = sessionStorage.getItem("code");
+
+    const data = {
+      Description: description,
+      UserID: user
+    };
+
+    if (description.length > 30)
+      data.Title = title;
+
+    Axios.post(`client/${code}/add-text-open`, data).then(() => this.OnClose(true));
+  }
+
+
+  HandleTitle = (event) => {
+    event.preventDefault();
+    const title = event.target.value;
+    this.setState({
+      title: title
+    });
+  }
+
+
+  HandleDescription = (event) => {
+    event.preventDefault();
+    const description = event.target.value;
+    this.setState({
+      description: description
+    });
+  }
+
+
+  OnTitleFocus = (e) => {
+    if (this.state.title.trim() === "")
     {
-        super(props);
-        this.state = {
-            description: "",
-            title: "",
-            showing: true
-        };
+      let title = this.state.description.substring(0, 30);
+      let index = title.lastIndexOf(" ");
 
-        this.Title = createRef();
-        this.Description = createRef();
-        this.Submit = createRef();
+      if (index !== -1)
+      {
+        index = 0;
+        for (let i = 0; i < 3; i++)
+        {
+          const check = title.indexOf(" ", index + 1);
+
+          if (check === -1)
+          {
+            if (index > 0)
+              break;
+            else
+            {
+              index = 30;
+              break;
+            }
+          }
+          else
+            index = check;
+        }
+
+        title = title.substring(0, index);
+      }
+      this.setState({
+        title: title
+      });
+      e.target.select();
     }
+  }
 
 
-    componentDidMount()
+  HandleInvalid = () => {
+    const Description = this.state.description;
+
+    if (Description.length < 3)
     {
+      if (this.Description.current)
+        this.Description.current.focus();
+
+      return;
     }
+    else if (Description.length > 30)
+    {
+      const title = this.state.title;
 
+      if (title.length < 3)
+      {
+        if (this.Title.current)
+          this.Title.current.focus().select();
 
-    SendInput = (e) => {
-        e.preventDefault();
-        const title = this.state.title;
-        const description = this.state.description;
-        const user = localStorage.getItem("user");
-        const code = sessionStorage.getItem("code");
-
-        const data = {
-            Description: description,
-            UserID: user
-        };
-
-        if (description.length > 30)
-            data.Title = title;
-
-        Axios.post(`client/${code}/add-text-open`, data).then(() => this.OnClose(true));
+        return;
+      }
     }
+  }
 
 
-    HandleTitle = (event) => {
-        event.preventDefault();
-        const title = event.target.value;
-        this.setState({
-            title: title
-        });
+  HandleEnter = (e) => {
+    if (e.key === "Enter")
+    {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.Submit.current)
+        this.Submit.current.click();
     }
+  }
 
 
-    HandleDescription = (event) => {
-        event.preventDefault();
-        const description = event.target.value;
-        this.setState({
-            description: description
-        });
-    }
+  OnClose = (repeat) => {
+    this.setState({
+      title: "",
+      description: "",
+      showing: false
+    });
+    this.props.onClose(repeat);
+  }
 
 
-    OnTitleFocus = (e) => {
-        if (this.state.title.trim() === "")
-        {
-            let title = this.state.description.substring(0, 30);
-            let index = title.lastIndexOf(" ");
-
-            if (index !== -1)
-            {
-                index = 0;
-                for (let i = 0; i < 3; i++)
-                {
-                    const check = title.indexOf(" ", index + 1);
-
-                    if (check === -1)
-                    {
-                        if (index > 0)
-                            break;
-                        else
-                        {
-                            index = 30;
-                            break;
-                        }
-                    }
-                    else
-                        index = check;
-                }
-
-                title = title.substring(0, index);
-            }
-            this.setState({
-                title: title
-            });
-            e.target.select();
-        }
-    }
-
-
-    HandleInvalid = () => {
-        const Description = this.state.description;
-
-        if (Description.length < 3)
-        {
-            if (this.Description.current)
-                this.Description.current.focus();
-
-            return;
-        }
-        else if (Description.length > 30)
-        {
-            const title = this.state.title;
-
-            if (title.length < 3)
-            {
-                if (this.Title.current)
-                    this.Title.current.focus().select();
-
-                return;
-            }
-        }
-    }
-
-
-    HandleEnter = (e) => {
-        if (e.key === "Enter")
-        {
-            e.preventDefault();
-            e.stopPropagation();
-            if (this.Submit.current)
-                this.Submit.current.click();
-        }
-    }
-
-
-    OnClose = (repeat) => {
-        this.setState({
-            title: "",
-            description: "",
-            showing: false
-        });
-        this.props.onClose(repeat);
-    }
-
-
-    Content = () => {
-        return (
-            <Form
-                autoComplete="off"
-                onInvalid={this.HandleInvalid}
-                onSubmit={this.SendInput} >
-                <Box
-                    m={1}
-                    mb={2}
-                    p={1} >
-                    <ContentInput
-                        fullWidth
-                        helperText={`${this.state.title.length}/30`}
-                        id="input-title"
-                        inputProps={{ minlength: 1, maxlength: 30, autocomplete: "off" }}
-                        inputRef={this.Title}
-                        isTitle
-                        label="Title"
-                        margin="normal"
-                        name="title"
-                        onChange={this.HandleTitle}
-                        onFocus={this.OnTitleFocus}
-                        onKeyDown={this.HandleEnter.bind(this)}
-                        required
-                        value={this.state.title}
-                        variant="outlined" />
-                </Box>
-                <Box
-                    m={1}
-                    mb={2}
-                    p={1} >
-                    <ContentInput
-                        autoFocus={true}
-                        fullWidth
-                        helperText={`${this.state.description.length}/250
+  Content = () => {
+    return (
+      <Form
+        autoComplete="off"
+        onSubmit={this.SendInput} >
+        <Box
+          m={1}
+          mb={2}
+          p={1} >
+          <ContentInput
+            fullWidth
+            helperText={`${this.state.title.length}/30`}
+            id="input-title"
+            inputProps={{ minlength: 1, maxlength: 30, autoComplete: "off" }}
+            inputRef={this.Title}
+            isTitle
+            label="Title"
+            margin="normal"
+            name="title"
+            onChange={this.HandleTitle}
+            onFocus={this.OnTitleFocus}
+            onKeyDown={this.HandleEnter.bind(this)}
+            required
+            value={this.state.title}
+            variant="outlined" />
+        </Box>
+        <Box
+          m={1}
+          mb={2}
+          p={1} >
+          <ContentInput
+            autoFocus={true}
+            fullWidth
+            helperText={`${this.state.description.length}/250
                                     ${this.state.description.length > 30 ?
                                       "" :
                                       `(${30 - this.state.description.length})`}`}
-                        id="input-description"
-                        inputProps={{ minlength: 1, maxlength: 250, autofocus: true, autocomplete: "off" }}
-                        inputRef={this.Description}
-                        label="Input"
-                        margin="normal"
-                        multiline
-                        name="description"
-                        onChange={this.HandleDescription}
-                        onKeyDown={this.HandleEnter.bind(this)}
-                        required
-                        rows={4}
-                        value={this.state.description}
-                        variant="outlined" />
-                </Box>
-                <CancelButton
-                    onClick={this.OnClose} >
-                    Cancel
-                </CancelButton>
-                <CreateButton
-                    ref={this.Submit}
-                    type="submit"
-                    value="Submit" />
-            </Form >
-        );
-    };
+            id="input-description"
+            inputProps={{ minlength: 1, maxlength: 250, autoFocus: true, autoComplete: "off" }}
+            inputRef={this.Description}
+            label="Input"
+            margin="normal"
+            multiline
+            name="description"
+            onChange={this.HandleDescription}
+            onKeyDown={this.HandleEnter.bind(this)}
+            required
+            rows={4}
+            value={this.state.description}
+            variant="outlined" />
+        </Box>
+        <CancelButton
+          onClick={this.OnClose} >
+          Cancel
+        </CancelButton>
+        <CreateButton
+          ref={this.Submit}
+          type="submit"
+          value="Submit" />
+      </Form >
+    );
+  };
 
 
-    render()
-    {
-        return (
-            <ModalPage
-                aria-describedby="registerTab"
-                aria-labelledby="loginTab"
-                centered
-                onHide={this.OnClose}
-                show={this.state.showing} >
-                <Modal.Header
-                    closeButton >
-                    <Modal.Title
-                        id="input-modal-title" >
-                        Write Input
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body
-                    id="input-modal-description" >
-                    {this.Content()}
-                </Modal.Body>
-            </ModalPage>
-        );
-    }
+  render()
+  {
+    return (
+      <ModalPage
+        aria-describedby="registerTab"
+        aria-labelledby="loginTab"
+        centered
+        onHide={this.OnClose}
+        show={this.state.showing} >
+        <Modal.Header
+          closeButton >
+          <Modal.Title
+            id="input-modal-title" >
+            Write Input
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body
+          id="input-modal-description" >
+          {this.Content()}
+        </Modal.Body>
+      </ModalPage>
+    );
+  }
 }

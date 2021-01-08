@@ -45,7 +45,7 @@ const GroupContainer = Styled.div`
                               "10px"};
 
     opacity: ${props => props.group === "new" || props.collapsed ?
-                        "50%" :
+                        "90%" :
                         "100%"};
 
     &:hover {
