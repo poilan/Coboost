@@ -236,7 +236,7 @@ export function ResultSlider(props) {
             <Input
                 checked={props.checked}
                 description={props.description}
-                favorite={this.props.favorite}
+                favorite={props.favorite}
                 id={props.id}
                 index={props.index}
                 onClick={props.onClick}
