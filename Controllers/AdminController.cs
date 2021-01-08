@@ -187,11 +187,10 @@ namespace Coboost.Controllers
                     session.LastOpen = DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("en-US"));
                     _context.Sessions.Update(session);
                 }
+
+                await _context.SaveChangesAsync();
+                HttpContext.Response.StatusCode = 200;
             }
-
-            await _context.SaveChangesAsync();
-
-            HttpContext.Response.StatusCode = 200;
         }
 
         [HttpPost("{code}/text-group{group}-collapse")]
