@@ -168,14 +168,18 @@ namespace Coboost.Controllers
         [HttpPost("{code}/close")]
         public async Task CloseSession(int code)
         {
-            if (DatabaseContext.Active.Sessions.TryGetValue(code, out AdminInstance admin))
+            if (DatabaseContext.Active.Sessions.ContainsKey(code))
             {
+                AdminInstance admin = DatabaseContext.Active.Sessions[code];
+                DatabaseContext.Active.Sessions.Remove(code);
+
                 Session session = await _context.Sessions.FindAsync(admin.EventCode);
                 if (session != null)
                 {
                     session.Questions = admin.SaveSession();
                     if (session.Questions == null)
                     {
+                        DatabaseContext.Active.Sessions.Add(code, admin);
                         HttpContext.Response.StatusCode = 500;
                         return;
                     }
@@ -185,7 +189,6 @@ namespace Coboost.Controllers
                 }
             }
 
-            DatabaseContext.Active.Sessions.Remove(code);
             await _context.SaveChangesAsync();
 
             HttpContext.Response.StatusCode = 200;
