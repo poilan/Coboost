@@ -764,7 +764,7 @@ namespace Coboost.Controllers
                 {
                     case OpenText open:
                     {
-                        while (!HttpContext.RequestAborted.IsCancellationRequested)
+                        while (!HttpContext.RequestAborted.IsCancellationRequested && DatabaseContext.Active.Sessions.ContainsKey(code))
                         {
                             {
                                 OpenTextGroup[] groups = open.Groups.ToArray();

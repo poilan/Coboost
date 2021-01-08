@@ -70,7 +70,7 @@ namespace Coboost.Controllers
                 Response.ContentType = "text/event-stream";
                 BaseTask question = null;
 
-                while (!HttpContext.RequestAborted.IsCancellationRequested)
+                while (!HttpContext.RequestAborted.IsCancellationRequested && DatabaseContext.Active.Sessions.ContainsKey(code))
                 {
                     if (admin.Active < admin.Tasks.Count)
                         question = admin.Tasks[admin.Active].Type switch
