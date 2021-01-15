@@ -568,7 +568,8 @@ class LoginModal extends Component {
                             I agree and consent to the
                             <br />
                             <a
-                                href="#" >
+                                href="/beta"
+                                target="_blank">
                                 Beta Participation Agreement
                             </a>
                         </Typography>
