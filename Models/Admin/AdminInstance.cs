@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Coboost.Models.Admin.Tasks;
 using Coboost.Models.Admin.Tasks.Input.Standard;
 using Coboost.Models.Admin.Tasks.Input.Standard.data;
+using Coboost.Models.Admin.Tasks.Phases;
 using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice;
 using Coboost.Models.Admin.Tasks.Votes.Multiple_Choice.data;
 using Coboost.Models.Admin.Tasks.Votes.Points;
@@ -35,9 +36,15 @@ namespace Coboost.Models.Admin
                 int i = _active;
                 _active = value;
                 ClientSet();
-                if (Tasks.Count > i)
+                if (i < Tasks.Count)
                     Tasks[i].Reset.Set();
             }
+        }
+
+        public List<Phase> Phase
+        {
+            get;
+            set;
         }
 
         public int EventCode
@@ -63,6 +70,7 @@ namespace Coboost.Models.Admin
         {
             Active = 0;
             Tasks = new List<BaseTask>();
+            Phase = new List<Phase>();
         }
 
         public void AddClientInput(object clientInput)
@@ -106,6 +114,7 @@ namespace Coboost.Models.Admin
                 option.Archive = new List<MultipleChoiceVote>();
             }
 
+
             Tasks.Add(question);
         }
 
@@ -123,6 +132,36 @@ namespace Coboost.Models.Admin
             question.Countdown = -1;
             question.InProgress = true;
             Tasks.Add(question);
+
+            if (question.Phase.Length == 0)
+            {
+                Phase phase = new Phase();
+                phase.InputIndex = question.Index;
+                phase.Children = new List<Phase>();
+                phase.Title = "Phase: " + question.Title;
+            }
+            else
+            {
+                for (int i = 0; i < question.Phase.Length; i++)
+                {
+                }
+            }
+        }
+
+        public void FindPhase(int[] indexes, int current, Phase phase)
+        {
+            while (true)
+            {
+                if (indexes.Length > current + 1)
+                {
+                    Phase next = phase.Children[indexes[current]];
+                    current = current + 1;
+                    phase = next;
+                    continue;
+                }
+
+                break;
+            }
         }
 
         public void AddPoints(Points task)
@@ -179,6 +218,7 @@ namespace Coboost.Models.Admin
 
             if (Tasks == null)
                 return;
+            int TempraryPhaseNumber = 1; //TODO: Remove This
             foreach (BaseTask task in Tasks)
             {
                 task.Reset = new ManualResetEvent(false);
@@ -193,6 +233,16 @@ namespace Coboost.Models.Admin
                     open.FavoriteGroups ??= new List<int>();
                     foreach (OpenTextGroup group in open.Groups.Where(group => group.Collapsed != true))
                         group.Collapsed = false;
+
+                    //TODO: Remove Temporary Phase Test Code
+                    Phase phase = new Phase
+                    {
+                        Title = "TESTING PHASE " + TempraryPhaseNumber,
+                        InputIndex = open.Index
+                    };
+                    phase.VoteIndexes.Add(1);
+                    TempraryPhaseNumber += 1;
+                    Phase.Add(phase);
                 }
                 else
                 {

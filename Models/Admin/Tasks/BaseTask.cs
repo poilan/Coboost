@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 // ReSharper disable UnusedMember.Global
@@ -37,6 +38,17 @@ namespace Coboost.Models.Admin.Tasks
         ///     This is used for SSE(Continuous Post Request), so that data is only sent when it is changed.
         /// </summary>
         public ManualResetEvent Reset = new ManualResetEvent(false);
+
+        /// <summary>
+        ///     The Index tree to the phase this task is a part of.
+        ///     <para>Null == not part of a phase / stand alone task</para>
+        /// </summary>
+        [CanBeNull]
+        public int[] Phase
+        {
+            get;
+            set;
+        }
 
         public int Countdown
         {
