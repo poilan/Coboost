@@ -236,7 +236,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Scope of this Agreement
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     The Software-Product accompanying this agreement as a pre-release copy and all affiliated materials is copyrighted. Scope of this agreement is the licensing (not selling) of the “Product” to You, as the ‘user’ (either an individual or an entity). Coboost reserves all rights not expressly granted
@@ -246,7 +246,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Copyrights and Ownership
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     Ownership and Copyright of Software Title to the software and all copies thereof remain with Coboost. The software is copyrighted and is protected by copyright laws and international treaty provisions. Licensee will not remove copyright notices from the Software. Licensee agrees to prevent any unauthorized copying of the Software
@@ -256,7 +256,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     License and Acceptable Use
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     Limited License. You are entitled to access the Coboost software for the purposes of performing your obligations under this agreement. You may not sell, license, or share the software to other parties in any way. You may only access the software through the email address provided on sign-up.
@@ -266,7 +266,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Disclaimer of Liability and Warranties
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     Limitation on liability provision of the software under this agreement is experimental and shall not create any obligation for Coboost to continue to develop, productize, support, repair, offer for sale or in any other way continue to provide or develop software either to licensee or to any other party. The software is provided “as is” without any express or implied warranty of any kind. Coboost disclaims any liability for data loss, damages, or loss of profits incurred using the Beta software.
@@ -276,7 +276,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Term and Termination
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     Licensee’s rights with respect to the Beta software will terminate upon the earlier of (a) the initial commercial release by Coboost of a generally available version of the Beta software or (b) automatic expiration of the Beta software based on the system date. Either party may terminate this agreement at any time for any reason or no reason by providing the other party advance written notice thereof. Coboost shall immediately terminate this agreement and any Licensee rights with respect to the beta software without notice in the event of improper disclosure of Coboost’s Beta software. Upon any expiration or termination of this agreement, the rights and licenses granted to Licensee under this agreement shall immediately terminate, and licensee shall immediately cease using, and will return to Coboost, the Beta software, documentation, and all other tangible items in licensee’s possession or control that are proprietary to or contain Confidential Information.
@@ -286,7 +286,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Beta testers feedback
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     Beta Tester agrees to report any flaws, errors or imperfections discovered in any software or other materials where Beta Tester has been granted access to the Beta Test. Beta Tester understands that prompt and accurate reporting is the purpose of the Beta Tests and undertakes to use best efforts to provide frequent reports on all aspects of the product both positive and negative and acknowledges that any improvements, modifications and changes arising from or in connection with the Beta Testers contribution to the Project, remain or become the exclusive property of the Disclosing Party.
@@ -296,7 +296,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Confidentiality
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     The Beta Tester will not disclose software or any comments regarding software to any third party without the prior written approval of Coboost. The Tester will maintain the confidentiality of software with at least the same degree of care that you use to protect your own confidential and proprietary information, but not less than a reasonable degree of care under the circumstances. The Tester will not be liable for the disclosure of any confidential information which is in the public domain other than by a breach of this agreement on Tester’s part or rightfully received or made available to a third party without any obligation of confidentiality.
@@ -306,7 +306,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Support
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     During your participation in the Beta testing Coboost is not obligated to provide you with any maintenance, technical or other support for the Pre-Release Software. You agree to abide by any support rules and policies that Coboost provides to you in order to receive such support. You acknowledge that Coboost has no express or implied obligation to announce or make available a commercial version of the pre-release software to anyone in the future. Should a commercial version be made available, it may have features or functionality that are different from those found in the pre-release doftware licensed hereunder.
@@ -316,7 +316,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Privacy policy
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     You acknowledge and agree that by participating in the testing of the Beta software, Coboost may receive certain information about you, including personally identifiable information. and you hereby consent to Coboost’s collection, use and disclosure such information in accordance with the Privacy Policy.
@@ -326,7 +326,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Fees and Costs
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     There are no license fees for licensee’s use of the Beta software under this agreement. Licensee is responsible for all costs and expenses associated with the use of the Beta software and the performance of all testing and evaluation activities.
@@ -336,7 +336,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Modification
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     This is the entire agreement between the parties relating to the subject matter hereof and all other terms are rejected. No waiver or modification of this agreement shall be valid unless in writing signed by each party.
@@ -346,7 +346,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     No Assignment
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     This agreement is personal to Tester. Tester shall not assign or otherwise transfer any rights or obligations under this agreement.
@@ -356,7 +356,7 @@ export class Beta extends React.Component {
                             variant="h5" >
                     Severability
                 </Typography>
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }
+                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", display: "block" }
 }
                             variant="p" >
                     If any provision of this agreement shall be found by a court to be void, invalid or unenforceable, the same shall be reformed to comply with applicable law or stricken if not so conformable, so as not to affect the validity or enforceability of this agreement.
