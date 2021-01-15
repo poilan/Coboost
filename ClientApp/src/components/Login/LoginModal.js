@@ -133,7 +133,7 @@ class LoginModal extends Component {
      * Changes the active tab
      * @param {string} key the name of the new active tab
      */
-    HandleTab = (key) => {
+    handleTab = (key) => {
         this.setState({
             tab: key
         });
