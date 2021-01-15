@@ -17,6 +17,12 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             set;
         }
 
+        public List<int> Favorites
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         ///     The maximum value a option can receive
         /// </summary>
@@ -30,12 +36,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
         ///     The description of what the max represents
         /// </summary>
         public string MaxDescription
-        {
-            get;
-            set;
-        }
-
-        public List<int> Favorites
         {
             get;
             set;
@@ -77,22 +77,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             set;
         }
 
-        public void SetFavorite(int option)
-        {
-            lock (ThreadLock)
-            {
-                if (Options.Count > option || option < 0)
-                    return;
-
-                if (Favorites.Contains(option))
-                    Favorites.Remove(option);
-                else
-                    Favorites.Add(option);
-            }
-
-            EventStream();
-        }
-
         public void AddClientVote(SliderVote vote)
         {
             lock (ThreadLock)
@@ -124,6 +108,27 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             EventStream();
         }
 
+        public void SetFavorite(int option)
+        {
+            lock (ThreadLock)
+            {
+                if (Options.Count > option || option < 0)
+                    return;
+
+                if (Favorites.Contains(option))
+                    Favorites.Remove(option);
+                else
+                    Favorites.Add(option);
+            }
+
+            EventStream();
+        }
+
+        private int Compare(SliderOption x, SliderOption y)
+        {
+            return y.Ratings.Count - x.Ratings.Count;
+        }
+
         private void RecountVotes()
         {
             foreach (SliderOption rating in Options)
@@ -132,6 +137,8 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             foreach (SliderVote vote in Votes)
                 for (int j = 0; j < vote.Ratings.Count; j++)
                     Options[j].Ratings.Add(vote.Ratings[j]);
+
+            Options.Sort(Compare);
         }
     }
 }

@@ -59,22 +59,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
             set;
         }
 
-        public void SetFavorite(int option)
-        {
-            lock (ThreadLock)
-            {
-                if (Options.Count > option || option < 0)
-                    return;
-
-                if (Favorites.Contains(option))
-                    Favorites.Remove(option);
-                else
-                    Favorites.Add(option);
-            }
-
-            EventStream();
-        }
-
         public void AddClientVote(PointsVote vote)
         {
             lock (ThreadLock)
@@ -106,6 +90,27 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
             EventStream();
         }
 
+        public void SetFavorite(int option)
+        {
+            lock (ThreadLock)
+            {
+                if (Options.Count > option || option < 0)
+                    return;
+
+                if (Favorites.Contains(option))
+                    Favorites.Remove(option);
+                else
+                    Favorites.Add(option);
+            }
+
+            EventStream();
+        }
+
+        private int Compare(PointsOption x, PointsOption y)
+        {
+            return y.Points - x.Points;
+        }
+
         private void RecountVotes()
         {
             foreach (PointsOption option in Options)
@@ -114,6 +119,8 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
             foreach (PointsVote vote in Votes)
                 for (int j = 0; j < vote.Points.Count; j++)
                     Options[j].Points += vote.Points[j];
+
+            Options.Sort(Compare);
         }
     }
 }

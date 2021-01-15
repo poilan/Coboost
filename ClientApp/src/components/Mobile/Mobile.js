@@ -18,10 +18,9 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 
 function Alert(props) {
-    return <MuiAlert
-               elevation={6}
-               variant="filled"
-               {...props} />;
+    return <MuiAlert elevation={6}
+                     variant="filled"
+                     {...props} />;
 }
 
 
@@ -332,8 +331,7 @@ const MultipleChoiceButton = Styled(ToggleButton)`
 `;
 
 export class Mobile extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {
             activeHeader: "inputs",
@@ -365,10 +363,8 @@ export class Mobile extends React.Component {
     }
 
 
-    componentDidMount()
-    {
-        if (localStorage.getItem("user") !== null)
-        {
+    componentDidMount() {
+        if (localStorage.getItem("user") !== null) {
             this.setState({
                 loggedIn: true
             });
@@ -382,8 +378,7 @@ export class Mobile extends React.Component {
         const Code = sessionStorage.getItem("code");
 
         await Axios.get(`admin/${Code}/questions-all`).then(res => {
-            if (res.status === 202)
-            {
+            if (res.status === 202) {
                 const Data = res.data;
 
                 this.setState({
@@ -403,8 +398,7 @@ export class Mobile extends React.Component {
 
         EventSource.startEventSource(() => {
             EventSource.addListener("question", async (e) => {
-                try
-                {
+                try {
                     const Data = JSON.parse(e.data); // Question data
 
                     const Index = parseInt(Data.Index);
@@ -412,11 +406,9 @@ export class Mobile extends React.Component {
 
 
 
-                    if (Index >= inputs.length)
-                    {
+                    if (Index >= inputs.length) {
                         await Axios.get(`admin/${Code}/questions-all`).then(res => {
-                            if (res.status === 202)
-                            {
+                            if (res.status === 202) {
                                 const Data = res.data;
 
                                 inputs = Data;
@@ -427,15 +419,15 @@ export class Mobile extends React.Component {
                     const Spent = inputs[Index].Spent;
                     inputs[Index] = Data;
 
-                    if (Index === this.state.currentInput)
+                    if (Index === this.state.currentInput) {
                         inputs[Index].Spent = Spent;
+                    }
 
                     this.setState({
                         inputs: inputs
                     });
 
-                    if (Index !== this.state.currentInput)
-                    {
+                    if (Index !== this.state.currentInput) {
                         this.parseAnswers();
 
                         this.setState({
@@ -443,9 +435,7 @@ export class Mobile extends React.Component {
                             sessionState: 1
                         });
                     }
-                }
-                catch (Event)
-                {
+                } catch (Event) {
                     EventSource.log(`Failed to parse server event${Event}`);
                 }
             });
@@ -453,15 +443,14 @@ export class Mobile extends React.Component {
     }
 
 
-    componentWillUnmount()
-    {
-        if (this.eventSource)
+    componentWillUnmount() {
+        if (this.eventSource) {
             this.eventSource.close();
+        }
     }
 
 
-    parseAnswers()
-    {
+    parseAnswers() {
         var Answers = [];
 
         const Questions = this.getTasks();
@@ -473,32 +462,31 @@ export class Mobile extends React.Component {
                            []
             };
 
-            if (question.Options !== undefined)
-            {
-                if (question.Type === 2)
-                {
+            if (question.Options !== undefined) {
+                if (question.Type === 2) {
                     const Values = [];
 
-                    for (let i = 0; i < question.Options.length; i++)
+                    for (let i = 0; i < question.Options.length; i++) {
                         Values.push(0);
+                    }
                     Answer.value = Values;
                     question.Spent = 0;
-                }
-                else if (question.Type === 3)
-                {
+                } else if (question.Type === 3) {
                     const Values = [];
 
-                    for (let i = 0; i < question.Options.length; i++)
+                    for (let i = 0; i < question.Options.length; i++) {
                         Values.push(question.Min);
+                    }
 
                     Answer.value = Values;
                 }
             }
 
-            if (Answers[index] !== undefined)
+            if (Answers[index] !== undefined) {
                 Answers[index] = Answer;
-            else
+            } else {
                 Answers.push(Answer);
+            }
         });
 
         this.setState({
@@ -507,30 +495,25 @@ export class Mobile extends React.Component {
     }
 
 
-    getTasks()
-    {
+    getTasks() {
         return this.state.inputs;
     }
 
 
-    getTaskIndex()
-    {
+    getTaskIndex() {
         return this.state.currentInput;
     }
 
 
-    getTaskAnswers()
-    {
+    getTaskAnswers() {
         const Index = this.getTaskIndex();
         const Type = this.getTaskType();
         const AnswerData = this.state.answers[Index];
 
-        if (AnswerData)
+        if (AnswerData) {
             return AnswerData.value;
-        else
-        {
-            switch (Type)
-            {
+        } else {
+            switch (Type) {
                 case 0:
                     return "";
                 default:
@@ -540,8 +523,7 @@ export class Mobile extends React.Component {
     }
 
 
-    setTaskAnswers(answer)
-    {
+    setTaskAnswers(answer) {
         const State = this.state;
         const Index = this.getTaskIndex();
         const Answers = State.answers;
@@ -553,46 +535,39 @@ export class Mobile extends React.Component {
     }
 
 
-    getCurrentTask()
-    {
+    getCurrentTask() {
         const Inputs = this.getTasks();
         return Inputs[this.getTaskIndex()];
     }
 
 
-    getLastTask()
-    {
+    getLastTask() {
         const Inputs = this.getTasks();
         return Inputs[this.state.lastInput];
     }
 
 
-    getTaskType()
-    {
+    getTaskType() {
         return this.getCurrentTask().Type;
     }
 
 
-    getTaskTitle()
-    {
+    getTaskTitle() {
         return this.getCurrentTask().Title;
     }
 
 
-    getTaskOptions()
-    {
+    getTaskOptions() {
         return this.getCurrentTask().Options;
     }
 
 
-    getOptionMax()
-    {
+    getOptionMax() {
         return this.getCurrentTask().Max;
     }
 
 
-    headerClick(target)
-    {
+    headerClick(target) {
         const Id = target.id;
 
         this.setState({
@@ -601,8 +576,7 @@ export class Mobile extends React.Component {
     }
 
 
-    welcomeRender()
-    {
+    welcomeRender() {
         return (
             <ContentContainer>
                 <ContentTitle>Welcome!</ContentTitle>
@@ -614,15 +588,13 @@ export class Mobile extends React.Component {
     }
 
 
-    finishedRender()
-    {
+    finishedRender() {
         const LastInput = this.getLastTask();
         const LastType = LastInput.Type;
 
         let word;
 
-        switch (LastType)
-        {
+        switch (LastType) {
             case 0:
                 word = "Input";
                 this.inputsEdit();
@@ -634,17 +606,14 @@ export class Mobile extends React.Component {
 
         return (
             <ContentContainer>
-                <ContentTitle
-                    blue >
+                <ContentTitle blue >
                     {word} sent!
                 </ContentTitle>
                 <IconDone />
-                <ContentBody
-                    boxed >
+                <ContentBody boxed >
                     You may send another {word}! or you can take it easy while waiting for the next task.
                 </ContentBody>
-                <ContentButton
-                    onClick={this.inputsEdit} >
+                <ContentButton onClick={this.inputsEdit} >
                     New {word}
                 </ContentButton>
             </ContentContainer>
@@ -652,19 +621,16 @@ export class Mobile extends React.Component {
     }
 
 
-    closedRender()
-    {
+    closedRender() {
         return (
             <ContentContainer>
-                <ContentTitle
-                    blue >
+                <ContentTitle blue >
                     Task Closed
                 </ContentTitle>
 
                 <IconDone />
 
-                <ContentBody
-                    boxed >
+                <ContentBody boxed >
                     This task appears to be closed, please remain patient.
                 </ContentBody>
 
@@ -674,8 +640,7 @@ export class Mobile extends React.Component {
     }
 
 
-    questionChange(e)
-    {
+    questionChange(e) {
         const Target = e.target;
         const Value = Target.value;
         Target.style.height = "inherit";
@@ -685,8 +650,7 @@ export class Mobile extends React.Component {
     }
 
 
-    questionRender()
-    {
+    questionRender() {
         const TitleChange = (e) => {
             const Target = e.target;
             const Value = Target.value;
@@ -698,21 +662,19 @@ export class Mobile extends React.Component {
         const HandleInvalid = () => {
             const Description = this.getTaskAnswers();
 
-            if (Description.length < 3)
-            {
-                if (this.TextDescription.current)
+            if (Description.length < 3) {
+                if (this.TextDescription.current) {
                     this.TextDescription.current.focus();
+                }
 
                 return;
-            }
-            else if (Description.length > 30)
-            {
+            } else if (Description.length > 30) {
                 const Title = this.state.title;
 
-                if (Title.length < 3)
-                {
-                    if (this.TextTitle.current)
+                if (Title.length < 3) {
+                    if (this.TextTitle.current) {
                         this.TextTitle.current.focus().select();
+                    }
 
                     return;
                 }
@@ -720,43 +682,39 @@ export class Mobile extends React.Component {
         };
 
         const HandleEnter = (e) => {
-            if (e.key === "Enter")
-            {
+            if (e.key === "Enter") {
                 e.preventDefault();
                 e.stopPropagation();
-                if (this.TextForm.current)
+                if (this.TextForm.current) {
                     this.TextForm.current.click();
+                }
             }
         };
 
         const OnTitleFocus = () => {
-            if (this.getCurrentTask().ShortInputsOnly)
+            if (this.getCurrentTask().ShortInputsOnly) {
                 return;
+            }
 
-            if (this.state.title.trim() === "")
-            {
+            if (this.state.title.trim() === "") {
                 let title = this.getTaskAnswers().substring(0, 30).trim();
                 let index = title.lastIndexOf(" ");
 
-                if (index !== -1)
-                {
+                if (index !== -1) {
                     index = 0;
-                    for (let i = 0; i < 3; i++)
-                    {
+                    for (let i = 0; i < 3; i++) {
                         const Check = title.indexOf(" ", index + 1);
 
-                        if (Check === -1)
-                        {
-                            if (index > 0)
+                        if (Check === -1) {
+                            if (index > 0) {
                                 break;
-                            else
-                            {
+                            } else {
                                 index = 30;
                                 break;
                             }
-                        }
-                        else
+                        } else {
                             index = Check;
+                        }
                     }
 
                     title = title.substring(0, index);
@@ -769,22 +727,20 @@ export class Mobile extends React.Component {
 
         return (
             <ContentContainer>
-                <Form
-                    autoComplete="off"
-                    onSubmit={this.inputsClick}
-                    style={{ height: "100%" }} >
+                <Form autoComplete="off"
+                      onSubmit={this.inputsClick}
+                      style={{ height: "100%" }} >
                     <ContentQuestion>{this.getTaskTitle()}</ContentQuestion>
 
-                    <Box
-                        height="calc(100% - 120px)"
-                        m={1}
-                        mb={2}
-                        p={1}
-                        position="absolute"
-                        style={{ maxWidth: "500px", top: "45px", left: "50%", transform: "translateX(-50%)" }}
-                        width="100%" >
+                    <Box height="calc(100% - 120px)"
+                         m={1}
+                         mb={2}
+                         p={1}
+                         position="absolute"
+                         style={{ maxWidth: "500px", top: "45px", left: "50%", transform: "translateX(-50%)" }}
+                         width="100%" >
                         {
-                <ContentInput
+                            <ContentInput
                                 autoFocus={this.getCurrentTask().ShortInputsOnly}
                                 fullWidth
                                 helperText={`${this.state.title.length}/30`}
@@ -799,10 +755,10 @@ export class Mobile extends React.Component {
                                 required
                                 value={this.state.title}
                                 variant="outlined" />
-            }
+                        }
                         {
-                !this.getCurrentTask().ShortInputsOnly &&
-                    <ContentInput
+                            !this.getCurrentTask().ShortInputsOnly &&
+                                <ContentInput
                                     autoFocus={true}
                                     fullWidth
                                     helperText={`${this.getTaskAnswers().length}/250`}
@@ -817,24 +773,23 @@ export class Mobile extends React.Component {
                                     rowsMax={10}
                                     value={this.getTaskAnswers()}
                                     variant="outlined" />
-            }
+                        }
                     </Box>
 
-                    <ContentButton
-                        ref={this.TextForm}
-                        type="submit"
-                        value="Submit" >
+                    <ContentButton ref={this.TextForm}
+                                   type="submit"
+                                   value="Submit" >
                         {!this.getCurrentTask().ShortInputsOnly ?
-                 this.getTaskAnswers().length < 3 ?
-                 "Write an input to send!" :
-                 this.getTaskAnswers().length > 30 && this.state.title < 3 ?
-                 "Write a title before sending!" :
-                 "Send Input!" :
-                 this.state.title < 3 ?
-                 "Write an input to send!" :
-                 "Send Input!"
+                             this.getTaskAnswers().length < 3 ?
+                             "Write an input to send!" :
+                             this.getTaskAnswers().length > 30 && this.state.title < 3 ?
+                             "Write a title before sending!" :
+                             "Send Input!" :
+                             this.state.title < 3 ?
+                             "Write an input to send!" :
+                             "Send Input!"
 
-            }
+                        }
                     </ContentButton>
                 </Form>
             </ContentContainer>
@@ -842,13 +797,13 @@ export class Mobile extends React.Component {
     }
 
 
-    choicePick(picked)
-    {
+    choicePick(picked) {
         const Index = this.getTaskIndex();
         const Max = this.getOptionMax();
 
-        if (picked.length >= this.getTaskAnswers().length && picked.length > Max)
+        if (picked.length >= this.getTaskAnswers().length && picked.length > Max) {
             return;
+        }
 
         var Chosen = [];
 
@@ -856,12 +811,10 @@ export class Mobile extends React.Component {
             var PickData = pick.split("-");
             var ChoiceIndex = parseInt(PickData[0]);
 
-            if (ChoiceIndex === Index)
-            {
+            if (ChoiceIndex === Index) {
                 Chosen.push(pick);
 
-                if (Chosen.length >= Max)
-                {
+                if (Chosen.length >= Max) {
                     this.setTaskAnswers(Chosen);
                     return;
                 }
@@ -872,35 +825,36 @@ export class Mobile extends React.Component {
     }
 
 
-    pointsChange(index, points)
-    {
+    pointsChange(index, points) {
         const Answers = this.getTaskAnswers();
         let spent = 0;
         const Tasks = this.getTasks();
         let value = parseInt(points);
         const Change = value - Answers[index];
 
-        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change)
-        {
+        if (Tasks[this.getTaskIndex()].Amount < Tasks[this.getTaskIndex()].Spent + Change) {
             const Maximum = Tasks[this.getTaskIndex()].Amount - Tasks[this.getTaskIndex()].Spent;
 
-            if (Maximum < 1)
+            if (Maximum < 1) {
                 return false;
-            else
+            } else {
                 value = Maximum;
+            }
         }
 
 
-        for (let i = 0; i < this.getTaskOptions().length; i++)
-        {
-            if (Answers[i] == undefined)
+        for (let i = 0; i < this.getTaskOptions().length; i++) {
+            if (Answers[i] == undefined) {
                 Answers[i] = 0;
+            }
 
-            if (index === i)
+            if (index === i) {
                 Answers[i] = value;
+            }
 
-            if (Answers[i] > 0)
+            if (Answers[i] > 0) {
                 spent += Answers[i];
+            }
         }
 
         Tasks[this.getTaskIndex()].Spent = spent;
@@ -912,16 +866,14 @@ export class Mobile extends React.Component {
     }
 
 
-    sliderChange(index, value)
-    {
+    sliderChange(index, value) {
         const Answers = this.getTaskAnswers();
         Answers[index] = value;
         this.setTaskAnswers(Answers);
     }
 
 
-    inputsClick(e)
-    {
+    inputsClick(e) {
         e.preventDefault();
         const State = this.state;
         const Current = this.getTaskIndex();
@@ -932,33 +884,30 @@ export class Mobile extends React.Component {
         // Send the input
         const Code = sessionStorage.getItem("code");
         let user = "anonymous";
-        if (State.loggedIn)
+        if (State.loggedIn) {
             user = localStorage.getItem("user");
+        }
 
         var Data = {
             UserID: user
         };
 
         // Send
-        if (Type === 0)
-        { // Open Text
-            if (this.getCurrentTask().ShortInputsOnly)
+        if (Type === 0) { // Open Text
+            if (this.getCurrentTask().ShortInputsOnly) {
                 Data.Description = this.state.title.trim();
-            else
-            {
+            } else {
                 Data.Description = Answer.trim();
 
-                if (Data.Description.length > 30)
-                {
-                    if (this.state.title.trim().length < 3)
-                        return false;
-                    Data.Title = this.state.title.trim();
+
+                if (this.state.title.trim().length < 3) {
+                    return false;
                 }
+                Data.Title = this.state.title.trim();
+
             }
             Axios.post(`client/${Code}/add-text-open`, Data);
-        }
-        else if (Type === 1)
-        { // Multiple Choice
+        } else if (Type === 1) { // Multiple Choice
             Answer.forEach(option => {
                 var OptionData = option.split("-");
                 var Index = parseInt(OptionData[1]);
@@ -966,14 +915,10 @@ export class Mobile extends React.Component {
 
                 Axios.post(`client/${Code}/add-vote-multi`, Data);
             });
-        }
-        else if (Type === 2)
-        { // Points
+        } else if (Type === 2) { // Points
             Data.Points = Answer;
             Axios.post(`client/${Code}/add-vote-points`, Data);
-        }
-        else if (Type === 3)
-        { // Slider
+        } else if (Type === 3) { // Slider
             Data.Ratings = Answer;
             Axios.post(`client/${Code}/add-vote-slider`, Data);
         }
@@ -989,8 +934,7 @@ export class Mobile extends React.Component {
     }
 
 
-    inputsEdit()
-    {
+    inputsEdit() {
         const LastInput = this.state.lastInput;
         this.setState({
             currentInput: LastInput,
@@ -999,16 +943,14 @@ export class Mobile extends React.Component {
     }
 
 
-    logout()
-    {
+    logout() {
         localStorage.clear();
         sessionStorage.clear();
         this.props.history.push("/");
     }
 
 
-    choiceRender()
-    {
+    choiceRender() {
         return (
             <ContentContainer>
 
@@ -1016,16 +958,15 @@ export class Mobile extends React.Component {
                     {this.getTaskTitle()}
                 </ContentQuestion>
 
-                <MultipleChoiceGroup
-                    name={`group-${this.getTaskIndex()}`}
-                    onChange={this.choicePick}
-                    toggle
-                    type="checkbox"
-                    value={this.getTaskAnswers()}
-                    vertical >
+                <MultipleChoiceGroup name={`group-${this.getTaskIndex()}`}
+                                     onChange={this.choicePick}
+                                     toggle
+                                     type="checkbox"
+                                     value={this.getTaskAnswers()}
+                                     vertical >
 
                     {this.getTaskOptions().map((choice) =>
-              <MultipleChoiceButton
+                        <MultipleChoiceButton
                             key={choice.Index}
                             name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
                             size="lg"
@@ -1038,11 +979,10 @@ export class Mobile extends React.Component {
 
                             {choice.Title}
                         </MultipleChoiceButton>
-          )}
+                    )}
                 </MultipleChoiceGroup>
 
-                <ContentButton
-                    onClick={this.inputsClick} >
+                <ContentButton onClick={this.inputsClick} >
                     Send Vote
                 </ContentButton>
             </ContentContainer>
@@ -1050,21 +990,19 @@ export class Mobile extends React.Component {
     }
 
 
-    pointsRender()
-    {
+    pointsRender() {
         const Task = this.getCurrentTask();
         const Answers = this.state.answers[this.getTaskIndex()];
         return (
             <ContentContainer>
                 <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box
-                    borderColor="transparent"
-                    component="fieldset"
-                    mb={3}
-                    pt={2}
-                    px={2} >
+                <Box borderColor="transparent"
+                     component="fieldset"
+                     mb={3}
+                     pt={2}
+                     px={2} >
                     {Task.Options.map((point) =>
-              <Box
+                        <Box
                             borderColor="transparent"
                             component="fieldset"
                             key={point.Index}
@@ -1085,22 +1023,20 @@ export class Mobile extends React.Component {
                                            0
                                 } />
                         </Box>
-          )}
+                    )}
                 </Box>
-                <ContentButton
-                    disabled={Task.Spent !== Task.Amount}
-                    onClick={this.inputsClick} >
+                <ContentButton disabled={Task.Spent !== Task.Amount}
+                               onClick={this.inputsClick} >
                     {Task.Spent !== Task.Amount ?
-               (Task.Amount - Task.Spent) + " points left!" :
-               "Send Vote"}
+                         (Task.Amount - Task.Spent) + " points left!" :
+                         "Send Vote"}
                 </ContentButton>
             </ContentContainer>
         );
     }
 
 
-    sliderRender()
-    {
+    sliderRender() {
         const Task = this.getCurrentTask();
         const Answers = this.state.answers[this.getTaskIndex()];
         const Marks = [
@@ -1117,14 +1053,13 @@ export class Mobile extends React.Component {
         return (
             <ContentContainer>
                 <ContentQuestion>{Task.Title}</ContentQuestion>
-                <Box
-                    borderColor="transparent"
-                    component="fieldset"
-                    mb={2}
-                    pt={1}
-                    px={2} >
+                <Box borderColor="transparent"
+                     component="fieldset"
+                     mb={2}
+                     pt={1}
+                     px={2} >
                     {Task.Options.map((slider) =>
-              <Box
+                        <Box
                             borderColor="transparent"
                             component="fieldset"
                             key={slider.Index}
@@ -1148,10 +1083,9 @@ export class Mobile extends React.Component {
                                            Task.Min}
                                 valueLabelDisplay="on" />
                         </Box>
-          )}
+                    )}
                 </Box>
-                <ContentButton
-                    onClick={this.inputsClick} >
+                <ContentButton onClick={this.inputsClick} >
                     Send Vote
                 </ContentButton>
             </ContentContainer>
@@ -1159,40 +1093,36 @@ export class Mobile extends React.Component {
     }
 
 
-    processScreens()
-    {
+    processScreens() {
         const State = this.state.sessionState;
 
-        switch (State)
-        {
+        switch (State) {
             case 0: // Start Screen
                 return this.welcomeRender();
             case 1: // Answer Screen
-                if (this.getCurrentTask() !== undefined)
-                {
+                if (this.getCurrentTask() !== undefined) {
                     const Type = this.getTaskType();
                     const Answer = this.getTaskAnswers();
 
-                    if (Answer !== 0 && this.getCurrentTask().InProgress)
-                    {
-                        if (Type === 0)
+                    if (Answer !== 0 && this.getCurrentTask().InProgress) {
+                        if (Type === 0) {
                             return this.questionRender();
-                        else if (Type === 1)
+                        } else if (Type === 1) {
                             return this.choiceRender();
-                        else if (Type === 2)
+                        } else if (Type === 2) {
                             return this.pointsRender();
-                        else if (Type === 3)
+                        } else if (Type === 3) {
                             return this.sliderRender();
-                    }
-                    else if (!this.getCurrentTask().InProgress)
+                        }
+                    } else if (!this.getCurrentTask().InProgress) {
                         return this.closedRender();
-                }
-                else
-                {
-                    if (this.getTaskIndex() > 0)
+                    }
+                } else {
+                    if (this.getTaskIndex() > 0) {
                         return this.finishedRender();
-                    else
+                    } else {
                         return this.welcomeRender();
+                    }
                 }
 
             default: // Wait for more questions
@@ -1201,25 +1131,21 @@ export class Mobile extends React.Component {
     }
 
 
-    renderPage()
-    {
+    renderPage() {
         const Tab = this.state.activeHeader;
 
-        switch (Tab)
-        {
+        switch (Tab) {
             default:
                 return this.processScreens();
         }
     }
 
 
-    tabTitle(type)
-    {
+    tabTitle(type) {
         let title;
         const Task = this.getCurrentTask();
 
-        switch (type)
-        {
+        switch (type) {
             case 0:
                 title = "Open Text";
                 break;
@@ -1241,8 +1167,9 @@ export class Mobile extends React.Component {
                 break;
         }
 
-        if (Task.Countdown > -1)
+        if (Task.Countdown > -1) {
             title += `  |  Timer: ${Task.Countdown} seconds`;
+        }
 
         return title;
     }
@@ -1250,8 +1177,7 @@ export class Mobile extends React.Component {
 
     secondsToMinutes = (countdown) => {
         let seconds = countdown, minutes = 0;
-        while (seconds >= 60)
-        {
+        while (seconds >= 60) {
             minutes += 1;
             seconds -= 60;
         }
@@ -1261,27 +1187,25 @@ export class Mobile extends React.Component {
     }
 
 
-    render()
-    {
+    render() {
         return (
             <React.Fragment>
                 <MainContainer>
-                    <ThemeProvider
-                        theme={Theme} >
+                    <ThemeProvider theme={Theme} >
                         {
-                //    <Header>
-                //    <HeaderText
-                //        active={this.state.activeHeader}
-                //        id="inputs"
-                //        onClick={(e) => this.headerClick(e.target)} >
-                //        {this.getCurrentTask() !== undefined ?
-                //             this.tabTitle(this.getTaskType()) :
-                //             "Waiting"}
-                //    </HeaderText>
-                //</Header>
-            }
+                            //    <Header>
+                            //    <HeaderText
+                            //        active={this.state.activeHeader}
+                            //        id="inputs"
+                            //        onClick={(e) => this.headerClick(e.target)} >
+                            //        {this.getCurrentTask() !== undefined ?
+                            //             this.tabTitle(this.getTaskType()) :
+                            //             "Waiting"}
+                            //    </HeaderText>
+                            //</Header>
+                        }
                         {this.getCurrentTask() && this.getCurrentTask().InProgress && this.getCurrentTask().Countdown > -1 &&
-                <div
+                            <div
                                 style={{
                                     zIndex: "10",
                                     position: "absolute",
@@ -1300,15 +1224,13 @@ export class Mobile extends React.Component {
                                 }} >
                                 {this.secondsToMinutes(this.getCurrentTask().Countdown)}
                             </div>
-            }
+                        }
                         {this.renderPage()}
-                        <Snackbar
-                            autoHideDuration={2000}
-                            onClose={() => this.setState({ snackbar: false })}
-                            open={this.state.snackbar} >
-                            <MuiAlert
-                                onClose={() => this.setState({ snackbar: false })}
-                                severity="success" >
+                        <Snackbar autoHideDuration={2000}
+                                  onClose={() => this.setState({ snackbar: false })}
+                                  open={this.state.snackbar} >
+                            <MuiAlert onClose={() => this.setState({ snackbar: false })}
+                                      severity="success" >
                                 Message Sent
                             </MuiAlert>
                         </Snackbar>

@@ -71,22 +71,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             Options = new List<MultipleChoiceOption>();
         }
 
-        public void SetFavorite(int option)
-        {
-            lock (ThreadLock)
-            {
-                if (Options.Count > option || option < 0)
-                    return;
-
-                if (Favorites.Contains(option))
-                    Favorites.Remove(option);
-                else
-                    Favorites.Add(option);
-            }
-
-            EventStream();
-        }
-
         /// <summary>
         ///     Adds another option to the vote
         /// </summary>
@@ -97,12 +81,12 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             {
                 MultipleChoiceOption option = new MultipleChoiceOption
                 {
-                    Archive = new List<MultipleChoiceVote>(),
-                    Votes = new List<MultipleChoiceVote>(),
-                    Description = input.Description,
-                    UserID = input.UserID
+                        Archive = new List<MultipleChoiceVote>(),
+                        Votes = new List<MultipleChoiceVote>(),
+                        Description = input.Description,
+                        UserID = input.UserID
 
-                    //Title = input.Title,
+                        //Title = input.Title,
                 };
 
                 Options.Add(option);
@@ -120,6 +104,7 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             lock (ThreadLock)
             {
                 Options[vote.Option].Votes.Add(vote);
+                Options.Sort(Compare);
             }
 
             EventStream();
@@ -156,6 +141,27 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             }
 
             EventStream();
+        }
+
+        public void SetFavorite(int option)
+        {
+            lock (ThreadLock)
+            {
+                if (Options.Count > option || option < 0)
+                    return;
+
+                if (Favorites.Contains(option))
+                    Favorites.Remove(option);
+                else
+                    Favorites.Add(option);
+            }
+
+            EventStream();
+        }
+
+        private int Compare(MultipleChoiceOption x, MultipleChoiceOption y)
+        {
+            return y.Votes.Count - x.Votes.Count;
         }
     }
 }
