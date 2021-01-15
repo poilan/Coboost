@@ -126,7 +126,7 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
 
         private int Compare(SliderOption x, SliderOption y)
         {
-            return y.Ratings.Count - x.Ratings.Count;
+            return (int) (y.Average - x.Average);
         }
 
         private void RecountVotes()
