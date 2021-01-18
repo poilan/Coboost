@@ -340,10 +340,7 @@ class LoginModal extends Component {
             let result = false;
 
             await Axios.post(`user/start-recovery`, data).then(() => {
-                alert("We have good news and we have bad news! \n" +
-                    "The Good news is that it worked! \n" +
-                    "The Bad news is that I can't simply trust that you are who you say you are. \n" +
-                    "But if you are, I sent you an Email, just hop over there and click on the link to confirm the change! ");
+                alert("Thank you! We sent you a mail. Please click on the link in the mail to confirm changes.");
                 result = true;
             }, error => {
                 if (error.response.status === 406)

@@ -232,7 +232,7 @@ export class Beta extends React.Component {
                     BETA TEST AGREEMENT
                 </Typography>
                 <br />
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Scope of this Agreement
                 </Typography>
@@ -243,7 +243,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Copyrights and Ownership
                 </Typography>
@@ -254,7 +254,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     License and Acceptable Use
                 </Typography>
@@ -265,7 +265,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Disclaimer of Liability and Warranties
                 </Typography>
@@ -276,7 +276,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Term and Termination
                 </Typography>
@@ -287,7 +287,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Beta testers feedback
                 </Typography>
@@ -298,7 +298,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Confidentiality
                 </Typography>
@@ -309,7 +309,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Support
                 </Typography>
@@ -320,7 +320,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Privacy policy
                 </Typography>
@@ -331,7 +331,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Fees and Costs
                 </Typography>
@@ -342,7 +342,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Modification
                 </Typography>
@@ -353,7 +353,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     No Assignment
                 </Typography>
@@ -364,7 +364,7 @@ export class Beta extends React.Component {
                 </Typography>
                 <br />
 
-                <Typography style={{ position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
                             variant="h5" >
                     Severability
                 </Typography>
@@ -374,6 +374,9 @@ export class Beta extends React.Component {
                     If any provision of this agreement shall be found by a court to be void, invalid or unenforceable, the same shall be reformed to comply with applicable law or stricken if not so conformable, so as not to affect the validity or enforceability of this agreement.
                 </Typography>
                 <br />
+                <Typography style={{ marginTop: "15px", position: "relative", width: "50%", left: "50%", transform: "translateX(-50%)", textAlign: "center", display: "block" }}
+                            variant="h5" >
+                </Typography>
             </div>
         );
     }

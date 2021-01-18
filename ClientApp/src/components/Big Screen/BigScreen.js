@@ -383,12 +383,12 @@ export class BigScreen extends Component {
                                      onResultToggle={this.facilitatorToggleResults}
                                      showingResult={State.showResults}
                                      style={{
-                                left: "0",
-                                bottom: "15px",
-                                position: "fixed",
-                                height: "100px",
-                                width: "60%"
-                            }}
+                                         left: "0",
+                                         bottom: "15px",
+                                         position: "fixed",
+                                         height: "100px",
+                                         width: "60%"
+                                     }}
                                      toggle={true} />
                     }
                 </ContentContainer>
@@ -421,12 +421,12 @@ export class BigScreen extends Component {
                                      onResultToggle={this.facilitatorToggleResults}
                                      showingResult={State.showResults}
                                      style={{
-                                left: "0",
-                                bottom: "100px",
-                                position: "fixed",
-                                height: "100px",
-                                width: "60%"
-                            }}
+                                         left: "0",
+                                         bottom: "100px",
+                                         position: "fixed",
+                                         height: "100px",
+                                         width: "60%"
+                                     }}
                                      toggle={true} />
                     }
                 </ContentContainer>
@@ -470,22 +470,21 @@ export class BigScreen extends Component {
                         {this.viewResult()}
                     </WelcomeContainer>
                     {!this.props.admin &&
-                        <Facilitator
-                            active={State.activeQuestion}
-                            allTasks
-                            code={Code}
-                            fullscreen
-                            hide={true}
-                            onResultToggle={this.facilitatorToggleResults}
-                            showingResult={State.showResults}
-                            style={{
+                        <Facilitator active={State.activeQuestion}
+                                     allTasks
+                                     code={Code}
+                                     fullscreen
+                                     hide={true}
+                                     onResultToggle={this.facilitatorToggleResults}
+                                     showingResult={State.showResults}
+                                     style={{
                                 left: "0",
                                 bottom: "15px",
                                 position: "fixed",
                                 height: "100px",
                                 width: "60%"
                             }}
-                            toggle={true} />
+                                     toggle={true} />
                     }
                 </ContentContainer>
 
@@ -512,19 +511,18 @@ export class BigScreen extends Component {
                         {Results && Results.slice(1).map(group => {
                                 if (column.index === group.Column && (!group.Collapsed || this.props.tool === "hide")) {
                                     return(
-                                        <Group
-                                            collapsed={group.Collapsed}
-                                            color={group.Color}
-                                            column={group.Column}
-                                            favorite={Task.FavoriteGroups.indexOf(group.Index) !== -1}
-                                            group={group.Index}
-                                            id={group.Index}
-                                            key={group.Index}
-                                            showcase
-                                            size={column.width}
-                                            title={group.Title}
-                                            toolFavorite={this.props.tool === "favorite"}
-                                            toolHide={this.props.tool === "hide"} >
+                                        <Group collapsed={group.Collapsed}
+                                               color={group.Color}
+                                               column={group.Column}
+                                               favorite={Task.FavoriteGroups.indexOf(group.Index) !== -1}
+                                               group={group.Index}
+                                               id={group.Index}
+                                               key={group.Index}
+                                               showcase
+                                               size={column.width}
+                                               title={group.Title}
+                                               toolFavorite={this.props.tool === "favorite"}
+                                               toolHide={this.props.tool === "hide"} >
 
                                             {group.Members && group.Members.map(member =>
                                                 <Input
@@ -636,21 +634,20 @@ export class BigScreen extends Component {
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
 
                 {Task.Options.map(option =>
-                    <ResultItem
-                        color={option.Color}
-                        description={option.Description}
-                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
-                        height="85%"
-                        id={option.Index}
-                        index={option.Index}
-                        key={option.Index}
-                        percentage={((option.Votes.length / Task.TotalVotes) * 100)}
-                        points={option.Votes.length}
-                        showcase
-                        showPercentage={this.state.resultsAsPercentage}
-                        title={option.Title}
-                        total={Task.Options.length}
-                        vote />
+                    <ResultItem color={option.Color}
+                                description={option.Description}
+                                favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
+                                height="85%"
+                                id={option.Index}
+                                index={option.Index}
+                                key={option.Index}
+                                percentage={((option.Votes.length / Task.TotalVotes) * 100)}
+                                points={option.Votes.length}
+                                showcase
+                                showPercentage={this.state.resultsAsPercentage}
+                                title={option.Title}
+                                total={Task.Options.length}
+                                vote />
                 )}
             </React.Fragment>
         );
@@ -666,21 +663,20 @@ export class BigScreen extends Component {
                 <ResultBackground style={{ width: "98%", height: "85%" }} />
 
                 {Task.Options.map(option =>
-                    <ResultItem
-                        color={option.Color}
-                        description={option.Description}
-                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
-                        height="85%"
-                        id={option.Index}
-                        index={option.Index}
-                        key={option.Index}
-                        percentage={((option.Points / Total) * 100)}
-                        points={option.Points}
-                        showcase
-                        showPercentage={this.state.resultsAsPercentage}
-                        title={option.Title}
-                        total={Task.Options.length}
-                        vote />
+                    <ResultItem color={option.Color}
+                                description={option.Description}
+                                favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
+                                height="85%"
+                                id={option.Index}
+                                index={option.Index}
+                                key={option.Index}
+                                percentage={((option.Points / Total) * 100)}
+                                points={option.Points}
+                                showcase
+                                showPercentage={this.state.resultsAsPercentage}
+                                title={option.Title}
+                                total={Task.Options.length}
+                                vote />
                 )}
             </React.Fragment>
         );
@@ -693,20 +689,19 @@ export class BigScreen extends Component {
         return (
             <Box style={{ position: "relative", height: "100%", width: "100%", overflowY: "auto" }} >
                 {Task.Options.map(option =>
-                    <ResultSlider
-                        average={option.Average}
-                        color={option.Color}
-                        description={option.Description}
-                        favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
-                        id={option.Index}
-                        index={option.Index}
-                        max={Task.Max}
-                        maxDescription={Task.MaxDescription}
-                        min={Task.Min}
-                        minDescription={Task.MinDescription}
-                        showcase
-                        title={option.Title}
-                        vote />
+                    <ResultSlider average={option.Average}
+                                  color={option.Color}
+                                  description={option.Description}
+                                  favorite={Task.Favorites && Task.Favorites.includes(option.Index)}
+                                  id={option.Index}
+                                  index={option.Index}
+                                  max={Task.Max}
+                                  maxDescription={Task.MaxDescription}
+                                  min={Task.Min}
+                                  minDescription={Task.MinDescription}
+                                  showcase
+                                  title={option.Title}
+                                  vote />
                 )}
             </Box>
         );
@@ -736,7 +731,7 @@ export class BigScreen extends Component {
                 Task.Type === 3 ?
                 <React.Fragment>
                     {Task.Options.map(option =>
-                        <ResultSlider average={(Task.Max + Task.Min) / 2}
+                        <ResultSlider average={Task.Min}
                                       color={option.Color}
                                       description={option.Description}
                                       id={option.Index}
@@ -760,20 +755,19 @@ export class BigScreen extends Component {
                     </Typography>
 
                     {Task.Options.map(option =>
-                        <ResultItem
-                            color={option.Color}
-                            description={option.Description}
-                            height="85%"
-                            id={option.Index}
-                            index={option.Index}
-                            key={option.Index}
-                            percentage={0}
-                            points={0}
-                            showcase
-                            showPercentage={this.state.resultsAsPercentage}
-                            title={option.Title}
-                            total={Task.Options.length}
-                            vote />
+                        <ResultItem color={option.Color}
+                                    description={option.Description}
+                                    height="85%"
+                                    id={option.Index}
+                                    index={option.Index}
+                                    key={option.Index}
+                                    percentage={0}
+                                    points={0}
+                                    showcase
+                                    showPercentage={this.state.resultsAsPercentage}
+                                    title={option.Title}
+                                    total={Task.Options.length}
+                                    vote />
                     )}
 
                 </React.Fragment>
@@ -833,19 +827,19 @@ export class BigScreen extends Component {
 
                     {this.state.task &&
                         <div style={{
-                                position: "absolute",
-                                height: "50px",
-                                lineHeight: "50px",
-                                textAlign: "center",
-                                minWidth: "150px",
-                                border: "1px solid black",
-                                borderRadius: "15px",
-                                right: "50px",
-                                top: "25px",
-                                color: this.state.task.Countdown < 11 && this.state.task.Countdown > -1 ?
-                                           "red" :
-                                           "black"
-                            }} >
+                            position: "absolute",
+                            height: "50px",
+                            lineHeight: "50px",
+                            textAlign: "center",
+                            minWidth: "150px",
+                            border: "1px solid black",
+                            borderRadius: "15px",
+                            right: "50px",
+                            top: "25px",
+                            color: this.state.task.Countdown < 11 && this.state.task.Countdown > -1 ?
+                                       "red" :
+                                       "black"
+                        }} >
                             {this.state.task.InProgress ?
                                  this.state.task.Countdown < 0 ?
                                  "Task Open!" :
