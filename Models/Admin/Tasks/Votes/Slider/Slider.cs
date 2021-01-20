@@ -124,10 +124,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             EventStream();
         }
 
-        private int Compare(SliderOption x, SliderOption y)
-        {
-            return (int) (y.Average - x.Average);
-        }
 
         private void RecountVotes()
         {
@@ -137,8 +133,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Slider
             foreach (SliderVote vote in Votes)
                 for (int j = 0; j < vote.Ratings.Count; j++)
                     Options[j].Ratings.Add(vote.Ratings[j]);
-
-            Options.Sort(Compare);
         }
     }
 }

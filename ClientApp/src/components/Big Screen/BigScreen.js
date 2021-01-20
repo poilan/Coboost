@@ -230,6 +230,28 @@ export class BigScreen extends Component {
                     const Options = JSON.parse(e.data);
                     const Task = this.state.task;
                     Task.Options = Options;
+
+                    if (Task.Options !== undefined) {
+                        switch (Task.Type) {
+                            case 1:
+                                Task.Options.sort((a, b) => (a.Votes.length > b.Votes.length) ?
+                                                            -1 :
+                                                            1);
+                                break;
+                            case 2:
+                                Task.Options.sort((a, b) => (a.Points > b.Points) ?
+                                                            -1 :
+                                                            1);
+                                break;
+                            case 3:
+                                Task.Options.sort((a, b) => (a.Average > b.Average) ?
+                                                            -1 :
+                                                            1);
+                                break;
+
+                        }
+                    }
+
                     this.setState({
                         task: Task
                     });
@@ -478,12 +500,12 @@ export class BigScreen extends Component {
                                      onResultToggle={this.facilitatorToggleResults}
                                      showingResult={State.showResults}
                                      style={{
-                                left: "0",
-                                bottom: "15px",
-                                position: "fixed",
-                                height: "100px",
-                                width: "60%"
-                            }}
+                                         left: "0",
+                                         bottom: "15px",
+                                         position: "fixed",
+                                         height: "100px",
+                                         width: "60%"
+                                     }}
                                      toggle={true} />
                     }
                 </ContentContainer>
@@ -525,19 +547,18 @@ export class BigScreen extends Component {
                                                toolHide={this.props.tool === "hide"} >
 
                                             {group.Members && group.Members.map(member =>
-                                                <Input
-                                                    column={group.Column}
-                                                    description={member.Description}
-                                                    favorite={Task.FavoriteMembers.indexOf(`${group.Index}-${member.Index}`) !== -1}
-                                                    group={group.Index}
-                                                    id={group.Index + "-" + member.Index}
-                                                    isMerged={0}
-                                                    key={member.Index}
-                                                    member={member.Index}
-                                                    showcase
-                                                    size={column.width}
-                                                    title={member.Title}
-                                                    toolFavorite={this.props.tool === "favorite"} />
+                                                <Input column={group.Column}
+                                                       description={member.Description}
+                                                       favorite={Task.FavoriteMembers.indexOf(`${group.Index}-${member.Index}`) !== -1}
+                                                       group={group.Index}
+                                                       id={group.Index + "-" + member.Index}
+                                                       isMerged={0}
+                                                       key={member.Index}
+                                                       member={member.Index}
+                                                       showcase
+                                                       size={column.width}
+                                                       title={member.Title}
+                                                       toolFavorite={this.props.tool === "favorite"} />
                                             )}
                                         </Group>
                                     );

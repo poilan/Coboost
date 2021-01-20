@@ -106,10 +106,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
             EventStream();
         }
 
-        private int Compare(PointsOption x, PointsOption y)
-        {
-            return y.Points - x.Points;
-        }
 
         private void RecountVotes()
         {
@@ -119,8 +115,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Points
             foreach (PointsVote vote in Votes)
                 for (int j = 0; j < vote.Points.Count; j++)
                     Options[j].Points += vote.Points[j];
-
-            Options.Sort(Compare);
         }
     }
 }

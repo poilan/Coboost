@@ -475,7 +475,7 @@ export class Mobile extends React.Component {
                     const Values = [];
 
                     for (let i = 0; i < question.Options.length; i++) {
-                        Values.push(question.Min);
+                        Values.push(0);
                     }
 
                     Answer.value = Values;
@@ -919,6 +919,14 @@ export class Mobile extends React.Component {
             Data.Points = Answer;
             Axios.post(`client/${Code}/add-vote-points`, Data);
         } else if (Type === 3) { // Slider
+            const Max = this.getCurrentTask().Max, Min = this.getCurrentTask().Min;
+            for (let i = 0; i < Answer.length; i++) {
+                if (Answer[i] < Min || Answer[i] > Max) {
+                    Alert("Please Rate all the inputs");
+                    return false;
+                }
+            }
+
             Data.Ratings = Answer;
             Axios.post(`client/${Code}/add-vote-slider`, Data);
         }
@@ -966,11 +974,10 @@ export class Mobile extends React.Component {
                                      vertical >
 
                     {this.getTaskOptions().map((choice) =>
-                        <MultipleChoiceButton
-                            key={choice.Index}
-                            name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
-                            size="lg"
-                            value={`${this.getTaskIndex()}-${choice.Index}`} >
+                        <MultipleChoiceButton key={choice.Index}
+                                              name={`${this.getTaskIndex()}-${choice.Title}-${choice.Index}`}
+                                              size="lg"
+                                              value={`${this.getTaskIndex()}-${choice.Index}`} >
 
                             <Tick>
                                 <TickStem />
@@ -1059,29 +1066,26 @@ export class Mobile extends React.Component {
                      pt={1}
                      px={2} >
                     {Task.Options.map((slider) =>
-                        <Box
-                            borderColor="transparent"
-                            component="fieldset"
-                            key={slider.Index}
-                            mb={4}
-                            pt={2}
-                            px={1} >
-                            <Typography
-                                component="legend" >
+                        <Box borderColor="transparent"
+                             component="fieldset"
+                             key={slider.Index}
+                             mb={4}
+                             pt={2}
+                             px={1} >
+                            <Typography component="legend" >
                                 {slider.Title}
                             </Typography>
-                            <Slider
-                                aria-labledby="discrete-slider"
-                                marks={Marks}
-                                max={Task.Max}
-                                min={Task.Min}
-                                name={slider.Title}
-                                onChange={(e, value) => this.sliderChange(slider.Index, value)}
-                                step={1}
-                                value={Answers !== undefined ?
-                                           Answers.value[slider.Index] :
-                                           Task.Min}
-                                valueLabelDisplay="on" />
+                            <Slider aria-labledby="discrete-slider"
+                                    marks={Marks}
+                                    max={Task.Max}
+                                    min={Task.Min}
+                                    name={slider.Title}
+                                    onChange={(e, value) => this.sliderChange(slider.Index, value)}
+                                    step={1}
+                                    value={Answers !== undefined ?
+                                               Answers.value[slider.Index] :
+                                               Task.Min}
+                                    valueLabelDisplay="on" />
                         </Box>
                     )}
                 </Box>

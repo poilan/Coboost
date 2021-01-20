@@ -104,7 +104,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             lock (ThreadLock)
             {
                 Options[vote.Option].Votes.Add(vote);
-                Options.Sort(Compare);
             }
 
             EventStream();
@@ -157,11 +156,6 @@ namespace Coboost.Models.Admin.Tasks.Votes.Multiple_Choice
             }
 
             EventStream();
-        }
-
-        private int Compare(MultipleChoiceOption x, MultipleChoiceOption y)
-        {
-            return y.Votes.Count - x.Votes.Count;
         }
     }
 }

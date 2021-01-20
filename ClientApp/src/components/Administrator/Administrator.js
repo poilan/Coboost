@@ -198,8 +198,7 @@ const FullscreenButton = Styled.button`
 `;
 
 export class Administrator extends React.Component {
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         this.state = {
             title: "",
@@ -226,56 +225,47 @@ export class Administrator extends React.Component {
     }
 
 
-    componentDidMount()
-    {
+    componentDidMount() {
         const Code = sessionStorage.getItem("code");
         const Title = sessionStorage.getItem("title");
         const PresentManager = new Presentation(Code);
 
         document.addEventListener("keypress", (e) => {
-            if (!this.state.popup)
-            {
-                if (e.key === "|")
-                {
+            if (!this.state.popup) {
+                if (e.key === "|") {
                     this.setState({
                         showList: !this.state.showList
                     });
-                }
-                else if (e.key === " ")
-                {
-                    if (this.state.tab === "task")
+                } else if (e.key === " ") {
+                    if (this.state.tab === "task") {
                         this.selectTab("organize");
-                    else
+                    } else {
                         this.selectTab("task");
+                    }
                 }
             }
         });
 
         document.addEventListener("keydown", (e) => {
-            if (this.state.popup)
+            if (this.state.popup) {
                 return;
+            }
 
-            if (e.keyCode === 37 || e.keyCode === 38)
-            {
+            if (e.keyCode === 37 || e.keyCode === 38) {
                 e.preventDefault();
                 this.controls.back();
-            }
-            else if (e.keyCode === 39 || e.keyCode === 40)
-            {
+            } else if (e.keyCode === 39 || e.keyCode === 40) {
                 e.preventDefault();
                 this.controls.next();
             }
         });
 
         document.addEventListener("fullscreenchange", (e) => {
-            if (document.fullscreenElement)
-            {
+            if (document.fullscreenElement) {
                 this.setState({
                     fullscreen: true
                 });
-            }
-            else
-            {
+            } else {
                 this.setState({
                     fullscreen: false
                 });
@@ -291,8 +281,7 @@ export class Administrator extends React.Component {
     }
 
 
-    componentWillUnmount()
-    {
+    componentWillUnmount() {
         this.SSE.close();
         const Code = sessionStorage.getItem("code");
         Axios.post(`admin/${Code}/close`);
@@ -303,8 +292,7 @@ export class Administrator extends React.Component {
         this.SSE.close();
         const Code = sessionStorage.getItem("code");
         await Axios.get(`admin/${Code}/questions-all`).then((res) => {
-            if (res.status === 202)
-            {
+            if (res.status === 202) {
                 const TaskList = res.data;
                 this.setState({
                     tasks: TaskList
@@ -312,13 +300,12 @@ export class Administrator extends React.Component {
 
                 Axios.post(`admin/${Code}/save`);
 
-                if (this.state.active < this.state.tasks.length)
+                if (this.state.active < this.state.tasks.length) {
                     this.SSE.start(this.state.active);
-                else if (this.state.tasks.length > 0)
+                } else if (this.state.tasks.length > 0) {
                     this.SSE.start(0);
-            }
-            else if (res.status === 412)
-            {
+                }
+            } else if (res.status === 412) {
                 //session not found
             }
         });
@@ -345,8 +332,9 @@ export class Administrator extends React.Component {
         },
 
         start: (target) => {
-            if (target >= this.state.tasks.length || target < 0)
+            if (target >= this.state.tasks.length || target < 0) {
                 return;
+            }
 
             this.SSE.close();
 
@@ -360,8 +348,7 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Groups", (e) => {
-                try
-                {
+                try {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     const Columns = this.state.columns;
@@ -369,31 +356,28 @@ export class Administrator extends React.Component {
                     this.state.columns = [];
                     TaskList[target].Groups = Data;
 
-                    if (TaskList[target].Groups !== undefined)
-                    {
-                        for (let i = 0; i < TaskList[target].Groups.length; i++)
-                        {
-                            while (TaskList[target].Groups[i].Column + 1 >= this.state.columns.length)
+                    if (TaskList[target].Groups !== undefined) {
+                        for (let i = 0; i < TaskList[target].Groups.length; i++) {
+                            while (TaskList[target].Groups[i].Column + 1 >= this.state.columns.length) {
                                 this.SSE.addColumn();
+                            }
                         }
-                    }
-                    else
+                    } else {
                         this.SSE.addColumn();
+                    }
 
-                    for (let i = 0; i < this.state.columns.length; i++)
-                    {
-                        if (Columns[i] !== undefined)
+                    for (let i = 0; i < this.state.columns.length; i++) {
+                        if (Columns[i] !== undefined) {
                             this.state.columns[i].width = Columns[i].width;
-                        else
+                        } else {
                             break;
+                        }
                     }
                     this.setState(
                         {
                             tasks: TaskList
                         });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -401,21 +385,38 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Options", (e) => {
-                try
-                {
+                try {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Options = Data;
 
-                    //if (tasks[target].options !== undefined) {
-                    //    tasks[target].options.sort((a, b) => (a.Votes.length > b.Votes.length) ? -1 : 1);
-                    //}
+
+                    if (TaskList[target].Options !== undefined) {
+                        switch (TaskList[target].Type) {
+                            case 1:
+                                TaskList[target].Options.sort((a, b) => (a.Votes.length > b.Votes.length) ?
+                                                                        -1 :
+                                                                        1);
+                                break;
+                            case 2:
+                                TaskList[target].Options.sort((a, b) => (a.Points > b.Points) ?
+                                                                        -1 :
+                                                                        1);
+                                break;
+                            case 3:
+                                TaskList[target].Options.sort((a, b) => (a.Average > b.Average) ?
+                                                                        -1 :
+                                                                        1);
+                                break;
+
+                        }
+                    }
+
+
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -423,17 +424,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Total", (e) => {
-                try
-                {
+                try {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].TotalVotes = Data;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
@@ -441,17 +439,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Votes", (e) => {
-                try
-                {
+                try {
                     const Votes = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Votes = Votes;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Votes");
                     console.log(e);
                 }
@@ -459,17 +454,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Amount", (e) => {
-                try
-                {
+                try {
                     const Amount = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Amount = Amount;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Amount");
                     console.log(e);
                 }
@@ -477,17 +469,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Status", (e) => {
-                try
-                {
+                try {
                     const InProgress = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].InProgress = InProgress;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Status");
                     console.log(e);
                 }
@@ -495,17 +484,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Timer", (e) => {
-                try
-                {
+                try {
                     const Timer = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Timer = Timer;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Countdown");
                     console.log(e);
                 }
@@ -513,17 +499,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Countdown", (e) => {
-                try
-                {
+                try {
                     const Countdown = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Countdown = Countdown;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Countdown");
                     console.log(e);
                 }
@@ -531,17 +514,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Results", (e) => {
-                try
-                {
+                try {
                     const Results = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].ShowResults = Results;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Results");
                     console.log(e);
                 }
@@ -549,8 +529,7 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("FavoriteGroups", (e) => {
-                try
-                {
+                try {
                     const FavGroups = JSON.parse(e.data);
                     console.log(FavGroups);
                     const TaskList = this.state.tasks;
@@ -558,9 +537,7 @@ export class Administrator extends React.Component {
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: FavoriteGroups");
                     console.log(e);
                 }
@@ -568,8 +545,7 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("FavoriteMembers", (e) => {
-                try
-                {
+                try {
                     const FavMembers = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     console.log(FavMembers);
@@ -577,9 +553,7 @@ export class Administrator extends React.Component {
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: FavoriteMembers");
                     console.log(e);
                 }
@@ -587,17 +561,14 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Favorites", (e) => {
-                try
-                {
+                try {
                     const Favorites = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Favorites = Favorites;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log("Failed to parse server event: Favorites");
                     console.log(e);
                 }
@@ -605,36 +576,37 @@ export class Administrator extends React.Component {
 
             // ReSharper disable once Html.EventNotResolved
             this.SSE.source.addEventListener("Archive", (e) => {
-                try
-                {
+                try {
                     const Data = JSON.parse(e.data);
                     const TaskList = this.state.tasks;
                     TaskList[target].Archive = Data;
                     this.setState({
                         tasks: TaskList
                     });
-                }
-                catch (e)
-                {
+                } catch (e) {
                     console.log(`Failed to parse server event: ${e.data}`);
                     console.log(e);
                 }
             }, false);
 
             this.SSE.source.addEventListener("error", (e) => {
-                if (e.readyState === window.EventSource.CLOSED)
+                if (e.readyState === window.EventSource.CLOSED) {
                     console.log("SSE: connection closed");
-                else
+                } else {
                     console.log(e);
+                }
             }, false);
 
             // ReSharper disable once Html.EventNotResolved
-            this.SSE.source.addEventListener("open", () => { console.log("SSE: connection opened"); }, false);
+            this.SSE.source.addEventListener("open", () => {
+                console.log("SSE: connection opened");
+            }, false);
         },
 
         close: () => {
-            if (this.SSE.source !== undefined && this.SSE.source.readyState !== window.EventSource.CLOSED)
+            if (this.SSE.source !== undefined && this.SSE.source.readyState !== window.EventSource.CLOSED) {
                 this.SSE.source.close();
+            }
         }
     }
 
@@ -644,10 +616,11 @@ export class Administrator extends React.Component {
         let value = parseInt(e.target.value) * 60;
         const Tasks = this.state.tasks;
 
-        if (value < 1)
+        if (value < 1) {
             value = 1;
-        else if (value > 2147483647)
+        } else if (value > 2147483647) {
             value = 2147483647;
+        }
 
         Tasks[index].Timer = value;
         this.setState({
@@ -658,8 +631,7 @@ export class Administrator extends React.Component {
     };
 
 
-    selectTab(key)
-    {
+    selectTab(key) {
         this.setState({
             tab: key,
             BannerButtonText: key === "task" ?
@@ -687,14 +659,16 @@ export class Administrator extends React.Component {
     controls = {
         next: () => {
             const Index = this.state.active + 1;
-            if (Index < this.state.tasks.length)
+            if (Index < this.state.tasks.length) {
                 this.SSE.start(Index);
+            }
         },
 
         back: () => {
             const Index = this.state.active - 1;
-            if (Index >= 0)
+            if (Index >= 0) {
                 this.SSE.start(Index);
+            }
         }
     }
 
@@ -724,8 +698,9 @@ export class Administrator extends React.Component {
 
             this.shortcuts.close();
 
-            if (success === true)
+            if (success === true) {
                 this.update();
+            }
         },
 
         text: () => {
@@ -798,13 +773,10 @@ export class Administrator extends React.Component {
         if (!Document.fullscreenElement &&
             !Document.mozFullScreenElement &&
             !Document.webkitFullscreenElement &&
-            !Document.msFullscreenElement)
-        {
+            !Document.msFullscreenElement) {
             Request.call(Element);
             fullscreen = true;
-        }
-        else
-        {
+        } else {
             Cancel.call(Document);
             fullscreen = false;
         }
@@ -815,65 +787,54 @@ export class Administrator extends React.Component {
     }
 
 
-    render()
-    {
+    render() {
         let banner_button_check = this.state.tab === "task";
         return (
             <MainContainer>
-                <ThemeProvider
-                    theme={Theme} >
-                    <Banner
-                        task={this.state.tab === "task"} >
-                        <BreadCrumb
-                            aria-label="Breadcrumb"
-                            separator="&#187;" >
-                            <BreadText
-                                color="initial"
-                                href="/" >
+                <ThemeProvider theme={Theme} >
+                    <Banner task={this.state.tab === "task"} >
+                        <BreadCrumb aria-label="Breadcrumb"
+                                    separator="&#187;" >
+                            <BreadText color="initial"
+                                       href="/" >
                                 Coboost
                             </BreadText>
 
-                            <BreadText
-                                color="initial"
-                                href="/dashboard" >
+                            <BreadText color="initial"
+                                       href="/dashboard" >
                                 Sessions
                             </BreadText>
 
-                            <BreadText
-                                color="initial"
-                                href="#"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    this.state.tab === "task" ?
-                                        this.selectTab("organize") :
-                                        this.selectTab("task");
-                                }} >
+                            <BreadText color="initial"
+                                       href="#"
+                                       onClick={(e) => {
+                                           e.preventDefault();
+                                           this.state.tab === "task" ?
+                                               this.selectTab("organize") :
+                                               this.selectTab("task");
+                                       }} >
                                 {this.state.title}
                             </BreadText>
 
                         </BreadCrumb>
 
-                        <BannerDropdown
-                            style={{
-                                float: "right",
-                                position: "relative",
-                                top: "50%",
-                                transform: "translateY(-50%)"
-                            }}
-                            title={<BsJustify />} >
-                            <BannerLink
-                                onClick={this.present} >
+                        <BannerDropdown style={{
+                            float: "right",
+                            position: "relative",
+                            top: "50%",
+                            transform: "translateY(-50%)"
+                        }}
+                                        title={<BsJustify />} >
+                            <BannerLink onClick={this.present} >
                                 Present in a new window
                             </BannerLink>
                             <Divider />
-                            <BannerLink
-                                onClick={this.logout} >
+                            <BannerLink onClick={this.logout} >
                                 Logout
                             </BannerLink>
                         </BannerDropdown>
 
-                        <FullscreenButton
-                            onClick={this.toggleFullscreen} >
+                        <FullscreenButton onClick={this.toggleFullscreen} >
                             {this.state.fullscreen ?
                                  <React.Fragment>
                                      <BsFullscreenExit
@@ -891,97 +852,87 @@ export class Administrator extends React.Component {
                                  `Code: ${this.state.code.substr(0, 3)} ${this.state.code.substr(3, 3)}` :
                                  null}
                         </BannerCode>
-                        <DivButton
-                            onClick={() => {
-                                this.state.tab === "task" ?
-                                    this.selectTab("organize") :
-                                    this.selectTab("task");
-                            }}
-                            onMouseLeave={() => this.setState({
-                                BannerButtonText: this.state.tab === "task" ?
-                                                      "Discussion" :
-                                                      "Organize"
-                            })}
-                            onMouseOver={() => this.setState({
-                                BannerButtonText: this.state.tab !== "task" ?
-                                                      "Discussion" :
-                                                      "Organize"
-                            })}
-                            task={this.state.tab === "task"} >
+                        <DivButton onClick={() => {
+                            this.state.tab === "task" ?
+                                this.selectTab("organize") :
+                                this.selectTab("task");
+                        }}
+                                   onMouseLeave={() => this.setState({
+                                       BannerButtonText: this.state.tab === "task" ?
+                                                             "Discussion" :
+                                                             "Organize"
+                                   })}
+                                   onMouseOver={() => this.setState({
+                                       BannerButtonText: this.state.tab !== "task" ?
+                                                             "Discussion" :
+                                                             "Organize"
+                                   })}
+                                   task={this.state.tab === "task"} >
                             {this.state.BannerButtonText}
                         </DivButton>
                     </Banner>
 
                     <ContentCard>
-                        <Tab.Container
-                            activeKey={this.state.tab}
-                            onSelect={(k) => this.selectTab(k)} >
-                            <div
-
-                                style={{
-                                    width: this.state.showList ?
-                                               "calc(max(15%, 300px) + 5px)" :
-                                               "5px",
-                                    left: "0",
-                                    position: "absolute",
-                                    height: "100%",
-                                    borderRight: "5px solid",
-                                    borderColor: this.state.tab === "task" ?
-                                                     "#24305E" :
-                                                     "#374785"
-                                }} >
+                        <Tab.Container activeKey={this.state.tab}
+                                       onSelect={(k) => this.selectTab(k)} >
+                            <div style={{
+                                width: this.state.showList ?
+                                           "calc(max(15%, 300px) + 5px)" :
+                                           "5px",
+                                left: "0",
+                                position: "absolute",
+                                height: "100%",
+                                borderRight: "5px solid",
+                                borderColor: this.state.tab === "task" ?
+                                                 "#24305E" :
+                                                 "#374785"
+                            }} >
 
                                 {this.state.modal.create &&
                                     <CreateTaskModal
                                         onClose={this.create.close}
                                         type={this.state.modal.type} />
                                 }
-                                <Menu
-                                    anchorEl={this.state.anchor}
-                                    anchorOrigin={{
-                                        vertical: "bottom",
-                                        horizontal: "center"
-                                    }}
-                                    id="CreateMenu"
-                                    onClose={() => this.setState({ anchor: null })}
-                                    open={Boolean(this.state.anchor)}
-                                    transformOrigin={{
-                                        vertical: "bottom",
-                                        horizontal: "center"
-                                    }} >
+                                <Menu anchorEl={this.state.anchor}
+                                      anchorOrigin={{
+                                          vertical: "bottom",
+                                          horizontal: "center"
+                                      }}
+                                      id="CreateMenu"
+                                      onClose={() => this.setState({ anchor: null })}
+                                      open={Boolean(this.state.anchor)}
+                                      transformOrigin={{
+                                          vertical: "bottom",
+                                          horizontal: "center"
+                                      }} >
 
-                                    <MenuItem
-                                        onClick={this.create.text} >
+                                    <MenuItem onClick={this.create.text} >
                                         Input: Open Text
                                     </MenuItem>
 
                                     <Divider />
 
-                                    <MenuItem
-                                        onClick={this.create.multipleChoice} >
+                                    <MenuItem onClick={this.create.multipleChoice} >
                                         Vote: Multiple Choice
                                     </MenuItem>
 
                                     <Divider />
 
-                                    <MenuItem
-                                        onClick={this.create.points} >
+                                    <MenuItem onClick={this.create.points} >
                                         Vote: Points
                                     </MenuItem>
 
                                     <Divider />
 
-                                    <MenuItem
-                                        onClick={this.create.slider} >
+                                    <MenuItem onClick={this.create.slider} >
                                         Vote: Slider
                                     </MenuItem>
 
                                 </Menu>
 
-                                <Collection
-                                    createTask={(event) => this.create.menu(event)}
-                                    shown={this.state.showList}
-                                    update={this.update.bind(this)} >
+                                <Collection createTask={(event) => this.create.menu(event)}
+                                            shown={this.state.showList}
+                                            update={this.update.bind(this)} >
                                     {this.state.tasks != undefined &&
                                         this.state.tasks.map(task =>
                                             <Task
@@ -998,9 +949,10 @@ export class Administrator extends React.Component {
                                         )}
                                 </Collection>
 
-                                <ListButton
-                                    onClick={() => { this.setState({ showList: !this.state.showList }); }}
-                                    task={this.state.tab === "task"} >
+                                <ListButton onClick={() => {
+                                    this.setState({ showList: !this.state.showList });
+                                }}
+                                            task={this.state.tab === "task"} >
                                     {this.state.showList ?
                                          <KeyboardArrowLeftIcon
                                              className="icon"
@@ -1027,43 +979,38 @@ export class Administrator extends React.Component {
 
                             </div>
 
-                            <div
-                                style={{
-                                    width: this.state.showList ?
-                                               "calc(min(85%, calc(100% - 300px)) - 5px)" :
-                                               "calc(100% - 5px)",
-                                    left: this.state.showList ?
-                                              "calc(max(15%, 300px) + 5px)" :
-                                              "5px",
-                                    position: "absolute",
-                                    height: "100%"
-                                }} >
+                            <div style={{
+                                width: this.state.showList ?
+                                           "calc(min(85%, calc(100% - 300px)) - 5px)" :
+                                           "calc(100% - 5px)",
+                                left: this.state.showList ?
+                                          "calc(max(15%, 300px) + 5px)" :
+                                          "5px",
+                                position: "absolute",
+                                height: "100%"
+                            }} >
                                 <Tab.Content>
-                                    <Tab.Pane
-                                        eventKey="task" >
-                                        <Tasks
-                                            active={this.state.active}
-                                            changeTab={this.selectTab.bind(this)}
-                                            columns={this.state.columns}
-                                            SSE={this.SSE.start}
-                                            tasks={this.state.tasks}
-                                            update={this.update.bind(this)} />
+                                    <Tab.Pane eventKey="task" >
+                                        <Tasks active={this.state.active}
+                                               changeTab={this.selectTab.bind(this)}
+                                               columns={this.state.columns}
+                                               SSE={this.SSE.start}
+                                               tasks={this.state.tasks}
+                                               update={this.update.bind(this)} />
                                     </Tab.Pane>
-                                    <Tab.Pane
-                                        eventKey="organize" >
-                                        <Organizer
-                                            active={this.state.active}
-                                            changeTab={this.selectTab.bind(this)}
-                                            columns={this.state.columns}
-                                            handleTimer={this.HandleTimer}
-                                            popClosed={this.shortcuts.close}
-                                            popOpen={this.shortcuts.open}
-                                            showControls={this.state.showList ?
-                                                              true :
-                                                              this.state.showControls}
-                                            SSE={this.SSE.start}
-                                            tasks={this.state.tasks}
-                                            update={this.update.bind(this)} />
+                                    <Tab.Pane eventKey="organize" >
+                                        <Organizer active={this.state.active}
+                                                   changeTab={this.selectTab.bind(this)}
+                                                   columns={this.state.columns}
+                                                   handleTimer={this.HandleTimer}
+                                                   popClosed={this.shortcuts.close}
+                                                   popOpen={this.shortcuts.open}
+                                                   showControls={this.state.showList ?
+                                                                     true :
+                                                                     this.state.showControls}
+                                                   SSE={this.SSE.start}
+                                                   tasks={this.state.tasks}
+                                                   update={this.update.bind(this)} />
                                     </Tab.Pane>
                                 </Tab.Content>
                             </div>
