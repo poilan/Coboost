@@ -93,7 +93,7 @@ export class InputModal extends Component {
             UserID: user
         };
 
-        if (data.title) {
+        if (title) {
             data.Title = title;
         }
 
